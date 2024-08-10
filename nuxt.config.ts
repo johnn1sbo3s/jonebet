@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      API_URL: process.env.API_URL || 'https://primetime-api.onrender.com/',
+      API_URL: 'http://45.92.10.252',
     },
   }
 });
