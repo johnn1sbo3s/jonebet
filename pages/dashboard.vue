@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-5">
 	<div class="flex justify-between items-end">
-	  <page-header title="Bem-vindo ao PrimeTime!" />
+	  <page-header title="Bem-vindo(a) à JoneBet!" />
 	  <div class="flex gap-2">
 		<div class="inline-block align-middle">
 		  <UToggle
