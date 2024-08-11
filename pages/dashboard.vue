@@ -8,7 +8,7 @@
             size="lg"
             on-icon="i-heroicons-check-20-solid"
             off-icon="i-heroicons-x-mark-20-solid"
-            :loading="pending"
+            :loading="monthDataPending"
             :model-value="onlyChosenModels"
             @click="onlyChosenModels = !onlyChosenModels"
           />
