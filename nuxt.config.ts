@@ -17,7 +17,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      API_URL: 'https://jonebet.xyz',
+      API_URL: 'https://api.jonebet.xyz',
     },
   }
 });

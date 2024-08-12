@@ -88,7 +88,7 @@ function buildTableObject(objectList) {
 }
 
 const { data: performanceData, error } = await useFetch(
-  "https://jonebet.xyz/model-performance"
+  "https://api.jonebet.xyz/model-performance"
 );
 
 const buildComparisonTable = () => {
