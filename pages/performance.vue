@@ -125,7 +125,7 @@
       <template #header>
         <p class="font-semibold">Jogos reais</p>
       </template>
-      <p class="mb-3 text-sm">{{ allBetsDataFilteredRows.length }} jogos</p>
+      <p class="mb-3 text-sm">{{ realData.entradas }} jogos</p>
       <UTable
         class="h-96"
         :ui="{
@@ -287,7 +287,6 @@ const chartByDay = ref(false);
 const blocksHistoryRows = ref([]);
 const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
-const allBetsDataFilteredRows = ref([]);
 
 const fetchData = async (url) => {
   try {
@@ -364,6 +363,11 @@ const getBetsArray = () => {
   chartOptions.value.plugins.annotation.annotations.line1.xMin = nRange;
 };
 
+const allBetsDataFilteredRows = computed(() => {
+  let name = chosenModel.value.toLowerCase().replace(/\s+/g, "_");
+  return _filter(betsData.value, { Metodo: name });
+});
+
 function cumulativeSum(array) {
   if (array.length === 0) {
     return [];
@@ -380,12 +384,6 @@ function cumulativeSum(array) {
   chartData.value.datasets[0].data = cumSum;
 }
 
-const buildAllBetsTable = () => {
-  let name = chosenModel.value.toLowerCase().replace(/\s+/g, "_");
-  allBetsDataFilteredRows.value = _filter(betsData.value, { Metodo: name });
-  allBetsDataFilteredRows.value = Object.values(allBetsDataFilteredRows.value);
-};
-
 function resetsZoom() {
   chartKey.value++;
 }
@@ -397,7 +395,6 @@ const changeChartData = () => {
 const buildInfo = () => {
   changeModel();
   changeChartData();
-  buildAllBetsTable();
   chartKey.value++;
 };
 
