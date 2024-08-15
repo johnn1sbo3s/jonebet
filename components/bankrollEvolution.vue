@@ -91,13 +91,13 @@ const chartOptions = ref({
 		pinch: {
 		  enabled: true,
 		},
-		mode: "x",
-		drag: {
-		  enabled: true,
-		  borderColor: "rgb(54, 162, 235)",
-		  borderWidth: 1,
-		  backgroundColor: "rgba(54, 162, 235, 0.3)",
-		},
+        mode: "x",
+        drag: {
+          enabled: true,
+          borderColor: "rgb(20 184 166)",
+          borderWidth: 1,
+          backgroundColor: "rgba(20, 184, 166, 0.15)",
+        },
 	  },
 	  pan: {
 		enabled: true,
