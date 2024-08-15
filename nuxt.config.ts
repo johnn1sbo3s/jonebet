@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   modules: ["@nuxt/ui", "nuxt-lodash", "@nuxt/fonts"],
   devtools: { enabled: false },
 
+  compatibilityDate: '2024-08-15',
+
   lodash: {
     prefix: "_",
     prefixSkip: ["string"],
