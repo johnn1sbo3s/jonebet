@@ -278,9 +278,27 @@ const blocksHistoryRows = ref([]);
 const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
 
+const fetchWithTimeout = (url, options = {}, timeout = 10000) => {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('Tempo de requisição esgotado'));
+    }, timeout);
+
+    fetch(url, options)
+      .then(response => {
+        clearTimeout(timer);
+        resolve(response);
+      })
+      .catch(err => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+};
+
 const fetchData = async (url) => {
   try {
-    const req = await fetch(url);
+    const req = await fetchWithTimeout(url, {}, 20000); // timeout de 20 segundos
     const data = await req.json();
     return data;
   } catch (error) {
@@ -288,6 +306,7 @@ const fetchData = async (url) => {
     return [];
   }
 };
+
 
 const changeChartByDay = () => {
   chartByDay.value = !chartByDay.value;
