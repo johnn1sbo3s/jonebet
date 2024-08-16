@@ -28,10 +28,11 @@
 </template>
 
 <script setup>
-const chosenCategory = ref("Selecione uma categoria");
+const chosenCategory = ref("Todos os modelos");
 const performanceDataRows = ref([]);
 
 const categoriesList = [
+  "Todos os modelos",
   "Betfair",
   "Lay Away",
   "LTD",
@@ -51,7 +52,8 @@ const performanceDataColumns = ref([
   { key: "modelo", label: "Modelo" },
   { key: "media", label: "Média P/L", sortable: true },
   { key: "desvpad", label: "Desvpad P/L", sortable: true },
-  { key: "diff_med_dp_um_96_raiz", label: "Dif. valid.", sortable: true },
+  { key: "ev_val", label: "EV Val", sortable: true },
+  { key: "ev_real", label: "EV Real", sortable: true },
   { key: "bottom_int", label: "Int. conf. inferior", sortable: true },
   { key: "top_int", label: "Int. conf. superior", sortable: true },
   { key: "med_atual", label: "Média atual" },
@@ -74,8 +76,9 @@ function buildTableObject(objectList) {
       modelo: modelNameToFront(item.modelo),
       media: item.total.media.toFixed(2),
       desvpad: item.total.desvpad.toFixed(2),
+      ev_val: item.val.ev.toFixed(2),
+      ev_real: item.real.ev.toFixed(2),
       med_dp: item.total.med_dp.toFixed(2),
-      diff_med_dp_um_96_raiz: item.total.diff_med_dp_um_96_raiz.toFixed(2),
       bottom_int: item.total.intervalo_confianca[0].toFixed(2),
       top_int: item.total.intervalo_confianca[1].toFixed(2),
       med_atual: item.total.media_atual.toFixed(2),
@@ -93,6 +96,11 @@ const { data: performanceData, error } = await useFetch(
 
 const buildComparisonTable = () => {
   performanceDataRows.value = [];
+
+  if (chosenCategory.value === "Todos os modelos") {
+    performanceDataRows.value = buildTableObject(performanceData.value);
+    return;
+  }
 
   let filteredModels = [];
   _forEach(performanceData.value, function (value, key) {
