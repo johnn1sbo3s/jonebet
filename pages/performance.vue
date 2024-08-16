@@ -147,7 +147,7 @@ import { LineChart } from "vue-chart-3";
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
 
-if (process.client) {
+if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
   const annotationPlugin = (await import("chartjs-plugin-annotation")).default;
   Chart.register(zoomPlugin);
@@ -185,19 +185,9 @@ const chartOptions = ref({
   scales: {
     y: {
       beginAtZero: false,
-      ticks: {
-        callback: (value) => {
-          return value.toFixed(1);
-        },
-      },
     },
     x: {
       beginAtZero: false,
-      ticks: {
-        callback: (value) => {
-          return value.toFixed(1);
-        },
-      },
     },
   },
   plugins: {
@@ -216,9 +206,9 @@ const chartOptions = ref({
         mode: "x",
         drag: {
           enabled: true,
-          borderColor: "rgb(54, 162, 235)",
+          borderColor: "rgb(20 184 166)",
           borderWidth: 1,
-          backgroundColor: "rgba(54, 162, 235, 0.3)",
+          backgroundColor: "rgba(20, 184, 166, 0.15)",
         },
       },
       pan: {
@@ -298,6 +288,7 @@ const fetchData = async (url) => {
     return [];
   }
 };
+
 
 const changeChartByDay = () => {
   chartByDay.value = !chartByDay.value;
