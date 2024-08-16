@@ -2,9 +2,6 @@
   <div class="flex flex-col gap-5">
     <div class="flex justify-between">
       <page-header title="Apostas do dia">
-        <template #right>
-          <USelect class="pt-0.5" v-model="date" :options="dates" />
-        </template>
       </page-header>
       <div class="flex items-center gap-2">
         <div class="pt-2 flex gap-3">
@@ -18,6 +15,10 @@
         </div>
         <div class="text-sm pt-1.5">Apenas favoritos</div>
       </div>
+    </div>
+
+    <div>
+      <USelect class="w-1/5" v-model="date" :options="dates" />
     </div>
 
     <div>
