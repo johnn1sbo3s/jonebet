@@ -28,11 +28,11 @@
 </template>
 
 <script setup>
-const chosenCategory = ref("Selecione uma categoria");
+const chosenCategory = ref("Todos os modelos");
 const performanceDataRows = ref([]);
 
 const categoriesList = [
-  "Todos",
+  "Todos os modelos",
   "Betfair",
   "Lay Away",
   "LTD",
@@ -96,6 +96,11 @@ const { data: performanceData, error } = await useFetch(
 
 const buildComparisonTable = () => {
   performanceDataRows.value = [];
+
+  if (chosenCategory.value === "Todos os modelos") {
+    performanceDataRows.value = buildTableObject(performanceData.value);
+    return;
+  }
 
   let filteredModels = [];
   _forEach(performanceData.value, function (value, key) {
