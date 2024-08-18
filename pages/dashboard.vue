@@ -1,22 +1,23 @@
 <template>
-  <div class="flex flex-col gap-5">
-	<div class="flex justify-between items-end">
-	  <page-header title="Bem-vindo(a) à JoneBet!" />
-	  <div class="flex gap-2">
-		<div class="inline-block align-middle">
-		  <UToggle
-			size="lg"
-			on-icon="i-heroicons-check-20-solid"
-			off-icon="i-heroicons-x-mark-20-solid"
-			:loading="monthDataStatus === 'pending'"
-			:model-value="onlyChosenModels"
-			@click="onlyChosenModels = !onlyChosenModels"
-		  />
-		</div>
+	<div class="flex flex-col gap-5">
+		<div class="flex justify-between items-end">
+			<page-header title="Bem-vindo(a) à JoneBet!" />
 
-		<p>Apenas modelos selecionados</p>
-	  </div>
-	</div>
+			<div class="flex items-center gap-2">
+				<div class="pt-2 flex gap-3">
+					<UToggle
+					size="md"
+					on-icon="i-heroicons-check-20-solid"
+					off-icon="i-heroicons-x-mark-20-solid"
+					:loading="monthDataStatus === 'pending'"
+					:model-value="onlyChosenModels"
+					@click="onlyChosenModels = !onlyChosenModels"
+					/>
+				</div>
+
+				<div class="text-sm pt-1.5">Apenas modelos selecionados</div>
+			</div>
+		</div>
 
 	<u-skeleton
 	  v-if="yesterdayDataStatus === 'pending'"
