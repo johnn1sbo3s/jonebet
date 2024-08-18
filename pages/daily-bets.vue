@@ -1,47 +1,48 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex justify-between">
-      <page-header title="Apostas do dia">
-      </page-header>
-      <div class="flex items-center gap-2">
-        <div class="pt-2 flex gap-3">
-          <UToggle
-            size="md"
-            on-icon="i-heroicons-check-20-solid"
-            off-icon="i-heroicons-x-mark-20-solid"
-            :model-value="favsOnly"
-            @click="changeFavsOnly"
-          />
-        </div>
-        <div class="text-sm pt-1.5">Apenas favoritos</div>
-      </div>
-    </div>
+	<div class="flex justify-between">
+		<page-header title="Apostas do dia" />
 
-    <div>
-      <USelect class="w-1/5" v-model="date" :options="dates" />
-    </div>
+		<div class="flex items-center gap-2">
+			<div class="pt-2 flex gap-3">
+				<UToggle
+				size="md"
+				on-icon="i-heroicons-check-20-solid"
+				off-icon="i-heroicons-x-mark-20-solid"
+				:model-value="favsOnly"
+				@click="changeFavsOnly"
+				/>
+			</div>
 
-    <div>
-      <div class="text-sm text-slate-400 mb-3" v-if="bets.length > 0">
-        {{ qtd_games }} apostas encontradas
-      </div>
-      <UTable
-        :ui="{
-          wrapper:
-            'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
-        }"
-        :rows="bets"
-        :columns="columns"
-        :sort="sort"
-      />
-    </div>
+			<div class="text-sm pt-1.5">Apenas favoritos</div>
+		</div>
+	</div>
+
+	<div>
+	  <USelect class="w-1/5" v-model="date" :options="dates" />
+	</div>
+
+	<div>
+	  <div class="text-sm text-slate-400 mb-3" v-if="bets.length > 0">
+		{{ qtd_games }} apostas encontradas
+	  </div>
+	  <UTable
+		:ui="{
+		  wrapper:
+			'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
+		}"
+		:rows="bets"
+		:columns="columns"
+		:sort="sort"
+	  />
+	</div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-const sort = { column: "Modelo", direction: "asc" };
+const sort = { column: "Time", direction: "asc" };
 const favsOnly = ref(true);
 const favsModels = ref([
   "Ltd V1 Betfair",
@@ -51,6 +52,7 @@ const favsModels = ref([
 
 const columns = [
   { key: "Date", label: "Data" },
+  { key: "Time", label: "Horário", sortable: true },
   { key: "Home", label: "Casa", sortable: true },
   { key: "Away", label: "Fora", sortable: true },
   { key: "FT_Odds_H", label: "Odds casa" },
@@ -68,12 +70,12 @@ const filterByDate = (selectedDate) => {
 
 const normalizeColumns = (object_data) => {
   object_data.forEach((item) => {
-    item.Modelo = item.Modelo.replace(/_/g, " ").replace(/\b\w/g, (c) =>
-      c.toUpperCase()
-    );
-    item.FT_Odds_H = parseFloat(item.FT_Odds_H).toFixed(2);
-    item.FT_Odds_D = parseFloat(item.FT_Odds_D).toFixed(2);
-    item.FT_Odds_A = parseFloat(item.FT_Odds_A).toFixed(2);
+	item.Modelo = item.Modelo.replace(/_/g, " ").replace(/\b\w/g, (c) =>
+	  c.toUpperCase()
+	);
+	item.FT_Odds_H = parseFloat(item.FT_Odds_H).toFixed(2);
+	item.FT_Odds_D = parseFloat(item.FT_Odds_D).toFixed(2);
+	item.FT_Odds_A = parseFloat(item.FT_Odds_A).toFixed(2);
   });
 
   return object_data;
@@ -81,12 +83,12 @@ const normalizeColumns = (object_data) => {
 
 const fetchData = async () => {
   try {
-    const req = await fetch("https://api.jonebet.xyz/daily-bets");
-    const data = await req.json();
-    return data;
+	const req = await fetch("https://api.jonebet.xyz/daily-bets");
+	const data = await req.json();
+	return data;
   } catch (error) {
-    console.error("Erro ao buscar os dados:", error);
-    return [];
+	console.error("Erro ao buscar os dados:", error);
+	return [];
   }
 };
 
@@ -105,12 +107,12 @@ const bets = ref([]);
 
 const buildTableData = async (chosenDate) => {
   try {
-    const filteredBets = filterByDate(chosenDate);
-    normalizeColumns(filteredBets);
-    bets.value = filteredBets;
+	const filteredBets = filterByDate(chosenDate);
+	normalizeColumns(filteredBets);
+	bets.value = filteredBets;
   } catch (error) {
-    console.error("Erro ao buscar apostas do dia:", error);
-    bets.value = []; // Limpar a lista em caso de erro
+	console.error("Erro ao buscar apostas do dia:", error);
+	bets.value = []; // Limpar a lista em caso de erro
   }
 };
 
@@ -119,9 +121,9 @@ const qtd_games = computed(() => bets.value.length);
 watchEffect(() => {
   buildTableData(date.value);
   if (favsOnly.value) {
-    bets.value = bets.value.filter((item) =>
-      favsModels.value.includes(item.Modelo)
-    );
+	bets.value = bets.value.filter((item) =>
+	  favsModels.value.includes(item.Modelo)
+	);
   }
 });
 </script>
