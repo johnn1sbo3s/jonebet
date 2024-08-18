@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col gap-5">
-		<div class="flex justify-between items-end">
+		<div class="flex justify-between items-start">
 			<page-header title="Bem-vindo(a) à JoneBet!" />
 
 			<div class="flex items-center gap-2">
