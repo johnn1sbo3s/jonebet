@@ -14,14 +14,31 @@
 					/>
 				</div>
 			</div>
-			<u-card class="w-full h-min">
+			<div
+				class="w-full h-[520px] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
+				v-if="!chosenModel._id"
+			>
+				<p class="text-center text-gray-400 text-2xl">
+					Selecione um card ao lado para ver o gráfico de acúmulo de capital do modelo.
+				</p>
+			</div>
+			<u-card
+				v-else
+				class="w-full h-min"
+			>
 				<template #header>
-					<p class="font-semibold">{{ chosenModel.modelo }}</p>
+					<div class="flex justify-between">
+						<p class="font-semibold self-center">{{ chosenModel.modelo }}</p>
+						<UButton color="blue" variant="soft" @click="resetsZoom">
+							Restaurar zoom
+						</UButton>
+					</div>
 				</template>
 				<LineChart
-				:chartData="chartData"
-				:options="chartOptions"
-				:style="chartStyle"
+					:chartData="chartData"
+					:options="chartOptions"
+					:style="chartStyle"
+					:key="chartKey"
 				/>
 			</u-card>
 		</div>
@@ -29,6 +46,7 @@
 </template>
 
 <script setup>
+import { _order } from "#tailwind-config/theme";
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
 
@@ -37,6 +55,7 @@ const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
 const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
+const chartKey = ref(0);
 
 if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
@@ -118,14 +137,25 @@ const sortedSanitizedData = computed(() => {
 		bottom_int_conf: (item.total.intervalo_confianca[0] * 100).toFixed(2).toLocaleString('pt-BR'),
 		top_int_conf: (item.total.intervalo_confianca[1] * 100).toFixed(2).toLocaleString('pt-BR'),
 		qtd_blocks: item.total.blocks_history?.length - 1,
+		pl_history: item.total.pl_history
 	}));
 });
 
 const chartData = computed(() => {
-//   let labels = chosenModel.total.pl_history.map((item) => formatDate(item.Date));
-//   let data = props.bankrollData.map((item) => item.Bankroll);
-	let labels = [1, 2, 3, 4, 5]
-	let data = [1, 2, 3, 4, 5]
+	if (!chosenModel.value.pl_history) {
+		return {};
+	}
+
+	let profits =  chosenModel.value.pl_history.map((item) => item.Profit);
+	let data = profits.reduce((acc, curr, index) => {
+		if (index === 0) {
+			return [curr];
+		}
+
+		return [...acc, curr + acc[index - 1]];
+	}, []);
+
+	let labels = Array.from({ length: data.length }, (_, i) => i + 1);
 
 	return {
 		labels: labels,
@@ -135,7 +165,7 @@ const chartData = computed(() => {
 			data: data,
 			borderColor: "#6d28d9",
 			backgroundColor: "rgb(109, 40, 217, 0.05)",
-			pointRadius: 3,
+			pointRadius: 1,
 			pointHoverRadius: 7,
 			fill: true,
 			tension: 0.2,
@@ -144,8 +174,10 @@ const chartData = computed(() => {
 	};
 })
 
-chosenModel.value = sortedSanitizedData.value[0];
-
+// Métodos
+function resetsZoom() {
+	chartKey.value++;
+}
 
 </script>
 
