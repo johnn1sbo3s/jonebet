@@ -56,6 +56,11 @@ const links = [
       to: "/performance",
     },
     {
+      label: "Monitoramento de Lotes",
+      icon: "i-heroicons-inbox-stack",
+      to: "/batch-monitoring",
+    },
+    {
       label: "Comparador",
       icon: "i-heroicons-chart-pie",
       to: "/comparison",
