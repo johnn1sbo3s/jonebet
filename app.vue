@@ -56,7 +56,7 @@ const links = [
       to: "/performance",
     },
     {
-      label: "Monitoramento de Lotes",
+      label: "Monitoramento em Lotes",
       icon: "i-heroicons-inbox-stack",
       to: "/batch-monitoring",
     },
