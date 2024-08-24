@@ -46,7 +46,7 @@ const links = [
       to: "/dashboard",
     },
     {
-      label: "Apostas do dia",
+      label: "Apostas do Dia",
       icon: "i-heroicons-clipboard-document-list",
       to: "/daily-bets",
     },
