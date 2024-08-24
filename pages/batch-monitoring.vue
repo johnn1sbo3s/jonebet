@@ -34,12 +34,23 @@
 						</UButton>
 					</div>
 				</template>
-				<LineChart
-					:chartData="chartData"
-					:options="chartOptions"
-					:style="chartStyle"
-					:key="chartKey"
-				/>
+				<div class="flex flex-col gap-3">
+					<LineChart
+						:chartData="chartData"
+						:options="chartOptions"
+						:style="chartStyle"
+						:key="chartKey"
+					/>
+					<UTable
+						class="max-h-screen-40"
+						:ui="{
+							wrapper:
+							'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
+						}"
+						:rows="chosenModel.blocks"
+						:columns="blocksTableColumns"
+					/>
+				</div>
 			</u-card>
 		</div>
 	</div>
@@ -56,6 +67,12 @@ const apiUrl = runtimeConfig.public.API_URL;
 const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
 const chartKey = ref(0);
+const blocksTableColumns = [
+	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
+	{ label: "Profit", key: "Profit" },
+	{ label: "ROI", key: "ROI" },
+	{ label: "Último dia do bloco", key: "Ult_Dia" },
+];
 
 if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
@@ -136,6 +153,7 @@ const sortedSanitizedData = computed(() => {
 		last_block_day: item.total.blocks_history?.at(-2)?.Ult_Dia,
 		bottom_int_conf: (item.total.intervalo_confianca[0] * 100).toFixed(2).toLocaleString('pt-BR'),
 		top_int_conf: (item.total.intervalo_confianca[1] * 100).toFixed(2).toLocaleString('pt-BR'),
+		blocks: item.total.blocks_history,
 		qtd_blocks: item.total.blocks_history?.length - 1,
 		pl_history: item.total.pl_history
 	}));
@@ -184,6 +202,10 @@ function resetsZoom() {
 <style lang="css" scoped>
 .max-h-screen-90 {
 	max-height: 90vh;
+}
+
+.max-h-screen-40 {
+	max-height: 40vh;
 }
 
 </style>
