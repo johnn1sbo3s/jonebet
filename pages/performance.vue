@@ -42,7 +42,7 @@
         </template>
         <div>
           <div class="flex justify-end">
-            <UButton color="gray" variant="solid" @click="resetsZoom">
+            <UButton color="blue" variant="soft" @click="resetsZoom">
               Restaurar zoom
             </UButton>
           </div>
