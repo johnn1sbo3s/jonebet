@@ -5,7 +5,7 @@
                 <div class="font-semibold flex gap-5 group-hover:text-violet-700">
                     <p>{{ metricItem.modelo }}</p>
                     <div class="flex gap-3">
-                        <p>{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
+                        <p :class="metricItem.profit > 0 ? 'text-green-600' : 'text-red-600'" class="group-hover:text-violet-700">{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
                         <u-divider orientation="vertical" class="w-min"/>
                         <p>{{ metricItem.qtd_jgs }} jogos</p>
                     </div>
