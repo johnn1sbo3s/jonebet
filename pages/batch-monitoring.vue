@@ -181,7 +181,7 @@ const chartStyle = ref({
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
 	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], ['desc']);
-	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value));
+	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
 
 	if (chosenModelsOnly.value) {
 		sorted = filterFavsModels(sorted);
