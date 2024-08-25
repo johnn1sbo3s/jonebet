@@ -57,7 +57,6 @@ const props = defineProps({
 })
 
 const runtimeConfig = useRuntimeConfig();
-const apiUrl = runtimeConfig.public.API_URL;
 
 if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;

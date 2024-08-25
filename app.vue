@@ -46,7 +46,7 @@ const links = [
       to: "/dashboard",
     },
     {
-      label: "Apostas do dia",
+      label: "Apostas do Dia",
       icon: "i-heroicons-clipboard-document-list",
       to: "/daily-bets",
     },
@@ -54,6 +54,11 @@ const links = [
       label: "Performance",
       icon: "i-heroicons-chart-bar",
       to: "/performance",
+    },
+    {
+      label: "Monitoramento em Lotes",
+      icon: "i-heroicons-inbox-stack",
+      to: "/batch-monitoring",
     },
     {
       label: "Comparador",
