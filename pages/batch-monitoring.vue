@@ -1,6 +1,20 @@
 <template>
 	<div class="flex flex-col gap-4">
-		<page-header title="Monitoramento em lotes" />
+		<div class="flex justify-between items-start">
+			<page-header title="Monitoramento em lotes" />
+			<div class="flex items-center gap-2">
+				<div class="pt-2 flex gap-3">
+					<UToggle
+					size="md"
+					on-icon="i-heroicons-check-20-solid"
+					off-icon="i-heroicons-x-mark-20-solid"
+					:model-value="chosenModelsOnly"
+					@click="chosenModelsOnly = !chosenModelsOnly"
+					/>
+				</div>
+				<div class="text-sm pt-1.5">Apenas modelos selecionados</div>
+			</div>
+		</div>
 		<u-input
 			v-model="filterString"
 			class="w-1/5"
@@ -26,7 +40,7 @@
 				>
 					<i>Nenhum modelo encontrado</i>
 				</div>
-				<div class="p-0.5 pr-4 max-h-screen-90 overflow-auto flex flex-col gap-4">
+				<div class="p-0.5 pr-4 max-h-screen-80 overflow-auto flex flex-col gap-4">
 					<batch-card
 						:class="item._id === chosenModel._id ? 'outline outline-violet-400 outline-1' : ''"
 						v-for="item in sortedSanitizedData"
@@ -91,6 +105,7 @@ const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
+const chosenModelsOnly = ref(false);
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
 	{ label: "Profit", key: "Profit" },
@@ -168,6 +183,10 @@ const sortedSanitizedData = computed(() => {
 	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], ['desc']);
 	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value));
 
+	if (chosenModelsOnly.value) {
+		sorted = filterFavsModels(sorted);
+	}
+
 	return sorted.map((item) => ({
 		_id: item._id,
 		modelo: modelNameToNaturalName(item.modelo),
@@ -222,11 +241,14 @@ function resetsZoom() {
 	chartKey.value++;
 }
 
+function filterFavsModels(metricsArray) {
+	return _filter(metricsArray, (item) => CHOSEN_MODELS.includes(item.modelo));
+}
 </script>
 
 <style lang="css" scoped>
-.max-h-screen-90 {
-	max-height: 90vh;
+.max-h-screen-80 {
+	max-height: 80vh;
 }
 
 .max-h-screen-40 {
