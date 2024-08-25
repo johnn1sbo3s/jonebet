@@ -1,8 +1,31 @@
 <template>
 	<div class="flex flex-col gap-4">
 		<page-header title="Monitoramento em lotes" />
+		<u-input
+			v-model="filterString"
+			class="w-1/5"
+			variant="outline"
+			placeholder="Buscar modelo"
+		/>
+		<p
+			v-if="sortedSanitizedData.length"
+			class="text-sm pl-0.5"
+		>
+			{{ sortedSanitizedData.length }} modelos
+		</p>
+		<div
+			v-else
+			class="h-[20px] w-full"
+		>
+		</div>
 		<div class="flex gap-4">
 			<div class="flex justify-between">
+				<div
+					v-if="!sortedSanitizedData.length"
+					class="h-20 w-[589px] flex items-center justify-center"
+				>
+					<i>Nenhum modelo encontrado</i>
+				</div>
 				<div class="p-0.5 pr-4 max-h-screen-90 overflow-auto flex flex-col gap-4">
 					<batch-card
 						:class="item._id === chosenModel._id ? 'outline outline-violet-400 outline-1' : ''"
@@ -67,6 +90,7 @@ const apiUrl = runtimeConfig.public.API_URL;
 const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
 const chartKey = ref(0);
+const filterString = ref('');
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
 	{ label: "Profit", key: "Profit" },
@@ -142,10 +166,11 @@ const chartStyle = ref({
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
 	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], ['desc']);
+	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value));
 
 	return sorted.map((item) => ({
 		_id: item._id,
-		modelo: item.modelo.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+		modelo: modelNameToNaturalName(item.modelo),
 		profit: (item.total.media_atual * 100).toFixed(2).toLocaleString('pt-BR'),
 		ev: item.total.ev.toFixed(2).toLocaleString('pt-BR'),
 		media_profit: (item.total.media * 100).toFixed(2).toLocaleString('pt-BR'),
