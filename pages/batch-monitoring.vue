@@ -105,7 +105,7 @@ const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
-const chosenModelsOnly = ref(false);
+const chosenModelsOnly = ref(true);
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
 	{ label: "Profit", key: "Profit" },
