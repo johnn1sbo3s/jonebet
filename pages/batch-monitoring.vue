@@ -79,7 +79,7 @@
 						:key="chartKey"
 					/>
 					<UTable
-						class="max-h-screen-40"
+						class="max-h-screen-30"
 						:ui="{
 							wrapper:
 							'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
@@ -105,7 +105,7 @@ const { data } = await useFetch(`${apiUrl}/model-performance`);
 const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
-const chosenModelsOnly = ref(false);
+const chosenModelsOnly = ref(true);
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
 	{ label: "Profit", key: "Profit" },
@@ -251,8 +251,8 @@ function filterFavsModels(metricsArray) {
 	max-height: 80vh;
 }
 
-.max-h-screen-40 {
-	max-height: 40vh;
+.max-h-screen-30 {
+	max-height: 30vh;
 }
 
 </style>
