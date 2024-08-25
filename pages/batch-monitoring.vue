@@ -79,7 +79,7 @@
 						:key="chartKey"
 					/>
 					<UTable
-						class="max-h-screen-40"
+						class="max-h-screen-30"
 						:ui="{
 							wrapper:
 							'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
@@ -251,8 +251,8 @@ function filterFavsModels(metricsArray) {
 	max-height: 80vh;
 }
 
-.max-h-screen-40 {
-	max-height: 40vh;
+.max-h-screen-30 {
+	max-height: 30vh;
 }
 
 </style>
