@@ -270,7 +270,6 @@ const realData = ref({});
 const valData = ref({});
 const totalData = ref({});
 const listModels = ref([]);
-const betsData = ref({});
 const objectModel = ref({});
 const chartKey = ref(0);
 const chartByDay = ref(false);
@@ -278,26 +277,25 @@ const blocksHistoryRows = ref([]);
 const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
 
-const fetchData = async (url) => {
-  try {
-    const req = await fetch(url);
-    const data = await req.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar os dados:", error);
-    return [];
-  }
+const fetchAllData = async () => {
+  const [performanceData, betsData] = await Promise.all([
+    fetch(`${apiUrl}/model-performance`),
+    fetch(`${apiUrl}/model-bets`),
+  ]);
+
+  const [performanceDataJson, betsDataJson] = await Promise.all([
+    performanceData.json(),
+    betsData.json(),
+  ]);
+
+  return [performanceDataJson, betsDataJson];
 };
 
+const [performanceData, betsData] = await fetchAllData();
 
 const changeChartByDay = () => {
   chartByDay.value = !chartByDay.value;
 };
-
-// Pega os dados da API
-const performanceData = await fetchData(`${apiUrl}/model-performance`);
-
-betsData.value = await fetchData(`${apiUrl}/model-bets`);
 
 Object.values(performanceData).forEach((item) => {
   let name = item.modelo;
@@ -356,7 +354,7 @@ const getBetsArray = () => {
 
 const allBetsDataFilteredRows = computed(() => {
   let name = chosenModel.value.toLowerCase().replace(/\s+/g, "_");
-  return _filter(betsData.value, { Metodo: name });
+  return _filter(betsData, { Metodo: name });
 });
 
 function cumulativeSum(array) {
