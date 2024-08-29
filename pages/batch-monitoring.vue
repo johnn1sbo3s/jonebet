@@ -21,12 +21,14 @@
 			variant="outline"
 			placeholder="Buscar modelo"
 		/>
-		<p
+		<div
 			v-if="sortedSanitizedData.length"
-			class="text-sm pl-0.5"
+			class="pl-0.5 w-[590px] flex justify-between"
 		>
-			{{ sortedSanitizedData.length }} modelos
-		</p>
+			<p class="text-sm">{{ sortedSanitizedData.length }} modelos</p>
+			<i v-if="!invertOrder" class="i-heroicons-bars-arrow-down text-xl hover:cursor-pointer" @click="invertCardsOrder"></i>
+			<i v-else class="i-heroicons-bars-arrow-up text-xl hover:cursor-pointer" @click="invertCardsOrder"></i>
+		</div>
 		<div
 			v-else
 			class="h-[20px] w-full"
@@ -106,6 +108,7 @@ const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
 const chosenModelsOnly = ref(true);
+const invertOrder = ref(false);
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
 	{ label: "Profit", key: "Profit" },
@@ -180,7 +183,8 @@ const chartStyle = ref({
 
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
-	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], ['desc']);
+	let orderDirection = invertOrder.value ? 'asc' : 'desc';
+	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection]);
 	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
 
 	if (chosenModelsOnly.value) {
@@ -244,6 +248,11 @@ function resetsZoom() {
 function filterFavsModels(metricsArray) {
 	return _filter(metricsArray, (item) => CHOSEN_MODELS.includes(item.modelo));
 }
+
+function invertCardsOrder() {
+	invertOrder.value = !invertOrder.value;
+}
+
 </script>
 
 <style lang="css" scoped>
