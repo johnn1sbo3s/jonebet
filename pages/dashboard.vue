@@ -31,7 +31,7 @@
 
 	  <div class="w-full">
 		<bankroll-evolution
-		  :model-value="status === 'pending'"
+		  :model-value="yesterdayDataStatus === 'pending'"
 		  :bankroll-data="bankrollData"
 		/>
 	  </div>

@@ -292,7 +292,7 @@ const fetchAllData = async () => {
   return [performanceDataJson, betsDataJson];
 };
 
-if (_isEmpty(store.getPerformanceData)) {
+if (_isEmpty(store.getBetsData)) {
   const [performanceData, betsData] = await fetchAllData();
   store.setPerformanceData(performanceData);
   store.setBetsData(betsData);

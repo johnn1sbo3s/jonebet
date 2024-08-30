@@ -96,14 +96,16 @@
 </template>
 
 <script setup>
-import { _order } from "#tailwind-config/theme";
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
 
 // Variáveis reativas
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
-const { data } = await useFetch(`${apiUrl}/model-performance`);
+
+const store = usePerformanceStore();
+
+const data = ref({});
 const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
@@ -252,6 +254,13 @@ function filterFavsModels(metricsArray) {
 function invertCardsOrder() {
 	invertOrder.value = !invertOrder.value;
 }
+
+// Código
+if (_isEmpty(store.getPerformanceData)) {
+	const { data } = await useFetch(`${apiUrl}/model-performance`);
+	store.setPerformanceData(data.value);
+}
+data.value = store.getPerformanceData;
 
 </script>
 
