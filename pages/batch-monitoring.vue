@@ -66,10 +66,13 @@
 				class="w-full h-min"
 			>
 				<template #header>
-					<div class="flex justify-between">
-						<NuxtLink :to="{ name: 'performance', params: { model: chosenModel.modelo }}">
-							<p class="hover:cursor-pointer hover:text-violet-400 font-semibold self-center">{{ chosenModel.modelo }}</p>
-						</NuxtLink>
+					<div class="flex justify-between items-center">
+						<div class="flex gap-3 items-center">
+							<p class="font-semibold">{{ chosenModel.modelo }}</p>
+							<NuxtLink :to="`performance/${modelNameToIdName(chosenModel.modelo)}`">
+  								<UButton color="primary" size="xs" variant="solid">Ver Performance</UButton>
+							</NuxtLink>
+						</div>
 						<UButton color="blue" variant="soft" @click="resetsZoom">
 							Restaurar zoom
 						</UButton>
