@@ -31,7 +31,7 @@
 
 	  <div class="w-full">
 		<bankroll-evolution
-		  :model-value="status === 'pending'"
+		  :model-value="yesterdayDataStatus === 'pending'"
 		  :bankroll-data="bankrollData"
 		/>
 	  </div>
@@ -108,31 +108,19 @@ const month = DateTime.now().toFormat('M');
 const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
 const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-dd');
 const onlyChosenModels = ref(true);
+const requests = [
+	useFetch(`${apiUrl}/bankroll-evolution`, { params: { filtered: onlyChosenModels }}),
+	useFetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: onlyChosenModels }}),
+	useFetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: onlyChosenModels }}),
+	useFetch(`${apiUrl}/monthly-results/${month}`, { params: { filtered: onlyChosenModels }}),
+];
 
-const { data: bankrollData } = await useFetch(`${apiUrl}/bankroll-evolution`,
-{
-	params: {
-		filtered: onlyChosenModels,
-	}
-});
+const responses = await Promise.all(requests);
 
-const { data: yesterdayData, status: yesterdayDataStatus, error: yesterdayDataError } = await useFetch(`${apiUrl}/daily-results/${yesterday}`, {
-  params: {
-	filtered: onlyChosenModels,
-  },
-});
-
-const { data: dayBeforeYesterdayData } = await useFetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, {
-  params: {
-	filtered: onlyChosenModels,
-  },
-})
-
-const { data: monthData, status: monthDataStatus } = await useFetch(`${apiUrl}/monthly-results/${month}`, {
-  params: {
-	filtered: onlyChosenModels,
-  },
-});
+const { data: bankrollData } = responses[0];
+const { data: yesterdayData, status: yesterdayDataStatus, error: yesterdayDataError } = responses[1];
+const { data: dayBeforeYesterdayData } = responses[2];
+const { data: monthData, status: monthDataStatus } = responses[3];
 
 const yesterdayResults = computed(() => {
   return yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;

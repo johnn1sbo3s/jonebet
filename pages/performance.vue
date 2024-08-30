@@ -266,6 +266,7 @@ const allBetsDataFilteredColumns = ref([
   { key: "Profit", label: "Profit" },
 ]);
 
+const store = usePerformanceStore();
 const realData = ref({});
 const valData = ref({});
 const totalData = ref({});
@@ -291,7 +292,13 @@ const fetchAllData = async () => {
   return [performanceDataJson, betsDataJson];
 };
 
-const [performanceData, betsData] = await fetchAllData();
+if (_isEmpty(store.getBetsData)) {
+  const [performanceData, betsData] = await fetchAllData();
+  store.setPerformanceData(performanceData);
+  store.setBetsData(betsData);
+}
+const performanceData = store.getPerformanceData;
+const betsData = store.getBetsData;
 
 const changeChartByDay = () => {
   chartByDay.value = !chartByDay.value;
