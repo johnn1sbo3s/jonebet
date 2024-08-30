@@ -40,7 +40,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+const runtimeConfig = useRuntimeConfig();
+const apiUrl = runtimeConfig.public.API_URL;
 
 const sort = { column: "Time", direction: "asc" };
 const favsOnly = ref(true);
@@ -83,7 +84,7 @@ const normalizeColumns = (object_data) => {
 
 const fetchData = async () => {
   try {
-	const req = await fetch("https://api.jonebet.xyz/daily-bets");
+	const req = await fetch(`${apiUrl}/daily-bets`);
 	const data = await req.json();
 	return data;
   } catch (error) {
