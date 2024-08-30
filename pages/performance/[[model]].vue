@@ -143,10 +143,10 @@
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
 
-const route = useRoute();
-
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
+
+const route = useRoute();
 
 if (import.meta.client) {
 	const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
@@ -306,23 +306,19 @@ const changeChartByDay = () => {
 };
 
 Object.values(performanceData).forEach((item) => {
-	let name = item.modelo;
-	name = name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+	let name = modelNameToNaturalName(item.modelo);
 	if (!listModels.value.includes(name)) {
 	listModels.value.push(name);
 	}
 });
 
-console.log(route.params);
-
-const chosenModel = ref(null);
-route.params.model ? chosenModel.value = listModels.value.indexOf(modelNameToNaturalName(route.params.model)) : chosenModel.value = listModels.value[0];
+const chosenModel = ref(listModels.value[0]);
+route.params.model ? chosenModel.value = modelNameToNaturalName(route.params.model) : chosenModel.value = listModels.value[0];
 
 const changeModel = () => {
 	Object.values(performanceData).forEach((item) => {
 	let name = item.modelo;
-	name = name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-	if (name === chosenModel.value) {
+	if (name === modelNameToIdName(chosenModel.value)) {
 		objectModel.value = item;
 		const { real } = objectModel.value;
 		const { val } = objectModel.value;
@@ -367,10 +363,6 @@ const allBetsDataFilteredRows = computed(() => {
 	let name = chosenModel.value.toLowerCase().replace(/\s+/g, "_");
 	return _filter(betsData, { Metodo: name });
 });
-
-// function findIndex(modelName) {
-// 	return );
-// }
 
 function cumulativeSum(array) {
 	if (array.length === 0) {
