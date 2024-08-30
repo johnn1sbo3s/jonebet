@@ -31,6 +31,13 @@
 const chosenCategory = ref("Todos os modelos");
 const performanceDataRows = ref([]);
 
+const store = usePerformanceStore();
+
+const runtimeConfig = useRuntimeConfig();
+const apiUrl = runtimeConfig.public.API_URL;
+
+const performanceData = ref({});
+
 const categoriesList = [
   "Todos os modelos",
   "Betfair",
@@ -90,9 +97,11 @@ function buildTableObject(objectList) {
   return objects;
 }
 
-const { data: performanceData, error } = await useFetch(
-  "https://api.jonebet.xyz/model-performance"
-);
+if (_isEmpty(store.getPerformanceData)) {
+	const { data } = await useFetch(`${apiUrl}/model-performance`);
+	store.setPerformanceData(data.value);
+}
+performanceData.value = store.getPerformanceData;
 
 const buildComparisonTable = () => {
   performanceDataRows.value = [];
