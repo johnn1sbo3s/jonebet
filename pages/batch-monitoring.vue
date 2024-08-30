@@ -67,7 +67,9 @@
 			>
 				<template #header>
 					<div class="flex justify-between">
-						<p class="font-semibold self-center">{{ chosenModel.modelo }}</p>
+						<NuxtLink :to="{ name: 'performance', params: { model: chosenModel.modelo }}">
+							<p class="hover:cursor-pointer hover:text-violet-400 font-semibold self-center">{{ chosenModel.modelo }}</p>
+						</NuxtLink>
 						<UButton color="blue" variant="soft" @click="resetsZoom">
 							Restaurar zoom
 						</UButton>
