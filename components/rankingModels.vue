@@ -71,7 +71,6 @@
 </template>
 
 <script setup>
-import { formatDate } from "../utils/formatDate.js";
 
 const props = defineProps({
     items: {
@@ -105,7 +104,6 @@ const sanitizedAllResultsData = computed(() => {
     return props.allResultsData.map(item => {
         return {
             ...item,
-            Date: item.date === 'Total' ? formatDate(item.Date) : item.Date,
             Profit: item.Profit.toLocaleString('pt-BR'),
             ROI: item.ROI.toLocaleString('pt-BR'),
             Num_Bets: item.Num_Bets.toLocaleString('pt-BR')

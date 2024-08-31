@@ -19,13 +19,18 @@
 			</div>
 		</div>
 
-		<u-carousel
-			v-slot="{ item }"
-			:items="batchModels"
-			:ui="{ item: 'mr-11 snap-align-none w-1/4' }"
-		>
-			<batch-alert-card class="p-0.5" :model="item" />
-		</u-carousel>
+		<div class="flex flex-col gap-2">
+			<p class="text-sm">{{ batchModels.length }} alertas</p>
+			<u-carousel
+				v-slot="{ item }"
+				:items="batchModels"
+				:ui="{ item: 'snap-align-none',
+					container: 'relative w-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2',
+				 }"
+			>
+				<batch-alert-card class="p-0.5" :model="item" />
+			</u-carousel>
+		</div>
 
 		<u-skeleton
 			v-if="yesterdayDataStatus === 'pending'"
