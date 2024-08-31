@@ -8,7 +8,7 @@
                 <div class="font-semibold flex gap-5">
                     <p>{{ metricItem.modelo }}</p>
                     <div class="flex gap-3">
-                        <p :class="metricItem.profit > 0 ? 'text-green-600' : 'text-red-600'">{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
+                        <p :class="metricItem.profit >= 0 ? 'text-green-600' : 'text-red-600'">{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
                         <u-divider orientation="vertical" class="w-min"/>
                         <p>{{ metricItem.qtd_jgs }} jogos</p>
                     </div>
