@@ -45,11 +45,8 @@ const apiUrl = runtimeConfig.public.API_URL;
 
 const sort = { column: "Time", direction: "asc" };
 const favsOnly = ref(true);
-const favsModels = ref([
-  "Ltd V1 Betfair",
-  "Lay Home V10 Betfair",
-  "Back Home V3",
-]);
+const favsModels = ref(FAVORITE_MODELS);
+favsModels.value = favsModels.value.map(item => modelNameToNaturalName(item));
 
 const columns = [
   { key: "Date", label: "Data" },

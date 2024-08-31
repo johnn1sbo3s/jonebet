@@ -10,7 +10,7 @@
 					on-icon="i-heroicons-check-20-solid"
 					off-icon="i-heroicons-x-mark-20-solid"
 					:loading="monthDataStatus === 'pending'"
-					:model-value="onlyChosenModels"
+					v-model="onlyChosenModels"
 					@click="onlyChosenModels = !onlyChosenModels"
 					/>
 				</div>
@@ -19,81 +19,94 @@
 			</div>
 		</div>
 
-	<u-skeleton
-	  v-if="yesterdayDataStatus === 'pending'"
-	  class="w-full h-[510px]"
-	/>
+		<div class="flex flex-col gap-2">
+			<p class="text-sm">{{ batchModels.length }} alertas</p>
+			<u-carousel
+				v-slot="{ item }"
+				:items="batchModels"
+				:ui="{ item: 'snap-align-none',
+					container: 'relative w-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2',
+				 }"
+			>
+				<batch-alert-card class="p-0.5" :model="item" />
+			</u-carousel>
+		</div>
 
-	<u-card v-else>
-	  <template #header>
-		<p class="font-semibold">Evolução da banca</p>
-	  </template>
-
-	  <div class="w-full">
-		<bankroll-evolution
-		  :model-value="yesterdayDataStatus === 'pending'"
-		  :bankroll-data="bankrollData"
-		/>
-	  </div>
-	</u-card>
-
-	<u-skeleton
-	  v-if="yesterdayDataStatus === 'pending'"
-	  class="w-full h-[330px]"
-	/>
-
-	<u-card v-else>
-	  <template #header>
-		<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
-	  </template>
-
-	  <div class="flex gap-5 w-full">
-		<yesterday-metrics-card
-		  :items="yesterdayMetrics"
+		<u-skeleton
+			v-if="yesterdayDataStatus === 'pending'"
+			class="w-full h-[510px]"
 		/>
 
-		<ranking-models
-		  :title="'Top 3 modelos'"
-		  :items="top3YesterdayModels"
-		  :all-results-data="yesterdayResults"
+		<u-card v-else>
+			<template #header>
+				<p class="font-semibold">Evolução da banca</p>
+			</template>
+
+			<div class="w-full">
+				<bankroll-evolution
+				:model-value="yesterdayDataStatus === 'pending'"
+				:bankroll-data="bankrollData"
+				/>
+			</div>
+		</u-card>
+
+		<u-skeleton
+			v-if="yesterdayDataStatus === 'pending'"
+			class="w-full h-[330px]"
 		/>
 
-		<yesterday-details-card
-		  :number-bets="yesterdayTotal.Num_Bets"
-		  :number-models="yesterdayTotal.Method"
-		  :positive-models="positiveYesterdayModels"
+		<u-card v-else>
+			<template #header>
+				<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
+			</template>
+
+			<div class="flex gap-5 w-full">
+				<yesterday-metrics-card
+				:items="yesterdayMetrics"
+				/>
+
+				<ranking-models
+				:title="'Top 3 modelos'"
+				:items="top3YesterdayModels"
+				:all-results-data="yesterdayResults"
+				/>
+
+				<yesterday-details-card
+				:number-bets="yesterdayTotal.Num_Bets"
+				:number-models="yesterdayTotal.Method"
+				:positive-models="positiveYesterdayModels"
+				/>
+			</div>
+		</u-card>
+
+		<u-skeleton
+		v-if="monthDataStatus === 'pending'"
+		class="w-full h-[330px]"
 		/>
-	  </div>
-	</u-card>
 
-	<u-skeleton
-	  v-if="monthDataStatus === 'pending'"
-	  class="w-full h-[330px]"
-	/>
+		<u-card v-else>
+			<template #header>
+				<p class="font-semibold">Resultados do mês</p>
+			</template>
 
-	<u-card v-else>
-	  <template #header>
-		<p class="font-semibold">Resultados do mês</p>
-	  </template>
+			<div class="flex gap-5 w-full">
+				<yesterday-metrics-card
+				:items="monthMetrics"
+				/>
 
-	  <div class="flex gap-5 w-full">
-		<yesterday-metrics-card
-		  :items="monthMetrics"
-		/>
+				<ranking-models
+				:title="'Top 3 modelos'"
+				:items="top3MonthModels"
+				:all-results-data="monthResults"
+				/>
 
-		<ranking-models
-		  :title="'Top 3 modelos'"
-		  :items="top3MonthModels"
-		  :all-results-data="monthResults"
-		/>
-
-		<yesterday-details-card
-		  :number-bets="monthTotal.Num_Bets"
-		  :number-models="monthTotal.Method"
-		  :positive-models="positiveMonthModels"
-		/>
-	  </div>
-	</u-card>
+				<yesterday-details-card
+				:number-bets="monthTotal.Num_Bets"
+				:number-models="monthTotal.Method"
+				:positive-models="positiveMonthModels"
+				/>
+			</div>
+		</u-card>
   </div>
 </template>
 
@@ -113,6 +126,7 @@ const requests = [
 	useFetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: onlyChosenModels }}),
 	useFetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: onlyChosenModels }}),
 	useFetch(`${apiUrl}/monthly-results/${month}`, { params: { filtered: onlyChosenModels }}),
+	useFetch(`${apiUrl}/model-performance`),
 ];
 
 const responses = await Promise.all(requests);
@@ -121,6 +135,13 @@ const { data: bankrollData } = responses[0];
 const { data: yesterdayData, status: yesterdayDataStatus, error: yesterdayDataError } = responses[1];
 const { data: dayBeforeYesterdayData } = responses[2];
 const { data: monthData, status: monthDataStatus } = responses[3];
+const { data: performanceData } = responses[4];
+
+const batchModels = computed(() => {
+    let filtered = _filter(performanceData.value, (item) => CHOSEN_MODELS.includes(item.modelo));
+    filtered.sort((a, b) => b.total.qtd_jgs_atual - a.total.qtd_jgs_atual);
+    return _filter(filtered, (item) => item?.total?.qtd_jgs_atual >= 88 || item?.total?.qtd_jgs_atual <= 10);
+})
 
 const yesterdayResults = computed(() => {
   return yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
