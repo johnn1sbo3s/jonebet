@@ -10,7 +10,7 @@
 					on-icon="i-heroicons-check-20-solid"
 					off-icon="i-heroicons-x-mark-20-solid"
 					:loading="monthDataStatus === 'pending'"
-					:model-value="onlyChosenModels"
+					v-model="onlyChosenModels"
 					@click="onlyChosenModels = !onlyChosenModels"
 					/>
 				</div>
