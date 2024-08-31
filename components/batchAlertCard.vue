@@ -1,10 +1,10 @@
 <template>
-    <div class="min-w-80 w-1/4">
+    <div class="min-w-80">
         <u-card>
             <div class="flex flex-col gap-3">
                     <div class="flex gap-2 items-center font-semibold">
                         <p>{{ modelName }}</p>
-                        <p :class="profit >= 0 ? 'text-purple-600' : 'text-red-600'">{{ profit >= 0 ? '+' : '' }}{{ profit.toLocaleString('pt-BR') }}</p>
+                        <p :class="profit >= 0 ? 'text-purple-600' : 'text-red-600'">{{ profit >= 0 ? '+' : '' }}{{ profit.toLocaleString('pt-BR') }} u</p>
                     </div>
                     <div v-html="cardDescription" />
             </div>

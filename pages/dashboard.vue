@@ -19,16 +19,13 @@
 			</div>
 		</div>
 
-		<div
-			class="flex flex-row gap-3 w-full overflow-x-hidden p-0.5"
-			>
-			<batch-alert-card
-				v-for="model in batchModels"
-				:key="model._id"
-				:model="model"
-				class="w-1/4"
-			/>
-		</div>
+		<u-carousel
+			v-slot="{ item }"
+			:items="batchModels"
+			:ui="{ item: 'mr-11 snap-align-none w-1/4' }"
+		>
+			<batch-alert-card class="p-0.5" :model="item" />
+		</u-carousel>
 
 		<u-skeleton
 			v-if="yesterdayDataStatus === 'pending'"
