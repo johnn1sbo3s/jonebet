@@ -21,7 +21,9 @@
                     :key="item.id"
                     class="flex align-middle justify-between"
                 >
-                    <div class="hover:text-purple-600 hover:cursor-pointer">{{ item.name }}</div>
+                    <nuxt-link :to="`performance/${modelNameToIdName(item.name)}`">
+                        <div class="hover:text-purple-600 hover:cursor-pointer">{{ item.name }}</div>
+                    </nuxt-link>
                     <div
                         class="font-semibold"
                         :class="item.profit >= 0 ? 'text-purple-600' : 'text-red-600'"
@@ -40,7 +42,15 @@
                 class="w-fit"
             >
                 <template #header>
-                    <p class="font-semibold">{{ title }}</p>
+                    <div class="flex justify-between items-center">
+                        <p class="font-semibold">{{ title }}</p>
+                        <p
+                            class="text-xl hover:cursor-pointer"
+                            @click="isModalOpen = false"
+                        >
+                            x
+                        </p>
+                    </div>
                 </template>
 
                 <template #default>
