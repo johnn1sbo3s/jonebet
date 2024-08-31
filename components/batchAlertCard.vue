@@ -2,6 +2,7 @@
     <div>
         <u-card>
             <div class="flex flex-col gap-3">
+                <div class="flex justify-between">
                     <div class="flex gap-2 items-center font-semibold">
                         <p>{{ modelName }}</p>
                         <p
@@ -11,7 +12,13 @@
                             {{ profit >= 0 ? '+' : '' }}{{ profit.toLocaleString('pt-BR') }} u
                         </p>
                     </div>
-                    <div class="text-sm" v-html="cardDescription" />
+
+                    <NuxtLink :to="`/performance/${model.modelo}`">
+                        <u-button size="2xs" variant="soft" color="blue">Performance</u-button>
+                    </NuxtLink>
+                </div>
+
+                <div class="text-sm" v-html="cardDescription" />
             </div>
         </u-card>
     </div>
