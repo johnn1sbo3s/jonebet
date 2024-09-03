@@ -16,7 +16,7 @@
                 <p>{{ item.name }}</p>
                 <p
                     class="text-2xl font-black"
-                    :class="item.value >= 0 ? 'text-purple-600' : 'text-red-600'"
+                    :class="item.value >= 0 ? 'text-violet-600' : 'text-red-600'"
                 >
                     {{ item.value.toLocaleString() }} {{ item.sufix }}
                 </p>

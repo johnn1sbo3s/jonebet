@@ -7,7 +7,7 @@
                         <p>{{ modelName }}</p>
                         <p
                             v-if="model.total.qtd_jgs_atual >= 88"
-                            :class="profit >= 0 ? 'text-purple-600' : 'text-red-600'"
+                            :class="profit >= 0 ? 'text-violet-600' : 'text-red-600'"
                         >
                             {{ profit >= 0 ? '+' : '' }}{{ profit.toLocaleString('pt-BR') }} u
                         </p>
