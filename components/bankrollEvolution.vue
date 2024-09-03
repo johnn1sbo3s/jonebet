@@ -11,7 +11,15 @@
 		<div class="w-2/6 pt-8 pb-7 h-full">
 			<u-card class="h-full">
 				<template #header>
-					<p class="font-semibold">Dados da evolução</p>
+					<div class="flex justify-between items-center font-semibold">
+						<p>Profit mensal</p>
+						<p
+							class="text-lg"
+							:class="totalProfit > 0 ? 'text-purple-600' : 'text-red-600'"
+						>
+							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit }} u
+						</p>
+					</div>
 				</template>
 
 				<template #default>
@@ -55,8 +63,6 @@ const props = defineProps({
 	default: () => {}
   }
 })
-
-const runtimeConfig = useRuntimeConfig();
 
 if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
@@ -154,6 +160,10 @@ const resultsByMonth = computed(() => {
 	})
 
 	return months.reverse();
+})
+
+const totalProfit = computed(() => {
+	return props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll
 })
 
 </script>
