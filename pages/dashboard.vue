@@ -138,7 +138,12 @@ const { data: monthData, status: monthDataStatus } = responses[3];
 const { data: performanceData } = responses[4];
 
 const batchModels = computed(() => {
-    let filtered = _filter(performanceData.value, (item) => CHOSEN_MODELS.includes(item.modelo));
+	let filtered = performanceData.value;
+
+	if (onlyChosenModels.value) {
+		filtered = _filter(performanceData.value, (item) => CHOSEN_MODELS.includes(item.modelo));
+	}
+
     filtered.sort((a, b) => b.total.qtd_jgs_atual - a.total.qtd_jgs_atual);
     return _filter(filtered, (item) => item?.total?.qtd_jgs_atual >= 88 || item?.total?.qtd_jgs_atual <= 10);
 })
