@@ -22,11 +22,11 @@
                     class="flex align-middle justify-between"
                 >
                     <nuxt-link :to="`performance/${modelNameToIdName(item.name)}`">
-                        <div class="hover:text-purple-600 hover:cursor-pointer">{{ item.name }}</div>
+                        <div class="hover:text-violet-600 hover:cursor-pointer">{{ item.name }}</div>
                     </nuxt-link>
                     <div
                         class="font-semibold"
-                        :class="item.profit >= 0 ? 'text-purple-600' : 'text-red-600'"
+                        :class="item.profit >= 0 ? 'text-violet-600' : 'text-red-600'"
                     >
                     {{ item.profit.toLocaleString() }} u</div>
                 </div>

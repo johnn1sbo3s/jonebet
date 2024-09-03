@@ -11,26 +11,34 @@
 		<div class="w-2/6 pt-8 pb-7 h-full">
 			<u-card class="h-full">
 				<template #header>
-					<p class="font-semibold">Dados da evolução</p>
+					<div class="flex justify-between items-center font-semibold">
+						<p>Acúmulo mensal</p>
+						<p
+							class="text-lg"
+							:class="totalProfit > 0 ? 'text-violet-600' : 'text-red-600'"
+						>
+							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit }} u
+						</p>
+					</div>
 				</template>
 
 				<template #default>
-					<div class="flex flex-col gap-4 max-h-56 overflow-y-scroll">
-						<div
-							v-for="item in resultsByMonth"
+					<div class="grid grid-cols-2 max-h-56 gap-2 overflow-y-scroll p-0.5">
+						<u-card
+							v-for="(item, index) in resultsByMonth"
 							:key="item.month"
+							:class="{ 'outline outline-1 outline-violet-200': index === 0 }"
 						>
-							<div class="flex justify-between pr-4">
+							<div class="text-sm flex justify-between">
 								<p>{{ item.month }}</p>
-
 								<p
 									class="font-semibold"
-									:class="item.profit >= 0 ? 'text-purple-600' : 'text-red-600'"
+									:class="item.profit >= 0 ? 'text-violet-600' : 'text-red-600'"
 								>
 									{{ item.profit.toLocaleString('pt-BR') }} u
 								</p>
 							</div>
-						</div>
+						</u-card>
 					</div>
 				</template>
 			</u-card>
@@ -55,8 +63,6 @@ const props = defineProps({
 	default: () => {}
   }
 })
-
-const runtimeConfig = useRuntimeConfig();
 
 if (import.meta.client) {
   const zoomPlugin = (await import("chartjs-plugin-zoom")).default;
@@ -154,6 +160,10 @@ const resultsByMonth = computed(() => {
 	})
 
 	return months.reverse();
+})
+
+const totalProfit = computed(() => {
+	return props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll
 })
 
 </script>
