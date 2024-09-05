@@ -6,11 +6,11 @@
     <div class="grid grid-cols-2 text-sm gap-y-5">
       <div class="flex gap-1">
         <p class="font-semibold">Profit:</p>
-        <p>{{ metricsData.media_atual.toFixed(2) }}</p>
+        <p>{{ metricsData.media_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
       </div>
       <div class="flex gap-1">
         <p class="font-semibold">Desvpad:</p>
-        <p>{{ metricsData.desvpad_atual.toFixed(2) }}</p>
+        <p>{{ metricsData.desvpad_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
       </div>
       <div class="flex gap-1">
         <p class="font-semibold">Jogos:</p>
