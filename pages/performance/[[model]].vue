@@ -41,10 +41,14 @@
 			</div>
 		</template>
 		<div>
-			<div class="flex justify-end">
-			<UButton color="blue" variant="soft" @click="resetsZoom">
-				Restaurar zoom
-			</UButton>
+			<div
+				class="flex items-center"
+				:class="slope != 0 ? 'justify-between' : 'justify-end'"
+			>
+				<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope }}</p>
+				<UButton color="blue" variant="soft" @click="resetsZoom">
+					Restaurar zoom
+				</UButton>
 			</div>
 			<LineChart
 			class="w-full"
@@ -159,16 +163,16 @@ if (import.meta.client) {
 const chartData = ref({
 	labels: [],
 	datasets: [
-	{
-		label: "Acúmulo de capital",
-		data: [],
-		borderColor: "#6d28d9",
-		backgroundColor: "rgb(109, 40, 217, 0.05)",
-		pointRadius: 1,
-		pointHoverRadius: 7,
-		fill: true,
-		tension: 0.2,
-	},
+		{
+			label: "Acúmulo de capital",
+			data: [],
+			borderColor: "#6d28d9",
+			backgroundColor: "rgb(109, 40, 217, 0.05)",
+			pointRadius: 1,
+			pointHoverRadius: 7,
+			fill: true,
+			tension: 0.2,
+		},
 	],
 });
 
@@ -278,6 +282,7 @@ const chartByDay = ref(false);
 const blocksHistoryRows = ref([]);
 const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
+const slope = ref(0);
 
 const fetchAllData = async () => {
 	const [performanceData, betsData] = await Promise.all([
@@ -334,48 +339,92 @@ const changeModel = () => {
 const getBetsArray = () => {
 	let betsToShow = totalData.value.pl_history;
 	let nRange = -100;
+
+	slope.value = 0;
+
 	const cumulativeBets = resultsByDay(betsToShow);
 	dailyBetsRows.value = buildDailyTable(cumulativeBets);
 	monthlyBetsRows.value = buildMonthlyTable(dailyBetsRows.value);
 
 	if (chartByDay.value === false) {
-	nRange = valData.value.entradas;
-	const profitList = betsToShow.map((item) => item.Profit);
-	cumulativeSum(profitList);
+		nRange = valData.value.entradas;
+		const profitList = betsToShow.map((item) => item.Profit);
+		cumulativeSum(profitList);
+		slope.value = calculateSlopeAndIntercept(profitList);
 	} else {
-	const lastDayVal = ref(
-		_findLast(betsToShow.slice(0, valData.value.entradas), "Date").Date
-	);
+		const lastDayVal = ref(
+			_findLast(betsToShow.slice(0, valData.value.entradas), "Date").Date
+		);
 
-	const datesList = Object.keys(cumulativeBets);
-	const profitList = Object.values(cumulativeBets).map((obj) => obj.profit);
-
-	nRange = _filter(datesList, (date) => date <= lastDayVal.value).length;
-
-	chartData.value.labels = datesList;
-	chartData.value.datasets[0].data = profitList;
+		const datesList = Object.keys(cumulativeBets);
+		const profitList = Object.values(cumulativeBets).map((obj) => obj.profit);
+		nRange = _filter(datesList, (date) => date <= lastDayVal.value).length;
+		chartData.value.labels = datesList;
+		chartData.value.datasets[0].data = profitList;
 	}
 	chartOptions.value.plugins.annotation.annotations.line1.xMax = nRange;
 	chartOptions.value.plugins.annotation.annotations.line1.xMin = nRange;
 };
 
 const allBetsDataFilteredRows = computed(() => {
-	let name = chosenModel.value.toLowerCase().replace(/\s+/g, "_");
+	let name = modelNameToIdName(chosenModel.value);
 	return _filter(betsData, { Metodo: name });
 });
 
+function calculateSlopeAndIntercept(bets) {
+	const n = bets.length;
+	const games = Array.from({ length: n }, (_, i) => i);
+
+	// Calcular o saldo acumulado jogo a jogo
+	const accumulatedCapital = [];
+	bets.reduce((acc, bet, i) => {
+		acc += bet;
+		accumulatedCapital[i] = acc;
+		return acc;
+	}, 0);
+
+	// Calcular as somas necessárias para a regressão linear
+	const sumGames = games.reduce((acc, curr) => acc + curr, 0);
+	const sumCapital = accumulatedCapital.reduce((acc, curr) => acc + curr, 0);
+	const sumProduct = games.reduce((acc, curr, i) => acc + curr * accumulatedCapital[i], 0);
+	const sumSquareGames = games.reduce((acc, curr) => acc + curr * curr, 0);
+
+	// Calcular a inclinação (slope)
+	const slope = (n * sumProduct - sumGames * sumCapital) /
+					(n * sumSquareGames - sumGames * sumGames);
+
+	// Calcular o intercepto (b)
+	const intercept = (sumCapital - slope * sumGames) / n;
+
+	return slope.toFixed(2);
+}
+
+function generateTrendLine(slope, intercept, n) {
+  // Gerar os pontos da linha de tendência (y = mx + b)
+  const trendLine = [];
+  for (let i = 0; i < n; i++) {
+    const y = slope * i + intercept;
+    trendLine.push(y);
+  }
+  return trendLine;
+}
+
 function cumulativeSum(array) {
 	if (array.length === 0) {
-	return [];
+		return [];
 	}
+
 	let cumSum = [array[0]];
 	let listIndex = [];
+
 	for (let i = 1; i < array.length; i++) {
-	cumSum.push(cumSum[i - 1] + array[i]);
+		cumSum.push(cumSum[i - 1] + array[i]);
 	}
+
 	for (let i = 1; i < array.length + 10; i++) {
-	listIndex.push(i);
+		listIndex.push(i);
 	}
+
 	chartData.value.labels = listIndex;
 	chartData.value.datasets[0].data = cumSum;
 }
