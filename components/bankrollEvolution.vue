@@ -17,7 +17,7 @@
 							class="text-lg"
 							:class="totalProfit > 0 ? 'text-violet-600' : 'text-red-600'"
 						>
-							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit }} u
+							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
 						</p>
 					</div>
 				</template>
@@ -163,7 +163,7 @@ const resultsByMonth = computed(() => {
 })
 
 const totalProfit = computed(() => {
-	return props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll
+	return (props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll);
 })
 
 </script>
