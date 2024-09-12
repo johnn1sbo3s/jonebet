@@ -222,28 +222,20 @@ const top3YesterdayModels = computed(() => {
 })
 
 const top3MonthModels = computed(() => {
-  let removedLast = monthResults.value.slice(0, -1);
-  let sorted = _filter(removedLast).sort((a, b) => {
-	return b.Profit - a.Profit
-  }).slice(0, 3);
+	if (monthResults.value.length === 0) {
+		return []
+	}
 
-  return [
-	{
-	  id: sorted[0].Method_Id,
-	  name: sorted[0].Method,
-	  profit: sorted[0].Profit,
-	},
-	{
-	  id: sorted[1].Method_Id,
-	  name: sorted[1].Method,
-	  profit: sorted[1].Profit,
-	},
-	{
-	  id: sorted[2].Method_Id,
-	  name: sorted[2].Method,
-	  profit: sorted[2].Profit,
-	},
-  ]
+	let removedLast = monthResults.value.slice(0, -1);
+	let sorted = _filter(removedLast).sort((a, b) => {
+		return b.Profit - a.Profit
+	}).slice(0, 3);
+
+	return sorted.map((item) => ({
+		id: item.Method_Id,
+		name: item.Method,
+		profit: item.Profit
+	}))
 })
 
 const positiveYesterdayModels = computed(() => {
