@@ -149,7 +149,7 @@ const batchModels = computed(() => {
 })
 
 const yesterdayResults = computed(() => {
-  return yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
+	return yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
 });
 
 const monthResults = computed(() => {
@@ -157,31 +157,31 @@ const monthResults = computed(() => {
 });
 
 const yesterdayTotal = computed(() => {
-  return _find(yesterdayResults.value, { Date: 'Total' });
+	return _find(yesterdayResults.value, { Date: 'Total' });
 })
 
 const monthTotal = computed(() => {
-  return _find(monthResults.value, { Date: 'Total' });
+	return _find(monthResults.value, { Date: 'Total' });
 })
 
 const yesterdayMetrics = computed(() => {
-  return [
-	{
-	  name: 'Profit',
-	  value: yesterdayTotal.value.Profit,
-	  sufix: 'u'
-	},
-	{
-	  name: 'Investido',
-	  value: yesterdayTotal.value.Responsibility,
-	  sufix: 'u'
-	},
-	{
-	  name: 'ROI',
-	  value: yesterdayTotal.value.ROI,
-	  sufix: ''
-	}
-  ]
+	return [
+		{
+			name: 'Profit',
+			value: yesterdayTotal.value.Profit,
+			sufix: 'u'
+		},
+		{
+			name: 'Investido',
+			value: yesterdayTotal.value.Responsibility,
+			sufix: 'u'
+		},
+		{
+			name: 'ROI',
+			value: yesterdayTotal.value.ROI,
+			sufix: ''
+		}
+	]
 });
 
 const monthMetrics = computed(() => {
@@ -205,28 +205,20 @@ const monthMetrics = computed(() => {
 });
 
 const top3YesterdayModels = computed(() => {
-  let removedLast = yesterdayResults.value.slice(0, -1);
-  let sorted = _filter(removedLast).sort((a, b) => {
-	return b.Profit - a.Profit
-  }).slice(0, 3);
+	if (yesterdayResults.value.length === 0) {
+		return []
+	}
 
-  return [
-	{
-	  id: sorted[0].Method_Id,
-	  name: sorted[0].Method,
-	  profit: sorted[0].Profit,
-	},
-	{
-	  id: sorted[1].Method_Id,
-	  name: sorted[1].Method,
-	  profit: sorted[1].Profit,
-	},
-	{
-	  id: sorted[2].Method_Id,
-	  name: sorted[2].Method,
-	  profit: sorted[2].Profit,
-	},
-  ]
+	let removedLast = yesterdayResults.value.slice(0, -1);
+	let sorted = _filter(removedLast).sort((a, b) => {
+		return b.Profit - a.Profit
+	}).slice(0, 3);
+
+	return sorted.map((item) => ({
+		id: item.Method_Id,
+		name: item.Method,
+		profit: item.Profit
+	}))
 })
 
 const top3MonthModels = computed(() => {
