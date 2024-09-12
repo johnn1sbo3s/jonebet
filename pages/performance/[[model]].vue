@@ -3,61 +3,75 @@
 	<page-header title="Performance dos modelos" />
 	<div class="flex gap-5">
 		<USelectMenu
-		class="w-1/5"
-		searchable
-		searchable-placeholder="Pesquise por um modelo"
-		placeholder="Selecione um modelo"
-		:options="listModels"
-		v-model:model-value="chosenModel"
-		/>
+			class="w-1/5"
+			searchable
+			searchable-placeholder="Pesquise por um modelo"
+			placeholder="Selecione um modelo"
+			:options="listModels"
+			v-model:model-value="chosenModel"
+		>
+			<template #option="{ option }">
+				<div class="flex items-center my-1">
+					<UTooltip
+						v-if="playedYesterday(option)"
+						text="O modelo possui atualização de resultados de ontem"
+					>
+						<span
+							class="mr-2 w-2 h-2 bg-violet-500 rounded-full"
+						/>
+					</UTooltip>
+					<span>{{ option }}</span>
+				</div>
+			</template>
+		</USelectMenu>
 	</div>
 	<div class="w-full gap-3 flex">
 		<div class="w-2/5 flex flex-col gap-3">
-		<metrics-card
-			:metrics-data="valData"
-			:card-title="'Métricas de validação'"
-		/>
-		<metrics-card
-			:metrics-data="realData"
-			:card-title="'Métricas de jogos reais'"
-		/>
-		</div>
-		<UCard class="w-3/5">
-		<template #header>
-			<div class="flex justify-between">
-			<p class="font-semibold">Gráfico de acúmulo de capital</p>
-			<div class="flex gap-2">
-				<div class="inline-block align-middle">
-				<UToggle
-					size="md"
-					on-icon="i-heroicons-check-20-solid"
-					off-icon="i-heroicons-x-mark-20-solid"
-					:model-value="chartByDay"
-					@click="changeChartByDay"
-				/>
-				</div>
-				<p class="text-sm">Exibição por dia</p>
-			</div>
-			</div>
-		</template>
-		<div>
-			<div
-				class="flex items-center"
-				:class="slope != 0 ? 'justify-between' : 'justify-end'"
-			>
-				<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope }}</p>
-				<UButton color="blue" variant="soft" @click="resetsZoom">
-					Restaurar zoom
-				</UButton>
-			</div>
-			<LineChart
-			class="w-full"
-			:key="chartKey"
-			:chartData="chartData"
-			:options="chartOptions"
-			:style="chartStyle"
+			<metrics-card
+				:metrics-data="valData"
+				:card-title="'Métricas de validação'"
+			/>
+			<metrics-card
+				:metrics-data="realData"
+				:card-title="'Métricas de jogos reais'"
 			/>
 		</div>
+		<UCard class="w-3/5">
+			<template #header>
+				<div class="flex justify-between">
+					<p class="font-semibold">Gráfico de acúmulo de capital</p>
+					<div class="flex gap-2">
+						<div class="inline-block align-middle">
+						<UToggle
+							size="md"
+							on-icon="i-heroicons-check-20-solid"
+							off-icon="i-heroicons-x-mark-20-solid"
+							:model-value="chartByDay"
+							@click="changeChartByDay"
+						/>
+						</div>
+						<p class="text-sm">Exibição por dia</p>
+					</div>
+				</div>
+			</template>
+			<div>
+				<div
+					class="flex items-center"
+					:class="slope != 0 ? 'justify-between' : 'justify-end'"
+				>
+					<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope }}</p>
+					<UButton color="blue" variant="soft" @click="resetsZoom">
+						Restaurar zoom
+					</UButton>
+				</div>
+				<LineChart
+					class="w-full"
+					:key="chartKey"
+					:chartData="chartData"
+					:options="chartOptions"
+					:style="chartStyle"
+				/>
+			</div>
 		</UCard>
 	</div>
 	<UCard>
@@ -144,11 +158,15 @@
 </template>
 
 <script setup>
+import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
+
+const performanceStore = usePerformanceStore();
+const yesterdayStore = useYesterdayModelsStore();
 
 const route = useRoute();
 
@@ -271,7 +289,6 @@ const allBetsDataFilteredColumns = ref([
 	{ key: "Profit", label: "Profit" },
 ]);
 
-const store = usePerformanceStore();
 const realData = ref({});
 const valData = ref({});
 const totalData = ref({});
@@ -284,28 +301,41 @@ const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
 const slope = ref(0);
 
+const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
+const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-dd');
+
 const fetchAllData = async () => {
-	const [performanceData, betsData] = await Promise.all([
+	const [performanceData, betsData, yesterdayData, dayBeforeYesterdayData] = await Promise.all([
 	fetch(`${apiUrl}/model-performance`),
 	fetch(`${apiUrl}/model-bets`),
+	fetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: false }}),
+	fetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: false }}),
 	]);
 
-	const [performanceDataJson, betsDataJson] = await Promise.all([
+	const [performanceDataJson, betsDataJson, yesterdayDataJson, dayBeforeYesterdayDataJson] = await Promise.all([
 	performanceData.json(),
 	betsData.json(),
+	yesterdayData.json(),
+	dayBeforeYesterdayData.json(),
 	]);
 
-	return [performanceDataJson, betsDataJson];
+	return [performanceDataJson, betsDataJson, yesterdayDataJson, dayBeforeYesterdayDataJson];
 };
 
-if (_isEmpty(store.getBetsData)) {
-	const [performanceData, betsData] = await fetchAllData();
-	store.setPerformanceData(performanceData);
-	store.setBetsData(betsData);
-}
-const performanceData = store.getPerformanceData;
-const betsData = store.getBetsData;
+if (_isEmpty(performanceStore.getBetsData) || _isEmpty(yesterdayStore.getYesterdayModels)) {
+	const [performanceData, betsData, yesterdayData, dayBeforeYesterdayData] = await fetchAllData();
+	performanceStore.setPerformanceData(performanceData);
+	performanceStore.setBetsData(betsData);
 
+	yesterdayStore.setYesterdayModels(yesterdayData);
+	if (_isEmpty(yesterdayData)) {
+		yesterdayStore.setYesterdayModels(dayBeforeYesterdayData);
+	}
+}
+const performanceData = performanceStore.getPerformanceData;
+const betsData = performanceStore.getBetsData;
+const yesterdayData = yesterdayStore.getYesterdayModels;
+const yesterdayModelsNames = computed(() => _map(yesterdayData, 'Method'));
 const changeChartByDay = () => {
 	chartByDay.value = !chartByDay.value;
 };
@@ -442,6 +472,10 @@ const buildInfo = () => {
 	changeChartData();
 	chartKey.value++;
 };
+
+function playedYesterday(modelName) {
+	return yesterdayModelsNames.value.includes(modelName);
+}
 
 watchEffect(() => {
 	buildInfo();

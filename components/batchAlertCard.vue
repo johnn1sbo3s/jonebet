@@ -2,9 +2,9 @@
     <div>
         <u-card>
             <div class="flex flex-col gap-3">
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-2">
                     <div class="flex gap-2 items-center font-semibold">
-                        <p>{{ modelName }}</p>
+                        <p class="text-ellipsis line-clamp-1">{{ modelName }}</p>
                         <p
                             v-if="model.total.qtd_jgs_atual >= 88"
                             :class="profit >= 0 ? 'text-violet-600' : 'text-red-600'"
