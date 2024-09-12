@@ -112,10 +112,11 @@
 
 <script setup>
 import { DateTime } from 'luxon';
-import { formatDate } from '~/utils/formatDate';
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
+
+const yesterdayStore = useYesterdayModelsStore();
 
 const month = DateTime.now().toFormat('M');
 const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
@@ -149,7 +150,9 @@ const batchModels = computed(() => {
 })
 
 const yesterdayResults = computed(() => {
-	return yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
+	let lastResults = yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
+	yesterdayStore.setYesterdayModels(lastResults);
+	return lastResults;
 });
 
 const monthResults = computed(() => {
