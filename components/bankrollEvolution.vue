@@ -25,9 +25,8 @@
 				<template #default>
 					<div class="grid grid-cols-2 max-h-56 gap-2 overflow-y-scroll p-0.5">
 						<u-card
-							v-for="(item, index) in resultsByMonth"
+							v-for="item in resultsByMonth"
 							:key="item.month"
-							:class="{ 'outline outline-1 outline-violet-200': index === 0 }"
 						>
 							<div class="text-sm flex justify-between">
 								<p>{{ item.month }}</p>
