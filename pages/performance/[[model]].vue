@@ -357,7 +357,7 @@ if (_isEmpty(performanceStore.getBetsData) || _isEmpty(yesterdayStore.getYesterd
 
 const performanceData = performanceStore.getPerformanceData;
 const betsData = performanceStore.getBetsData;
-const yesterdayModelsNames = computed(() => _map(yesterdayStore.getYesterdayModels, 'Method'));
+const yesterdayModelsNames = computed(() => _map(yesterdayStore.getYesterdayModels.slice(0, -1), 'Method'));
 
 const changeChartByDay = () => {
 	chartByDay.value = !chartByDay.value;
@@ -502,7 +502,8 @@ const buildInfo = () => {
 };
 
 function playedYesterday(modelName) {
-	return yesterdayModelsNames.value.includes(modelName);
+	const lowerNames = yesterdayModelsNames.value.map(name => name.toLowerCase());
+	return lowerNames.includes(modelName.toLowerCase());
 }
 
 watchEffect(() => {
