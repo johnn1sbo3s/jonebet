@@ -59,7 +59,7 @@
 					class="flex items-center"
 					:class="slope != 0 ? 'justify-between' : 'justify-end'"
 				>
-					<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope }}</p>
+					<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
 					<UButton color="blue" variant="soft" @click="resetsZoom">
 						Restaurar zoom
 					</UButton>
@@ -191,6 +191,17 @@ const chartData = ref({
 			fill: true,
 			tension: 0.2,
 		},
+		{
+			label: "Linha de tendência",
+			data: [],
+			borderColor: "rgb(59, 130, 246, 0.8)",
+			borderWidth: 2,
+			backgroundColor: "rgb(109, 40, 217, 0.0)",
+			pointRadius: 0,
+			pointHoverRadius: 7,
+			fill: true,
+			tension: 0.2,
+		},
 	],
 });
 
@@ -300,6 +311,7 @@ const blocksHistoryRows = ref([]);
 const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
 const slope = ref(0);
+const intercept = ref(0);
 
 const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
 const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-dd');
@@ -382,7 +394,10 @@ const getBetsArray = () => {
 		nRange = valData.value.entradas;
 		const profitList = betsToShow.map((item) => item.Profit);
 		cumulativeSum(profitList);
-		slope.value = calculateSlopeAndIntercept(profitList);
+		const [calculatedSlope, calculatedIntercept] = calculateSlopeAndIntercept(profitList);
+		slope.value = calculatedSlope;
+		intercept.value = calculatedIntercept;
+		chartData.value.datasets[1].data = generateTrendLine(slope.value, intercept.value, profitList.length);
 	} else {
 		const lastDayVal = ref(
 			_findLast(betsToShow.slice(0, valData.value.entradas), "Date").Date
@@ -393,6 +408,7 @@ const getBetsArray = () => {
 		nRange = _filter(datesList, (date) => date <= lastDayVal.value).length;
 		chartData.value.labels = datesList;
 		chartData.value.datasets[0].data = profitList;
+		chartData.value.datasets[1].data = [];
 	}
 	chartOptions.value.plugins.annotation.annotations.line1.xMax = nRange;
 	chartOptions.value.plugins.annotation.annotations.line1.xMin = nRange;
@@ -421,24 +437,24 @@ function calculateSlopeAndIntercept(bets) {
 	const sumProduct = games.reduce((acc, curr, i) => acc + curr * accumulatedCapital[i], 0);
 	const sumSquareGames = games.reduce((acc, curr) => acc + curr * curr, 0);
 
-	// Calcular a inclinação (slope)
-	const slope = (n * sumProduct - sumGames * sumCapital) /
-					(n * sumSquareGames - sumGames * sumGames);
+	// Calcula o slope (m)
+	let slope = (n * sumProduct - sumGames * sumCapital) / (n * sumSquareGames - sumGames * sumGames);
 
-	// Calcular o intercepto (b)
-	const intercept = (sumCapital - slope * sumGames) / n;
+	// Calcula o intercepto (b)
+	let intercept = (sumCapital - slope * sumGames) / n;
 
-	return slope.toFixed(2);
+	return [slope, intercept];
 }
 
 function generateTrendLine(slope, intercept, n) {
-  // Gerar os pontos da linha de tendência (y = mx + b)
-  const trendLine = [];
-  for (let i = 0; i < n; i++) {
-    const y = slope * i + intercept;
-    trendLine.push(y);
-  }
-  return trendLine;
+	// Gerar os pontos da linha de tendência (y = mx + b)
+	const trendLine = [];
+	for (let i = 0; i < n; i++) {
+		const y = slope * i + intercept;
+		trendLine.push(y);
+	}
+
+	return trendLine;
 }
 
 function cumulativeSum(array) {
