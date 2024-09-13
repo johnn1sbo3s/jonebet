@@ -56,10 +56,18 @@
 			</template>
 			<div>
 				<div
-					class="flex items-center"
+					class="flex items-center mb-2"
 					:class="slope != 0 ? 'justify-between' : 'justify-end'"
 				>
-					<p v-if="slope != 0" class="text-sm">Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+					<div
+						v-if="slope != 0"
+						class="flex gap-3 text-sm"
+					>
+						<p>Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+						<p>|</p>
+						<p>Trend Distance: {{ trendDistance < 0 ? '' : '+' }}{{ trendDistance.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} u</p>
+					</div>
+
 					<UButton color="blue" variant="soft" @click="resetsZoom">
 						Restaurar zoom
 					</UButton>
@@ -194,7 +202,7 @@ const chartData = ref({
 		{
 			label: "Linha de tendência",
 			data: [],
-			borderColor: "rgb(59, 130, 246, 0.8)",
+			borderColor: "rgb(59, 130, 246, 0.5)",
 			borderWidth: 2,
 			backgroundColor: "rgb(109, 40, 217, 0.0)",
 			pointRadius: 0,
@@ -312,6 +320,7 @@ const dailyBetsRows = ref([]);
 const monthlyBetsRows = ref([]);
 const slope = ref(0);
 const intercept = ref(0);
+const trendDistance = ref(0);
 
 const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
 const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-dd');
@@ -398,6 +407,7 @@ const getBetsArray = () => {
 		slope.value = calculatedSlope;
 		intercept.value = calculatedIntercept;
 		chartData.value.datasets[1].data = generateTrendLine(slope.value, intercept.value, profitList.length);
+		trendDistance.value = chartData.value.datasets[0].data.at(-1) - chartData.value.datasets[1].data.at(-1);
 	} else {
 		const lastDayVal = ref(
 			_findLast(betsToShow.slice(0, valData.value.entradas), "Date").Date
