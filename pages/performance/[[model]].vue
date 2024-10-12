@@ -426,7 +426,9 @@ const getBetsArray = () => {
 
 const allBetsDataFilteredRows = computed(() => {
 	let name = modelNameToIdName(chosenModel.value);
-	return _filter(betsData, { Metodo: name });
+	let filteredBets = _filter(betsData, { Metodo: name });
+	filteredBets = _uniqWith(filteredBets, (a, b) => a.Date === b.Date && a.Home === b.Home && a.Away === b.Away);
+	return _sortBy(filteredBets, ['Date']);
 });
 
 function calculateSlopeAndIntercept(bets) {
