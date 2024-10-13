@@ -61,6 +61,11 @@ const links = [
       to: "/batch-monitoring",
     },
     {
+      label: "Alavancagem",
+      icon: "i-heroicons-arrow-trending-up",
+      to: "/leverage-bets",
+    },
+    {
       label: "Comparador",
       icon: "i-heroicons-chart-pie",
       to: "/comparison",
