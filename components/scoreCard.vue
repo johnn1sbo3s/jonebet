@@ -93,7 +93,14 @@ const chosenScoreAway = computed(() => {
 	}
 });
 
-const probability = computed(() => (chosenScoreHome.value[1] * chosenScoreAway.value[1]) * 100);
+const probability = computed(() => {
+	if (chosenScoreHome.value && chosenScoreAway.value) {
+		return Math.round((chosenScoreHome.value[1] * chosenScoreAway.value[1]) * 100);
+	} else {
+		return 0;
+	}
+});
+
 const odds = computed(() => (100 / probability.value).toFixed(0));
 
 watch(() => props.data, () => {
