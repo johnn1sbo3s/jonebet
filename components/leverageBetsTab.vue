@@ -1,5 +1,12 @@
 <template>
-	<div>
+	<div class="flex flex-col gap-4">
+		<USelectMenu
+			class="w-1/5"
+			placeholder="Selecione um dia"
+			:options="availableDates"
+			v-model="chosenDay"
+		/>
+
 		<UTable
 			:rows="rows"
 			:ui="tableUi"
@@ -15,12 +22,9 @@ const props = defineProps({
 		type: Object,
 		required: true
 	},
-	chosenDay: {
-		type: String,
-		required: true
-	}
 })
 
+const chosenDay = ref('');
 const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' };
 
 let allColumns = [
@@ -88,13 +92,23 @@ const rows = computed(() => {
 		return betsRows.some(row => row[column.key] !== '' && row[column.key] !== null && row[column.key] !== undefined);
 	});
 
-	betsRows = betsRows.filter(row => row.date === props.chosenDay);
+	betsRows = betsRows.filter(row => row.date === chosenDay.value);
 
 	return betsRows;
 });
 
+const availableDates = computed(() => {
+	let dates = [...new Set(Object.values(props.data).map(item => formatDate(item.Date)))];
+	dates = dates.slice(-2);
+
+	return dates;
+});
 
 const columns = computed(() => allColumns);
+
+onMounted(() => {
+	chosenDay.value = availableDates.value.at(-1);
+})
 
 </script>
 

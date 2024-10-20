@@ -21,13 +21,6 @@
 						v-if="item.key === 'jogos'"
 						class="flex flex-col gap-3"
 					>
-						<USelectMenu
-							class="w-1/5"
-							placeholder="Selecione um dia"
-							:options="availableDates"
-							v-model="chosenDay"
-						/>
-
 						<leverage-bets-tab
 							:data="leverageBets"
 							:chosen-day="chosenDay"
@@ -45,8 +38,6 @@
 
 <script setup>
 const apiUrl = useRuntimeConfig().public.API_URL;
-
-const chosenDay = ref('');
 
 const tabItems = [
 	{
@@ -69,17 +60,6 @@ const responses = await Promise.all(requests);
 
 const { data: leverageBets } = responses[0];
 const { data: scoresData } = responses[1];
-
-const availableDates = computed(() => {
-	let dates = [...new Set(Object.values(leverageBets.value).map(item => formatDate(item.Date)))];
-	dates = dates.slice(-2);
-
-	return dates;
-});
-
-onMounted(() => {
-	chosenDay.value = availableDates.value.at(-1);
-})
 
 </script>
 
