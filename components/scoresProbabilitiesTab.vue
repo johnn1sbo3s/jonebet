@@ -1,42 +1,47 @@
 <template>
 	<div>
 		<USelectMenu
-			class="w-1/5"
-			v-model="selectedGame"
+			class="w-1/4 mb-4"
+			v-model="selectedOption"
 			:options="options"
 			searchable
-			option-attribute="name"
+			option-attribute="label"
 		/>
 
-		{{ buildScores }}
+		<div class="flex flex-col gap-3 w-1/2">
+			<score-card
+				:data="selectedOption"
+				title="Placar mais provável"
+				score-probability="most"
+			/>
+
+			<score-card
+				:data="selectedOption"
+				title="Placar menos provável"
+				score-probability="less"
+			/>
+		</div>
 	</div>
 </template>
 
 <script setup>
 const props = defineProps({
 	data: {
-		type: Object,
+		type: Array,
 		required: true
 	},
 })
 
-const selectedGame = ref(null);
-
-const options = computed(() => {
-	return Object.values(props.data).map((item) => ({
-		name: item.Home + ' vs. ' + item.Away,
-		value: item._id,
-	}));
-});
-
-const buildScores = computed(() => {
-	let game = props.data.find(item => item._id === selectedGame.value);
-
-	return game;
-});
+const selectedOption = ref(null);
+const options = ref([]);
 
 onMounted(() => {
-	selectedGame.value = options.value[0].name;
+	options.value = props.data.map((item) => ({
+		...item,
+		label: item.Home + ' vs. ' + item.Away,
+		value: item._id,
+	}));
+	selectedOption.value = options.value[0];
 });
 
 </script>

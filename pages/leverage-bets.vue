@@ -35,7 +35,7 @@
 					</div>
 
 					<div v-else-if="item.key === 'placares'">
-						<scores-probabilities-tab :data="scoresData" />
+						<scores-probabilities-tab :data="Object.values(scoresData)" />
 					</div>
 				</div>
 			</template>
