@@ -8,7 +8,10 @@
 			<template #default>
 				<div class="flex flex-col w-full items-center justify-center gap-5">
 					<div class="font-semibold">
-						<div class="flex gap-3 items-center">
+						<div
+							v-if="chosenScoreHome"
+							class="flex gap-3 items-center"
+						>
 							<span class="text-sm text-slate-500 font-normal">
 								{{ chosenScoreHome[1] * 100 + '%' }}
 							</span>
@@ -59,7 +62,7 @@ const props = defineProps({
 const internalData = ref({});
 
 const chosenScoreHome = computed(() => {
-	let scoresHome = {
+	const scoresHome = {
 		'0': internalData.value?.Prob_0GH,
 		'1': internalData.value?.Prob_1GH,
 		'2': internalData.value?.Prob_2GH,
@@ -74,7 +77,7 @@ const chosenScoreHome = computed(() => {
 });
 
 const chosenScoreAway = computed(() => {
-	let scoresAway = {
+	const scoresAway = {
 		'0': internalData.value?.Prob_0GA,
 		'1': internalData.value?.Prob_1GA,
 		'2': internalData.value?.Prob_2GA,
@@ -90,7 +93,7 @@ const chosenScoreAway = computed(() => {
 
 watch(() => props.data, () => {
 	internalData.value = props.data;
-}, { immediate: true });
+}, { immediate: true, deep: true });
 
 </script>
 

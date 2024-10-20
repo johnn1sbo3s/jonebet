@@ -8,7 +8,7 @@
 			option-attribute="label"
 		/>
 
-		<div class="flex flex-col gap-3 w-1/2">
+		<div class="flex flex-col gap-3 w-2/5">
 			<score-card
 				:data="selectedOption"
 				title="Placar mais provável"
