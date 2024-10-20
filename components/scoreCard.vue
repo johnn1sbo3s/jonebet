@@ -28,12 +28,14 @@
 
 					<div class="flex gap-2">
 						<u-badge
-							label="10%"
+							:label="probability.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) + '%'"
 							variant="subtle"
+							size="md"
 						/>
 						<u-badge
-							label="Odd 100"
+							:label="'Odds ' + odds"
 							variant="subtle"
+							size="md"
 						/>
 					</div>
 				</div>
@@ -90,6 +92,9 @@ const chosenScoreAway = computed(() => {
 		return _minBy(Object.entries(scoresAway), (item) => item[1]);
 	}
 });
+
+const probability = computed(() => (chosenScoreHome.value[1] * chosenScoreAway.value[1]) * 100);
+const odds = computed(() => (100 / probability.value).toFixed(0));
 
 watch(() => props.data, () => {
 	internalData.value = props.data;
