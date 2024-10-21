@@ -6,6 +6,7 @@
 		<u-table
 			:rows="scores"
 			:ui="tableUi"
+			:columns="tableColumns"
 		/>
 	</u-card>
 </template>
@@ -21,6 +22,29 @@ const props = defineProps({
 
 const internalData = ref([]);
 const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' };
+
+const tableColumns = [
+	{
+		key: 'team',
+		label: 'Time',
+	},
+	{
+		key: 'goals0',
+		label: '0 gols',
+	},
+	{
+		key: 'goals1',
+		label: '1 gol',
+	},
+	{
+		key: 'goals2',
+		label: '2 gols',
+	},
+	{
+		key: 'goals3',
+		label: '3 gols',
+	},
+]
 
 const scores = computed(() => {
 	let scoresRows = [];
