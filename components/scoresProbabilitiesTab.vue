@@ -1,14 +1,14 @@
 <template>
 	<USelectMenu
-		class="w-1/4 mb-4"
+		class="w-1/5 mb-4"
 		v-model="selectedOption"
 		:options="options"
 		searchable
 		option-attribute="label"
 	/>
 
-	<div class="flex gap-4">
-		<div class="flex gap-3 w-3/5">
+	<div class="grid gap-3 grid-cols-2">
+		<div class="flex gap-3">
 			<score-card
 				:data="selectedOption"
 				title="Placar mais provável"
@@ -22,7 +22,7 @@
 			/>
 		</div>
 
-		<div class="w-2/5 h-full">
+		<div class="h-full">
 			<scores-table :data="selectedOption" />
 		</div>
 	</div>
@@ -50,6 +50,6 @@ onMounted(() => {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="css" scoped>
 
 </style>

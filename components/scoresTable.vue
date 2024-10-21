@@ -1,10 +1,13 @@
 <template>
-	<div>
+	<u-card>
+		<template #header>
+			<p class="font-semibold">Tabela de placares</p>
+		</template>
 		<u-table
 			:rows="scores"
 			:ui="tableUi"
 		/>
-	</div>
+	</u-card>
 </template>
 
 <script setup>
@@ -23,17 +26,17 @@ const scores = computed(() => {
 	let scoresRows = [];
 	scoresRows.push({
 		team: internalData.value?.Home,
-		goals0: internalData.value?.Prob_0GH,
-		goals1: internalData.value?.Prob_1GH,
-		goals2: internalData.value?.Prob_2GH,
-		goals3: internalData.value?.Prob_3GH,
+		goals0: (internalData.value?.Prob_0GH * 100).toLocaleString('pt-BR'),
+		goals1: internalData.value?.Prob_1GH * 100,
+		goals2: internalData.value?.Prob_2GH * 100,
+		goals3: internalData.value?.Prob_3GH * 100,
 	});
 	scoresRows.push({
 		team: internalData.value?.Away,
-		goals0: internalData.value?.Prob_0GA,
-		goals1: internalData.value?.Prob_1GA,
-		goals2: internalData.value?.Prob_2GA,
-		goals3: internalData.value?.Prob_3GA,
+		goals0: internalData.value?.Prob_0GA * 100,
+		goals1: internalData.value?.Prob_1GA * 100,
+		goals2: internalData.value?.Prob_2GA * 100,
+		goals3: internalData.value?.Prob_3GA * 100,
 	});
 
 	return scoresRows;

@@ -1,47 +1,45 @@
 <template>
-	<div class="w-full">
-		<u-card class="w-full">
-			<template #header>
-				<p class="font-semibold">{{ title }}</p>
-			</template>
+	<u-card class="w-full" :ui="{ body: { background: 'h-[77%]'}}">
+		<template #header>
+			<p class="font-semibold">{{ title }}</p>
+		</template>
 
-			<template #default>
-				<div class="flex flex-col w-full items-center justify-center gap-5">
-					<div class="font-semibold">
-						<div
-							v-if="chosenScoreHome"
-							class="flex gap-3 items-center"
-						>
-							<span class="text-sm text-slate-500 font-normal">
-								{{ chosenScoreHome[1] * 100 + '%' }}
-							</span>
+		<template #default>
+			<div class="flex flex-col h-full w-full items-center justify-center gap-5">
+				<div class="font-semibold">
+					<div
+						v-if="chosenScoreHome"
+						class="flex gap-3 items-center"
+					>
+						<span class="text-sm text-slate-500 font-normal">
+							{{ chosenScoreHome[1] * 100 + '%' }}
+						</span>
 
-							<span class="text-5xl">
-								{{ chosenScoreHome[0] }} x {{ chosenScoreAway[0] }}
-							</span>
+						<span class="text-5xl">
+							{{ chosenScoreHome[0] }} x {{ chosenScoreAway[0] }}
+						</span>
 
-							<span class="text-sm text-slate-500 font-normal">
-								{{ chosenScoreAway[1] * 100 + '%' }}
-							</span>
-						</div>
-					</div>
-
-					<div class="flex gap-2">
-						<u-badge
-							:label="probability.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) + '%'"
-							variant="subtle"
-							size="md"
-						/>
-						<u-badge
-							:label="'Odds ' + odds"
-							variant="subtle"
-							size="md"
-						/>
+						<span class="text-sm text-slate-500 font-normal">
+							{{ chosenScoreAway[1] * 100 + '%' }}
+						</span>
 					</div>
 				</div>
-			</template>
-		</u-card>
-	</div>
+
+				<div class="flex gap-2">
+					<u-badge
+						:label="probability.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) + '%'"
+						variant="subtle"
+						size="md"
+					/>
+					<u-badge
+						:label="'Odds ' + odds"
+						variant="subtle"
+						size="md"
+					/>
+				</div>
+			</div>
+		</template>
+	</u-card>
 </template>
 
 <script setup>
