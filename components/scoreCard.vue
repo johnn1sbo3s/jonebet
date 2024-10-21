@@ -93,7 +93,7 @@ const chosenScoreAway = computed(() => {
 
 const probability = computed(() => {
 	if (chosenScoreHome.value && chosenScoreAway.value) {
-		return Math.round((chosenScoreHome.value[1] * chosenScoreAway.value[1]) * 100);
+		return (chosenScoreHome.value[1] * chosenScoreAway.value[1]) * 100;
 	} else {
 		return 0;
 	}
