@@ -4,7 +4,6 @@
 
 		<UTabs
 			:items="tabItems"
-			v-model="selected"
 		>
 			<template #default="{ item, selected }">
 				<span
@@ -23,7 +22,6 @@
 					>
 						<leverage-bets-tab
 							:data="leverageBets"
-							:chosen-day="chosenDay"
 						/>
 					</div>
 
