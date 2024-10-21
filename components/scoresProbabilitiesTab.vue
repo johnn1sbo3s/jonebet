@@ -1,14 +1,14 @@
 <template>
-	<div>
-		<USelectMenu
-			class="w-1/4 mb-4"
-			v-model="selectedOption"
-			:options="options"
-			searchable
-			option-attribute="label"
-		/>
+	<USelectMenu
+		class="w-1/4 mb-4"
+		v-model="selectedOption"
+		:options="options"
+		searchable
+		option-attribute="label"
+	/>
 
-		<div class="flex flex-col gap-3 w-2/5">
+	<div class="flex gap-4">
+		<div class="flex gap-3 w-3/5">
 			<score-card
 				:data="selectedOption"
 				title="Placar mais provável"
@@ -20,6 +20,10 @@
 				title="Placar menos provável"
 				score-probability="less"
 			/>
+		</div>
+
+		<div class="w-2/5 h-full">
+			<scores-table :data="selectedOption" />
 		</div>
 	</div>
 </template>
@@ -36,7 +40,7 @@ const selectedOption = ref(null);
 const options = ref([]);
 
 onMounted(() => {
-	options.value = props.data.map((item) => ({
+	options.value = props.data.filter(item => item.Date === new Date().toISOString().split('T')[0]).map((item) => ({
 		...item,
 		label: item.Home + ' vs. ' + item.Away,
 		value: item._id,
