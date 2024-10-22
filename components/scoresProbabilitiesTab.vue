@@ -1,5 +1,5 @@
 <template>
-	<div class="flex gap-5 items-baseline">
+	<div class="flex gap-5 items-baseline justify-between">
 		<USelectMenu
 			class="w-1/4 mb-4"
 			v-model="selectedOption"
@@ -11,7 +11,8 @@
 					<span>
 						{{ option.label }}
 					</span>
-					<span class="text-xs text-green-500 font-semibold mt-0.5">
+
+					<span class="text-xs text-purple-500 font-semibold mt-0.5">
 						{{ isGameLive(option) ? 'AO VIVO' : '' }}
 					</span>
 				</div>
@@ -20,8 +21,9 @@
 
 		<div
 			v-if="isGameLive(selectedOption)"
-			class="text-green-500 font-semibold"
+			class="text-purple-500 font-semibold flex items-center"
 		>
+			<span class="mr-2 w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
 			JOGO AO VIVO
 		</div>
 	</div>
@@ -81,7 +83,6 @@ function isGameLive(game) {
 
 	return diffInMinutes >= 0 && diffInMinutes <= 120;
 }
-
 
 </script>
 
