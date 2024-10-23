@@ -49,28 +49,13 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x1',
-		label: 'Lay 0x1',
-		sortable: true,
-	},
-	{
 		key: 'lay1x3V6',
 		label: 'Lay 1x3 V6',
 		sortable: true,
 	},
 	{
-		key: 'lay0x2V1',
-		label: 'Lay 0x2 V1',
-		sortable: true,
-	},
-	{
 		key: 'layGoleadaAwayV1',
 		label: 'Lay Goleada Away V1',
-		sortable: true,
-	},
-	{
-		key: 'lay2x0V2',
-		label: 'Lay 2x0 V2',
 		sortable: true,
 	},
 ]
