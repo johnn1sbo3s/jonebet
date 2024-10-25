@@ -58,6 +58,11 @@ let allColumns = [
 		label: 'Lay Goleada Away V1',
 		sortable: true,
 	},
+	{
+		key: 'lay2x2V2',
+		label: 'Lay 2x2 V2',
+		sortable: true,
+	},
 ]
 
 const rows = computed(() => {
@@ -66,11 +71,9 @@ const rows = computed(() => {
 		time: item.Time,
 		home: item.Home,
 		away: item.Away,
-		lay0x1: item.lay_0x1 ? modelNameToNaturalName(item.lay_0x1) : '',
+		lay2x2V2: item.lay_2x2_v2 ? modelNameToNaturalName(item.lay_2x2_v2) : '',
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
-		lay0x2V1: item?.lay_0x2_v1 ? modelNameToNaturalName(item.lay_0x2_v1) : '',
 		layGoleadaAwayV1: item?.lay_goleada_away_v1 ? modelNameToNaturalName(item.lay_goleada_away_v1) : '',
-		lay2x0V2: item?.lay_2x0_v2 ? modelNameToNaturalName(item.lay_2x0_v2) : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
