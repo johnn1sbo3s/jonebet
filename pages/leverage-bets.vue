@@ -3,52 +3,35 @@
 		<page-header title="Apostas para alavancagem" />
 
 		<UTabs
-			:items="tabItems"
-		>
-			<template #default="{ item, selected }">
-				<span
-					class="truncate"
-					:class="[selected && 'text-primary-500 dark:text-primary-400']"
-				>
-					{{ item.label }}
-				</span>
-			</template>
+			:items="items"
+			@change="onChange"
+		/>
 
-			<template #item="{ item }">
-				<div class="flex flex-col gap-3 mt-4">
-					<div
-						v-if="item.key === 'jogos'"
-						class="flex flex-col gap-3"
-					>
-						<leverage-bets-tab
-							:data="leverageBets"
-						/>
-					</div>
+		<div v-if="selectedTab === 'jogos'">
+				<leverage-bets-tab :data="leverageBets" />
+		</div>
 
-					<div v-else-if="item.key === 'placares'">
-						<scores-probabilities-tab :data="Object.values(scoresData)" />
-					</div>
-				</div>
-			</template>
-		</UTabs>
+		<div v-else-if="selectedTab === 'placares'">
+				<scores-probabilities-tab :data="Object.values(scoresData)" />
+		</div>
+
 	</div>
 </template>
 
 <script setup>
 const apiUrl = useRuntimeConfig().public.API_URL;
 
-const tabItems = [
+const items = [
 	{
-		key: 'jogos',
-		label: 'Jogos para alavancagem',
-		icon: 'i-heroicons-calendar-days',
+		label: 'Jogos selecionados',
+		value: 'jogos',
 	},
 	{
-		key: 'placares',
 		label: 'Probabilidades de placares',
-		icon: 'i-heroicons-sparkles',
+		value: 'placares'
 	}
-]
+];
+
 const requests = [
 	useFetch(`${apiUrl}/leverage-bets`),
 	useFetch(`${apiUrl}/scores-probabilities`),
@@ -58,6 +41,12 @@ const responses = await Promise.all(requests);
 
 const { data: leverageBets } = responses[0];
 const { data: scoresData } = responses[1];
+
+const selectedTab = ref('jogos');
+
+function onChange(tab) {
+	selectedTab.value = items[tab].value;
+}
 
 </script>
 
