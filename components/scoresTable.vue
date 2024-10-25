@@ -50,17 +50,17 @@ const scores = computed(() => {
 	let scoresRows = [];
 	scoresRows.push({
 		team: internalData.value?.Home,
-		goals0: (internalData.value?.Prob_0GH * 100).toLocaleString('pt-BR'),
-		goals1: internalData.value?.Prob_1GH * 100,
-		goals2: internalData.value?.Prob_2GH * 100,
-		goals3: internalData.value?.Prob_3GH * 100,
+		goals0: (internalData.value?.Prob_0GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals1: (internalData.value?.Prob_1GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals2: (internalData.value?.Prob_2GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals3: (internalData.value?.Prob_3GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 	});
 	scoresRows.push({
 		team: internalData.value?.Away,
-		goals0: internalData.value?.Prob_0GA * 100,
-		goals1: internalData.value?.Prob_1GA * 100,
-		goals2: internalData.value?.Prob_2GA * 100,
-		goals3: internalData.value?.Prob_3GA * 100,
+		goals0: (internalData.value?.Prob_0GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals1: (internalData.value?.Prob_1GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals2: (internalData.value?.Prob_2GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals3: (internalData.value?.Prob_3GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 	});
 
 	return scoresRows;
