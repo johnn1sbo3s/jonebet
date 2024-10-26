@@ -149,17 +149,33 @@
 	</div>
 	<UCard>
 		<template #header>
-		<p class="font-semibold">Jogos reais</p>
+			<p class="font-semibold">Jogos reais</p>
 		</template>
-		<p class="mb-3 text-sm">{{ realData.entradas }} jogos</p>
+
+		<div class="flex justify-between items-end mb-3">
+			<p
+				class="text-sm">{{ realData.entradas }} jogos
+			</p>
+
+			<UButton
+					icon="i-heroicons-arrow-down-tray"
+					color="blue"
+					size="sm"
+					variant="soft"
+					@click="exportTableToExcel(allBetsDataFilteredRows)"
+				>
+					Download
+			</UButton>
+		</div>
+
 		<UTable
-		class="h-96"
-		:ui="{
-			wrapper:
-			'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
-		}"
-		:rows="allBetsDataFilteredRows"
-		:columns="allBetsDataFilteredColumns"
+			class="h-96"
+			:ui="{
+				wrapper:
+				'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
+			}"
+			:rows="allBetsDataFilteredRows"
+			:columns="allBetsDataFilteredColumns"
 		/>
 	</UCard>
 	</div>
@@ -169,6 +185,7 @@
 import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
+import * as XLSX from 'xlsx';
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
@@ -506,6 +523,14 @@ const buildInfo = () => {
 function playedYesterday(modelName) {
 	const lowerNames = yesterdayModelsNames.value.map(name => name.toLowerCase());
 	return lowerNames.includes(modelName.toLowerCase());
+}
+
+function exportTableToExcel(tableData) {
+	const worksheet = XLSX.utils.json_to_sheet(tableData);
+	const workbook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
+
+	XLSX.writeFile(workbook, `jogos_reais_${chosenModel.value}.xlsx`);
 }
 
 watchEffect(() => {
