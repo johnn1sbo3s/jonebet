@@ -185,7 +185,6 @@
 import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
-import * as XLSX from 'xlsx';
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
@@ -525,7 +524,8 @@ function playedYesterday(modelName) {
 	return lowerNames.includes(modelName.toLowerCase());
 }
 
-function exportTableToExcel(tableData) {
+async function exportTableToExcel(tableData) {
+	const XLSX = await import('xlsx');
 	const worksheet = XLSX.utils.json_to_sheet(tableData);
 	const workbook = XLSX.utils.book_new();
 	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');

@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import * as XLSX from 'xlsx';
 
 const props = defineProps({
 	data: {
@@ -118,7 +117,8 @@ onMounted(() => {
 	chosenDay.value = availableDates.value.at(-1);
 })
 
-function exportTableToExcel(tableData) {
+async function exportTableToExcel(tableData) {
+	const XLSX = await import('xlsx');
 	const worksheet = XLSX.utils.json_to_sheet(tableData);
 	const workbook = XLSX.utils.book_new();
 	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
