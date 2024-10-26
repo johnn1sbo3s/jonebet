@@ -16,6 +16,7 @@
 				<UButton
 					icon="i-heroicons-arrow-down-tray"
 					color="blue"
+					size="sm"
 					variant="soft"
 					@click="exportTableToExcel(rows)"
 				>
