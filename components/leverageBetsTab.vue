@@ -7,16 +7,35 @@
 			v-model="chosenDay"
 		/>
 
-		<UTable
-			:rows="rows"
-			:ui="tableUi"
-			:columns="columns"
-			:sort="{ column: 'time', direction: 'asc' }"
-		></UTable>
+		<div class="flex flex-col gap-3">
+			<div class="flex justify-between items-end">
+				<p v-if="rows.length > 0" class="text-sm">
+					{{ rows.length }} apostas encontradas
+				</p>
+
+				<UButton
+					icon="i-heroicons-arrow-down-tray"
+					color="blue"
+					variant="soft"
+					@click="exportTableToExcel(rows)"
+				>
+					Download
+				</UButton>
+			</div>
+
+			<UTable
+				:rows="rows"
+				:ui="tableUi"
+				:columns="columns"
+				:sort="{ column: 'time', direction: 'asc' }"
+			/>
+		</div>
 	</div>
 </template>
 
 <script setup>
+import * as XLSX from 'xlsx';
+
 const props = defineProps({
 	data: {
 		type: Object,
@@ -97,6 +116,14 @@ const columns = computed(() => allColumns);
 onMounted(() => {
 	chosenDay.value = availableDates.value.at(-1);
 })
+
+function exportTableToExcel(tableData) {
+	const worksheet = XLSX.utils.json_to_sheet(tableData);
+	const workbook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
+
+	XLSX.writeFile(workbook, `jogos_alavancagem_${chosenDay.value}.xlsx`);
+}
 
 </script>
 
