@@ -48,11 +48,6 @@ const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dar
 
 let allColumns = [
 	{
-		key: 'date',
-		label: 'Data',
-		sortable: false,
-	},
-	{
 		key: 'time',
 		label: 'Horário',
 		sortable: true,
@@ -78,11 +73,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay2x2V2',
-		label: 'Lay 2x2 V2',
-		sortable: true,
-	},
-	{
 		key: 'lay3x0V1',
 		label: 'Lay 3x0 V1',
 		sortable: true,
@@ -95,7 +85,6 @@ const rows = computed(() => {
 		time: item.Time,
 		home: item.Home,
 		away: item.Away,
-		lay2x2V2: item.lay_2x2_v2 ? modelNameToNaturalName(item.lay_2x2_v2) : '',
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
 		layGoleadaAwayV1: item?.lay_goleada_away_v1 ? modelNameToNaturalName(item.lay_goleada_away_v1) : '',
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
