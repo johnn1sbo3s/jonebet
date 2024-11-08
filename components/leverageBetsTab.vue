@@ -29,7 +29,58 @@
 				:ui="tableUi"
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
-			/>
+			>
+				<template #lay3x0V1-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay3x0V1 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay3x0V1 != '' && row.FTHG"
+						>
+							<u-icon
+								v-if="!resolveResult(row, 3, 0)"
+								name="i-heroicons-check-circle"
+								class="text-green-600 w-5 h-5"
+							/>
+
+							<u-icon
+								v-if="resolveResult(row, 3, 0)"
+								name="i-heroicons-x-circle"
+								class="text-red-600 w-5 h-5"
+							/>
+						</div>
+					</div>
+				</template>
+
+				<template #lay1x3V6-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay1x3V6 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay1x3V6 != '' && row.FTHG"
+						>
+							<u-icon
+								v-if="!resolveResult(row, 1, 3)"
+								name="i-heroicons-check-circle"
+								class="text-green-600 w-5 h-5"
+							/>
+
+							<u-icon
+								v-if="resolveResult(row, 3, 0)"
+								name="i-heroicons-x-circle"
+								class="text-red-600 w-5 h-5"
+							/>
+						</div>
+					</div>
+				</template>
+			</UTable>
+
 		</div>
 	</div>
 </template>
@@ -68,8 +119,8 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'layGoleadaAwayV1',
-		label: 'Lay Goleada Away V1',
+		key: 'lay3x0Om',
+		label: 'Lay 3x0 OM',
 		sortable: true,
 	},
 	{
@@ -81,13 +132,14 @@ let allColumns = [
 
 const rows = computed(() => {
 	let betsRows = Object.values(props.data).map((item) => ({
+		...item,
 		date: formatDate(item.Date),
 		time: item.Time,
 		home: item.Home,
 		away: item.Away,
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
-		layGoleadaAwayV1: item?.lay_goleada_away_v1 ? modelNameToNaturalName(item.lay_goleada_away_v1) : '',
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
+		lay3x0Om: item?.lay_3x0_other_models ? modelNameToNaturalName(item.lay_3x0_other_models) : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
@@ -101,7 +153,7 @@ const rows = computed(() => {
 
 const availableDates = computed(() => {
 	let dates = [...new Set(Object.values(props.data).map(item => formatDate(item.Date)))];
-	dates = dates.slice(-2);
+	dates = dates.slice(-7);
 
 	return dates;
 });
@@ -111,6 +163,10 @@ const columns = computed(() => allColumns);
 onMounted(() => {
 	chosenDay.value = availableDates.value.at(-1);
 })
+
+function resolveResult(game, homeScore, awayScore) {
+	return (game.FTHG === homeScore && game.FTAG === awayScore);
+}
 
 async function exportTableToExcel(tableData) {
 	const XLSX = await import('xlsx');
