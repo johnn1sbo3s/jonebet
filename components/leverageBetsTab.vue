@@ -68,8 +68,8 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'layGoleadaAwayV1',
-		label: 'Lay Goleada Away V1',
+		key: 'lay3x0OM',
+		label: 'Lay 3x0 OM',
 		sortable: true,
 	},
 	{
@@ -86,8 +86,8 @@ const rows = computed(() => {
 		home: item.Home,
 		away: item.Away,
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
-		layGoleadaAwayV1: item?.lay_goleada_away_v1 ? modelNameToNaturalName(item.lay_goleada_away_v1) : '',
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
+		lay3x0OM: item?.lay_3x0_other_models ? modelNameToNaturalName(item.lay_3x0_other_models) : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
