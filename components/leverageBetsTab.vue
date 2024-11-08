@@ -153,6 +153,7 @@ const rows = computed(() => {
 
 const availableDates = computed(() => {
 	let dates = [...new Set(Object.values(props.data).map(item => formatDate(item.Date)))];
+	dates = dates.slice(-7);
 
 	return dates;
 });
