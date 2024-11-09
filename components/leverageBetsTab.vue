@@ -35,10 +35,9 @@
 						<span>
 							{{ row.lay3x0V1 }}
 						</span>
-
 						<div
 							class="flex items-center"
-							v-if="row.lay3x0V1 != '' && row.FTHG"
+							v-if="row.lay3x0V1 != '' && row.FTHG != null"
 						>
 							<u-icon
 								v-if="!resolveResult(row, 3, 0)"
