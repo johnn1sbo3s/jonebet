@@ -54,6 +54,30 @@
 					</div>
 				</template>
 
+				<template #lay3x0Om-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay3x0Om }}
+						</span>
+						<div
+							class="flex items-center"
+							v-if="row.lay3x0Om != '' && row.FTHG != null"
+						>
+							<u-icon
+								v-if="!resolveResult(row, 3, 0)"
+								name="i-heroicons-check-circle"
+								class="text-green-600 w-5 h-5"
+							/>
+
+							<u-icon
+								v-if="resolveResult(row, 3, 0)"
+								name="i-heroicons-x-circle"
+								class="text-red-600 w-5 h-5"
+							/>
+						</div>
+					</div>
+				</template>
+
 				<template #lay1x3V6-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -98,17 +122,17 @@ const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dar
 
 let allColumns = [
 	{
-		key: 'time',
+		key: 'Time',
 		label: 'Horário',
 		sortable: true,
 	},
 	{
-		key: 'home',
+		key: 'Home',
 		label: 'Casa',
 		sortable: true,
 	},
 	{
-		key: 'away',
+		key: 'Away',
 		label: 'Fora',
 		sortable: true,
 	},
@@ -118,13 +142,13 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay3x0Om',
-		label: 'Lay 3x0 OM',
+		key: 'lay3x0V1',
+		label: 'Lay 3x0 V1',
 		sortable: true,
 	},
 	{
-		key: 'lay3x0V1',
-		label: 'Lay 3x0 V1',
+		key: 'lay3x0Om',
+		label: 'Lay 3x0 OM',
 		sortable: true,
 	},
 ]
@@ -133,12 +157,9 @@ const rows = computed(() => {
 	let betsRows = Object.values(props.data).map((item) => ({
 		...item,
 		date: formatDate(item.Date),
-		time: item.Time,
-		home: item.Home,
-		away: item.Away,
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
-		lay3x0Om: item?.lay_3x0_other_models ? modelNameToNaturalName(item.lay_3x0_other_models) : '',
+		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
