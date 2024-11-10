@@ -62,7 +62,7 @@
 
 						<div
 							class="flex items-center"
-							v-if="row.lay1x3V6 != '' && row.FTHG"
+							v-if="row.lay1x3V6 != '' && row.FTHG != null"
 						>
 							<u-icon
 								v-if="!resolveResult(row, 1, 3)"
@@ -71,7 +71,7 @@
 							/>
 
 							<u-icon
-								v-if="resolveResult(row, 3, 0)"
+								v-if="resolveResult(row, 1, 3)"
 								name="i-heroicons-x-circle"
 								class="text-red-600 w-5 h-5"
 							/>
