@@ -30,23 +30,23 @@
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
 			>
-				<template #lay3x0V1-data="{ row }">
+				<template #lay0x2V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay3x0V1 }}
+							{{ row.lay0x2V1 }}
 						</span>
 						<div
 							class="flex items-center"
-							v-if="row.lay3x0V1 != '' && row.FTHG != null"
+							v-if="row.lay0x2V1 != '' && row.FTHG != null"
 						>
 							<u-icon
-								v-if="!resolveResult(row, 3, 0)"
+								v-if="!resolveResult(row, 0, 2)"
 								name="i-heroicons-check-circle"
 								class="text-green-600 w-5 h-5"
 							/>
 
 							<u-icon
-								v-if="resolveResult(row, 3, 0)"
+								v-if="resolveResult(row, 0, 2)"
 								name="i-heroicons-x-circle"
 								class="text-red-600 w-5 h-5"
 							/>
@@ -54,23 +54,23 @@
 					</div>
 				</template>
 
-				<template #lay2x2Om-data="{ row }">
+				<template #lay0x2Om-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay2x2Om }}
+							{{ row.lay0x2Om }}
 						</span>
 						<div
 							class="flex items-center"
-							v-if="row.lay2x2Om != '' && row.FTHG != null"
+							v-if="row.lay0x2Om != '' && row.FTHG != null"
 						>
 							<u-icon
-								v-if="!resolveResult(row, 2, 2)"
+								v-if="!resolveResult(row, 0, 2)"
 								name="i-heroicons-check-circle"
 								class="text-green-600 w-5 h-5"
 							/>
 
 							<u-icon
-								v-if="resolveResult(row, 2, 2)"
+								v-if="resolveResult(row, 0, 2)"
 								name="i-heroicons-x-circle"
 								class="text-red-600 w-5 h-5"
 							/>
@@ -78,24 +78,24 @@
 					</div>
 				</template>
 
-				<template #lay1x3V6-data="{ row }">
+				<template #lay3x0Om-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay1x3V6 }}
+							{{ row.lay3x0Om }}
 						</span>
 
 						<div
 							class="flex items-center"
-							v-if="row.lay1x3V6 != '' && row.FTHG != null"
+							v-if="row.lay3x0Om != '' && row.FTHG != null"
 						>
 							<u-icon
-								v-if="!resolveResult(row, 1, 3)"
+								v-if="!resolveResult(row, 0, 3)"
 								name="i-heroicons-check-circle"
 								class="text-green-600 w-5 h-5"
 							/>
 
 							<u-icon
-								v-if="resolveResult(row, 1, 3)"
+								v-if="resolveResult(row, 0, 3)"
 								name="i-heroicons-x-circle"
 								class="text-red-600 w-5 h-5"
 							/>
@@ -212,18 +212,18 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay1x3V6',
-		label: 'Lay 1x3 V6',
+		key: 'lay0x2V1',
+		label: 'Lay 0x2 V1',
 		sortable: true,
 	},
 	{
-		key: 'lay3x0V1',
-		label: 'Lay 3x0 V1',
+		key: 'lay0x2Om',
+		label: 'Lay 0x2 OM',
 		sortable: true,
 	},
 	{
-		key: 'lay2x2Om',
-		label: 'Lay 2x2 OM',
+		key: 'lay3x0Om',
+		label: 'Lay 3x0 OM',
 		sortable: true,
 	},
 	{
@@ -247,10 +247,11 @@ const rows = computed(() => {
 	let betsRows = Object.values(props.data).map((item) => ({
 		...item,
 		date: formatDate(item.Date),
-		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
-		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
+		lay0x2V1: item?.lay_0x2_v1 ? 'Lay 0x2 V1' : '',
+		lay0x2Om: item?.lay_0x2_other_models ? 'Lay 0x2 OM' : '',
+		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
 		lay0x0Om: item?.lay_0x0_other_models ? 'Lay 0x0 OM' : '',
-		lay0x0Footy: item?.lay_0x0_footy ? modelNameToNaturalName(item.lay_0x0_footy) : '',
+		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		under6Om: item?.under_6_other_models ? 'Under 6 OM' : '',
 	}));
 
