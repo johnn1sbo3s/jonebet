@@ -152,6 +152,31 @@
 						</div>
 					</div>
 				</template>
+
+				<template #under6Om-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.under6Om }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.under6Om != '' && row.FTHG != null"
+						>
+							<u-icon
+								v-if="!resolveResult(row, 404, 6)"
+								name="i-heroicons-check-circle"
+								class="text-green-600 w-5 h-5"
+							/>
+
+							<u-icon
+								v-if="resolveResult(row, 404, 6)"
+								name="i-heroicons-x-circle"
+								class="text-red-600 w-5 h-5"
+							/>
+						</div>
+					</div>
+				</template>
 			</UTable>
 
 		</div>
@@ -211,6 +236,11 @@ let allColumns = [
 		label: 'Lay 0x0 OM',
 		sortable: true,
 	},
+	{
+		key: 'under6Om',
+		label: 'Under 6 OM',
+		sortable: true,
+	},
 ]
 
 const rows = computed(() => {
@@ -221,6 +251,7 @@ const rows = computed(() => {
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
 		lay0x0Om: item?.lay_0x0_other_models ? 'Lay 0x0 OM' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? modelNameToNaturalName(item.lay_0x0_footy) : '',
+		under6Om: item?.under_6_other_models ? 'Under 6 OM' : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
@@ -246,6 +277,9 @@ onMounted(() => {
 })
 
 function resolveResult(game, homeScore, awayScore) {
+	if (homeScore === 404) {
+		return (game.FTHG + game.FTAG < awayScore);
+	}
 	return (game.FTHG === homeScore && game.FTAG === awayScore);
 }
 
