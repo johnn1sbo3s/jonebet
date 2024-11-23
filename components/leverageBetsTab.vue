@@ -103,40 +103,15 @@
 					</div>
 				</template>
 
-				<template #lay0x0V12-data="{ row }">
+				<template #lay0x0Footy-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay0x0V12 }}
+							{{ row.lay0x0Footy }}
 						</span>
 
 						<div
 							class="flex items-center"
-							v-if="row.lay0x0V12 != '' && row.FTHG != null"
-						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 0)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 0)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
-						</div>
-					</div>
-				</template>
-
-				<template #lay0x0V13-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0V13 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0V13 != '' && row.FTHG != null"
+							v-if="row.lay0x0Footy != '' && row.FTHG != null"
 						>
 							<u-icon
 								v-if="!resolveResult(row, 0, 0)"
@@ -227,12 +202,8 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x0V12',
-		label: 'Lay 0x0 V12',
-		sortable: true,
-	},	{
-		key: 'lay0x0V13',
-		label: 'Lay 0x0 V13',
+		key: 'lay0x0Footy',
+		label: 'Lay 0x0 Footy',
 		sortable: true,
 	},
 	{
@@ -249,8 +220,7 @@ const rows = computed(() => {
 		lay1x3V6: item?.lay_1x3_v6 ? modelNameToNaturalName(item.lay_1x3_v6) : '',
 		lay3x0V1: item?.lay_3x0_v1 ? modelNameToNaturalName(item.lay_3x0_v1) : '',
 		lay0x0Om: item?.lay_0x0_other_models ? 'Lay 0x0 OM' : '',
-		lay0x0V12: item?.lay_0x0_v12 ? modelNameToNaturalName(item.lay_0x0_v12) : '',
-		lay0x0V13: item?.lay_0x0_v13 ? modelNameToNaturalName(item.lay_0x0_v13) : '',
+		lay0x0Footy: item?.lay_0x0_footy ? modelNameToNaturalName(item.lay_0x0_footy) : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
