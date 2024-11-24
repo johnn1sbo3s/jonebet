@@ -279,7 +279,7 @@ onMounted(() => {
 
 function resolveResult(game, homeScore, awayScore) {
 	if (homeScore === 404) {
-		return (game.FTHG + game.FTAG < awayScore);
+		return (game.FTHG + game.FTAG >= awayScore);
 	}
 	return (game.FTHG === homeScore && game.FTAG === awayScore);
 }
