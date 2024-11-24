@@ -39,17 +39,7 @@
 							class="flex items-center"
 							v-if="row.lay0x2V1 != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 2)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 2)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 0, 2)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -63,17 +53,7 @@
 							class="flex items-center"
 							v-if="row.lay0x2Om != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 2)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 2)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 0, 2)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -88,17 +68,7 @@
 							class="flex items-center"
 							v-if="row.lay3x0Om != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 3)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 3)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -113,17 +83,7 @@
 							class="flex items-center"
 							v-if="row.lay0x0Footy != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 0)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 0)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -138,17 +98,7 @@
 							class="flex items-center"
 							v-if="row.lay0x0Om != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 0, 0)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 0, 0)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -163,17 +113,7 @@
 							class="flex items-center"
 							v-if="row.under6Om != '' && row.FTHG != null"
 						>
-							<u-icon
-								v-if="!resolveResult(row, 404, 6)"
-								name="i-heroicons-check-circle"
-								class="text-green-600 w-5 h-5"
-							/>
-
-							<u-icon
-								v-if="resolveResult(row, 404, 6)"
-								name="i-heroicons-x-circle"
-								class="text-red-600 w-5 h-5"
-							/>
+							<result-icon :lost-result="resolveResult(row, 404, 6)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -282,6 +222,10 @@ function resolveResult(game, homeScore, awayScore) {
 		return (game.FTHG + game.FTAG >= awayScore);
 	}
 	return (game.FTHG === homeScore && game.FTAG === awayScore);
+}
+
+function resolveGameResultString(game) {
+	return `${game.Home} ${game.FTHG} x ${game.FTAG} ${game.Away}`;
 }
 
 async function exportTableToExcel(tableData) {
