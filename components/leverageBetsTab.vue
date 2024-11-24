@@ -88,21 +88,6 @@
 					</div>
 				</template>
 
-				<template #lay0x0Om-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0Om }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0Om != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
 				<template #under6Om-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -172,11 +157,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x0Om',
-		label: 'Lay 0x0 OM',
-		sortable: true,
-	},
-	{
 		key: 'under6Om',
 		label: 'Under 6 OM',
 		sortable: true,
@@ -190,7 +170,6 @@ const rows = computed(() => {
 		lay0x2V1: item?.lay_0x2_v1 ? 'Lay 0x2 V1' : '',
 		lay0x2Om: item?.lay_0x2_other_models ? 'Lay 0x2 OM' : '',
 		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
-		lay0x0Om: item?.lay_0x0_other_models ? 'Lay 0x0 OM' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		under6Om: item?.under_6_other_models ? 'Under 6 OM' : '',
 	}));
