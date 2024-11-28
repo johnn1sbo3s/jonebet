@@ -88,6 +88,36 @@
 					</div>
 				</template>
 
+				<template #lay0x0Simple-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay0x0Simple }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay0x0Simple != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
+				<template #lay1x3Om-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay1x3Om }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay1x3Om != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
 				<template #under6Om-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -157,8 +187,18 @@ let allColumns = [
 		sortable: true,
 	},
 	{
+		key: 'lay0x0Simple',
+		label: 'Lay 0x0 Simple',
+		sortable: true,
+	},
+	{
 		key: 'under6Om',
 		label: 'Under 6 OM',
+		sortable: true,
+	},
+	{
+		key: 'lay1x3Om',
+		label: 'Lay 1x3 OM',
 		sortable: true,
 	},
 ]
@@ -171,6 +211,8 @@ const rows = computed(() => {
 		lay0x2Om: item?.lay_0x2_other_models ? 'Lay 0x2 OM' : '',
 		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
+		lay0x0Simple: item?.lay_0x0_simple ? 'Lay 0x0 Simple' : '',
+		lay1x3Om: item?.lay_1x3_other_models ? 'Lay 1x3 OM' : '',
 		under6Om: item?.under_6_other_models ? 'Under 6 OM' : '',
 	}));
 
