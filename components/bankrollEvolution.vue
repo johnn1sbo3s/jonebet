@@ -12,7 +12,7 @@
 			<u-card class="h-full">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">
-						<p>Acúmulo mensal</p>
+						<p>Acúmulo total</p>
 						<p
 							class="text-lg"
 							:class="totalProfit > 0 ? 'text-violet-600' : 'text-red-600'"
