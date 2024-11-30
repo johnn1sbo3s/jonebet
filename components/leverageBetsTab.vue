@@ -30,30 +30,32 @@
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
 			>
-				<template #lay0x2V1-data="{ row }">
+				<template #lay1x3V6-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay0x2V1 }}
+							{{ row.lay1x3V6 }}
 						</span>
+
 						<div
 							class="flex items-center"
-							v-if="row.lay0x2V1 != '' && row.FTHG != null"
+							v-if="row.lay1x3V6 != '' && row.FTHG != null"
 						>
-							<result-icon :lost-result="resolveResult(row, 0, 2)" :result="resolveGameResultString(row)" />
+							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
 
-				<template #lay0x2Om-data="{ row }">
+				<template #lay3x0V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay0x2Om }}
+							{{ row.lay3x0V1 }}
 						</span>
+
 						<div
 							class="flex items-center"
-							v-if="row.lay0x2Om != '' && row.FTHG != null"
+							v-if="row.lay3x0V1 != '' && row.FTHG != null"
 						>
-							<result-icon :lost-result="resolveResult(row, 0, 2)" :result="resolveGameResultString(row)" />
+							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -69,6 +71,21 @@
 							v-if="row.lay3x0Om != '' && row.FTHG != null"
 						>
 							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
+				<template #lay0x3V1-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay0x3V1 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay0x3V1 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 0, 3)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -167,18 +184,23 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x2V1',
-		label: 'Lay 0x2 V1',
+		key: 'lay1x3V6',
+		label: 'Lay 1x3 V6',
 		sortable: true,
 	},
 	{
-		key: 'lay0x2Om',
-		label: 'Lay 0x2 OM',
+		key: 'lay3x0V1',
+		label: 'Lay 3x0 V1',
 		sortable: true,
 	},
 	{
 		key: 'lay3x0Om',
 		label: 'Lay 3x0 OM',
+		sortable: true,
+	},
+	{
+		key: 'lay0x3V1',
+		label: 'Lay 0x3 V1',
 		sortable: true,
 	},
 	{
@@ -207,9 +229,10 @@ const rows = computed(() => {
 	let betsRows = Object.values(props.data).map((item) => ({
 		...item,
 		date: formatDate(item.Date),
-		lay0x2V1: item?.lay_0x2_v1 ? 'Lay 0x2 V1' : '',
-		lay0x2Om: item?.lay_0x2_other_models ? 'Lay 0x2 OM' : '',
+		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
+		lay3x0V1: item?.lay_3x0_v1 ? 'Lay 3x0 V1' : '',
 		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
+		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		lay0x0Simple: item?.lay_0x0_simple ? 'Lay 0x0 Simple' : '',
 		lay1x3Om: item?.lay_1x3_other_models ? 'Lay 1x3 OM' : '',
