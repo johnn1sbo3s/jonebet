@@ -134,21 +134,6 @@
 						</div>
 					</div>
 				</template>
-
-				<template #under6Om-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.under6Om }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.under6Om != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 404, 6)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
 			</UTable>
 
 		</div>
@@ -214,11 +199,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'under6Om',
-		label: 'Under 6 OM',
-		sortable: true,
-	},
-	{
 		key: 'lay1x3Om',
 		label: 'Lay 1x3 OM',
 		sortable: true,
@@ -236,7 +216,6 @@ const rows = computed(() => {
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		lay0x0Simple: item?.lay_0x0_simple ? 'Lay 0x0 Simple' : '',
 		lay1x3Om: item?.lay_1x3_other_models ? 'Lay 1x3 OM' : '',
-		under6Om: item?.under_6_other_models ? 'Under 6 OM' : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
