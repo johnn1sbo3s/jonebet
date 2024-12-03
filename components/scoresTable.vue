@@ -44,6 +44,10 @@ const tableColumns = [
 		key: 'goals3',
 		label: '3 gols',
 	},
+	{
+		key: 'goals4',
+		label: '4 gols',
+	},
 ]
 
 const scores = computed(() => {
@@ -54,6 +58,7 @@ const scores = computed(() => {
 		goals1: (internalData.value?.Prob_1GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 		goals2: (internalData.value?.Prob_2GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 		goals3: (internalData.value?.Prob_3GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals4: (internalData.value?.Prob_4GH * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 	});
 	scoresRows.push({
 		team: internalData.value?.Away,
@@ -61,6 +66,7 @@ const scores = computed(() => {
 		goals1: (internalData.value?.Prob_1GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 		goals2: (internalData.value?.Prob_2GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 		goals3: (internalData.value?.Prob_3GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+		goals4: (internalData.value?.Prob_4GA * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
 	});
 
 	return scoresRows;
