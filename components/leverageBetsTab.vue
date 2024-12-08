@@ -120,15 +120,15 @@
 					</div>
 				</template>
 
-				<template #lay1x3Om-data="{ row }">
+				<template #lay1x3V7-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay1x3Om }}
+							{{ row.lay1x3V7 }}
 						</span>
 
 						<div
 							class="flex items-center"
-							v-if="row.lay1x3Om != '' && row.FTHG != null"
+							v-if="row.lay1x3V7 != '' && row.FTHG != null"
 						>
 							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
 						</div>
@@ -199,8 +199,8 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay1x3Om',
-		label: 'Lay 1x3 OM',
+		key: 'lay1x3V7',
+		label: 'Lay 1x3 V7',
 		sortable: true,
 	},
 ]
@@ -215,7 +215,7 @@ const rows = computed(() => {
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		lay0x0Simple: item?.lay_0x0_simple ? 'Lay 0x0 Simple' : '',
-		lay1x3Om: item?.lay_1x3_other_models ? 'Lay 1x3 OM' : '',
+		lay1x3V7: item?.lay_1x3_v7 ? 'Lay 1x3 V7' : '',
 	}));
 
 	allColumns = allColumns.filter(column => {
