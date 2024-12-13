@@ -55,7 +55,8 @@ const acceptedModels = [
     'lay_2_goals_home',
     'lay_2_goals_away',
     'lay_away_v1_cluster',
-    'lay_away_v3_cluster'
+    'lay_away_v3_cluster',
+    'lay_away_v13_betfair',
 ]
 
 const filteresGames = computed(() => {
