@@ -11,6 +11,10 @@
 				<leverage-bets-tab :data="leverageBets" />
 		</div>
 
+		<div v-else-if="selectedTab === 'two_goals'">
+				<two-goals-tab :data="dailyBets" />
+		</div>
+
 		<div v-else-if="selectedTab === 'placares'">
 				<scores-probabilities-tab :data="Object.values(scoresData)" />
 		</div>
@@ -27,6 +31,10 @@ const items = [
 		value: 'jogos',
 	},
 	{
+		label: 'Estratégia 2 gols',
+		value: 'two_goals',
+	},
+	{
 		label: 'Probabilidades de placares',
 		value: 'placares'
 	}
@@ -35,12 +43,14 @@ const items = [
 const requests = [
 	useFetch(`${apiUrl}/leverage-bets`),
 	useFetch(`${apiUrl}/scores-probabilities`),
+	useFetch(`${apiUrl}/daily-bets`),
 ];
 
 const responses = await Promise.all(requests);
 
 const { data: leverageBets } = responses[0];
 const { data: scoresData } = responses[1];
+const { data: dailyBets } = responses[2];
 
 const selectedTab = ref('jogos');
 
