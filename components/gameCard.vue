@@ -3,9 +3,9 @@
         <div
             v-for="item in data"
             :key="item._id"
-            class="flex gap-7 justify-between items-center w-full border border-gray-200 rounded-lg py-4 px-6 mb-2"
-            :class="clicky ? 'cursor-pointer hover:outline hover:outline-violet-400 hover:outline-1' : ''"
-            @click="clicky ? emits('click', item) : ''"
+            class="flex gap-7 justify-between items-center w-full border border-gray-200 rounded-lg py-4 px-6 mb-2 cursor-pointer hover:outline hover:outline-violet-400 hover:outline-1"
+            :class="item._id === chosen._id ? 'outline outline-violet-400 outline-1' : ''"
+            @click="emits('click', item)"
         >
             <div class="flex gap-7 items-center">
                 <div
@@ -57,6 +57,11 @@ const props = defineProps({
     clicky: {
         type: Boolean,
         default: false
+    },
+
+    chosen: {
+        type: Object,
+        default: () => {}
     }
 });
 

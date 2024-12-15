@@ -21,19 +21,30 @@
                 <game-card
                     class="w-full"
                     :data="filteredGames"
+                    :chosen="chosenGame"
                     clicky
+                    @click="handleGameClick"
                 />
             </div>
 
-            <div
-                class="w-1/2 h-full sticky top-4"
-            >
+            <div class="w-1/2 h-full sticky top-4">
                 <div
+                    v-if="!chosenGame._id"
                     class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
                 >
                     <p class="text-center text-gray-400 text-2xl">
-                        Selecione um card ao lado para ver o gráfico de acúmulo de capital do modelo.
+                        Selecione um card ao lado para ver informações sobre o jogo
                     </p>
+                </div>
+
+                <div
+                    v-else
+                    class="w-full flex justify-center outline outline-1 outline-gray-200 p-10 rounded-md"
+                >
+                    <game-details-card
+                        :chosen-game="chosenGame"
+                        :games="data"
+                    />
                 </div>
             </div>
         </div>
@@ -57,9 +68,9 @@ const acceptedModels = [
     'lay_away_v3_cluster'
 ]
 
-const chosenDay = ref(null);
+const chosenDay = ref({});
 const chosenModel = ref({ label: 'Todos os modelos', value: null });
-const chosenGame = ref(null);
+const chosenGame = ref({});
 
 const filteredGames = computed(() => {
     let filtered = props.data.filter((item) => acceptedModels.includes(item.Modelo));
@@ -92,6 +103,15 @@ const modelsOptions = computed(() => {
 onMounted(() => {
     chosenDay.value = datesOptions.value.at(-1);
 });
+
+function handleGameClick(game) {
+    if (game._id === chosenGame.value._id) {
+        chosenGame.value = {};
+        return;
+    }
+
+    chosenGame.value = game;
+}
 
 </script>
 
