@@ -98,7 +98,8 @@ Object.values(games).forEach((item) => {
   uniqueDates.add(item.Date);
 });
 
-dates.value = Array.from(uniqueDates);
+dates.value = Array.from(uniqueDates).slice(-7);
+
 const date = ref(dates.value[dates.value.length - 1]);
 
 const bets = ref([]);
