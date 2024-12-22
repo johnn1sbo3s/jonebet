@@ -30,6 +30,17 @@
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
 			>
+				<template #Time-data="{ row }">
+					<div class="flex items-center">
+						<span
+							v-if="isGameLive(row)"
+							class="mr-2 w-2 h-2 bg-violet-500 rounded-full animate-pulse"
+						/>
+
+						{{ row.Time }}
+					</div>
+				</template>
+
 				<template #lay1x3V6-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -41,21 +52,6 @@
 							v-if="row.lay1x3V6 != '' && row.FTHG != null"
 						>
 							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
-				<template #lay3x0V1-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay3x0V1 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay3x0V1 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -105,15 +101,45 @@
 					</div>
 				</template>
 
-				<template #lay0x0Simple-data="{ row }">
+				<template #lay0x0V16-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay0x0Simple }}
+							{{ row.lay0x0V16 }}
 						</span>
 
 						<div
 							class="flex items-center"
-							v-if="row.lay0x0Simple != '' && row.FTHG != null"
+							v-if="row.lay0x0V16 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
+				<template #lay0x0V17-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay0x0V17 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay0x0V17 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
+				<template #lay0x0V18-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay0x0V18 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay0x0V18 != '' && row.FTHG != null"
 						>
 							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
 						</div>
@@ -141,6 +167,7 @@
 </template>
 
 <script setup>
+import { DateTime } from 'luxon';
 
 const props = defineProps({
 	data: {
@@ -151,6 +178,7 @@ const props = defineProps({
 
 const chosenDay = ref('');
 const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' };
+const timeNow = ref(DateTime.now());
 
 let allColumns = [
 	{
@@ -174,11 +202,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay3x0V1',
-		label: 'Lay 3x0 V1',
-		sortable: true,
-	},
-	{
 		key: 'lay3x0Om',
 		label: 'Lay 3x0 OM',
 		sortable: true,
@@ -194,8 +217,18 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x0Simple',
-		label: 'Lay 0x0 Simple',
+		key: 'lay0x0V16',
+		label: 'Lay 0x0 V16',
+		sortable: true,
+	},
+	{
+		key: 'lay0x0V17',
+		label: 'Lay 0x0 V17',
+		sortable: true,
+	},
+	{
+		key: 'lay0x0V18',
+		label: 'Lay 0x0 V18',
 		sortable: true,
 	},
 	{
@@ -210,11 +243,12 @@ const rows = computed(() => {
 		...item,
 		date: formatDate(item.Date),
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
-		lay3x0V1: item?.lay_3x0_v1_betfair ? 'Lay 3x0 V1' : '',
 		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
-		lay0x0Simple: item?.lay_0x0_simple ? 'Lay 0x0 Simple' : '',
+		lay0x0V16: item?.lay_0x0_v16 ? 'Lay 0x0 V16' : '',
+		lay0x0V17: item?.lay_0x0_v17 ? 'Lay 0x0 V17' : '',
+		lay0x0V18: item?.lay_0x0_v18 ? 'Lay 0x0 V18' : '',
 		lay1x3V7: item?.lay_1x3_v7 ? 'Lay 1x3 V7' : '',
 	}));
 
@@ -238,6 +272,10 @@ const columns = computed(() => allColumns);
 
 onMounted(() => {
 	chosenDay.value = availableDates.value.at(-1);
+
+	setInterval(() => {
+		timeNow.value = DateTime.now();
+	}, 1000 * 60 * 3);
 })
 
 function resolveResult(game, homeScore, awayScore) {
@@ -249,6 +287,18 @@ function resolveResult(game, homeScore, awayScore) {
 
 function resolveGameResultString(game) {
 	return `${game.Home} ${game.FTHG} x ${game.FTAG} ${game.Away}`;
+}
+
+function isGameLive(game) {
+	if (!game || formatDate(game.Date) != formatDate(new Date().toISOString().split('T')[0])) {
+		return false;
+	}
+
+	let now = timeNow.value;
+	let gameTime = DateTime.fromFormat(game.Time, 'HH:mm');
+	let diffInMinutes = now.diff(gameTime, 'minutes').minutes;
+
+	return diffInMinutes >= 0 && diffInMinutes <= 120;
 }
 
 async function exportTableToExcel(tableData) {
