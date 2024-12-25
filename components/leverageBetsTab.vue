@@ -146,6 +146,21 @@
 					</div>
 				</template>
 
+				<template #lay0x0V19-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay0x0V19 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay0x0V19 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
 				<template #lay1x3V7-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -232,6 +247,11 @@ let allColumns = [
 		sortable: true,
 	},
 	{
+		key: 'lay0x0V19',
+		label: 'Lay 0x0 V19',
+		sortable: true,
+	},
+	{
 		key: 'lay1x3V7',
 		label: 'Lay 1x3 V7',
 		sortable: true,
@@ -249,12 +269,9 @@ const rows = computed(() => {
 		lay0x0V16: item?.lay_0x0_v16 ? 'Lay 0x0 V16' : '',
 		lay0x0V17: item?.lay_0x0_v17 ? 'Lay 0x0 V17' : '',
 		lay0x0V18: item?.lay_0x0_v18 ? 'Lay 0x0 V18' : '',
+		lay0x0V19: item?.lay_0x0_v19 ? 'Lay 0x0 V19' : '',
 		lay1x3V7: item?.lay_1x3_v7 ? 'Lay 1x3 V7' : '',
 	}));
-
-	allColumns = allColumns.filter(column => {
-		return betsRows.some(row => row[column.key] !== '' && row[column.key] !== null && row[column.key] !== undefined);
-	});
 
 	betsRows = betsRows.filter(row => row.date === chosenDay.value);
 
