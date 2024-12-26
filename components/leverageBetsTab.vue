@@ -101,51 +101,6 @@
 					</div>
 				</template>
 
-				<template #lay0x0V16-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0V16 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0V16 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
-				<template #lay0x0V17-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0V17 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0V17 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
-				<template #lay0x0V18-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0V18 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0V18 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
 				<template #lay0x0V19-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -232,21 +187,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x0V16',
-		label: 'Lay 0x0 V16',
-		sortable: true,
-	},
-	{
-		key: 'lay0x0V17',
-		label: 'Lay 0x0 V17',
-		sortable: true,
-	},
-	{
-		key: 'lay0x0V18',
-		label: 'Lay 0x0 V18',
-		sortable: true,
-	},
-	{
 		key: 'lay0x0V19',
 		label: 'Lay 0x0 V19',
 		sortable: true,
@@ -266,9 +206,6 @@ const rows = computed(() => {
 		lay3x0Om: item?.lay_3x0_other_models ? 'Lay 3x0 OM' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
-		lay0x0V16: item?.lay_0x0_v16 ? 'Lay 0x0 V16' : '',
-		lay0x0V17: item?.lay_0x0_v17 ? 'Lay 0x0 V17' : '',
-		lay0x0V18: item?.lay_0x0_v18 ? 'Lay 0x0 V18' : '',
 		lay0x0V19: item?.lay_0x0_v19 ? 'Lay 0x0 V19' : '',
 		lay1x3V7: item?.lay_1x3_v7 ? 'Lay 1x3 V7' : '',
 	}));
