@@ -353,7 +353,7 @@ const fetchAllData = async () => {
 		performanceData.json(),
 		betsData.json(),
 		yesterdayData.ok ? yesterdayData.json() : {},
-		dayBeforeYesterdayData.json(),
+		dayBeforeYesterdayData.ok ? dayBeforeYesterdayData.json() : {},
 	]);
 
 	return [performanceDataJson, betsDataJson, yesterdayDataJson, dayBeforeYesterdayDataJson];
