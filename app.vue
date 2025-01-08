@@ -46,6 +46,11 @@ const links = [
       to: "/dashboard",
     },
     {
+      label: "Jogos do Dia",
+      icon: "i-heroicons-calendar-days",
+      to: "/fixtures",
+    },
+    {
       label: "Apostas do Dia",
       icon: "i-heroicons-clipboard-document-list",
       to: "/daily-bets",
