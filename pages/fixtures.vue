@@ -1,24 +1,27 @@
 <template>
 	<div class="flex flex-col gap-5">
 		<page-header title="Jogos do dia" />
-        {{ fixturesToUse }}
+
 		<UTabs
 			:items="items"
 			@change="onChange"
 		/>
 
-		<div v-if="selectedTab === 'jogos'">
-				<leverage-bets-tab :data="leverageBets" />
+		<div v-if="selectedTab === 'games'">
+			<div v-if="isLoading"> Loading... </div>
+
+			<fixtures-list
+				v-else
+				:fixtures="fixturesToUse"
+				:selected-date="selectedDate"
+				:initial-date="initialDate"
+				@change="onChangeDate"
+			/>
 		</div>
 
 		<div v-else-if="selectedTab === 'two_goals'">
-				<two-goals-tab :data="dailyBets" />
+			vamo
 		</div>
-
-		<div v-else-if="selectedTab === 'placares'">
-				<scores-probabilities-tab :data="Object.values(scoresData)" />
-		</div>
-
 	</div>
 </template>
 
@@ -27,9 +30,12 @@ import { DateTime } from 'luxon';
 
 const apiUrl = useRuntimeConfig().public.API_URL;
 
-// const today = DateTime.now().toFormat('yyyy-MM-dd');
-const today = '2024-12-23';
+const today = DateTime.now().toFormat('yyyy-MM-dd');
 const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
+const fixturesToUse = ref([]);
+const initialDate = ref('');
+const selectedDate = ref('');
+const isLoading = ref(true);
 
 const items = [
 	{
@@ -53,20 +59,37 @@ const responses = await Promise.all(requests);
 const { data: todayFixtures } = responses[0];
 const { data: tomorrowFixtures } = responses[1];
 
-console.log(todayFixtures.value);
-
-const fixturesToUse = computed(() => {
-	if (_isEmpty(tomorrowFixtures.value)) {
-        console.log('tomorrow is empty. Vamos de today: ', today);
-		return todayFixtures.value;
-	}
-
-	return tomorrowFixtures.value;
+onMounted(() => {
+	resolveFixtures();
 });
 
+function resolveFixtures() {
+	if (_isEmpty(tomorrowFixtures.value)) {
+		fixturesToUse.value = todayFixtures.value;
+		initialDate.value = today;
+		selectedDate.value = today;
+		isLoading.value = false;
+		return;
+	}
+
+	fixturesToUse.value = tomorrowFixtures.value;
+	initialDate.value = tomorrow;
+	selectedDate.value = tomorrow;
+	isLoading.value = false;
+	return;
+}
 
 function onChange(tab) {
 	selectedTab.value = items[tab].value;
+}
+
+async function onChangeDate(date) {
+	selectedDate.value = date;
+	let transformedDate = date.split('/').reverse().join('-');
+	isLoading.value = true;
+	const { data } = await useFetch(`${apiUrl}/fixtures`, { params: { date: transformedDate } });
+	fixturesToUse.value = data;
+	isLoading.value = false;
 }
 
 </script>

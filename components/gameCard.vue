@@ -38,7 +38,10 @@
                     Modelo
                 </div>
 
-                <div class="text-gray-600 text-sm font-semibold">
+                <div
+                    v-if="!hideModel"
+                    class="text-gray-600 text-sm font-semibold"
+                >
                     {{ modelNameToNaturalName(item.Modelo) }}
                 </div>
             </div>
@@ -53,17 +56,26 @@ const props = defineProps({
         type: Array,
         required: true
     },
-
     clicky: {
         type: Boolean,
         default: false
     },
-
     chosen: {
         type: Object,
         default: () => {}
+    },
+    hideModel: {
+        type: Boolean,
+        default: false
     }
 });
+
+const internalData = ref([]);
+
+watch(() => props.data, (value) => {
+    console.log('data', value);
+    internalData.value = value;
+}, { immediate: true });
 
 const emits = defineEmits(['click']);
 
