@@ -1,5 +1,18 @@
 <template>
-    <div class="flex flex-col gap-3 w-full">
+    <div class="flex flex-col gap-3 w-full relative">
+        <div class="absolute top-1 right-1">
+            <UTooltip
+                text="Adicionar jogo ao meu bilhete"
+                :popper="{ placement: 'top' }"
+            >
+                <UIcon
+                    name="i-heroicons-bookmark"
+                    class="w-5 h-5 text-gray-400 hover:text-gray-500 cursor-pointer"
+                    @click="addToBetSlip"
+                />
+            </UTooltip>
+        </div>
+
         <div class="text-gray-500 flex justify-center">
             {{ formatDate(fixture.Date) }} - {{ fixture.Time }}
         </div>
@@ -120,6 +133,10 @@ const props = defineProps({
 const fixtureAllowedModels = computed(() => {
     return props.bets.map((item) => modelNameToNaturalName(item.Modelo));
 })
+
+function addToBetSlip() {
+    alert('Essa funcionalidade ainda está em desenvolvimento. Aguarde!');
+}
 
 </script>
 
