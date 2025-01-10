@@ -38,8 +38,18 @@
                     Entrada em
                 </div>
 
-                <div class="text-gray-600 text-sm font-semibold">
-                    {{ countModels(item) }} modelos
+                <div
+                    v-if="countModels(item) === 0"
+                    class="text-gray-600 text-sm font-semibold"
+                >
+                    Nenhum modelo
+                </div>
+
+                <div
+                    v-else
+                    class="text-gray-600 text-sm font-semibold"
+                >
+                    {{ countModels(item) }} {{ countModels(item) === 1 ? 'modelo' : 'modelos' }}
                 </div>
             </div>
         </div>

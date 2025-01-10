@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-3 w-full">
-        <div class="text-gray-600 flex justify-center">
+        <div class="text-gray-500 flex justify-center">
             {{ formatDate(fixture.Date) }} - {{ fixture.Time }}
         </div>
 
@@ -14,7 +14,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ fixture.FT_Odds_H.toFixed(2) }}
+                Home: {{ fixture.FT_Odds_H.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -22,7 +22,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ fixture.FT_Odds_D.toFixed(2) }}
+                Draw: {{ fixture.FT_Odds_D.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -30,13 +30,67 @@
                 variant="soft"
                 size="md"
             >
-                {{ fixture.FT_Odds_A.toFixed(2) }}
+                Away: {{ fixture.FT_Odds_A.toFixed(2) }}
             </UBadge>
+        </div>
+
+        <div class="flex justify-between gap-3 items-center mt-3 mb-2 text-lg font-semibold text-center">
+            <div class="flex flex-col items-center gap-2 w-1/2">
+                <div>
+                    Over 2.5
+                </div>
+
+                <div class="flex gap-2 items-center">
+                    <UBadge
+                        color="primary"
+                        variant="soft"
+                        size="md"
+                        class="w-fit"
+                    >
+                        Over: {{ fixture.Odds_O25.toFixed(2) }}
+                    </UBadge>
+
+                    <UBadge
+                        color="primary"
+                        variant="soft"
+                        size="md"
+                        class="w-fit"
+                    >
+                        Under: {{ fixture.Odds_U25.toFixed(2) }}
+                    </UBadge>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center gap-2 w-1/2">
+                <div>
+                    BTTS
+                </div>
+
+                <div class="flex gap-2 items-center">
+                    <UBadge
+                        color="primary"
+                        variant="soft"
+                        size="md"
+                        class="w-fit"
+                    >
+                        Sim: {{ fixture.BTTS_Yes.toFixed(2) }}
+                    </UBadge>
+
+                    <UBadge
+                        color="primary"
+                        variant="soft"
+                        size="md"
+                        class="w-fit"
+                    >
+                        Não: {{ fixture.BTTS_No.toFixed(2) }}
+                    </UBadge>
+                </div>
+            </div>
         </div>
 
         <div class="mt-6 w-full">
             <div class="flex flex-col gap-2 text-sm mb-3">
-                Modelos que deram entrada para este jogo:
+                {{ fixtureAllowedModels.length > 0 ? 'Modelos com entrada para este jogo: ' : 'Nenhum modelo com entrada para este jogo.' }}
             </div>
 
             <div
@@ -44,7 +98,7 @@
                 :key="model"
                 class="mb-1"
             >
-                - {{ model }}
+                • {{ model }}
             </div>
         </div>
     </div>
