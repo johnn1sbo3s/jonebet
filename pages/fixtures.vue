@@ -8,8 +8,8 @@
 		/>
 
 		<div v-if="selectedTab === 'games'">
-			<div v-if="isLoading"> Loading... </div>
-
+			<!-- <div v-if="isLoading"> Loading... </div> -->
+			<fixtures-list-skeleton v-if="isLoading" />
 			<fixtures-list
 				v-else
 				:fixtures="fixturesToUse"
