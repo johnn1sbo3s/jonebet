@@ -35,9 +35,9 @@
                     v-else
                     class="w-full flex justify-center outline outline-1 outline-gray-200 p-10 rounded-md"
                 >
-                    <game-details-card
+                    <game-card
                         :chosen-game="chosenGame"
-                        :games="data"
+                        :games="internalFixtures"
                     />
                 </div>
             </div>
@@ -47,8 +47,6 @@
 </template>
 
 <script setup>
-import { DateTime } from 'luxon';
-
 const props = defineProps({
     fixtures: {
         type: Array,
@@ -83,7 +81,6 @@ const datesOptions = computed(() => {
 });
 
 watch(() => props.fixtures, (value) => {
-    console.log('fixtures', value);
     internalFixtures.value = value;
 }, { immediate: true });
 

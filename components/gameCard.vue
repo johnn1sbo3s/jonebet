@@ -73,7 +73,6 @@ const props = defineProps({
 const internalData = ref([]);
 
 watch(() => props.data, (value) => {
-    console.log('data', value);
     internalData.value = value;
 }, { immediate: true });
 

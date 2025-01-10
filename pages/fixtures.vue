@@ -88,7 +88,7 @@ async function onChangeDate(date) {
 	let transformedDate = date.split('/').reverse().join('-');
 	isLoading.value = true;
 	const { data } = await useFetch(`${apiUrl}/fixtures`, { params: { date: transformedDate } });
-	fixturesToUse.value = data;
+	fixturesToUse.value = data.value;
 	isLoading.value = false;
 }
 
