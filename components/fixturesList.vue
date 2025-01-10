@@ -70,6 +70,7 @@ const emits = defineEmits(['change']);
 const internalFixtures = ref([]);
 const chosenDay = ref(props.selectedDate);
 const chosenGame = ref({});
+const filteredBets = ref([]);
 
 const datesOptions = computed(() => {
     let dates = [];
@@ -81,14 +82,6 @@ const datesOptions = computed(() => {
     }
 
     return dates;
-});
-
-const filteredBets = computed(() => {
-    return props.bets.filter((bet) => {
-        return bet.Date === chosenDay.value &&
-        bet.Home === chosenGame.value.Home &&
-        bet.Away === chosenGame.value.Away;
-    })
 });
 
 watch(() => props.fixtures, (value) => {
@@ -107,6 +100,13 @@ function handleGameClick(game) {
     }
 
     chosenGame.value = game;
+    filterBets();
+}
+
+function filterBets() {
+    filteredBets.value = props.bets.filter((bet) => {
+        return bet.Home === chosenGame.value.Home && bet.Away === chosenGame.value.Away;
+    })
 }
 
 </script>
