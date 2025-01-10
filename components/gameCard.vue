@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col">
         <div
-            v-for="item in data"
+            v-for="item in internalFixtures"
             :key="item._id"
             class="flex gap-7 justify-between items-center w-full border border-gray-200 rounded-lg py-4 px-6 mb-2 cursor-pointer hover:outline hover:outline-violet-400 hover:outline-1"
             :class="item._id === chosen._id ? 'outline outline-violet-400 outline-1' : ''"
@@ -35,14 +35,11 @@
 
             <div class="flex flex-col items-end gap-1">
                 <div class="text-xs text-gray-500">
-                    Modelo
+                    Entrada em
                 </div>
 
-                <div
-                    v-if="!hideModel"
-                    class="text-gray-600 text-sm font-semibold"
-                >
-                    {{ modelNameToNaturalName(item.Modelo) }}
+                <div class="text-gray-600 text-sm font-semibold">
+                    {{ countModels(item) }} modelos
                 </div>
             </div>
         </div>
@@ -52,31 +49,31 @@
 <script setup>
 
 const props = defineProps({
-    data: {
+    fixtures: {
         type: Array,
         required: true
     },
-    clicky: {
-        type: Boolean,
-        default: false
+    bets: {
+        type: Array,
+        required: true
     },
     chosen: {
         type: Object,
         default: () => {}
     },
-    hideModel: {
-        type: Boolean,
-        default: false
-    }
 });
 
-const internalData = ref([]);
+const emits = defineEmits(['click']);
 
-watch(() => props.data, (value) => {
-    internalData.value = value;
+const internalFixtures = ref([]);
+
+watch(() => props.fixtures, (value) => {
+    internalFixtures.value = value;
 }, { immediate: true });
 
-const emits = defineEmits(['click']);
+function countModels(fixture) {
+    return props.bets.filter((bet) => bet.Date === fixture.Date && bet.Home === fixture.Home && bet.Away === fixture.Away).length;
+}
 
 </script>
 

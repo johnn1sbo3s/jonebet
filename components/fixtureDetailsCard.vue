@@ -1,11 +1,11 @@
 <template>
     <div class="flex flex-col gap-3 w-full">
         <div class="text-gray-600 flex justify-center">
-            {{ formatDate(chosenGame.Date) }} - {{ chosenGame.Time }}
+            {{ formatDate(fixture.Date) }} - {{ fixture.Time }}
         </div>
 
         <div class="font-semibold text-2xl flex justify-center">
-            {{ chosenGame.Home }} x {{ chosenGame.Away }}
+            {{ fixture.Home }} x {{ fixture.Away }}
         </div>
 
         <div class="flex gap-1 justify-center">
@@ -14,7 +14,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_H.toFixed(2) }}
+                {{ fixture.FT_Odds_H.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -22,7 +22,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_D.toFixed(2) }}
+                {{ fixture.FT_Odds_D.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -30,7 +30,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_A.toFixed(2) }}
+                {{ fixture.FT_Odds_A.toFixed(2) }}
             </UBadge>
         </div>
 
@@ -40,7 +40,7 @@
             </div>
 
             <div
-                v-for="model in chosenGameAllowedModels"
+                v-for="model in fixtureAllowedModels"
                 :key="model"
                 class="mb-1"
             >
@@ -53,24 +53,18 @@
 <script setup>
 
 const props = defineProps({
-    chosenGame: {
+    fixture: {
         type: Object,
         required: true
     },
-
-    games: {
+    bets: {
         type: Array,
         required: true
     }
 })
 
-const chosenGameAllowedModels = computed(() => {
-    if (!props.chosenGame) {
-        return;
-    }
-
-    let filteredByChosenGame = props.games.filter((item) => item.Home === props.chosenGame.Home && item.Away === props.chosenGame.Away);
-    return new Set(filteredByChosenGame.map((item) => modelNameToNaturalName(item.Modelo)));
+const fixtureAllowedModels = computed(() => {
+    return props.bets.map((item) => modelNameToNaturalName(item.Modelo));
 })
 
 </script>

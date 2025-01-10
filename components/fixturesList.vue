@@ -13,10 +13,9 @@
             <div class="w-1/2">
                 <game-card
                     class="w-full"
-                    :data="internalFixtures"
+                    :fixtures="internalFixtures"
+                    :bets="bets"
                     :chosen="chosenGame"
-                    clicky
-                    hide-model
                     @click="handleGameClick"
                 />
             </div>
@@ -35,9 +34,9 @@
                     v-else
                     class="w-full flex justify-center outline outline-1 outline-gray-200 p-10 rounded-md"
                 >
-                    <game-card
-                        :chosen-game="chosenGame"
-                        :games="internalFixtures"
+                    <fixture-details-card
+                        :fixture="chosenGame"
+                        :bets="filteredBets"
                     />
                 </div>
             </div>
@@ -52,6 +51,10 @@ const props = defineProps({
         type: Array,
         required: true
     },
+    bets: {
+        type: Array,
+        required: true
+    },
     selectedDate: {
         type: String,
         default: ''
@@ -59,7 +62,7 @@ const props = defineProps({
     initialDate: {
         type: String,
         default: ''
-    }
+    },
 });
 
 const emits = defineEmits(['change']);
@@ -80,7 +83,16 @@ const datesOptions = computed(() => {
     return dates;
 });
 
+const filteredBets = computed(() => {
+    return props.bets.filter((bet) => {
+        return bet.Date === chosenDay.value &&
+        bet.Home === chosenGame.value.Home &&
+        bet.Away === chosenGame.value.Away;
+    })
+});
+
 watch(() => props.fixtures, (value) => {
+    console.log('internalFixtures', value);
     internalFixtures.value = value;
 }, { immediate: true });
 

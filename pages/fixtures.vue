@@ -15,6 +15,7 @@
 				:fixtures="fixturesToUse"
 				:selected-date="selectedDate"
 				:initial-date="initialDate"
+				:bets="bets"
 				@change="onChangeDate"
 			/>
 		</div>
@@ -32,10 +33,11 @@ const apiUrl = useRuntimeConfig().public.API_URL;
 
 const today = DateTime.now().toFormat('yyyy-MM-dd');
 const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
-const fixturesToUse = ref([]);
 const initialDate = ref('');
 const selectedDate = ref('');
 const isLoading = ref(true);
+
+const fixturesToUse = ref([]);
 
 const items = [
 	{
@@ -53,11 +55,13 @@ const selectedTab = ref('games');
 const requests = [
 	useFetch(`${apiUrl}/fixtures`, { params: { date: today } }),
     useFetch(`${apiUrl}/fixtures`, { params: { date: tomorrow } }),
+	useFetch(`${apiUrl}/daily-bets`),
 ];
 
 const responses = await Promise.all(requests);
 const { data: todayFixtures } = responses[0];
 const { data: tomorrowFixtures } = responses[1];
+const { data: bets } = responses[2];
 
 onMounted(() => {
 	resolveFixtures();
@@ -68,6 +72,7 @@ function resolveFixtures() {
 		fixturesToUse.value = todayFixtures.value;
 		initialDate.value = today;
 		selectedDate.value = today;
+
 		isLoading.value = false;
 		return;
 	}
