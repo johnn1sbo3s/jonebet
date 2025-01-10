@@ -92,8 +92,7 @@ const filteredBets = computed(() => {
 });
 
 watch(() => props.fixtures, (value) => {
-    console.log('internalFixtures', value);
-    internalFixtures.value = value;
+    internalFixtures.value = value.sort((a, b) => a.Time > b.Time ? 1 : -1);
 }, { immediate: true });
 
 watch(() => chosenDay.value, (newValue, oldValue) => {
