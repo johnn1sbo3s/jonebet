@@ -41,7 +41,7 @@
 
                 <div
                     v-else
-                    class="w-full flex justify-center outline outline-1 outline-gray-200 p-10 rounded-md"
+                    class="w-full flex justify-center outline outline-1 outline-gray-400 p-10 rounded-md"
                 >
                     <fixture-details-card
                         :fixture="chosenGame"
