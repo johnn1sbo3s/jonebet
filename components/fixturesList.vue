@@ -1,17 +1,26 @@
 <template>
     <div>
-        <div class="flex gap-2 mb-4">
+        <div class="flex gap-6 items-baseline">
             <USelectMenu
                 class="w-1/5"
                 placeholder="Selecione um dia"
                 :options="datesOptions"
                 v-model="chosenDay"
             />
+
+            <UTabs
+                :items="tabItems"
+                @change="onTabChange"
+            />
+        </div>
+
+        <div class="mb-3 text-sm mt-5">
+            {{ internalFixtures.length }} jogos
         </div>
 
         <div class="flex gap-3">
             <div class="w-1/2">
-                <game-card
+                <fixture-card
                     class="w-full"
                     :fixtures="internalFixtures"
                     :bets="bets"
@@ -65,12 +74,25 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['change']);
+const emits = defineEmits(['change', 'source-change']);
+
+const tabItems = [
+    {
+        label: 'Exchange',
+        value: 'exchange',
+    },
+	{
+		label: 'Bookie',
+		value: 'bookie',
+	},
+];
 
 const internalFixtures = ref([]);
 const chosenDay = ref(props.selectedDate);
 const chosenGame = ref({});
 const filteredBets = ref([]);
+const selectedTab = ref('exchange');
+const betfairFixtures = ref(true);
 
 const datesOptions = computed(() => {
     let dates = [];
@@ -92,6 +114,15 @@ watch(() => chosenDay.value, (newValue, oldValue) => {
     if (newValue === oldValue) return;
     emits('change', newValue);
 });
+
+watch(() => betfairFixtures, () => {
+    emits('source-change', betfairFixtures.value);
+}, { deep: true });
+
+function onTabChange(tab) {
+    selectedTab.value = tabItems[tab].value;
+    selectedTab.value == 'bookie' ? betfairFixtures.value = false : betfairFixtures.value = true;
+}
 
 function handleGameClick(game) {
     if (game._id === chosenGame.value._id) {

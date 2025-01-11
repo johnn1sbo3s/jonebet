@@ -8,8 +8,8 @@
 		/>
 
 		<div v-if="selectedTab === 'games'">
-			<!-- <div v-if="isLoading"> Loading... </div> -->
 			<fixtures-list-skeleton v-if="isLoading" />
+
 			<fixtures-list
 				v-else
 				:fixtures="fixturesToUse"
@@ -17,6 +17,7 @@
 				:initial-date="initialDate"
 				:bets="bets"
 				@change="onChangeDate"
+				@source-change="onSourceChange"
 			/>
 		</div>
 
@@ -36,6 +37,7 @@ const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd');
 const initialDate = ref('');
 const selectedDate = ref('');
 const isLoading = ref(true);
+const betfairFixtures = ref(true);
 
 const fixturesToUse = ref([]);
 
@@ -53,8 +55,8 @@ const items = [
 const selectedTab = ref('games');
 
 const requests = [
-	useFetch(`${apiUrl}/fixtures`, { params: { date: today } }),
-    useFetch(`${apiUrl}/fixtures`, { params: { date: tomorrow } }),
+	useFetch(`${apiUrl}/fixtures-betfair`, { params: { date: today } }),
+    useFetch(`${apiUrl}/fixtures-betfair`, { params: { date: tomorrow } }),
 	useFetch(`${apiUrl}/daily-bets`),
 ];
 
@@ -88,13 +90,28 @@ function onChange(tab) {
 	selectedTab.value = items[tab].value;
 }
 
+async function updateFixturesToUse() {
+	let url = `${apiUrl}/fixtures`
+	let transformedDate = selectedDate.value.split('/').reverse().join('-');
+
+	if (betfairFixtures.value) {
+		url = `${apiUrl}/fixtures-betfair`
+	}
+
+	const { data } = await useFetch(url, { params: { date: transformedDate } });
+	fixturesToUse.value = data.value;
+}
+
 async function onChangeDate(date) {
 	selectedDate.value = date;
-	let transformedDate = date.split('/').reverse().join('-');
 	isLoading.value = true;
-	const { data } = await useFetch(`${apiUrl}/fixtures`, { params: { date: transformedDate } });
-	fixturesToUse.value = data.value;
+	updateFixturesToUse()
 	isLoading.value = false;
+}
+
+function onSourceChange(betfairToggleStatus) {
+	betfairFixtures.value = betfairToggleStatus;
+	updateFixturesToUse();
 }
 
 </script>
