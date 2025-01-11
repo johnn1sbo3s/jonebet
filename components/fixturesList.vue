@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="flex gap-6 items-baseline mb-4">
+        <div class="flex gap-5 items-baseline mb-4">
             <USelectMenu
                 class="w-1/5"
                 placeholder="Selecione um dia"

@@ -11,7 +11,11 @@
 				<leverage-bets-tab :data="leverageBets" />
 		</div>
 
-		<div v-else-if="selectedTab === 'two_goals'">
+		<div v-else-if="selectedTab === 'lay0x0'">
+				<lay-zero-goals :data="dailyBets" />
+		</div>
+
+		<div v-else-if="selectedTab === 'twoGoals'">
 				<two-goals-tab :data="dailyBets" />
 		</div>
 
@@ -31,8 +35,12 @@ const items = [
 		value: 'jogos',
 	},
 	{
+		label: 'Lay 0x0',
+		value: 'lay0x0',
+	},
+	{
 		label: 'Estratégia 2 gols',
-		value: 'two_goals',
+		value: 'twoGoals',
 	},
 	{
 		label: 'Probabilidades de placares',
