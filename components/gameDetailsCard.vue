@@ -66,7 +66,6 @@ const props = defineProps({
 
 const chosenGameAllowedModels = computed(() => {
     if (!props.chosenGame) {
-        console.log('aiaiaia');
         return;
     }
 

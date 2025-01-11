@@ -118,10 +118,12 @@ const apiUrl = runtimeConfig.public.API_URL;
 
 const yesterdayStore = useYesterdayModelsStore();
 
-const month = DateTime.now().toFormat('M');
-const yesterday = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd');
-const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-dd');
-const onlyChosenModels = ref(true);
+const timezone = 'America/Sao_Paulo';
+const month = DateTime.now().setZone(timezone).toFormat('M');
+const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
+const dayBeforeYesterday = DateTime.now().setZone(timezone).minus({ days: 2 }).toFormat('yyyy-MM-dd');
+const onlyChosenModels = ref(false);
+
 const requests = [
 	useFetch(`${apiUrl}/bankroll-evolution`, { params: { filtered: onlyChosenModels }}),
 	useFetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: onlyChosenModels }}),
