@@ -8,21 +8,19 @@
 		/>
 
 		<div v-if="selectedTab === 'games'">
-			<fixtures-list-skeleton v-if="isLoading" />
-
 			<fixtures-list
-				v-else
 				:fixtures="fixturesToUse"
 				:selected-date="selectedDate"
 				:initial-date="initialDate"
 				:bets="bets"
+				:loading="isLoading"
 				@change="onChangeDate"
 				@source-change="onSourceChange"
 			/>
 		</div>
 
-		<div v-else-if="selectedTab === 'two_goals'">
-			vamo
+		<div v-else-if="selectedTab === 'betSlip'">
+			Essa funcionalidade ainda está em desenvolvimento. Aguarde!
 		</div>
 	</div>
 </template>
@@ -98,15 +96,15 @@ async function updateFixturesToUse() {
 		url = `${apiUrl}/fixtures-betfair`
 	}
 
+	isLoading.value = true;
 	const { data } = await useFetch(url, { params: { date: transformedDate } });
+	isLoading.value = false;
 	fixturesToUse.value = data.value;
 }
 
 async function onChangeDate(date) {
 	selectedDate.value = date;
-	isLoading.value = true;
 	updateFixturesToUse()
-	isLoading.value = false;
 }
 
 function onSourceChange(betfairToggleStatus) {

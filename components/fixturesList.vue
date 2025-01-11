@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="flex gap-6 items-baseline">
+        <div class="flex gap-6 items-baseline mb-4">
             <USelectMenu
                 class="w-1/5"
                 placeholder="Selecione um dia"
@@ -14,43 +14,46 @@
             />
         </div>
 
-        <div class="mb-3 text-sm mt-5">
-            {{ internalFixtures.length }} jogos
-        </div>
+        <fixtures-list-skeleton v-if="loading" />
 
-        <div class="flex gap-3">
-            <div class="w-1/2">
-                <fixture-card
-                    class="w-full"
-                    :fixtures="internalFixtures"
-                    :bets="bets"
-                    :chosen="chosenGame"
-                    @click="handleGameClick"
-                />
+        <div v-else>
+            <div class="mb-3 text-sm">
+                {{ internalFixtures.length }} jogos
             </div>
 
-            <div class="w-1/2 h-full sticky top-4">
-                <div
-                    v-if="!chosenGame._id"
-                    class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
-                >
-                    <p class="text-center text-gray-400 text-2xl">
-                        Selecione um card ao lado para ver informações sobre o jogo
-                    </p>
-                </div>
-
-                <div
-                    v-else
-                    class="w-full flex justify-center outline outline-1 outline-gray-400 p-10 rounded-md"
-                >
-                    <fixture-details-card
-                        :fixture="chosenGame"
-                        :bets="filteredBets"
+            <div class="flex gap-3">
+                <div class="w-1/2">
+                    <fixture-card
+                        class="w-full"
+                        :fixtures="internalFixtures"
+                        :bets="bets"
+                        :chosen="chosenGame"
+                        @click="handleGameClick"
                     />
                 </div>
+
+                <div class="w-1/2 h-full sticky top-4">
+                    <div
+                        v-if="!chosenGame._id"
+                        class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
+                    >
+                        <p class="text-center text-gray-400 text-2xl">
+                            Selecione um card ao lado para ver informações sobre o jogo
+                        </p>
+                    </div>
+
+                    <div
+                        v-else
+                        class="w-full flex justify-center outline outline-1 outline-gray-400 p-10 rounded-md"
+                    >
+                        <fixture-details-card
+                            :fixture="chosenGame"
+                            :bets="filteredBets"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -72,6 +75,10 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    loading: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const emits = defineEmits(['change', 'source-change']);
@@ -81,14 +88,14 @@ const tabItems = [
         label: 'Exchange',
         value: 'exchange',
     },
-	{
-		label: 'Bookie',
-		value: 'bookie',
-	},
+    {
+        label: 'Bookie',
+        value: 'bookie',
+    },
 ];
 
 const internalFixtures = ref([]);
-const chosenDay = ref(props.selectedDate);
+const chosenDay = ref(props.selectedDate || new Date().toISOString().split('T')[0]);
 const chosenGame = ref({});
 const filteredBets = ref([]);
 const selectedTab = ref('exchange');
@@ -96,7 +103,7 @@ const betfairFixtures = ref(true);
 
 const datesOptions = computed(() => {
     let dates = [];
-    let currentDate = new Date(props.initialDate);
+    let currentDate = props.initialDate ? new Date(props.initialDate) : new Date();
 
     for (let i = 0; i < 7; i++) {
         let virtualDate = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
@@ -137,7 +144,7 @@ function handleGameClick(game) {
 function filterBets() {
     filteredBets.value = props.bets.filter((bet) => {
         return bet.Home === chosenGame.value.Home && bet.Away === chosenGame.value.Away;
-    })
+    });
 }
 
 </script>
@@ -145,3 +152,4 @@ function filterBets() {
 <style lang="scss" scoped>
 
 </style>
+
