@@ -30,13 +30,13 @@ const links = [
   [
     {
       avatar: {
-        src: "https://avatars.githubusercontent.com/u/49643446?v=4",
+        src: "/dataplay-icon.png",
         srcset: "",
         alt: "",
       },
-      label: "Joneta You Planeta",
-      to: "https://github.com/johnn1sbo3s",
-      target: "_blank",
+      label: "DataPlay",
+      // to: "https://github.com/johnn1sbo3s",
+      // target: "_blank",
     },
   ],
   [
