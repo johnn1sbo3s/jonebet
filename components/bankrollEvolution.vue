@@ -15,7 +15,7 @@
 						<p>Acúmulo total</p>
 						<p
 							class="text-lg"
-							:class="totalProfit > 0 ? 'text-violet-600' : 'text-red-600'"
+							:class="totalProfit > 0 ? 'text-teal-600' : 'text-red-600'"
 						>
 							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
 						</p>
@@ -32,7 +32,7 @@
 								<p>{{ item.month }}</p>
 								<p
 									class="font-semibold"
-									:class="item.profit >= 0 ? 'text-violet-600' : 'text-red-600'"
+									:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
 								>
 									{{ item.profit.toLocaleString('pt-BR') }} u
 								</p>
@@ -138,8 +138,8 @@ const chartData = computed(() => {
 	  {
 		label: "Acúmulo de capital",
 		data: data,
-		borderColor: "#6d28d9",
-		backgroundColor: "rgb(109, 40, 217, 0.05)",
+		borderColor: "#25D88B",
+		backgroundColor: "rgb(37, 216, 139, 0.05)",
 		pointRadius: 3,
 		pointHoverRadius: 7,
 		fill: true,

@@ -17,7 +17,7 @@
 						text="O modelo possui atualização de resultados de ontem"
 					>
 						<span
-							class="mr-2 w-2 h-2 bg-violet-500 rounded-full"
+							class="mr-2 w-2 h-2 bg-teal-500 rounded-full"
 						/>
 					</UTooltip>
 					<span>{{ option }}</span>
@@ -208,8 +208,8 @@ const chartData = ref({
 		{
 			label: "Acúmulo de capital",
 			data: [],
-			borderColor: "#6d28d9",
-			backgroundColor: "rgb(109, 40, 217, 0.05)",
+			borderColor: "#25D88B",
+			backgroundColor: "rgb(37, 216, 139, 0.05)",
 			pointRadius: 1,
 			pointHoverRadius: 7,
 			fill: true,
@@ -218,7 +218,7 @@ const chartData = ref({
 		{
 			label: "Linha de tendência",
 			data: [],
-			borderColor: "rgb(59, 130, 246, 0.5)",
+			borderColor: "rgb(30, 158, 244, 0.6)",
 			borderWidth: 2,
 			backgroundColor: "rgb(109, 40, 217, 0.0)",
 			pointRadius: 0,

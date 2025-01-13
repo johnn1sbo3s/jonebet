@@ -14,7 +14,7 @@
       </UVerticalNavigation>
     </div>
     <div class="w-4/5">
-      <NuxtLoadingIndicator/>
+      <NuxtLoadingIndicator color="linear-gradient(to right, #25D88B, #1E9EF4)"/>
       <NuxtPage class="p-6" />
     </div>
   </div>
@@ -23,7 +23,7 @@
 <script setup>
 
 useHead({
-  title: "JoneBet",
+  title: "DataPlay",
 })
 
 const links = [

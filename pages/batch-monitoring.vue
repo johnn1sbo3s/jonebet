@@ -44,7 +44,7 @@
 				</div>
 				<div class="p-0.5 pr-4 max-h-screen-80 overflow-auto flex flex-col gap-4">
 					<batch-card
-						:class="item._id === chosenModel._id ? 'outline outline-violet-400 outline-1' : ''"
+						:class="item._id === chosenModel._id ? 'outline outline-teal-400 outline-1' : ''"
 						v-for="item in sortedSanitizedData"
 						:key="item._id"
 						:metric-item="item"
@@ -236,8 +236,8 @@ const chartData = computed(() => {
 		{
 			label: "Acúmulo de capital",
 			data: data,
-			borderColor: "#6d28d9",
-			backgroundColor: "rgb(109, 40, 217, 0.05)",
+			borderColor: "#25D88B",
+			backgroundColor: "rgb(37, 216, 139, 0.05)",
 			pointRadius: 1,
 			pointHoverRadius: 7,
 			fill: true,

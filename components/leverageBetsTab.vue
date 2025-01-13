@@ -34,7 +34,7 @@
 					<div class="flex items-center">
 						<span
 							v-if="isGameLive(row)"
-							class="mr-2 w-2 h-2 bg-violet-500 rounded-full animate-pulse"
+							class="mr-2 w-2 h-2 bg-teal-500 rounded-full animate-pulse"
 						/>
 
 						{{ row.Time }}

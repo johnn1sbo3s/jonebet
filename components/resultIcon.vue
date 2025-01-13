@@ -4,7 +4,7 @@
             <u-icon
                 v-if="!lostResult"
                 name="i-heroicons-check-circle"
-                class="text-green-600 w-5 h-5"
+                class="text-teal-600 w-5 h-5"
             />
 
             <u-icon

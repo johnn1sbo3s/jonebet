@@ -12,7 +12,7 @@
 						{{ option.label }}
 					</span>
 
-					<span class="text-xs text-purple-500 font-semibold mt-0.5">
+					<span class="text-xs text-teal-500 font-semibold mt-0.5">
 						{{ isGameLive(option) ? 'AO VIVO' : '' }}
 					</span>
 				</div>
@@ -21,9 +21,9 @@
 
 		<div
 			v-if="isGameLive(selectedOption)"
-			class="text-purple-500 font-semibold flex items-center"
+			class="text-teal-500 font-semibold flex items-center"
 		>
-			<span class="mr-2 w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+			<span class="mr-2 w-2 h-2 bg-teal-500 rounded-full animate-pulse" />
 			JOGO AO VIVO
 		</div>
 	</div>

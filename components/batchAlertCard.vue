@@ -7,7 +7,7 @@
                         <p class="text-ellipsis line-clamp-1">{{ modelName }}</p>
                         <p
                             v-if="model.total.qtd_jgs_atual >= 88"
-                            :class="profit >= 0 ? 'text-violet-600' : 'text-red-600'"
+                            :class="profit >= 0 ? 'text-teal-600' : 'text-red-600'"
                         >
                             {{ profit >= 0 ? '+' : '' }}{{ profit.toFixed(2).toLocaleString('pt-BR') }} u
                         </p>

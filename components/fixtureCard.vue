@@ -3,8 +3,8 @@
         <div
             v-for="item in internalFixtures"
             :key="item._id"
-            class="flex gap-7 justify-between items-center w-full border border-gray-400 rounded-lg py-4 px-6 mb-2.5 cursor-pointer hover:border-violet-400"
-            :class="item._id === chosen._id ? 'border border-violet-400 border-1' : ''"
+            class="flex gap-7 justify-between items-center w-full border border-gray-400 rounded-lg py-4 px-6 mb-2.5 cursor-pointer hover:border-teal-400"
+            :class="item._id === chosen._id ? 'border border-teal-400 border-1' : ''"
             @click="emits('click', item)"
         >
             <div class="flex gap-7 items-center">
