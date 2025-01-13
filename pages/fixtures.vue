@@ -2,26 +2,15 @@
 	<div class="flex flex-col gap-5">
 		<page-header title="Jogos do dia" />
 
-		<UTabs
-			:items="items"
-			@change="onChange"
+		<fixtures-list
+			:fixtures="fixturesToUse"
+			:selected-date="selectedDate"
+			:initial-date="initialDate"
+			:bets="bets"
+			:loading="isLoading"
+			@change="onChangeDate"
+			@source-change="onSourceChange"
 		/>
-
-		<div v-if="selectedTab === 'games'">
-			<fixtures-list
-				:fixtures="fixturesToUse"
-				:selected-date="selectedDate"
-				:initial-date="initialDate"
-				:bets="bets"
-				:loading="isLoading"
-				@change="onChangeDate"
-				@source-change="onSourceChange"
-			/>
-		</div>
-
-		<div v-else-if="selectedTab === 'betSlip'">
-			Essa funcionalidade ainda está em desenvolvimento. Aguarde!
-		</div>
 	</div>
 </template>
 
@@ -38,19 +27,6 @@ const isLoading = ref(true);
 const betfairFixtures = ref(true);
 
 const fixturesToUse = ref([]);
-
-const items = [
-	{
-		label: 'Jogos do dia',
-		value: 'games',
-	},
-	{
-		label: 'Meu bilhete',
-		value: 'betSlip',
-	},
-];
-
-const selectedTab = ref('games');
 
 const requests = [
 	useFetch(`${apiUrl}/fixtures-betfair`, { params: { date: today } }),
@@ -82,10 +58,6 @@ function resolveFixtures() {
 	selectedDate.value = tomorrow;
 	isLoading.value = false;
 	return;
-}
-
-function onChange(tab) {
-	selectedTab.value = items[tab].value;
 }
 
 async function updateFixturesToUse() {

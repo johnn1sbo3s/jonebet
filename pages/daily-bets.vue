@@ -44,7 +44,7 @@ const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
 
 const sort = { column: "Time", direction: "asc" };
-const favsOnly = ref(true);
+const favsOnly = ref(false);
 const favsModels = ref(FAVORITE_MODELS);
 favsModels.value = favsModels.value.map(item => modelNameToNaturalName(item));
 
