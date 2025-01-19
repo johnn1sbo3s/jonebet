@@ -35,8 +35,8 @@ const links = [
         alt: "",
       },
       label: "DataPlay",
-      // to: "https://github.com/johnn1sbo3s",
-      // target: "_blank",
+      to: "https://github.com/johnn1sbo3s",
+      target: "_blank",
     },
   ],
   [
