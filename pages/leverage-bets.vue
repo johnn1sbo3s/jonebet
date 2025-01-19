@@ -15,6 +15,10 @@
 				<lay-zero-goals :data="dailyBets" />
 		</div>
 
+		<div v-else-if="selectedTab === 'layGoleada'">
+				<lay-goleada :data="dailyBets" />
+		</div>
+
 		<div v-else-if="selectedTab === 'placares'">
 				<scores-probabilities-tab :data="Object.values(scoresData)" />
 		</div>
@@ -33,6 +37,10 @@ const items = [
 	{
 		label: 'Lay 0x0',
 		value: 'lay0x0',
+	},
+	{
+		label: 'Lay goleada',
+		value: 'layGoleada',
 	},
 	{
 		label: 'Probabilidades de placares',
