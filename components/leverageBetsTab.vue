@@ -68,6 +68,21 @@
 					</div>
 				</template>
 
+				<template #layGoleadaAwayV2-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.layGoleadaAwayV2 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.layGoleadaAwayV2 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 404, 404)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
 				<template #lay0x3V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -259,6 +274,7 @@ const rows = computed(() => {
 		...item,
 		date: formatDate(item.Date),
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
+		layGoleadaAwayV2: item?.lay_goleada_away_v2 ? 'Lay GA V2' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		lay0x0V19: item?.lay_0x0_v19 ? 'Lay 0x0 V19' : '',
@@ -289,7 +305,7 @@ onMounted(() => {
 
 function resolveResult(game, homeScore, awayScore) {
 	if (homeScore === 404) {
-		return (game.FTHG + game.FTAG >= awayScore);
+		return ((game.FTAG >= 4) && (game.FTHG < game.FTAG));
 	}
 	return (game.FTHG === homeScore && game.FTAG === awayScore);
 }
@@ -323,6 +339,7 @@ function randomizeBets() {
 		auxRows.unshift(randomBet);
 
 		if (randomBet.lay1x3V6) { availableModels.push('lay1x3V6') }
+		if (randomBet.layGoleadaAwayV2) { availableModels.push('layGoleadaAwayV2') }
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
 		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
 		if (randomBet.lay0x0V19) { availableModels.push('lay0x0V19') }
