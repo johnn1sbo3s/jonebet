@@ -248,6 +248,11 @@ let allColumns = [
 		sortable: true,
 	},
 	{
+		key: 'layGoleadaAwayV2',
+		label: 'Lay GA V2',
+		sortable: true,
+	},
+	{
 		key: 'lay0x3V1',
 		label: 'Lay 0x3 V1',
 		sortable: true,
