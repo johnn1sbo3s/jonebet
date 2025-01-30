@@ -344,6 +344,7 @@ function randomizeBets() {
 		auxRows.unshift(randomBet);
 
 		if (randomBet.lay1x3V6) { availableModels.push('lay1x3V6') }
+		if (randomBet.lay3x0V1) { availableModels.push('lay3x0V1') }
 		if (randomBet.layGoleadaAwayV2) { availableModels.push('layGoleadaAwayV2') }
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
 		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
