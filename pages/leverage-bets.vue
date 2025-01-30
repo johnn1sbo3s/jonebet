@@ -31,7 +31,7 @@ const apiUrl = useRuntimeConfig().public.API_URL;
 
 const items = [
 	{
-		label: 'Jogos selecionados',
+		label: 'Jogos de alavancagem',
 		value: 'jogos',
 	},
 	{

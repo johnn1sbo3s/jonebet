@@ -68,6 +68,21 @@
 					</div>
 				</template>
 
+				<template #lay3x0V1-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay3x0V1 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay3x0V1 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
 				<template #layGoleadaAwayV2-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -124,21 +139,6 @@
 							v-if="row.lay0x0V19 != '' && row.FTHG != null"
 						>
 							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
-				<template #lay1x3V7-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay1x3V7 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay1x3V7 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -248,6 +248,11 @@ let allColumns = [
 		sortable: true,
 	},
 	{
+		key: 'lay3x0V1',
+		label: 'Lay 3x0 V1',
+		sortable: true,
+	},
+	{
 		key: 'layGoleadaAwayV2',
 		label: 'Lay GA V2',
 		sortable: true,
@@ -267,11 +272,6 @@ let allColumns = [
 		label: 'Lay 0x0 V19',
 		sortable: true,
 	},
-	{
-		key: 'lay1x3V7',
-		label: 'Lay 1x3 V7',
-		sortable: true,
-	},
 ]
 
 const rows = computed(() => {
@@ -279,11 +279,11 @@ const rows = computed(() => {
 		...item,
 		date: formatDate(item.Date),
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
+		lay3x0V1: item?.lay_3x0_v1_betfair ? 'Lay 3x0 V1' : '',
 		layGoleadaAwayV2: item?.lay_goleada_away_v2 ? 'Lay GA V2' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 		lay0x0V19: item?.lay_0x0_v19 ? 'Lay 0x0 V19' : '',
-		lay1x3V7: item?.lay_1x3_v7 ? 'Lay 1x3 V7' : '',
 	}));
 
 	betsRows = betsRows.filter(row => row.date === chosenDay.value);
@@ -348,7 +348,6 @@ function randomizeBets() {
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
 		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
 		if (randomBet.lay0x0V19) { availableModels.push('lay0x0V19') }
-		if (randomBet.lay1x3V7) { availableModels.push('lay1x3V7') }
 
 		let randomModel = Math.floor(Math.random() * availableModels.length);
 		let randomBetModel = availableModels[randomModel];
