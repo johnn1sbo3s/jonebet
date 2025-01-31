@@ -15,8 +15,8 @@
 				<lay-zero-goals :data="dailyBets" />
 		</div>
 
-		<div v-else-if="selectedTab === 'layGoleada'">
-				<lay-goleada :data="dailyBets" />
+		<div v-else-if="selectedTab === 'layAway'">
+				<lay-away :data="dailyBets" />
 		</div>
 
 		<div v-else-if="selectedTab === 'placares'">
@@ -39,8 +39,8 @@ const items = [
 		value: 'lay0x0',
 	},
 	{
-		label: 'Lay goleada',
-		value: 'layGoleada',
+		label: 'Lay Away',
+		value: 'layAway',
 	},
 	{
 		label: 'Probabilidades de placares',

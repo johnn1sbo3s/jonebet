@@ -62,9 +62,11 @@ const props = defineProps({
 });
 
 const acceptedModels = [
-    'lay_goleada_home_v1',
-    'lay_goleada_home_v3',
-    'lay_goleada_away_v2',
+    'lay_away_v1_cluster',
+    'lay_away_v3_cluster',
+    'lay_away_v4_cluster',
+    'lay_away_v1_cluster_tr',
+    'lay_away_v3_cluster_tr',
 ]
 
 const chosenDay = ref({});
