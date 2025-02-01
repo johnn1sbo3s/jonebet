@@ -1,7 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui", "nuxt-lodash", "@nuxt/fonts", "@pinia/nuxt"],
+  modules: ["@nuxt/ui", "nuxt-lodash", "@nuxt/fonts", "@pinia/nuxt", "@nuxt/scripts"],
   devtools: { enabled: false },
+
+  scripts: {
+    registry: {
+      clarity: {
+        id: 'q35mj3r8vd'
+      }
+    }
+  },
 
   lodash: {
 	prefix: "_",
