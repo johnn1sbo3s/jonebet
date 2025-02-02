@@ -127,21 +127,6 @@
 						</div>
 					</div>
 				</template>
-
-				<template #lay0x0V19-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.lay0x0V19 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.lay0x0V19 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
 			</UTable>
 		</div>
 
@@ -267,11 +252,6 @@ let allColumns = [
 		label: 'Lay 0x0 Footy',
 		sortable: true,
 	},
-	{
-		key: 'lay0x0V19',
-		label: 'Lay 0x0 V19',
-		sortable: true,
-	},
 ]
 
 const rows = computed(() => {
@@ -283,7 +263,6 @@ const rows = computed(() => {
 		layGoleadaAwayV2: item?.lay_goleada_away_v2 ? 'Lay GA V2' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
-		lay0x0V19: item?.lay_0x0_v19 ? 'Lay 0x0 V19' : '',
 	}));
 
 	betsRows = betsRows.filter(row => row.date === chosenDay.value);
@@ -348,7 +327,6 @@ function randomizeBets() {
 		if (randomBet.layGoleadaAwayV2) { availableModels.push('layGoleadaAwayV2') }
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
 		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
-		if (randomBet.lay0x0V19) { availableModels.push('lay0x0V19') }
 
 		let randomModel = Math.floor(Math.random() * availableModels.length);
 		let randomBetModel = availableModels[randomModel];
