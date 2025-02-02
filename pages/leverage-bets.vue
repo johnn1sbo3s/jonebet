@@ -18,11 +18,6 @@
 		<div v-else-if="selectedTab === 'layAway'">
 				<lay-away :data="dailyBets" />
 		</div>
-
-		<div v-else-if="selectedTab === 'placares'">
-				<scores-probabilities-tab :data="Object.values(scoresData)" />
-		</div>
-
 	</div>
 </template>
 
@@ -42,23 +37,17 @@ const items = [
 		label: 'Lay Away',
 		value: 'layAway',
 	},
-	{
-		label: 'Probabilidades de placares',
-		value: 'placares'
-	}
 ];
 
 const requests = [
 	useFetch(`${apiUrl}/leverage-bets`),
-	useFetch(`${apiUrl}/scores-probabilities`),
 	useFetch(`${apiUrl}/daily-bets`),
 ];
 
 const responses = await Promise.all(requests);
 
 const { data: leverageBets } = responses[0];
-const { data: scoresData } = responses[1];
-const { data: dailyBets } = responses[2];
+const { data: dailyBets } = responses[1];
 
 const selectedTab = ref('jogos');
 

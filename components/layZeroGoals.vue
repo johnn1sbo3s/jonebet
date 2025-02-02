@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="flex gap-2 mb-4">
+        <div class="flex gap-2 mb-5">
             <USelectMenu
                 class="w-1/5"
                 placeholder="Selecione um dia"
@@ -16,7 +16,9 @@
             />
         </div>
 
-        <div class="flex gap-3">
+        <div class="text-sm">{{ filteredGames.length }} jogos</div>
+
+        <div class="flex gap-3 mt-2.5">
             <div class="w-1/2">
                 <game-card
                     class="w-full"
@@ -65,7 +67,6 @@ const acceptedModels = [
     'lay_0x0_v7',
     'lay_0x0_footy',
     'lay_0x0_v2_betfair',
-    'lay_0x0_v19'
 ]
 
 const chosenDay = ref({});
@@ -75,6 +76,11 @@ const chosenGame = ref({});
 const filteredGames = computed(() => {
     let filtered = props.data.filter((item) => acceptedModels.includes(item.Modelo));
     filtered = filtered.filter((item) => formatDate(item.Date) === chosenDay.value);
+    filtered = filtered.filter((item, index, self) =>
+        index === self.findIndex((t) => (
+            t.Home === item.Home && t.Date === item.Date && t.Away === item.Away
+        ))
+    );
 
     if (chosenModel.value.value) {
         filtered = filtered.filter((item) => item.Modelo === chosenModel.value.value);
