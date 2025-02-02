@@ -3,8 +3,6 @@ export default defineNuxtConfig({
   modules: ["@nuxt/ui", "nuxt-lodash", "@nuxt/fonts", "@pinia/nuxt", "@nuxt/scripts"],
   devtools: { enabled: false },
 
-  ssr: false,
-
   scripts: {
     registry: {
       clarity: {
