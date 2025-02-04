@@ -68,6 +68,21 @@
 					</div>
 				</template>
 
+				<template #lay1x3V8-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay1x3V8 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay1x3V8 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
 				<template #lay3x0V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -233,6 +248,11 @@ let allColumns = [
 		sortable: true,
 	},
 	{
+		key: 'lay1x3V8',
+		label: 'Lay 1x3 V8',
+		sortable: true,
+	},
+	{
 		key: 'lay3x0V1',
 		label: 'Lay 3x0 V1',
 		sortable: true,
@@ -259,6 +279,7 @@ const rows = computed(() => {
 		...item,
 		date: formatDate(item.Date),
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
+		lay1x3V8: item?.lay_1x3_v8 ? 'Lay 1x3 V8' : '',
 		lay3x0V1: item?.lay_3x0_v1_betfair ? 'Lay 3x0 V1' : '',
 		layGoleadaAwayV2: item?.lay_goleada_away_v2 ? 'Lay GA V2' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
@@ -323,6 +344,7 @@ function randomizeBets() {
 		auxRows.unshift(randomBet);
 
 		if (randomBet.lay1x3V6) { availableModels.push('lay1x3V6') }
+		if (randomBet.lay1x3V8) { availableModels.push('lay1x3V8') }
 		if (randomBet.lay3x0V1) { availableModels.push('lay3x0V1') }
 		if (randomBet.layGoleadaAwayV2) { availableModels.push('layGoleadaAwayV2') }
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
