@@ -43,7 +43,7 @@ const links = [
 		{
 			label: "Dashboard",
 			icon: "i-heroicons-squares-2x2",
-			to: "/dashboard",
+			to: "/",
 		},
 		{
 			label: "Jogos do Dia",
@@ -56,7 +56,7 @@ const links = [
 			to: "/daily-bets",
 		},
 		{
-			label: "Performance",
+			label: "Performance dos modelos",
 			icon: "i-heroicons-chart-bar",
 			to: "/performance",
 		},
