@@ -45,10 +45,10 @@ const lastDay = computed(() => {
 
 const cardDescription = computed(() => {
     if (props.model.total.qtd_jgs_atual >= 88) {
-        return `O modelo está a <b>${100 - props.model.total.qtd_jgs_atual} jogos</b> de completar 100 jogos.`;
+        return `<b>${100 - props.model.total.qtd_jgs_atual} jogos</b> para completar um bloco de 100`;
     }
 
-    return `O modelo completou 100 jogos dia <b>${lastDay.value}</b>.`;
+    return `Completou um bloco de 100 jogos dia <b>${lastDay.value}</b>`;
 });
 
 </script>
