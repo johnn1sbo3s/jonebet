@@ -238,11 +238,6 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'layGoleadaAwayV2',
-		label: 'Lay GA V2',
-		sortable: true,
-	},
-	{
 		key: 'lay0x3V1',
 		label: 'Lay 0x3 V1',
 		sortable: true,
@@ -260,7 +255,6 @@ const rows = computed(() => {
 		date: formatDate(item.Date),
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
 		lay3x0V1: item?.lay_3x0_v1_betfair ? 'Lay 3x0 V1' : '',
-		layGoleadaAwayV2: item?.lay_goleada_away_v2 ? 'Lay GA V2' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
 	}));
@@ -324,7 +318,6 @@ function randomizeBets() {
 
 		if (randomBet.lay1x3V6) { availableModels.push('lay1x3V6') }
 		if (randomBet.lay3x0V1) { availableModels.push('lay3x0V1') }
-		if (randomBet.layGoleadaAwayV2) { availableModels.push('layGoleadaAwayV2') }
 		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
 		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
 
