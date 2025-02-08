@@ -43,6 +43,15 @@
                     </div>
 
                     <div
+                        v-else-if="showSkeleton"
+                        class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-gray-200 p-10 rounded-md bg-slate-100"
+                    >
+                        <p class="text-center text-gray-400 text-sm">
+                            Carregando...
+                        </p>
+                    </div>
+
+                    <div
                         v-else
                         class="w-full flex justify-center outline outline-1 outline-gray-400 p-10 rounded-md"
                     >
@@ -100,6 +109,7 @@ const chosenGame = ref({});
 const filteredBets = ref([]);
 const selectedTab = ref('exchange');
 const betfairFixtures = ref(true);
+const showSkeleton = ref(false);
 
 const datesOptions = computed(() => {
     let dates = [];
@@ -131,14 +141,20 @@ function onTabChange(tab) {
     selectedTab.value == 'bookie' ? betfairFixtures.value = false : betfairFixtures.value = true;
 }
 
-function handleGameClick(game) {
-    if (game._id === chosenGame.value._id) {
-        chosenGame.value = {};
-        return;
-    }
+async function handleGameClick(game) {
+    showSkeleton.value = true;
 
-    chosenGame.value = game;
-    filterBets();
+    setTimeout(() => {
+        if (game._id === chosenGame.value._id) {
+            chosenGame.value = {};
+            return;
+        }
+
+        chosenGame.value = game;
+        filterBets();
+
+        showSkeleton.value = false;
+    }, 100);
 }
 
 function filterBets() {
