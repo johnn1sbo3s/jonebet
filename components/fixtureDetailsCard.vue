@@ -17,6 +17,10 @@
             {{ formatDate(fixture.Date) }} - {{ fixture.Time }}
         </div>
 
+        <div class="-mt-3 text-sm flex text-gray-500 justify-center">
+            {{ fixture.League || '' }}
+        </div>
+
         <div class="font-semibold text-2xl flex justify-center">
             {{ fixture.Home }} x {{ fixture.Away }}
         </div>
