@@ -2,7 +2,7 @@
     <div>
         <u-card>
             <div class="flex flex-col gap-3">
-                <div class="flex justify-between gap-2">
+                <div class="flex justify-between gap-3">
                     <div class="flex gap-2 items-center font-semibold">
                         <p class="text-ellipsis line-clamp-1">{{ modelName }}</p>
                         <p
@@ -14,7 +14,7 @@
                     </div>
 
                     <NuxtLink :to="`/performance/${model.modelo}`">
-                        <u-button size="2xs" variant="soft" color="blue">Performance</u-button>
+                        <u-button size="2xs" variant="ghost">Ver mais</u-button>
                     </NuxtLink>
                 </div>
 

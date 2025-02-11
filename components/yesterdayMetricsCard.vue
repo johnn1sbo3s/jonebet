@@ -15,7 +15,7 @@
             >
                 <p>{{ item.name }}</p>
                 <p
-                    class="text-2xl font-black"
+                    class="text-xl font-black"
                     :class="item.value >= 0 ? 'text-teal-600' : 'text-red-600'"
                 >
                     {{ item.value.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} {{ item.sufix }}
@@ -25,7 +25,7 @@
         </template>
 
         <template #footer>
-        <p class="text-xs">u = Unidade</p>
+        <p class="text-xs text-gray-600">Considera-se 1 unidade como 1% da banca</p>
         </template>
     </u-card>
 
