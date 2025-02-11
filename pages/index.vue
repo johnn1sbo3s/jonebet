@@ -152,14 +152,14 @@ const driverObj = driver({
 	],
 	onDestroyStarted: () => {
 		if (!driverObj.hasNextStep()) {
-			localStorage.setItem('doneTour', true);
+			localStorage.setItem('doneTourHome', true);
 			driverObj.destroy();
 		}
 	},
 });
 
 onMounted(() => {
-	if (!isMobile && localStorage.getItem('doneTour') !== 'true') {
+	if (!isMobile && localStorage.getItem('doneTourHome') !== 'true') {
 		driverObj.drive();
 	}
 });

@@ -26,7 +26,10 @@
 		</USelectMenu>
 	</div>
 	<div class="w-full gap-3 flex">
-		<div class="w-2/5 flex flex-col gap-3">
+		<div
+			id="metrics-cards"
+			class="w-2/5 flex flex-col gap-3"
+		>
 			<metrics-card
 				:metrics-data="valData"
 				:card-title="'Métricas de validação'"
@@ -36,7 +39,10 @@
 				:card-title="'Métricas de jogos reais'"
 			/>
 		</div>
-		<UCard class="w-3/5">
+		<UCard
+			id="model-chart"
+			class="w-3/5"
+		>
 			<template #header>
 				<div class="flex justify-between">
 					<p class="font-semibold">Gráfico de acúmulo de capital</p>
@@ -82,7 +88,7 @@
 			</div>
 		</UCard>
 	</div>
-	<UCard>
+	<UCard id="block-metrics">
 		<template #header>
 		<p class="font-semibold">Resultados por blocos de 100 jogos</p>
 		</template>
@@ -185,6 +191,55 @@
 import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+const { isMobile } = useDevice();
+
+const driverObj = driver({
+	showProgress: true,
+	allowClose: false,
+	steps: [
+		{
+			element: '#metrics-cards',
+			popover: {
+				title: 'Métricas do modelo',
+				description: 'Os dois cards de métricas exibem os dados do modelo, tanto em seu conjunto de validação em backtest quanto em seus dados reais.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+		{
+			element: '#model-chart',
+			popover: {
+				title: 'Acúmulo de capital do modelo',
+				description: 'O gráfico apresenta a evolução do lucro do modelo. Tudo que está à esquerda da linha vertical são os dados de validação em backtest, e tudo que está à direita são os dados reais, atualizados dia a dia.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+		{
+			element: '#block-metrics',
+			popover: {
+				title: 'Resultados em blocos de 100 jogos',
+				description: 'Essas métricas levam em consideração blocos de 100 entradas do modelo. Os valores apresentam a média de lucro, desvio padrão e intervalo de confiança do lucro a cada bloco.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+	],
+	onDestroyStarted: () => {
+		if (!driverObj.hasNextStep()) {
+			localStorage.setItem('doneTourPerformance', true);
+			driverObj.destroy();
+		}
+	},
+});
+
+onMounted(() => {
+	if (!isMobile && localStorage.getItem('doneTourPerformance') !== 'true') {
+		driverObj.drive();
+	}
+});
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
@@ -295,7 +350,7 @@ const chartStyle = ref({
 });
 
 const blocksHistoryColumns = ref([
-	{ key: "Profit", label: "Profit" },
+	{ key: "Profit", label: "Lucro" },
 	{ key: "Qtd_Jogos", label: "Quantidade de jogos" },
 	{ key: "ROI", label: "ROI" },
 	{ key: "Ult_Dia", label: "Último dia do bloco" },
@@ -303,14 +358,14 @@ const blocksHistoryColumns = ref([
 
 const dailyBetsColumns = ref([
 	{ key: "date", label: "Dia" },
-	{ key: "gain", label: "Profit" },
+	{ key: "gain", label: "Lucro" },
 	{ key: "gameCount", label: "Jogos" },
 	{ key: "accumulated", label: "Acumulado" },
 ]);
 
 const monthlyBetsColumns = ref([
 	{ key: "monthYear", label: "Mês" },
-	{ key: "profit", label: "Profit" },
+	{ key: "profit", label: "Lucro" },
 	{ key: "gameCount", label: "Jogos" },
 	{ key: "accumulated", label: "Acumulado" },
 ]);
@@ -321,7 +376,7 @@ const allBetsDataFilteredColumns = ref([
 	{ key: "Away", label: "Fora" },
 	{ key: "Odds", label: "Odds" },
 	{ key: "Resultado", label: "Resultado" },
-	{ key: "Profit", label: "Profit" },
+	{ key: "Profit", label: "Lucro" },
 ]);
 
 const realData = ref({});
