@@ -11,6 +11,7 @@
     "backend": "json-server --watch db/db.json --port 5000"
   },
   "dependencies": {
+    "@fullstory/browser": "^2.0.6",
     "@nuxt/fonts": "^0.6.1",
     "@nuxt/scripts": "^0.9.5",
     "@nuxt/ui": "^2.15.0",

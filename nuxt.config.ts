@@ -8,6 +8,7 @@ export default defineNuxtConfig({
    "@nuxt/scripts",
    "@nuxtjs/device"
   ],
+
   devtools: { enabled: false },
 
   scripts: {

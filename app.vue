@@ -43,8 +43,13 @@
 </template>
 
 <script setup>
+import { init } from '@fullstory/browser';
 const { isMobile } = useDevice();
 const showAlert = ref(true);
+
+if (process.client) {
+  init({ orgId: 'o-22P180-na1', debug: true });
+}
 
 useHead({
 	title: "DataPlay",
