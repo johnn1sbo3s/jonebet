@@ -1,6 +1,6 @@
 <template>
 	<div class="flex gap-3">
-		<div class="w-4/6">
+		<div class="w-7/12">
 			<LineChart
 			:chartData="chartData"
 			:options="chartOptions"
@@ -8,7 +8,7 @@
 			/>
 		</div>
 
-		<div class="w-2/6 pt-8 pb-7 h-full">
+		<div class="w-5/12 pt-8 pb-7 h-full">
 			<u-card class="h-full">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">

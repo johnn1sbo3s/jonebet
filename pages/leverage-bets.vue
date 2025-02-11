@@ -1,10 +1,14 @@
 <template>
-	<div class="flex flex-col gap-5">
-		<page-header title="Apostas para alavancagem" />
+	<div class="flex flex-col gap-3">
+		<page-header
+			title="Apostas para alavancagem"
+			description="Seleção de entradas com alto índice de acertos, para métodos de alavancagem"
+		/>
 
 		<UTabs
 			:items="items"
 			@change="onChange"
+			class="mt-3"
 		/>
 
 		<div v-if="selectedTab === 'jogos'">

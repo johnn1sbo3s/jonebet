@@ -2,27 +2,24 @@
 	<div class="flex flex-col gap-5">
 		<div class="flex justify-between items-start">
 			<page-header title="Bem-vindo(a) ao DataPlay!" />
-
-			<div class="flex items-center gap-2">
-				<div class="pt-2 flex gap-3">
-					<UToggle
-					size="md"
-					on-icon="i-heroicons-check-20-solid"
-					off-icon="i-heroicons-x-mark-20-solid"
-					:loading="monthDataStatus === 'pending'"
-					v-model="onlyChosenModels"
-					@click="onlyChosenModels = !onlyChosenModels"
-					/>
-				</div>
-
-				<div class="text-sm pt-1.5">Apenas modelos selecionados</div>
-			</div>
 		</div>
+
+		<UAlert
+			v-if="showAlert"
+			color="blue"
+			variant="soft"
+			title="Atenção"
+			:close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'gray', variant: 'link', padded: false }"
+			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder. Jogue com consciência!"
+			@close="showAlert = false"
+		/>
+
 
 		<div class="flex flex-col gap-2">
 			<p class="text-sm">{{ batchModels.length }} alertas</p>
 			<u-carousel
 				v-slot="{ item }"
+				id="carousel"
 				:items="batchModels"
 				:ui="{ item: 'snap-align-none',
 					container: 'relative w-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2',
@@ -37,7 +34,10 @@
 			class="w-full h-[510px]"
 		/>
 
-		<u-card v-else>
+		<u-card
+			v-else
+			id="bankroll-evolution"
+		>
 			<template #header>
 				<p class="font-semibold">Evolução da banca</p>
 			</template>
@@ -55,26 +55,27 @@
 			class="w-full h-[330px]"
 		/>
 
-		<u-card v-else>
+		<u-card
+			v-else
+			id="yesterday-metrics"
+		>
 			<template #header>
 				<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
 			</template>
 
 			<div class="flex gap-5 w-full">
-				<yesterday-metrics-card
-				:items="yesterdayMetrics"
-				/>
+				<yesterday-metrics-card :items="yesterdayMetrics"/>
 
 				<ranking-models
-				:title="'Top 3 modelos'"
-				:items="top3YesterdayModels"
-				:all-results-data="yesterdayResults"
+					:title="'Top 3 modelos'"
+					:items="top3YesterdayModels"
+					:all-results-data="yesterdayResults"
 				/>
 
 				<yesterday-details-card
-				:number-bets="yesterdayTotal.Num_Bets"
-				:number-models="yesterdayTotal.Method"
-				:positive-models="positiveYesterdayModels"
+					:number-bets="yesterdayTotal.Num_Bets"
+					:number-models="yesterdayTotal.Method"
+					:positive-models="positiveYesterdayModels"
 				/>
 			</div>
 		</u-card>
@@ -84,7 +85,10 @@
 		class="w-full h-[330px]"
 		/>
 
-		<u-card v-else>
+		<u-card
+			v-else
+			id="month-metrics"
+		>
 			<template #header>
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
@@ -112,6 +116,66 @@
 
 <script setup>
 import { DateTime } from 'luxon';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+const { isMobile } = useDevice();
+
+const driverObj = driver({
+	showProgress: true,
+	allowClose: false,
+	steps: [
+		{
+			element: '#carousel',
+			popover: {
+				title: 'Alertas',
+				description: 'Os alertas mostram os modelos que estão próximos ou acabaram de completar um bloco de 100 entradas.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+		{
+			element: '#bankroll-evolution',
+			popover: {
+				title: 'Evolução da banca',
+				description: 'O gráfico apresenta a evolução da banca desde janeiro de 2024, somando os ganhos de todos os modelos e considerando a stake como 1un da banca e banca inicial de R$ 100,00.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+		{
+			element: '#yesterday-metrics',
+			popover: {
+				title: 'Resultados do dia anterior',
+				description: 'Os dados mostram o resultado do dia anterior, como o ROI, o investimento e o ganho.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+		{
+			element: '#month-metrics',
+			popover: {
+				title: 'Resultados do mês',
+				description: 'Os dados mostram o resultado do mês atual, como o ROI, o investimento e o ganho.',
+				side: 'left',
+				align: 'start'
+			}
+		},
+	],
+	onDestroyStarted: () => {
+		if (!driverObj.hasNextStep()) {
+			localStorage.setItem('doneTourHome', true);
+			driverObj.destroy();
+		}
+	},
+});
+
+onMounted(() => {
+	if (!isMobile && localStorage.getItem('doneTourHome') !== 'true') {
+		driverObj.drive();
+	}
+});
+
+const showAlert = ref(true);
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;

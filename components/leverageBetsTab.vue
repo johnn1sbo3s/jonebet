@@ -15,16 +15,6 @@
 
 				<div class="flex gap-3">
 					<UButton
-						icon="i-heroicons-sparkles"
-						color="blue"
-						size="sm"
-						variant="soft"
-						@click="showModal = true"
-					>
-						Randomizar entradas
-					</UButton>
-
-					<UButton
 						icon="i-heroicons-arrow-down-tray"
 						color="blue"
 						size="sm"
@@ -44,10 +34,14 @@
 			>
 				<template #Time-data="{ row }">
 					<div class="flex items-center">
-						<span
+						<UTooltip
 							v-if="isGameLive(row)"
-							class="mr-2 w-2 h-2 bg-teal-500 rounded-full animate-pulse"
-						/>
+							text="Jogo em andamento"
+						>
+							<span
+								class="mr-2 w-2 h-2 bg-teal-500 rounded-full animate-pulse"
+							/>
+						</UTooltip>
 
 						{{ row.Time }}
 					</div>
@@ -129,67 +123,6 @@
 				</template>
 			</UTable>
 		</div>
-
-		<UModal
-			v-model="showModal"
-		>
-			<div class="flex justify-center">
-				<u-card class="w-full">
-					<template #header>
-						<div class="flex justify-between items-center">
-							<p class="font-semibold">Randomizar apostas</p>
-							<p
-								class="text-xl hover:cursor-pointer"
-								@click="showModal = false"
-							>
-								x
-							</p>
-						</div>
-					</template>
-
-					<template #default>
-						<div class="flex flex-col gap-2">
-							<p class="text-sm">Quantidade de apostas</p>
-
-							<div class="flex gap-3 mb-1">
-								<UInput
-									v-model="NumRandomBets"
-									type="number"
-									class="w-1/3"
-									size="md"
-								/>
-
-								<UButton
-									size="md"
-									@click="randomizeBets(NumRandomBets)"
-								>
-									Randomizar
-								</UButton>
-							</div>
-
-							<div
-								v-if="randomizedBets.length > 0"
-							>
-								<div
-									v-for="bet in randomizedBets"
-									:key="bet"
-									class="flex justify-between items-center mt-3 p-4 rounded-md border border-slate-200 dark:border-slate-700"
-								>
-									<div>{{ formatDate(bet.Date) }} - {{ bet.Time }}</div>
-
-									<div>{{ bet.Home }} x {{ bet.Away }}</div>
-
-									<div>{{ bet.Model ? modelNameToNaturalName(bet.Model) : '' }}</div>
-								</div>
-							</div>
-
-						</div>
-
-						<div></div>
-					</template>
-				</u-card>
-			</div>
-		</UModal>
 	</div>
 </template>
 
@@ -302,38 +235,6 @@ function isGameLive(game) {
 	let diffInMinutes = now.diff(gameTime, 'minutes').minutes;
 
 	return diffInMinutes >= 0 && diffInMinutes <= 120;
-}
-
-function randomizeBets() {
-	let auxRows = rows.value;
-	randomizedBets.value = [];
-
-	for (let i = 0; i < NumRandomBets.value; i++) {
-		let availableModels = []
-
-		let randomIndex = Math.floor(Math.random() * auxRows.length);
-		let randomBet = auxRows[randomIndex];
-		auxRows.splice(randomIndex, 1);
-		auxRows.unshift(randomBet);
-
-		if (randomBet.lay1x3V6) { availableModels.push('lay1x3V6') }
-		if (randomBet.lay3x0V1) { availableModels.push('lay3x0V1') }
-		if (randomBet.lay0x3V1) { availableModels.push('lay0x3V1') }
-		if (randomBet.lay0x0Footy) { availableModels.push('lay0x0Footy') }
-
-		let randomModel = Math.floor(Math.random() * availableModels.length);
-		let randomBetModel = availableModels[randomModel];
-
-		randomizedBets.value.push({
-			Date: randomBet.Date,
-			Time: randomBet.Time,
-			Home: randomBet.Home,
-			Away: randomBet.Away,
-			Model: randomBetModel,
-		});
-	}
-
-	return randomizedBets.value.sort((a, b) => a.Time.localeCompare(b.Time));
 }
 
 async function exportTableToExcel(tableData) {
