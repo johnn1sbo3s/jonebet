@@ -2,20 +2,6 @@
   <div class="flex flex-col gap-5">
 	<div class="flex justify-between">
 		<page-header title="Apostas do dia" />
-
-		<div class="flex items-center gap-2">
-			<div class="pt-2 flex gap-3">
-				<UToggle
-				size="md"
-				on-icon="i-heroicons-check-20-solid"
-				off-icon="i-heroicons-x-mark-20-solid"
-				:model-value="favsOnly"
-				@click="changeFavsOnly"
-				/>
-			</div>
-
-			<div class="text-sm pt-1.5">Apenas favoritos</div>
-		</div>
 	</div>
 
 	<div>
