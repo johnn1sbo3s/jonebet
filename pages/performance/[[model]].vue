@@ -1,93 +1,99 @@
 <template>
 	<div class="flex flex-col gap-3">
-	<page-header title="Performance dos modelos" />
-	<div class="flex gap-5">
-		<USelectMenu
-			class="w-1/5"
-			searchable
-			searchable-placeholder="Pesquise por um modelo"
-			placeholder="Selecione um modelo"
-			:options="listModels"
-			v-model:model-value="chosenModel"
-		>
-			<template #option="{ option }">
-				<div class="flex items-center my-1">
-					<UTooltip
-						v-if="playedYesterday(option)"
-						text="O modelo possui atualização de resultados de ontem"
-					>
-						<span
-							class="mr-2 w-2 h-2 bg-teal-500 rounded-full"
-						/>
-					</UTooltip>
-					<span>{{ option }}</span>
-				</div>
-			</template>
-		</USelectMenu>
-	</div>
-	<div class="w-full gap-3 flex">
-		<div
-			id="metrics-cards"
-			class="w-2/5 flex flex-col gap-3"
-		>
-			<metrics-card
-				:metrics-data="valData"
-				:card-title="'Métricas de validação'"
-			/>
-			<metrics-card
-				:metrics-data="realData"
-				:card-title="'Métricas de jogos reais'"
-			/>
-		</div>
-		<UCard
-			id="model-chart"
-			class="w-3/5"
-		>
-			<template #header>
-				<div class="flex justify-between">
-					<p class="font-semibold">Gráfico de acúmulo de capital</p>
-					<div class="flex gap-2">
-						<div class="inline-block align-middle">
-						<UToggle
-							size="md"
-							on-icon="i-heroicons-check-20-solid"
-							off-icon="i-heroicons-x-mark-20-solid"
-							:model-value="chartByDay"
-							@click="changeChartByDay"
-						/>
-						</div>
-						<p class="text-sm">Exibição por dia</p>
-					</div>
-				</div>
-			</template>
-			<div>
-				<div
-					class="flex items-center mb-2"
-					:class="slope != 0 ? 'justify-between' : 'justify-end'"
-				>
-					<div
-						v-if="slope != 0"
-						class="flex gap-3 text-sm"
-					>
-						<p>Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
-						<p>|</p>
-						<p>Trend Distance: {{ trendDistance < 0 ? '' : '+' }}{{ trendDistance.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} u</p>
-					</div>
+		<page-header
+			title="Performance dos modelos"
+			description="Acompanhe o desempenho e as métricas de cada modelo"
+			class="mb-3"
+		/>
 
-					<UButton color="blue" variant="soft" @click="resetsZoom">
-						Restaurar zoom
-					</UButton>
-				</div>
-				<LineChart
-					class="w-full"
-					:key="chartKey"
-					:chartData="chartData"
-					:options="chartOptions"
-					:style="chartStyle"
+		<div class="flex gap-5">
+			<USelectMenu
+				class="w-1/5"
+				searchable
+				searchable-placeholder="Pesquise por um modelo"
+				placeholder="Selecione um modelo"
+				:options="listModels"
+				v-model:model-value="chosenModel"
+			>
+				<template #option="{ option }">
+					<div class="flex items-center my-1">
+						<UTooltip
+							v-if="playedYesterday(option)"
+							text="O modelo possui atualização de resultados de ontem"
+						>
+							<span
+								class="mr-2 w-2 h-2 bg-teal-500 rounded-full"
+							/>
+						</UTooltip>
+						<span>{{ option }}</span>
+					</div>
+				</template>
+			</USelectMenu>
+		</div>
+		<div class="w-full gap-3 flex">
+			<div
+				id="metrics-cards"
+				class="w-2/5 flex flex-col gap-3"
+			>
+				<metrics-card
+					:metrics-data="valData"
+					:card-title="'Métricas de validação'"
+				/>
+				<metrics-card
+					:metrics-data="realData"
+					:card-title="'Métricas de jogos reais'"
 				/>
 			</div>
-		</UCard>
-	</div>
+			<UCard
+				id="model-chart"
+				class="w-3/5"
+			>
+				<template #header>
+					<div class="flex justify-between">
+						<p class="font-semibold">Gráfico de acúmulo de capital</p>
+						<div class="flex gap-2">
+							<div class="inline-block align-middle">
+							<UToggle
+								size="md"
+								on-icon="i-heroicons-check-20-solid"
+								off-icon="i-heroicons-x-mark-20-solid"
+								:model-value="chartByDay"
+								@click="changeChartByDay"
+							/>
+							</div>
+							<p class="text-sm">Exibição por dia</p>
+						</div>
+					</div>
+				</template>
+				<div>
+					<div
+						class="flex items-center mb-2"
+						:class="slope != 0 ? 'justify-between' : 'justify-end'"
+					>
+						<div
+							v-if="slope != 0"
+							class="flex gap-3 text-sm"
+						>
+							<p>Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+							<p>|</p>
+							<p>Trend Distance: {{ trendDistance < 0 ? '' : '+' }}{{ trendDistance.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} u</p>
+						</div>
+
+						<UButton color="blue" variant="soft" @click="resetsZoom">
+							Restaurar zoom
+						</UButton>
+					</div>
+					<LineChart
+						class="w-full"
+						:key="chartKey"
+						:chartData="chartData"
+						:options="chartOptions"
+						:style="chartStyle"
+					/>
+				</div>
+			</UCard>
+		</div>
+
 	<UCard id="block-metrics">
 		<template #header>
 		<p class="font-semibold">Resultados por blocos de 100 jogos</p>

@@ -4,6 +4,17 @@
 			<page-header title="Bem-vindo(a) ao DataPlay!" />
 		</div>
 
+		<UAlert
+			v-if="showAlert"
+			color="blue"
+			variant="soft"
+			title="Atenção"
+			:close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'gray', variant: 'link', padded: false }"
+			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder. Jogue com consciência!"
+			@close="showAlert = false"
+		/>
+
+
 		<div class="flex flex-col gap-2">
 			<p class="text-sm">{{ batchModels.length }} alertas</p>
 			<u-carousel
@@ -163,6 +174,8 @@ onMounted(() => {
 		driverObj.drive();
 	}
 });
+
+const showAlert = ref(true);
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
