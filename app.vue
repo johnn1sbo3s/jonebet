@@ -48,7 +48,7 @@ const { isMobile } = useDevice();
 const showAlert = ref(true);
 
 if (process.client) {
-  init({ orgId: 'o-22P180-na1', debug: true });
+  init({ orgId: 'o-22P180-na1' });
 }
 
 useHead({
