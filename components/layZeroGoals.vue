@@ -7,13 +7,6 @@
                 :options="datesOptions"
                 v-model="chosenDay"
             />
-
-            <USelectMenu
-                class="w-1/5"
-                placeholder="Selecione uma opção"
-                :options="modelsOptions"
-                v-model="chosenModel"
-            />
         </div>
 
         <div class="text-sm">{{ filteredGames.length }} jogos</div>
@@ -65,8 +58,11 @@ const props = defineProps({
 
 const acceptedModels = [
     'lay_0x0_v7',
-    'lay_0x0_footy',
+    'lay_0x0_v10',
     'lay_0x0_v2_betfair',
+    'lay_0x0_footy',
+    'lay_0x0_simple',
+    'lay_0x0_ht_v6'
 ]
 
 const chosenDay = ref({});
@@ -82,10 +78,6 @@ const filteredGames = computed(() => {
         ))
     );
 
-    if (chosenModel.value.value) {
-        filtered = filtered.filter((item) => item.Modelo === chosenModel.value.value);
-    }
-
     return filtered;
 });
 
@@ -94,16 +86,6 @@ const datesOptions = computed(() => {
 	dates = dates.slice(-7);
 
 	return dates;
-});
-
-const modelsOptions = computed(() => {
-    return [
-        { label: 'Todos os modelos', value: null },
-        ...acceptedModels.map((item) => ({
-            label: modelNameToNaturalName(item),
-            value: item
-        }))
-    ]
 });
 
 onMounted(() => {
