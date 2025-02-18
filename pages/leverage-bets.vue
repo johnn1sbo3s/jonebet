@@ -12,7 +12,7 @@
 		/>
 
 		<div v-if="selectedTab === 'jogos'">
-				<leverage-bets-tab :data="leverageBets" />
+				<leverage-bets-tab :data="leverageBets" :daily-bets="dailyBets" />
 		</div>
 
 		<div v-else-if="selectedTab === 'lay0x0'">

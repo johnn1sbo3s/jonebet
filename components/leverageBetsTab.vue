@@ -32,6 +32,30 @@
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
 			>
+				<template #Home-data="{ row }">
+					<div class="flex items-center gap-2">
+						<div>
+							{{ row.Home }}
+						</div>
+
+						<div class="text-xs text-gray-400">
+							({{ findOdds(row)[0] }})
+						</div>
+					</div>
+				</template>
+
+				<template #Away-data="{ row }">
+					<div class="flex items-center gap-2">
+						<div>
+							{{ row.Away }}
+						</div>
+
+						<div class="text-xs text-gray-400">
+							({{ findOdds(row)[1] }})
+						</div>
+					</div>
+				</template>
+
 				<template #Time-data="{ row }">
 					<div class="flex items-center">
 						<UTooltip
@@ -134,15 +158,15 @@ const props = defineProps({
 		type: Object,
 		required: true
 	},
+	dailyBets: {
+		type: Array,
+		required: true
+	}
 })
 
 const chosenDay = ref('');
 const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' };
 const timeNow = ref(DateTime.now());
-
-const showModal = ref(false);
-const NumRandomBets = ref(3);
-const randomizedBets = ref([]);
 
 let allColumns = [
 	{
@@ -235,6 +259,14 @@ function isGameLive(game) {
 	let diffInMinutes = now.diff(gameTime, 'minutes').minutes;
 
 	return diffInMinutes >= 0 && diffInMinutes <= 120;
+}
+
+function findOdds(game) {
+	let foundGame = props.dailyBets?.find(bet => bet.Home === game.Home && bet.Away === game.Away);
+
+	if (foundGame) {
+		return [foundGame.FT_Odds_H.toFixed(2), foundGame.FT_Odds_A.toFixed(2)];
+	}
 }
 
 async function exportTableToExcel(tableData) {
