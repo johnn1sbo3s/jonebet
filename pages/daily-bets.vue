@@ -9,8 +9,19 @@
 	</div>
 
 	<div>
-	  <div class="text-sm text-slate-400 mb-3" v-if="bets.length > 0">
-		{{ qtd_games }} apostas encontradas
+	  <div class="flex justify-between items-center mb-3">
+		<div class="text-sm text-slate-400" v-if="bets.length > 0">
+			{{ qtd_games }} apostas encontradas
+		</div>
+
+		<UButton
+			icon="i-heroicons-arrow-down-tray"
+			variant="soft"
+			color="blue"
+			@click="exportTableToExcel(bets)"
+		>
+			Download
+		</UButton>
 	  </div>
 	  <UTable
 		:ui="{
@@ -111,6 +122,15 @@ watchEffect(() => {
 	);
   }
 });
+
+async function exportTableToExcel(tableData) {
+	const XLSX = await import('xlsx');
+	const worksheet = XLSX.utils.json_to_sheet(tableData);
+	const workbook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
+
+	XLSX.writeFile(workbook, `jogos_do_dia_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
 </script>
 
 
