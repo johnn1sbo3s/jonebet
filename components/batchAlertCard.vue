@@ -1,26 +1,31 @@
 <template>
     <div>
-        <u-card>
-            <div class="flex flex-col gap-3">
-                <div class="flex justify-between gap-3">
-                    <div class="flex gap-2 items-center font-semibold">
-                        <p class="text-ellipsis line-clamp-1">{{ modelName }}</p>
-                        <p
-                            v-if="model.total.qtd_jgs_atual >= 88"
-                            :class="profit >= 0 ? 'text-teal-600' : 'text-red-600'"
-                        >
-                            {{ profit >= 0 ? '+' : '' }}{{ profit.toFixed(2).toLocaleString('pt-BR') }} u
-                        </p>
+        <NuxtLink
+            :to="`/performance/${model.modelo}`"
+            class="block sm:hidden"
+        >
+            <u-card>
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between gap-3">
+                        <div class="flex gap-2 items-center font-semibold">
+                            <p class="text-ellipsis line-clamp-1">{{ modelName }}</p>
+                            <p
+                                v-if="model.total.qtd_jgs_atual >= 88"
+                                :class="profit >= 0 ? 'text-teal-600' : 'text-red-600'"
+                            >
+                                {{ profit >= 0 ? '+' : '' }}{{ profit.toFixed(2).toLocaleString('pt-BR') }} u
+                            </p>
+                        </div>
+
+                        <NuxtLink class="hidden sm:block" :to="`/performance/${model.modelo}`">
+                            <u-button size="2xs" variant="ghost">Ver mais</u-button>
+                        </NuxtLink>
                     </div>
 
-                    <NuxtLink :to="`/performance/${model.modelo}`">
-                        <u-button size="2xs" variant="ghost">Ver mais</u-button>
-                    </NuxtLink>
+                    <div class="text-sm" v-html="cardDescription" />
                 </div>
-
-                <div class="text-sm" v-html="cardDescription" />
-            </div>
-        </u-card>
+            </u-card>
+        </NuxtLink>
     </div>
 </template>
 

@@ -39,13 +39,17 @@
 			id="bankroll-evolution"
 		>
 			<template #header>
-				<p class="font-semibold">Evolução da banca</p>
+				<div class="row gap-1">
+					<p class="font-semibold">Evolução da banca</p>
+
+					<p class="text-sm text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+				</div>
 			</template>
 
 			<div class="w-full">
 				<bankroll-evolution
-				:model-value="yesterdayDataStatus === 'pending'"
-				:bankroll-data="bankrollData"
+					:model-value="yesterdayDataStatus === 'pending'"
+					:bankroll-data="bankrollData"
 				/>
 			</div>
 		</u-card>
@@ -63,20 +67,27 @@
 				<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
 			</template>
 
-			<div class="flex gap-5 w-full">
-				<yesterday-metrics-card :items="yesterdayMetrics"/>
+			<div class="row sm:flex gap-5 w-full">
+				<div>
+					<yesterday-metrics-card :items="yesterdayMetrics" />
+				</div>
 
-				<ranking-models
-					:title="'Top 3 modelos'"
-					:items="top3YesterdayModels"
-					:all-results-data="yesterdayResults"
-				/>
+				<div class="my-3 sm:my-0">
+					<ranking-models
+						:title="'Top 3 modelos'"
+						:items="top3YesterdayModels"
+						:all-results-data="yesterdayResults"
+					/>
+				</div>
 
-				<yesterday-details-card
-					:number-bets="yesterdayTotal.Num_Bets"
-					:number-models="yesterdayTotal.Method"
-					:positive-models="positiveYesterdayModels"
-				/>
+				<div>
+					<yesterday-details-card
+						:number-bets="yesterdayTotal.Num_Bets"
+						:number-models="yesterdayTotal.Method"
+						:positive-models="positiveYesterdayModels"
+						class="mb-3 sm:mb-0"
+					/>
+				</div>
 			</div>
 		</u-card>
 
@@ -93,21 +104,21 @@
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
 
-			<div class="flex gap-5 w-full">
-				<yesterday-metrics-card
-				:items="monthMetrics"
-				/>
+			<div class="row sm:flex gap-5 w-full">
+				<yesterday-metrics-card :items="monthMetrics" />
 
-				<ranking-models
-				:title="'Top 3 modelos'"
-				:items="top3MonthModels"
-				:all-results-data="monthResults"
-				/>
+				<div class="my-3 sm:my-0">
+					<ranking-models
+						:title="'Top 3 modelos'"
+						:items="top3MonthModels"
+						:all-results-data="monthResults"
+					/>
+				</div>
 
 				<yesterday-details-card
-				:number-bets="monthTotal.Num_Bets"
-				:number-models="monthTotal.Method"
-				:positive-models="positiveMonthModels"
+					:number-bets="monthTotal.Num_Bets"
+					:number-models="monthTotal.Method"
+					:positive-models="positiveMonthModels"
 				/>
 			</div>
 		</u-card>
