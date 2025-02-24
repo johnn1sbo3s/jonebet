@@ -14,7 +14,6 @@
 			@close="showAlert = false"
 		/>
 
-
 		<div class="flex flex-col gap-2">
 			<p class="text-sm">{{ batchModels.length }} alertas</p>
 			<u-carousel
@@ -67,12 +66,12 @@
 				<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
 			</template>
 
-			<div class="row sm:flex gap-5 w-full">
-				<div>
+			<div class="row sm:flex gap-3 w-full">
+				<div class="w-full">
 					<yesterday-metrics-card :items="yesterdayMetrics" />
 				</div>
 
-				<div class="my-3 sm:my-0">
+				<div class="my-3 sm:my-0 w-full">
 					<ranking-models
 						:title="'Top 3 modelos'"
 						:items="top3YesterdayModels"
@@ -80,12 +79,11 @@
 					/>
 				</div>
 
-				<div>
+				<div class="w-full">
 					<yesterday-details-card
 						:number-bets="yesterdayTotal.Num_Bets"
 						:number-models="yesterdayTotal.Method"
 						:positive-models="positiveYesterdayModels"
-						class="mb-3 sm:mb-0"
 					/>
 				</div>
 			</div>
@@ -104,10 +102,10 @@
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
 
-			<div class="row sm:flex gap-5 w-full">
+			<div class="row sm:flex gap-3 w-full">
 				<yesterday-metrics-card :items="monthMetrics" />
 
-				<div class="my-3 sm:my-0">
+				<div class="my-3 sm:my-0 w-full">
 					<ranking-models
 						:title="'Top 3 modelos'"
 						:items="top3MonthModels"
