@@ -5,7 +5,7 @@
 	</div>
 
 	<div>
-	  <USelect class="w-1/5" v-model="date" :options="dates" />
+	  <USelect class="w-1/2 sm:w-1/5" v-model="date" :options="dates" />
 	</div>
 
 	<div>

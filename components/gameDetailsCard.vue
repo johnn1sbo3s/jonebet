@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-col gap-3 w-full">
-        <div class="text-gray-600 flex justify-center">
+        <div class="text-gray-600 flex justify-center text-sm sm:text-base">
             {{ formatDate(chosenGame.Date) }} - {{ chosenGame.Time }}
         </div>
 
-        <div class="font-semibold text-2xl flex justify-center">
+        <div class="font-semibold text-lg sm:text-2xl flex justify-center">
             {{ chosenGame.Home }} x {{ chosenGame.Away }}
         </div>
 
@@ -14,7 +14,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_H.toFixed(2) }}
+                Home: {{ chosenGame.FT_Odds_H.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -22,7 +22,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_D.toFixed(2) }}
+                Draw: {{ chosenGame.FT_Odds_D.toFixed(2) }}
             </UBadge>
 
             <UBadge
@@ -30,7 +30,7 @@
                 variant="soft"
                 size="md"
             >
-                {{ chosenGame.FT_Odds_A.toFixed(2) }}
+                Away: {{ chosenGame.FT_Odds_A.toFixed(2) }}
             </UBadge>
         </div>
 
