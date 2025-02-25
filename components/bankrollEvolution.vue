@@ -1,14 +1,14 @@
 <template>
-	<div class="flex gap-3">
-		<div class="w-7/12">
+	<div class="row sm:flex gap-3">
+		<div class="w-full sm:w-7/12">
 			<LineChart
-			:chartData="chartData"
-			:options="chartOptions"
-			:style="chartStyle"
+				:chartData="chartData"
+				:options="chartOptions"
+				:style="chartStyle"
 			/>
 		</div>
 
-		<div class="w-5/12 pt-8 pb-7 h-full">
+		<div class="w-full sm:w-5/12 pt-8 pb-7 h-full">
 			<u-card class="h-full">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">
@@ -28,8 +28,9 @@
 							v-for="item in resultsByMonth"
 							:key="item.month"
 						>
-							<div class="text-sm flex justify-between">
+							<div class="text-sm row sm:flex items-center text-center justify-center sm:justify-between">
 								<p>{{ item.month }}</p>
+
 								<p
 									class="font-semibold"
 									:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"

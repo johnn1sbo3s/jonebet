@@ -2,7 +2,7 @@
 	<div class="flex flex-col gap-3">
 		<page-header
 			title="Apostas para alavancagem"
-			description="Seleção de entradas com alto índice de acertos, para métodos de alavancagem"
+			description="Seleção de entradas com alto índice de acerto para métodos de alavancagem"
 		/>
 
 		<UTabs

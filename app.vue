@@ -1,42 +1,51 @@
 <template>
-	<div
-		v-if="isMobile && showAlert"
-		class="flex items-center justify-center h-screen w-screen bg-slate-100 font-semibold p-6"
-	>
-		<div class="flex flex-col items-center justify-center text-center gap-2 text-slate-700">
-			<div class="text-lg font-semibold">Este site não tem navegação otimizada para dispositivos móveis.</div>
-
-			<div class="font-normal">Se ainda assim desejar acessar, recomendamos ativar a visualização de desktop nas configurações do seu navegador.</div>
-
-			<UButton
-				size="lg"
-				block
-				class="mt-3"
-				@click="showAlert = false"
+	<div class="h-full flex gap-2">
+		<transition
+			enter-active-class="transition-transform duration-300 ease-in-out"
+			enter-from-class="-translate-x-full"
+			enter-to-class="translate-x-0"
+			leave-active-class="transition-transform duration-300 ease-in-out"
+			leave-from-class="translate-x-0"
+			leave-to-class="-translate-x-full"
+		>
+			<div
+				v-if="showMenu"
+				class="fixed inset-y-0 left-0 w-80 h-screen z-50"
 			>
-				Prosseguir
-			</UButton>
-		</div>
+				<UVerticalNavigation
+					class="h-full pt-2 bg-slate-50 dark:bg-gray-900"
+					:links="sidebarItems"
+					:ui="{
+						padding: 'p-4',
+						gap: 'gap-2',
+						avatar: 'w-5 h-5',
+					}"
+					@click="closeMenu"
+				>
+					<template #avatar> </template>
+				</UVerticalNavigation>
+			</div>
+		</transition>
 
-	</div>
-
-	<div v-else class="flex h-full gap-2">
-		<div class="w-1/6 h-full">
+		<div class="hidden sm:block w-80 h-full">
 			<UVerticalNavigation
-				class="fixed w-1/6 px-2 h-full pt-2 bg-slate-50 dark:bg-gray-900"
-				:links="links"
+				class="fixed px-2 h-full pt-2 bg-slate-50 dark:bg-gray-900"
+				:links="sidebarItems"
 				:ui="{
-					padding: 'p-4',
-					gap: 'gap-2',
-					avatar: 'w-5 h-5',
+				padding: 'p-4',
+				gap: 'gap-2',
+				avatar: 'w-5 h-5',
 				}"
 			>
 				<template #avatar> </template>
 			</UVerticalNavigation>
 		</div>
 
-		<div class="w-4/5">
-			<NuxtLoadingIndicator color="linear-gradient(to right, #25D88B, #1E9EF4)"/>
+		<div
+			class="w-full transition-margin duration-300 ease-in-out"
+			:class="{ 'ml-80': showMenu }"
+		>
+			<NuxtLoadingIndicator color="linear-gradient(to right, #25D88B, #1E9EF4)" />
 			<NuxtPage class="p-6" />
 		</div>
 	</div>
@@ -45,15 +54,16 @@
 <script setup>
 import { init } from '@fullstory/browser';
 const { isMobile } = useDevice();
-const showAlert = ref(true);
 
 if (process.client) {
-  init({ orgId: 'o-22P180-na1' });
+	init({ orgId: 'o-22P180-na1' });
 }
 
 useHead({
 	title: "DataPlay",
-})
+});
+
+const menuState = useMenuStore();
 
 const links = [
 	[
@@ -63,9 +73,9 @@ const links = [
 				srcset: "",
 				alt: "",
 			},
-			label: "DataPlay",
-			to: "https://github.com/johnn1sbo3s",
-			target: "_blank",
+				label: "DataPlay",
+				to: "https://github.com/johnn1sbo3s",
+				target: "_blank",
 		},
 	],
 	[
@@ -106,10 +116,27 @@ const links = [
 		},
 	],
 ];
+
+const showMenu = computed(() => menuState.getMenuState);
+const sidebarItems = computed(() => {
+	if (isMobile) {
+		return links.map(group => group.filter(item =>
+			item.to !== '/comparison' &&
+			item.to !== '/batch-monitoring'
+		));
+	}
+
+	return links;
+});
+
+function closeMenu() {
+	menuState.setMenuState(false);
+}
 </script>
 
 <style>
 div {
 	font-family: satoshi, sans-serif;
 }
+
 </style>

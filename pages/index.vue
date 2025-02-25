@@ -10,10 +10,9 @@
 			variant="soft"
 			title="Atenção"
 			:close-button="{ icon: 'i-heroicons-x-mark-20-solid', color: 'gray', variant: 'link', padded: false }"
-			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder. Jogue com consciência!"
+			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder. Aposte com consciência!"
 			@close="showAlert = false"
 		/>
-
 
 		<div class="flex flex-col gap-2">
 			<p class="text-sm">{{ batchModels.length }} alertas</p>
@@ -39,13 +38,17 @@
 			id="bankroll-evolution"
 		>
 			<template #header>
-				<p class="font-semibold">Evolução da banca</p>
+				<div class="row gap-1">
+					<p class="font-semibold">Evolução da banca</p>
+
+					<p class="text-sm text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+				</div>
 			</template>
 
 			<div class="w-full">
 				<bankroll-evolution
-				:model-value="yesterdayDataStatus === 'pending'"
-				:bankroll-data="bankrollData"
+					:model-value="yesterdayDataStatus === 'pending'"
+					:bankroll-data="bankrollData"
 				/>
 			</div>
 		</u-card>
@@ -63,20 +66,26 @@
 				<p class="font-semibold">{{ !yesterdayDataError ? `Resultados de ontem - ${formatDate(yesterday)}` : `Resultados de anteontem - ${formatDate(dayBeforeYesterday)}`}}</p>
 			</template>
 
-			<div class="flex gap-5 w-full">
-				<yesterday-metrics-card :items="yesterdayMetrics"/>
+			<div class="row sm:flex gap-3 w-full">
+				<div class="w-full">
+					<yesterday-metrics-card :items="yesterdayMetrics" />
+				</div>
 
-				<ranking-models
-					:title="'Top 3 modelos'"
-					:items="top3YesterdayModels"
-					:all-results-data="yesterdayResults"
-				/>
+				<div class="my-3 sm:my-0 w-full">
+					<ranking-models
+						:title="'Top 3 modelos'"
+						:items="top3YesterdayModels"
+						:all-results-data="yesterdayResults"
+					/>
+				</div>
 
-				<yesterday-details-card
-					:number-bets="yesterdayTotal.Num_Bets"
-					:number-models="yesterdayTotal.Method"
-					:positive-models="positiveYesterdayModels"
-				/>
+				<div class="w-full">
+					<yesterday-details-card
+						:number-bets="yesterdayTotal.Num_Bets"
+						:number-models="yesterdayTotal.Method"
+						:positive-models="positiveYesterdayModels"
+					/>
+				</div>
 			</div>
 		</u-card>
 
@@ -93,21 +102,21 @@
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
 
-			<div class="flex gap-5 w-full">
-				<yesterday-metrics-card
-				:items="monthMetrics"
-				/>
+			<div class="row sm:flex gap-3 w-full">
+				<yesterday-metrics-card :items="monthMetrics" />
 
-				<ranking-models
-				:title="'Top 3 modelos'"
-				:items="top3MonthModels"
-				:all-results-data="monthResults"
-				/>
+				<div class="my-3 sm:my-0 w-full">
+					<ranking-models
+						:title="'Top 3 modelos'"
+						:items="top3MonthModels"
+						:all-results-data="monthResults"
+					/>
+				</div>
 
 				<yesterday-details-card
-				:number-bets="monthTotal.Num_Bets"
-				:number-models="monthTotal.Method"
-				:positive-models="positiveMonthModels"
+					:number-bets="monthTotal.Num_Bets"
+					:number-models="monthTotal.Method"
+					:positive-models="positiveMonthModels"
 				/>
 			</div>
 		</u-card>

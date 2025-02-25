@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col gap-4">
 		<USelectMenu
-			class="w-1/5"
+			class="w-1/2 sm:w-1/5"
 			placeholder="Selecione um dia"
 			:options="availableDates"
 			v-model="chosenDay"
