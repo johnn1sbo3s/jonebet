@@ -20,6 +20,7 @@
 						gap: 'gap-2',
 						avatar: 'w-5 h-5',
 					}"
+					@click="closeMenu"
 				>
 					<template #avatar> </template>
 				</UVerticalNavigation>
@@ -115,9 +116,13 @@ const links = [
 		to: "/comparison",
 	  },
 	],
-  ];
+];
 
 const showMenu = computed(() => menuState.getMenuState);
+
+function closeMenu() {
+	menuState.setMenuState(false);
+}
 </script>
 
 <style>
