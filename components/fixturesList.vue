@@ -47,7 +47,7 @@
 
                     <div
                         v-else-if="showSkeleton"
-                        class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-gray-200 p-10 rounded-md bg-slate-100"
+                        class="w-full h-[50svh] flex items-center justify-center outline-dashed outline-1 outline-slate-900 p-10 rounded-md bg-slate-800"
                     >
                         <p class="text-center text-gray-400 text-sm">
                             Carregando...
@@ -56,7 +56,7 @@
 
                     <div
                         v-else
-                        class="w-full flex justify-center outline outline-1 outline-gray-400 p-10 rounded-md"
+                        class="w-full flex justify-center outline outline-1 bg-slate-900 outline-slate-700 p-10 rounded-md"
                     >
                         <fixture-details-card
                             :fixture="chosenGame"
@@ -71,7 +71,7 @@
             v-if="isMobile"
             v-model="showMobileModal"
         >
-            <div class="flex flex-col gap-3 p-4 rounded-lg bg-white h-[60vh]">
+            <div class="flex flex-col gap-3 p-5 rounded-lg bg-slate-900 border border-opacity-40 border-teal-500 h-[60vh]">
                 <div v-if="_isEmpty(chosenGame)"
                     class="flex flex-col items-center gap-2"
                 >
@@ -99,18 +99,18 @@
                     :fixture="chosenGame"
                     :bets="filteredBets"
                 />
-            </div>
 
-            <div class="p-4">
-                <UButton
-                    block
-                    color="gray"
-                    variant="soft"
-                    size="lg"
-                    @click="() =>showMobileModal = false"
-                >
-                    Fechar
-                </UButton>
+                <div class="p-4 absolute bottom-0 left-0 right-0">
+                    <UButton
+                        block
+                        color="teal"
+                        variant="soft"
+                        size="lg"
+                        @click="() =>showMobileModal = false"
+                    >
+                        Fechar
+                    </UButton>
+                </div>
             </div>
         </UModal>
     </div>

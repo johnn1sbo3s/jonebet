@@ -31,6 +31,7 @@
 				:ui="tableUi"
 				:columns="columns"
 				:sort="{ column: 'time', direction: 'asc' }"
+				class="bg-slate-900"
 			>
 				<template #Home-data="{ row }">
 					<div class="flex items-center gap-2">

@@ -1,39 +1,43 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: [
-   "@nuxt/ui",
-   "nuxt-lodash",
-   "@nuxt/fonts",
-   "@pinia/nuxt",
-   "@nuxt/scripts",
-   "@nuxtjs/device"
-  ],
+	modules: [
+		"@nuxt/ui",
+		"nuxt-lodash",
+		"@nuxt/fonts",
+		"@pinia/nuxt",
+		"@nuxt/scripts",
+		"@nuxtjs/device"
+	],
 
-  devtools: { enabled: false },
+	colorMode: {
+		preference: 'dark',
+	},
 
-  scripts: {
-    registry: {
-      clarity: {
-        id: 'q35mj3r8vd'
-      }
-    }
-  },
+	devtools: { enabled: false },
 
-  lodash: {
-    prefix: "_",
-    prefixSkip: ["string"],
-    upperAfterPrefix: false,
-    exclude: [],
-    alias: [
-        ["camelCase", "stringToCamelCase"], // => stringToCamelCase
-        ["kebabCase", "stringToKebab"], // => stringToKebab
-        ["isDate", "isLodashDate"], // => _isLodashDate
-    ],
-  },
+	scripts: {
+		registry: {
+			clarity: {
+			id: 'q35mj3r8vd'
+			}
+		}
+	},
 
-  runtimeConfig: {
-    public: {
-        API_URL: 'https://api.jonebet.xyz',
-    },
-  }
+	lodash: {
+		prefix: "_",
+		prefixSkip: ["string"],
+		upperAfterPrefix: false,
+		exclude: [],
+		alias: [
+			["camelCase", "stringToCamelCase"], // => stringToCamelCase
+			["kebabCase", "stringToKebab"], // => stringToKebab
+			["isDate", "isLodashDate"], // => _isLodashDate
+		],
+	},
+
+	runtimeConfig: {
+		public: {
+			API_URL: 'https://api.jonebet.xyz',
+		},
+	}
 });

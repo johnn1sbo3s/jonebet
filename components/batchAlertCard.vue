@@ -2,9 +2,8 @@
     <div>
         <NuxtLink
             :to="`/performance/${model.modelo}`"
-            class="block sm:hidden"
         >
-            <u-card>
+            <u-card class="hover:outline hover:outline-teal-400 hover:outline-1">
                 <div class="flex flex-col gap-3">
                     <div class="flex justify-between gap-3">
                         <div class="flex gap-2 items-center font-semibold">
@@ -16,10 +15,6 @@
                                 {{ profit >= 0 ? '+' : '' }}{{ profit.toFixed(2).toLocaleString('pt-BR') }} u
                             </p>
                         </div>
-
-                        <NuxtLink class="hidden sm:block" :to="`/performance/${model.modelo}`">
-                            <u-button size="2xs" variant="ghost">Ver mais</u-button>
-                        </NuxtLink>
                     </div>
 
                     <div class="text-sm" v-html="cardDescription" />

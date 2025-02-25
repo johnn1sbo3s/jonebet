@@ -21,6 +21,7 @@
           }"
           :rows="performanceDataRows"
           :columns="performanceDataColumns"
+          class="bg-slate-900"
         />
       </div>
     </div>

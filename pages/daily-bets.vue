@@ -31,6 +31,7 @@
 		:rows="bets"
 		:columns="columns"
 		:sort="sort"
+		class="bg-slate-900"
 	  />
 	</div>
   </div>
