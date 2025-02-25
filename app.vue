@@ -14,7 +14,7 @@
 			>
 				<UVerticalNavigation
 					class="h-full pt-2 bg-slate-50 dark:bg-gray-900"
-					:links="links"
+					:links="sidebarItems"
 					:ui="{
 						padding: 'p-4',
 						gap: 'gap-2',
@@ -30,7 +30,7 @@
 		<div class="hidden sm:block w-80 h-full">
 			<UVerticalNavigation
 				class="fixed px-2 h-full pt-2 bg-slate-50 dark:bg-gray-900"
-				:links="links"
+				:links="sidebarItems"
 				:ui="{
 				padding: 'p-4',
 				gap: 'gap-2',
@@ -54,7 +54,6 @@
 <script setup>
 import { init } from '@fullstory/browser';
 const { isMobile } = useDevice();
-const showAlert = ref(true);
 
 if (process.client) {
 	init({ orgId: 'o-22P180-na1' });
@@ -68,57 +67,67 @@ const menuState = useMenuStore();
 
 const links = [
 	[
-	  {
-		avatar: {
-		  src: "/dataplay-icon.png",
-		  srcset: "",
-		  alt: "",
+		{
+			avatar: {
+				src: "/dataplay-icon.png",
+				srcset: "",
+				alt: "",
+			},
+				label: "DataPlay",
+				to: "https://github.com/johnn1sbo3s",
+				target: "_blank",
 		},
-		label: "DataPlay",
-		to: "https://github.com/johnn1sbo3s",
-		target: "_blank",
-	  },
 	],
 	[
-	  {
-		label: "Dashboard",
-		icon: "i-heroicons-squares-2x2",
-		to: "/",
-	  },
-	  {
-		label: "Jogos do Dia",
-		icon: "i-heroicons-calendar-days",
-		to: "/fixtures",
-	  },
-	  {
-		label: "Apostas do Dia",
-		icon: "i-heroicons-clipboard-document-list",
-		to: "/daily-bets",
-	  },
-	  {
-		label: "Performance dos modelos",
-		icon: "i-heroicons-chart-bar",
-		to: "/performance",
-	  },
-	  {
-		label: "Monitoramento em Lotes",
-		icon: "i-heroicons-inbox-stack",
-		to: "/batch-monitoring",
-	  },
-	  {
-		label: "Alavancagem",
-		icon: "i-heroicons-arrow-trending-up",
-		to: "/leverage-bets",
-	  },
-	{
-		label: "Comparador",
-		icon: "i-heroicons-chart-pie",
-		to: "/comparison",
-	  },
+		{
+			label: "Dashboard",
+			icon: "i-heroicons-squares-2x2",
+			to: "/",
+		},
+		{
+			label: "Jogos do Dia",
+			icon: "i-heroicons-calendar-days",
+			to: "/fixtures",
+		},
+		{
+			label: "Apostas do Dia",
+			icon: "i-heroicons-clipboard-document-list",
+			to: "/daily-bets",
+		},
+		{
+			label: "Performance dos modelos",
+			icon: "i-heroicons-chart-bar",
+			to: "/performance",
+		},
+		{
+			label: "Monitoramento em Lotes",
+			icon: "i-heroicons-inbox-stack",
+			to: "/batch-monitoring",
+		},
+		{
+			label: "Alavancagem",
+			icon: "i-heroicons-arrow-trending-up",
+			to: "/leverage-bets",
+		},
+		{
+			label: "Comparador",
+			icon: "i-heroicons-chart-pie",
+			to: "/comparison",
+		},
 	],
 ];
 
 const showMenu = computed(() => menuState.getMenuState);
+const sidebarItems = computed(() => {
+	if (isMobile) {
+		return links.map(group => group.filter(item =>
+			item.to !== '/comparison' &&
+			item.to !== '/batch-monitoring'
+		));
+	}
+
+	return links;
+});
 
 function closeMenu() {
 	menuState.setMenuState(false);
