@@ -2,18 +2,6 @@
 	<div class="flex flex-col gap-4">
 		<div class="flex justify-between items-start">
 			<page-header title="Monitoramento em lotes" />
-			<div class="flex items-center gap-2">
-				<div class="pt-2 flex gap-3">
-					<UToggle
-					size="md"
-					on-icon="i-heroicons-check-20-solid"
-					off-icon="i-heroicons-x-mark-20-solid"
-					:model-value="chosenModelsOnly"
-					@click="chosenModelsOnly = !chosenModelsOnly"
-					/>
-				</div>
-				<div class="text-sm pt-1.5">Apenas modelos selecionados</div>
-			</div>
 		</div>
 		<u-input
 			v-model="filterString"
@@ -114,7 +102,6 @@ const data = ref({});
 const chosenModel = ref({});
 const chartKey = ref(0);
 const filterString = ref('');
-const chosenModelsOnly = ref(true);
 const invertOrder = ref(false);
 const blocksTableColumns = [
 	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
@@ -193,10 +180,6 @@ const sortedSanitizedData = computed(() => {
 	let orderDirection = invertOrder.value ? 'asc' : 'desc';
 	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection]);
 	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
-
-	if (chosenModelsOnly.value) {
-		sorted = filterFavsModels(sorted);
-	}
 
 	return sorted.map((item) => ({
 		_id: item._id,
