@@ -132,17 +132,32 @@
 					</div>
 				</template>
 
-				<template #lay0x0Footy-data="{ row }">
+				<template #lay3x1V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
-							{{ row.lay0x0Footy }}
+							{{ row.lay3x1V1 }}
 						</span>
 
 						<div
 							class="flex items-center"
-							v-if="row.lay0x0Footy != '' && row.FTHG != null"
+							v-if="row.lay3x1V1 != '' && row.FTHG != null"
 						>
-							<result-icon :lost-result="resolveResult(row, 0, 0)" :result="resolveGameResultString(row)" />
+							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
+
+				<template #lay3x1V2-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay3x1V2 }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay3x1V2 != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
@@ -201,8 +216,13 @@ let allColumns = [
 		sortable: true,
 	},
 	{
-		key: 'lay0x0Footy',
-		label: 'Lay 0x0 Footy',
+		key: 'lay3x1V1',
+		label: 'Lay 3x1 V1',
+		sortable: true,
+	},
+	{
+		key: 'lay3x1V2',
+		label: 'Lay 3x1 V2',
 		sortable: true,
 	},
 ]
@@ -214,7 +234,8 @@ const rows = computed(() => {
 		lay1x3V6: item?.lay_1x3_v6 ? 'Lay 1x3 V6' : '',
 		lay3x0V1: item?.lay_3x0_v1_betfair ? 'Lay 3x0 V1' : '',
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
-		lay0x0Footy: item?.lay_0x0_footy ? 'Lay 0x0 Footy' : '',
+		lay3x1V1: item?.lay_3x1_v1 ? 'Lay 3x1 V1' : '',
+		lay3x1V2: item?.lay_3x1_v2 ? 'Lay 3x1 V2' : '',
 	}));
 
 	betsRows = betsRows.filter(row => row.date === chosenDay.value);
