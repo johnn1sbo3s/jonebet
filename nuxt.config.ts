@@ -9,6 +9,8 @@ export default defineNuxtConfig({
 		"@nuxtjs/device"
 	],
 
+	ssr: false,
+
 	colorMode: {
 		preference: 'dark',
 	},
