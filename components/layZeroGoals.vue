@@ -108,7 +108,6 @@ const acceptedModels = [
     'lay_0x0_v10',
     'lay_0x0_v2_betfair',
     'lay_0x0_footy',
-    'lay_0x0_simple',
     'lay_0x0_ht_v6'
 ]
 
