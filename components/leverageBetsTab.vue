@@ -161,6 +161,21 @@
 						</div>
 					</div>
 				</template>
+
+				<template #lay3x2Om-data="{ row }">
+					<div class="flex items-center gap-1">
+						<span>
+							{{ row.lay3x2Om }}
+						</span>
+
+						<div
+							class="flex items-center"
+							v-if="row.lay3x2Om != '' && row.FTHG != null"
+						>
+							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
+						</div>
+					</div>
+				</template>
 			</UTable>
 		</div>
 	</div>
@@ -225,6 +240,11 @@ let allColumns = [
 		label: 'Lay 3x1 V2',
 		sortable: true,
 	},
+	{
+		key: 'lay3x2Om',
+		label: 'Lay 3x2 OM',
+		sortable: true,
+	},
 ]
 
 const rows = computed(() => {
@@ -236,6 +256,7 @@ const rows = computed(() => {
 		lay0x3V1: item?.lay_0x3_v1_betfair ? 'Lay 0x3 V1' : '',
 		lay3x1V1: item?.lay_3x1_v1 ? 'Lay 3x1 V1' : '',
 		lay3x1V2: item?.lay_3x1_v2 ? 'Lay 3x1 V2' : '',
+		lay3x2Om: item?.lay_3x2_other_models ? 'Lay 3x2 OM' : '',
 	}));
 
 	betsRows = betsRows.filter(row => row.date === chosenDay.value);
