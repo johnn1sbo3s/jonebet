@@ -102,21 +102,6 @@
 					</div>
 				</template>
 
-				<template #layGoleadaAwayV2-data="{ row }">
-					<div class="flex items-center gap-1">
-						<span>
-							{{ row.layGoleadaAwayV2 }}
-						</span>
-
-						<div
-							class="flex items-center"
-							v-if="row.layGoleadaAwayV2 != '' && row.FTHG != null"
-						>
-							<result-icon :lost-result="resolveResult(row, 404, 404)" :result="resolveGameResultString(row)" />
-						</div>
-					</div>
-				</template>
-
 				<template #lay0x3V1-data="{ row }">
 					<div class="flex items-center gap-1">
 						<span>
@@ -172,7 +157,7 @@
 							class="flex items-center"
 							v-if="row.lay3x2Om != '' && row.FTHG != null"
 						>
-							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
+							<result-icon :lost-result="resolveResult(row, 3, 2)" :result="resolveGameResultString(row)" />
 						</div>
 					</div>
 				</template>
