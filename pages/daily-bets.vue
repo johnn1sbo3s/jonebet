@@ -4,8 +4,9 @@
 		<page-header title="Apostas do dia" />
 	</div>
 
-	<div>
+	<div class="flex gap-2 items-center">
 	  <USelect class="w-1/2 sm:w-1/5" v-model="date" :options="dates" />
+	  <USelect class="w-1/2 sm:w-1/5" v-model="selectedModel" :options="modelsOptions" />
 	</div>
 
 	<div>
@@ -42,9 +43,6 @@ const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
 
 const sort = { column: "Time", direction: "asc" };
-const favsOnly = ref(false);
-const favsModels = ref(FAVORITE_MODELS);
-favsModels.value = favsModels.value.map(item => modelNameToNaturalName(item));
 
 const columns = [
   { key: "Date", label: "Data" },
@@ -57,9 +55,6 @@ const columns = [
   { key: "Modelo", label: "Modelo", sortable: true },
 ];
 
-const changeFavsOnly = () => {
-  favsOnly.value = !favsOnly.value;
-};
 const filterByDate = (selectedDate) => {
   return Object.values(games).filter((item) => item.Date === selectedDate);
 };
@@ -90,21 +85,43 @@ const fetchData = async () => {
 
 const dates = ref([]);
 const uniqueDates = new Set();
+const selectedModel = ref("Todos os modelos");
 
 const games = await fetchData();
+
 Object.values(games).forEach((item) => {
   uniqueDates.add(item.Date);
 });
-
 dates.value = Array.from(uniqueDates).slice(-7);
+const date = ref(dates.value[dates.value?.length - 1]);
 
-const date = ref(dates.value[dates.value.length - 1]);
+const modelsOptions = computed(() => {
+	let uniqueModels = new Set();
+	Object.values(games).filter((item) => item.Date === date.value)
+		.forEach((item) => {
+			uniqueModels.add(item.Modelo);
+		});
+
+	return [
+		{ value: null, label: "Todos os modelos" },
+		...Array.from(uniqueModels)
+			.map((item) => modelNameToNaturalName(item))
+			.sort((a, b) => a.localeCompare(b)),
+	];
+});
 
 const bets = ref([]);
 
+watch(() => date.value, () => {
+	selectedModel.value = "Todos os modelos";
+});
+
 const buildTableData = async (chosenDate) => {
   try {
-	const filteredBets = filterByDate(chosenDate);
+	let filteredBets = filterByDate(chosenDate);
+	if (selectedModel.value !== "Todos os modelos") {
+		filteredBets = filteredBets.filter((item) => item.Modelo === selectedModel.value);
+	}
 	normalizeColumns(filteredBets);
 	bets.value = filteredBets;
   } catch (error) {
@@ -117,11 +134,6 @@ const qtd_games = computed(() => bets.value.length);
 
 watchEffect(() => {
   buildTableData(date.value);
-  if (favsOnly.value) {
-	bets.value = bets.value.filter((item) =>
-	  favsModels.value.includes(item.Modelo)
-	);
-  }
 });
 
 async function exportTableToExcel(tableData) {
