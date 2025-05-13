@@ -1,4 +1,4 @@
-Acesse o [Dataplay]([https:](https://dataplaybets.vercel.app/)
+# Acesse o [Dataplay](https://dataplaybets.vercel.app/)
 
 # Nuxt 3 Minimal Starter
 
