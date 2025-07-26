@@ -69,7 +69,7 @@ const chosenGameAllowedModels = computed(() => {
         return;
     }
 
-    let filteredByChosenGame = props.games.filter((item) => item.Home === props.chosenGame.Home && item.Away === props.chosenGame.Away);
+    const filteredByChosenGame = props.games.filter((item) => item.Home === props.chosenGame.Home && item.Away === props.chosenGame.Away);
     return new Set(filteredByChosenGame.map((item) => modelNameToNaturalName(item.Modelo)));
 })
 

@@ -23,12 +23,12 @@
 			</div>
 		</div>
 
-		<slot name="right"></slot>
+		<slot name="right"/>
 	</div>
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
 		title: {
 				type: String,
 				required: true,
@@ -40,7 +40,7 @@ const props = defineProps({
 		}
 })
 
-const emits = defineEmits(['menu-click']);
+defineEmits(['menu-click']);
 
 const menuStore = useMenuStore();
 

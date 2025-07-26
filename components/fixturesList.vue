@@ -2,10 +2,10 @@
     <div>
         <div class="flex gap-2 sm:gap-5 items-baseline mb-4">
             <USelectMenu
+                v-model="chosenDay"
                 class="w-1/2 sm:w-1/5"
                 placeholder="Selecione um dia"
                 :options="datesOptions"
-                v-model="chosenDay"
             />
 
             <UTabs
@@ -72,7 +72,8 @@
             v-model="showMobileModal"
         >
             <div class="flex flex-col gap-3 p-5 rounded-lg bg-slate-900 border border-opacity-40 border-teal-500 h-[60vh]">
-                <div v-if="_isEmpty(chosenGame)"
+                <div
+v-if="_isEmpty(chosenGame)"
                     class="flex flex-col items-center gap-2"
                 >
                     <USkeleton
@@ -165,11 +166,11 @@ const showSkeleton = ref(false);
 const showMobileModal = ref(false);
 
 const datesOptions = computed(() => {
-    let dates = [];
-    let currentDate = props.initialDate ? new Date(props.initialDate) : new Date();
+    const dates = [];
+    const currentDate = props.initialDate ? new Date(props.initialDate) : new Date();
 
     for (let i = 0; i < 7; i++) {
-        let virtualDate = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+        const virtualDate = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
         dates.push(formatDate(virtualDate));
     }
 
@@ -199,7 +200,7 @@ watch(() => showMobileModal.value, (newValue) => {
 
 function onTabChange(tab) {
     selectedTab.value = tabItems[tab].value;
-    selectedTab.value == 'bookie' ? betfairFixtures.value = false : betfairFixtures.value = true;
+    betfairFixtures.value = selectedTab.value !== 'bookie';
 }
 
 async function handleGameClick(game) {

@@ -8,12 +8,12 @@
 
 		<div class="flex gap-5">
 			<USelectMenu
+				v-model:model-value="chosenModel"
 				class="w-1/5"
 				searchable
 				searchable-placeholder="Pesquise por um modelo"
 				placeholder="Selecione um modelo"
 				:options="listModels"
-				v-model:model-value="chosenModel"
 			>
 				<template #option="{ option }">
 					<div class="flex items-center my-1">
@@ -84,9 +84,9 @@
 						</UButton>
 					</div>
 					<LineChart
-						class="w-full"
 						:key="chartKey"
-						:chartData="chartData"
+						class="w-full"
+						:chart-data="chartData"
 						:options="chartOptions"
 						:style="chartStyle"
 					/>
@@ -441,18 +441,18 @@ const changeChartByDay = () => {
 };
 
 Object.values(performanceData).forEach((item) => {
-	let name = modelNameToNaturalName(item.modelo);
+	const name = modelNameToNaturalName(item.modelo);
 	if (!listModels.value.includes(name)) {
 	listModels.value.push(name);
 	}
 });
 
 const chosenModel = ref(listModels.value[0]);
-route.params.model ? chosenModel.value = modelNameToNaturalName(route.params.model) : chosenModel.value = listModels.value[0];
+chosenModel.value = route.params.model ? modelNameToNaturalName(route.params.model) : listModels.value[0];
 
 const changeModel = () => {
 	Object.values(performanceData).forEach((item) => {
-	let name = item.modelo;
+	const name = item.modelo;
 	if (name === modelNameToIdName(chosenModel.value)) {
 		objectModel.value = item;
 		const { real } = objectModel.value;
@@ -467,7 +467,7 @@ const changeModel = () => {
 };
 
 const getBetsArray = () => {
-	let betsToShow = totalData.value.pl_history;
+	const betsToShow = totalData.value.pl_history;
 	let nRange = -100;
 
 	slope.value = 0;
@@ -502,7 +502,7 @@ const getBetsArray = () => {
 };
 
 const allBetsDataFilteredRows = computed(() => {
-	let name = modelNameToIdName(chosenModel.value);
+	const name = modelNameToIdName(chosenModel.value);
 	let filteredBets = _filter(betsData, { Metodo: name });
 	filteredBets = _uniqWith(filteredBets, (a, b) => a.Date === b.Date && a.Home === b.Home && a.Away === b.Away);
 	return _sortBy(filteredBets, ['Date']);
@@ -527,10 +527,10 @@ function calculateSlopeAndIntercept(bets) {
 	const sumSquareGames = games.reduce((acc, curr) => acc + curr * curr, 0);
 
 	// Calcula o slope (m)
-	let slope = (n * sumProduct - sumGames * sumCapital) / (n * sumSquareGames - sumGames * sumGames);
+	const slope = (n * sumProduct - sumGames * sumCapital) / (n * sumSquareGames - sumGames * sumGames);
 
 	// Calcula o intercepto (b)
-	let intercept = (sumCapital - slope * sumGames) / n;
+	const intercept = (sumCapital - slope * sumGames) / n;
 
 	return [slope, intercept];
 }
@@ -551,8 +551,8 @@ function cumulativeSum(array) {
 		return [];
 	}
 
-	let cumSum = [array[0]];
-	let listIndex = [];
+	const cumSum = [array[0]];
+	const listIndex = [];
 
 	for (let i = 1; i < array.length; i++) {
 		cumSum.push(cumSum[i - 1] + array[i]);

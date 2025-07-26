@@ -2,7 +2,7 @@
 	<div class="row sm:flex gap-3">
 		<div class="w-full sm:w-7/12">
 			<LineChart
-				:chartData="chartData"
+				:chart-data="chartData"
 				:options="chartOptions"
 				:style="chartStyle"
 			/>
@@ -130,8 +130,8 @@ const chartStyle = ref({
 });
 
 const chartData = computed(() => {
-  let labels = props.bankrollData.map((item) => item.Month);
-  let data = props.bankrollData.map((item) => item.Bankroll);
+  const labels = props.bankrollData.map((item) => item.Month);
+  const data = props.bankrollData.map((item) => item.Bankroll);
 
   return {
 	labels: labels,
@@ -151,8 +151,8 @@ const chartData = computed(() => {
 })
 
 const resultsByMonth = computed(() => {
-	let removedInitialMonth = props.bankrollData.slice(1);
-	let months = removedInitialMonth.map((item) => {
+	const removedInitialMonth = props.bankrollData.slice(1);
+	const months = removedInitialMonth.map((item) => {
 		return {
 			month: item.Month,
 			profit: item.Profit,

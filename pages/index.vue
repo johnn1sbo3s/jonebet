@@ -14,19 +14,6 @@
 			@close="showAlert = false"
 		/>
 
-		<div class="flex flex-col gap-2">
-			<p class="text-sm">{{ batchModels.length }} alertas</p>
-			<u-carousel
-				v-slot="{ item }"
-				id="carousel"
-				:items="batchModels"
-				:ui="{ item: 'snap-align-none',
-					container: 'relative w-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2',
-				 }"
-			>
-				<batch-alert-card class="p-0.5" :model="item" />
-			</u-carousel>
-		</div>
 
 		<u-skeleton
 			v-if="yesterdayDataStatus === 'pending'"
@@ -211,21 +198,9 @@ const { data: bankrollData } = responses[0];
 const { data: yesterdayData, status: yesterdayDataStatus, error: yesterdayDataError } = responses[1];
 const { data: dayBeforeYesterdayData } = responses[2];
 const { data: monthData, status: monthDataStatus } = responses[3];
-const { data: performanceData } = responses[4];
-
-const batchModels = computed(() => {
-	let filtered = performanceData.value;
-
-	if (onlyChosenModels.value) {
-		filtered = _filter(performanceData.value, (item) => CHOSEN_MODELS.includes(item.modelo));
-	}
-
-    filtered.sort((a, b) => b.total.qtd_jgs_atual - a.total.qtd_jgs_atual);
-    return _filter(filtered, (item) => item?.total?.qtd_jgs_atual >= 88 || item?.total?.qtd_jgs_atual <= 10);
-})
 
 const yesterdayResults = computed(() => {
-	let lastResults = yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
+	const lastResults = yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
 	yesterdayStore.setYesterdayModels(lastResults);
 	return lastResults;
 });
@@ -287,8 +262,8 @@ const top3YesterdayModels = computed(() => {
 		return []
 	}
 
-	let removedLast = yesterdayResults.value.slice(0, -1);
-	let sorted = _filter(removedLast).sort((a, b) => {
+	const removedLast = yesterdayResults.value.slice(0, -1);
+	const sorted = _filter(removedLast).sort((a, b) => {
 		return b.Profit - a.Profit
 	}).slice(0, 3);
 
@@ -304,8 +279,8 @@ const top3MonthModels = computed(() => {
 		return []
 	}
 
-	let removedLast = monthResults.value.slice(0, -1);
-	let sorted = _filter(removedLast).sort((a, b) => {
+	const removedLast = monthResults.value.slice(0, -1);
+	const sorted = _filter(removedLast).sort((a, b) => {
 		return b.Profit - a.Profit
 	}).slice(0, 3);
 
@@ -317,14 +292,14 @@ const top3MonthModels = computed(() => {
 })
 
 const positiveYesterdayModels = computed(() => {
-  let models = _filter(yesterdayResults.value, item => item.Date != 'Total' );
-  let positive = _filter(models, item => item.Profit > 0);
+  const models = _filter(yesterdayResults.value, item => item.Date != 'Total' );
+  const positive = _filter(models, item => item.Profit > 0);
   return positive.length;
 });
 
 const positiveMonthModels = computed(() => {
-  let models = _filter(monthResults.value, item => item.Date != 'Total' );
-  let positive = _filter(models, item => item.Profit > 0);
+  const models = _filter(monthResults.value, item => item.Date != 'Total' );
+  const positive = _filter(models, item => item.Profit > 0);
   return positive.length;
 });
 

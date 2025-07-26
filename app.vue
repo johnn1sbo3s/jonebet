@@ -22,7 +22,7 @@
 					}"
 					@click="closeMenu"
 				>
-					<template #avatar> </template>
+					<template #avatar/>
 				</UVerticalNavigation>
 			</div>
 		</transition>
@@ -37,7 +37,7 @@
 					avatar: 'w-5 h-5',
 				}"
 			>
-				<template #avatar> </template>
+				<template #avatar/>
 			</UVerticalNavigation>
 		</div>
 
@@ -55,7 +55,7 @@
 import { init } from '@fullstory/browser';
 const { isMobile } = useDevice();
 
-if (process.client) {
+if (import.meta.client) {
 	init({ orgId: 'o-22P180-na1' });
 }
 

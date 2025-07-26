@@ -5,13 +5,13 @@
 	</div>
 
 	<div class="flex gap-2 items-center">
-	  <USelect class="w-1/2 sm:w-1/5" v-model="date" :options="dates" />
-	  <USelect class="w-1/2 sm:w-1/5" v-model="selectedModel" :options="modelsOptions" />
+	  <USelect v-model="date" class="w-1/2 sm:w-1/5" :options="dates" />
+	  <USelect v-model="selectedModel" class="w-1/2 sm:w-1/5" :options="modelsOptions" />
 	</div>
 
 	<div>
 	  <div class="flex justify-between items-center mb-3">
-		<div class="text-sm text-slate-400" v-if="bets.length > 0">
+		<div v-if="bets.length > 0" class="text-sm text-slate-400">
 			{{ qtd_games }} apostas encontradas
 		</div>
 
@@ -96,7 +96,7 @@ dates.value = Array.from(uniqueDates).slice(-7);
 const date = ref(dates.value[dates.value?.length - 1]);
 
 const modelsOptions = computed(() => {
-	let uniqueModels = new Set();
+	const uniqueModels = new Set();
 	Object.values(games).filter((item) => item.Date === date.value)
 		.forEach((item) => {
 			uniqueModels.add(item.Modelo);

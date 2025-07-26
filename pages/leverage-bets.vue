@@ -7,8 +7,8 @@
 
 		<UTabs
 			:items="items"
-			@change="onChange"
 			class="mt-3"
+			@change="onChange"
 		/>
 
 		<div v-if="selectedTab === 'jogos'">

@@ -2,10 +2,10 @@
     <div>
         <div class="flex gap-2 mb-5">
             <USelectMenu
+                v-model="chosenDay"
                 class="w-1/2 sm:w-1/5"
                 placeholder="Selecione um dia"
                 :options="datesOptions"
-                v-model="chosenDay"
             />
         </div>
 
@@ -49,7 +49,8 @@
             v-model="showMobileModal"
         >
             <div class="flex flex-col gap-3 p-5 rounded-lg bg-slate-900 border border-opacity-40 border-teal-500 h-[60vh]">
-                <div v-if="_isEmpty(chosenGame)"
+                <div
+v-if="_isEmpty(chosenGame)"
                     class="flex flex-col items-center gap-2"
                 >
                     <USkeleton

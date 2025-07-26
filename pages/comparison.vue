@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
-    <page-header title="Comparação de modelos"></page-header>
+    <page-header title="Comparação de modelos"/>
     <USelectMenu
+      v-model:model-value="chosenCategory"
       class="w-1/5"
       searchable
       searchable-placeholder="Pesquise por categoria"
       placeholder="Selecione uma categoria"
       :options="categoriesList"
-      v-model:model-value="chosenCategory"
     />
     <div class="h-96 w-full">
       <div>
@@ -78,9 +78,9 @@ const modelNameToFront = (modelName) => {
 };
 
 function buildTableObject(objectList) {
-  let objects = [];
+  const objects = [];
   objectList.forEach((item) => {
-    let myObj = {
+    const myObj = {
       modelo: modelNameToFront(item.modelo),
       media: item.total.media.toFixed(2),
       desvpad: item.total.desvpad.toFixed(2),
@@ -112,8 +112,8 @@ const buildComparisonTable = () => {
     return;
   }
 
-  let filteredModels = [];
-  _forEach(performanceData.value, function (value, key) {
+  const filteredModels = [];
+  _forEach(performanceData.value, function (value) {
     if (value.modelo.includes(modelNameToBack(chosenCategory.value))) {
       filteredModels.push(value);
     }

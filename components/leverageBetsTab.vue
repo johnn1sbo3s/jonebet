@@ -1,10 +1,10 @@
 <template>
 	<div class="flex flex-col gap-4">
 		<USelectMenu
+			v-model="chosenDay"
 			class="w-1/2 sm:w-1/5"
 			placeholder="Selecione um dia"
 			:options="availableDates"
-			v-model="chosenDay"
 		/>
 
 		<div class="flex flex-col gap-3">
@@ -79,8 +79,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay1x3V6 != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 1, 3)" :result="resolveGameResultString(row)" />
 						</div>
@@ -94,8 +94,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay3x0V1 != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 3, 0)" :result="resolveGameResultString(row)" />
 						</div>
@@ -109,8 +109,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay0x3V1 != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 0, 3)" :result="resolveGameResultString(row)" />
 						</div>
@@ -124,8 +124,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay3x1V1 != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
 						</div>
@@ -139,8 +139,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay3x1V2 != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 3, 1)" :result="resolveGameResultString(row)" />
 						</div>
@@ -154,8 +154,8 @@
 						</span>
 
 						<div
-							class="flex items-center"
 							v-if="row.lay3x2Om != '' && row.FTHG != null"
+							class="flex items-center"
 						>
 							<result-icon :lost-result="resolveResult(row, 3, 2)" :result="resolveGameResultString(row)" />
 						</div>
@@ -184,7 +184,7 @@ const chosenDay = ref('');
 const tableUi = { wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' };
 const timeNow = ref(DateTime.now());
 
-let allColumns = [
+const allColumns = [
 	{
 		key: 'Time',
 		label: 'Horário',
@@ -282,15 +282,15 @@ function isGameLive(game) {
 		return false;
 	}
 
-	let now = timeNow.value;
-	let gameTime = DateTime.fromFormat(game.Time, 'HH:mm');
-	let diffInMinutes = now.diff(gameTime, 'minutes').minutes;
+	const now = timeNow.value;
+	const gameTime = DateTime.fromFormat(game.Time, 'HH:mm');
+	const diffInMinutes = now.diff(gameTime, 'minutes').minutes;
 
 	return diffInMinutes >= 0 && diffInMinutes <= 120;
 }
 
 function findOdds(game) {
-	let foundGame = props.dailyBets?.find(bet => bet.Home === game.Home && bet.Away === game.Away);
+	const foundGame = props.dailyBets?.find(bet => bet.Home === game.Home && bet.Away === game.Away);
 
 	if (foundGame) {
 		return [foundGame.FT_Odds_H.toFixed(2), foundGame.FT_Odds_A.toFixed(2)];

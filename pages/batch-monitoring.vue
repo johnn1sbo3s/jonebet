@@ -14,14 +14,13 @@
 			class="pl-0.5 w-[590px] flex justify-between"
 		>
 			<p class="text-sm">{{ sortedSanitizedData.length }} modelos</p>
-			<i v-if="!invertOrder" class="i-heroicons-bars-arrow-down text-xl hover:cursor-pointer" @click="invertCardsOrder"></i>
-			<i v-else class="i-heroicons-bars-arrow-up text-xl hover:cursor-pointer" @click="invertCardsOrder"></i>
+			<i v-if="!invertOrder" class="i-heroicons-bars-arrow-down text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
+			<i v-else class="i-heroicons-bars-arrow-up text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
 		</div>
 		<div
 			v-else
 			class="h-[20px] w-full"
-		>
-		</div>
+		/>
 		<div class="flex gap-4">
 			<div class="flex justify-between">
 				<div
@@ -32,9 +31,9 @@
 				</div>
 				<div class="p-0.5 pr-4 max-h-screen-80 overflow-auto flex flex-col gap-4">
 					<batch-card
-						:class="item._id === chosenModel._id ? 'outline outline-teal-400 outline-1' : ''"
 						v-for="item in sortedSanitizedData"
 						:key="item._id"
+						:class="item._id === chosenModel._id ? 'outline outline-teal-400 outline-1' : ''"
 						:metric-item="item"
 						:selected-id="chosenModel._id"
 						@click="chosenModel = item"
@@ -42,8 +41,8 @@
 				</div>
 			</div>
 			<div
-				class="w-full h-[520px] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
 				v-if="!chosenModel._id"
+				class="w-full h-[520px] flex items-center justify-center outline-dashed outline-1 outline-gray-400 p-10 rounded-md"
 			>
 				<p class="text-center text-gray-400 text-2xl">
 					Selecione um card ao lado para ver o gráfico de acúmulo de capital do modelo.
@@ -68,10 +67,10 @@
 				</template>
 				<div class="flex flex-col gap-3">
 					<LineChart
-						:chartData="chartData"
+						:key="chartKey"
+						:chart-data="chartData"
 						:options="chartOptions"
 						:style="chartStyle"
-						:key="chartKey"
 					/>
 					<UTable
 						class="max-h-screen-30"
@@ -177,7 +176,7 @@ const chartStyle = ref({
 
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
-	let orderDirection = invertOrder.value ? 'asc' : 'desc';
+	const orderDirection = invertOrder.value ? 'asc' : 'desc';
 	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection]);
 	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
 
@@ -202,8 +201,8 @@ const chartData = computed(() => {
 		return {};
 	}
 
-	let profits =  chosenModel.value.pl_history.map((item) => item.Profit);
-	let data = profits.reduce((acc, curr, index) => {
+	const profits =  chosenModel.value.pl_history.map((item) => item.Profit);
+	const data = profits.reduce((acc, curr, index) => {
 		if (index === 0) {
 			return [curr];
 		}
@@ -211,7 +210,7 @@ const chartData = computed(() => {
 		return [...acc, curr + acc[index - 1]];
 	}, []);
 
-	let labels = Array.from({ length: data.length }, (_, i) => i + 1);
+	const labels = Array.from({ length: data.length }, (_, i) => i + 1);
 
 	return {
 		labels: labels,
@@ -233,10 +232,6 @@ const chartData = computed(() => {
 // Métodos
 function resetsZoom() {
 	chartKey.value++;
-}
-
-function filterFavsModels(metricsArray) {
-	return _filter(metricsArray, (item) => CHOSEN_MODELS.includes(item.modelo));
 }
 
 function invertCardsOrder() {

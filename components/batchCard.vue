@@ -13,7 +13,7 @@
                         <p>{{ metricItem.qtd_jgs }} jogos</p>
                     </div>
                 </div>
-                <i class="i-heroicons-chevron-right text-2xl text-teal-500 hidden group-hover:block"></i>
+                <i class="i-heroicons-chevron-right text-2xl text-teal-500 hidden group-hover:block"/>
             </div>
         </template>
 
@@ -52,7 +52,6 @@ const props = defineProps({
     metricItem: {
         type: Object,
         required: true,
-        default: () => {}
     },
 });
 
@@ -61,7 +60,7 @@ const emit = defineEmits(['click']);
 
 // Variáveis computadas
 const blockDays = computed(() => {
-    let lastDay = DateTime.fromISO(props.metricItem.last_block_day);
+    const lastDay = DateTime.fromISO(props.metricItem.last_block_day);
     return Math.floor(DateTime.now().diff(lastDay, 'days').toObject().days);
 })
 

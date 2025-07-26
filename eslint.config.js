@@ -1,5 +1,34 @@
 import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 
 export default createConfigForNuxt({
-  // options here
+  rules: {
+    // Allow unused variables that start with underscore
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }
+    ],
+    // Relax some Vue-specific rules
+    'vue/no-required-prop-with-default': 'warn',
+    'vue/require-prop-types': 'warn',
+    'vue/no-v-html': 'warn',
+    'vue/html-self-closing': 'warn',
+    'vue/attributes-order': 'warn',
+    'vue/first-attribute-linebreak': 'warn',
+    'vue/attribute-hyphenation': 'warn',
+    'vue/no-lone-template': 'warn'
+  },
+  languageOptions: {
+    globals: {
+      // Lodash functions from nuxt-lodash
+      '_groupBy': 'readonly',
+      '_forEach': 'readonly',
+      '_map': 'readonly',
+      '_sum': 'readonly',
+      // Pinia
+      'defineStore': 'readonly'
+    }
+  }
 })
