@@ -16,9 +16,30 @@ export default createConfigForNuxt({
     'vue/no-v-html': 'warn',
     'vue/html-self-closing': 'warn',
     'vue/attributes-order': 'warn',
-    'vue/first-attribute-linebreak': 'warn',
     'vue/attribute-hyphenation': 'warn',
-    'vue/no-lone-template': 'warn'
+    'vue/no-lone-template': 'warn',
+    // Force attributes on separate lines
+    'vue/max-attributes-per-line': [
+      'error',
+      {
+        'singleline': 1,
+        'multiline': 1
+      }
+    ],
+    'vue/first-attribute-linebreak': [
+      'error',
+      {
+        'singleline': 'ignore',
+        'multiline': 'below'
+      }
+    ],
+    'vue/html-closing-bracket-newline': [
+      'error',
+      {
+        'singleline': 'never',
+        'multiline': 'always'
+      }
+    ]
   },
   languageOptions: {
     globals: {

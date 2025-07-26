@@ -54,13 +54,11 @@ const props = defineProps({
   modelValue: {
 	type: Boolean,
 	required: true,
-	default: () => true
   },
 
   bankrollData: {
 	type: Object,
 	required: true,
-	default: () => {}
   }
 })
 

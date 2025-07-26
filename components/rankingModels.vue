@@ -76,17 +76,14 @@ const props = defineProps({
     items: {
         type: Array,
         required: true,
-        default: () => []
     },
     title: {
         type: String,
         required: true,
-        default: () => ""
     },
     allResultsData: {
         type: Array,
         required: true,
-        default: () => []
     }
 })
 

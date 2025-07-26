@@ -1,3 +1,6 @@
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+
 export const usePerformanceStore = defineStore('performance', () => {
     const performanceData = ref({});
     const betsData = ref({});

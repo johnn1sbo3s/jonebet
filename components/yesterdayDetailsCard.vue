@@ -31,17 +31,14 @@ defineProps({
     numberModels: {
         type: Number,
         required: true,
-        default: () => 0
     },
     numberBets: {
         type: Number,
         required: true,
-        default: () => 0
     },
     positiveModels: {
         type: Number,
         required: true,
-        default: () => 0
     }
 })
 </script>

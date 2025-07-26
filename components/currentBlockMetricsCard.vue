@@ -21,5 +21,14 @@
 </template>
 
 <script setup>
-const props = defineProps(["metricsData", "cardTitle"]);
+defineProps({
+  metricsData: {
+    type: Object,
+    required: true,
+  },
+  cardTitle: {
+    type: String,
+    required: true,
+  }
+});
 </script>
