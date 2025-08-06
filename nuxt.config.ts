@@ -1,5 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	devtools: { enabled: false },
+	compatibilityDate: '2025-07-26',
+
 	modules: [
 		"@nuxt/ui",
 		"nuxt-lodash",
@@ -13,7 +16,6 @@ export default defineNuxtConfig({
 		preference: 'dark',
 	},
 
-	devtools: { enabled: false },
 
 	scripts: {
 		registry: {
@@ -37,7 +39,8 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		public: {
-			API_URL: 'https://api.jonebet.xyz',
+			API_URL: 'https://45.92.10.252/',
+			API_V2: 'http://45.92.10.252:5001',
 		},
 	}
 });
