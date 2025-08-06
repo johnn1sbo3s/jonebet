@@ -121,15 +121,6 @@ const driverObj = driver({
 	allowClose: false,
 	steps: [
 		{
-			element: '#carousel',
-			popover: {
-				title: 'Alertas',
-				description: 'Os alertas mostram os modelos que estão próximos ou acabaram de completar um bloco de 100 entradas.',
-				side: 'left',
-				align: 'start'
-			}
-		},
-		{
 			element: '#bankroll-evolution',
 			popover: {
 				title: 'Evolução da banca',
