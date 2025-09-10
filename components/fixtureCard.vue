@@ -26,9 +26,26 @@
                     </div>
 
                     <div class="flex gap-1">
-                        <UBadge color="primary" variant="soft">{{ item.FT_Odds_H.toFixed(2) }}</UBadge>
-                        <UBadge color="primary" variant="soft">{{ item.FT_Odds_D.toFixed(2) }}</UBadge>
-                        <UBadge color="primary" variant="soft">{{ item.FT_Odds_A.toFixed(2) }}</UBadge>
+                        <UBadge
+                            :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'"
+                            variant="soft"
+                        >
+                            {{ item.FT_Odds_H.toFixed(2) }}
+                        </UBadge>
+
+                        <UBadge
+                            color="neutral"
+                            variant="soft"
+                        >
+                            {{ item.FT_Odds_D.toFixed(2) }}
+                        </UBadge>
+
+                        <UBadge
+                            :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'error'"
+                            variant="soft"
+                        >
+                            {{ item.FT_Odds_A.toFixed(2) }}
+                        </UBadge>
                     </div>
                 </div>
             </div>
