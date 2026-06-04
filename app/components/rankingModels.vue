@@ -1,5 +1,5 @@
 <template>
-    <u-card class="w-full">
+    <u-card class="w-full h-full">
         <template #header>
             <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>

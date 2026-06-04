@@ -52,7 +52,7 @@
 				</div>
 			</template>
 			<u-skeleton v-if="dayLoading" class="w-full h-[200px]" />
-			<div v-else class="sm:flex gap-3 w-full">
+			<div v-else class="sm:flex items-stretch gap-3 w-full">
 				<div class="flex-1 min-w-0">
 					<yesterday-metrics-card :items="dayMetrics" />
 				</div>
@@ -82,7 +82,7 @@
 			<template #header>
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
-			<div class="sm:flex gap-3 w-full">
+			<div class="sm:flex items-stretch gap-3 w-full">
 				<div class="flex-1 min-w-0">
 					<yesterday-metrics-card :items="monthMetrics" />
 				</div>
