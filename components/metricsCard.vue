@@ -35,7 +35,7 @@
 		</div>
 		<div class="flex gap-1">
 			<p class="font-semibold">Lucro efetivo:</p>
-			<p>{{ ((metricsData.ev / -metricsData.med_loss) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}%</p>
+			<p>{{ metricsData.med_loss !== 0 ? ((metricsData.ev / -metricsData.med_loss) * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) : '0.00' }}%</p>
 		</div>
 		<div class="flex gap-1">
 			<p class="font-semibold">Máx DD:</p>

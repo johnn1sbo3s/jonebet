@@ -35,16 +35,18 @@ const props = defineProps({
 });
 
 //Variáveis computadas
-const modelName = computed(() => modelNameToNaturalName(props.model.modelo));
-const profit = computed(() => (props.model.total.media_atual * 100));
+const modelName = computed(() => props.model?.modelo ? modelNameToNaturalName(props.model.modelo) : '');
+const profit = computed(() => (props.model?.total?.media_atual || 0) * 100);
 
 const lastDay = computed(() => {
-    let lastDay = props.model.total.blocks_history.at(-2).Ult_Dia;
-    return formatDate(lastDay);
+    const blocks = props.model?.total?.blocks_history || [];
+    const entry = blocks?.length >= 2 ? blocks.at(-2) : blocks?.at(-1);
+    if (!entry?.Ult_Dia) return '';
+    return formatDate(entry.Ult_Dia);
 });
 
 const cardDescription = computed(() => {
-    if (props.model.total.qtd_jgs_atual >= 88) {
+    if (!props.model?.total || props.model.total.qtd_jgs_atual >= 88) {
         return `<b>${100 - props.model.total.qtd_jgs_atual} jogos</b> para completar um bloco de 100`;
     }
 

@@ -130,6 +130,9 @@ const chartStyle = ref({
 });
 
 const chartData = computed(() => {
+  if (!props.bankrollData?.length) {
+    return { labels: [], datasets: [] };
+  }
   let labels = props.bankrollData.map((item) => item.Month);
   let data = props.bankrollData.map((item) => item.Bankroll);
 
@@ -151,6 +154,7 @@ const chartData = computed(() => {
 })
 
 const resultsByMonth = computed(() => {
+	if (!props.bankrollData?.length) return [];
 	let removedInitialMonth = props.bankrollData.slice(1);
 	let months = removedInitialMonth.map((item) => {
 		return {
@@ -163,9 +167,9 @@ const resultsByMonth = computed(() => {
 })
 
 const totalProfit = computed(() => {
+	if (!props.bankrollData?.length || props.bankrollData.length < 2) return 0;
 	return (props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll);
 })
-
 </script>
 
 <style lang="scss" scoped>
