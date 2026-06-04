@@ -141,7 +141,6 @@ const data = computed(() => {
     } : null,
   };
 });
-
 // Date picker
 const timezone = 'America/Sao_Paulo';
 const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
@@ -149,6 +148,7 @@ const chosenDate = ref(yesterday);
 const maxDate = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
 const dayLoading = ref(false);
 const yesterdayData = ref({});
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');

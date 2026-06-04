@@ -104,16 +104,6 @@ const links = [
 			icon: "i-heroicons-inbox-stack",
 			to: "/batch-monitoring",
 		},
-		{
-			label: "Alavancagem",
-			icon: "i-heroicons-arrow-trending-up",
-			to: "/leverage-bets",
-		},
-		{
-			label: "Comparador",
-			icon: "i-heroicons-chart-pie",
-			to: "/comparison",
-		},
 	],
 ];
 
@@ -121,7 +111,6 @@ const showMenu = computed(() => menuState.getMenuState);
 const sidebarItems = computed(() => {
 	if (isMobile) {
 		return links.map(group => group.filter(item =>
-			item.to !== '/comparison' &&
 			item.to !== '/batch-monitoring'
 		));
 	}
@@ -138,5 +127,4 @@ function closeMenu() {
 div {
 	font-family: satoshi, sans-serif;
 }
-
 </style>
