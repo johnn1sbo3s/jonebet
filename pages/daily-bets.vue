@@ -60,16 +60,13 @@ const filterByDate = (selectedDate) => {
 };
 
 const normalizeColumns = (object_data) => {
-  object_data.forEach((item) => {
-	item.Modelo = item.Modelo.replace(/_/g, " ").replace(/\b\w/g, (c) =>
-	  c.toUpperCase()
-	);
-	item.FT_Odds_H = parseFloat(item.FT_Odds_H).toFixed(2);
-	item.FT_Odds_D = parseFloat(item.FT_Odds_D).toFixed(2);
-	item.FT_Odds_A = parseFloat(item.FT_Odds_A).toFixed(2);
-  });
-
-  return object_data;
+  return object_data.map((item) => ({
+	...item,
+	Modelo: modelNameToNaturalName(item.Modelo),
+	FT_Odds_H: parseFloat(item.FT_Odds_H).toFixed(2),
+	FT_Odds_D: parseFloat(item.FT_Odds_D).toFixed(2),
+	FT_Odds_A: parseFloat(item.FT_Odds_A).toFixed(2),
+  }));
 };
 
 const fetchData = async () => {
@@ -122,8 +119,7 @@ const buildTableData = async (chosenDate) => {
 	if (selectedModel.value !== "Todos os modelos") {
 		filteredBets = filteredBets.filter((item) => item.Modelo === selectedModel.value);
 	}
-	normalizeColumns(filteredBets);
-	bets.value = filteredBets;
+	bets.value = normalizeColumns(filteredBets);
   } catch (error) {
 	console.error("Erro ao buscar apostas do dia:", error);
 	bets.value = []; // Limpar a lista em caso de erro
