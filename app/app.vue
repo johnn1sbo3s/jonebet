@@ -118,9 +118,3 @@ function closeMenu() {
 	menuState.setMenuState(false);
 }
 </script>
-
-<style>
-div {
-	font-family: satoshi, sans-serif;
-}
-</style>

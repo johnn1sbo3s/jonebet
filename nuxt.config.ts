@@ -1,6 +1,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
+    '@nuxt/fonts',
     '@pinia/nuxt',
     '@nuxtjs/device'
   ],
