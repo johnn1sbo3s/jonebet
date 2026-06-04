@@ -43,11 +43,35 @@
 			<template #header>
 				<div class="flex justify-between items-center">
 					<p class="font-semibold">Resultados de {{ formatDate(chosenDate) }}</p>
-					<UInputDate
-						v-model="chosenDate"
-						:max-value="maxDate"
-						size="sm"
-					/>
+					<div class="flex items-center gap-1">
+						<UButton
+							icon="i-lucide-chevron-left"
+							size="xs"
+							variant="soft"
+							@click="prevDay"
+						/>
+						<UPopover :popper="{ placement: 'bottom' }">
+							<UButton
+								:label="formatDate(chosenDate)"
+								size="xs"
+								variant="soft"
+							/>
+							<template #content>
+								<UCalendar
+									v-model="chosenDate"
+									:max-value="maxDate"
+									@update:model-value="calendarOpen = false"
+								/>
+							</template>
+						</UPopover>
+						<UButton
+							icon="i-lucide-chevron-right"
+							size="xs"
+							variant="soft"
+							:disabled="isAtMaxDate"
+							@click="nextDay"
+						/>
+					</div>
 				</div>
 			</template>
 			<u-skeleton v-if="dayLoading" class="w-full h-50" />
@@ -162,6 +186,28 @@ function calendarToDateStr(cal) {
 function formatDate(cal) {
   if (!cal) return '';
   return `${String(cal.day).padStart(2, '0')}/${String(cal.month).padStart(2, '0')}/${cal.year}`;
+}
+
+function addDays(cal, days) {
+  const d = new Date(cal.year, cal.month - 1, cal.day + days);
+  return new CalendarDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
+}
+
+function isSameDate(a, b) {
+  return a && b && a.year === b.year && a.month === b.month && a.day === b.day;
+}
+
+const calendarOpen = ref(false);
+const isAtMaxDate = computed(() => isSameDate(chosenDate.value, maxDate));
+
+function prevDay() {
+  chosenDate.value = addDays(chosenDate.value, -1);
+}
+
+function nextDay() {
+  if (!isAtMaxDate.value) {
+    chosenDate.value = addDays(chosenDate.value, 1);
+  }
 }
 
 const dayMetrics = computed(() => {
