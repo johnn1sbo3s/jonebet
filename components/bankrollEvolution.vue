@@ -133,8 +133,8 @@ const chartData = computed(() => {
   if (!props.bankrollData?.length) {
     return { labels: [], datasets: [] };
   }
-  let labels = props.bankrollData.map((item) => item.Month);
-  let data = props.bankrollData.map((item) => item.Bankroll);
+  let labels = props.bankrollData.map((item) => item.month);
+  let data = props.bankrollData.map((item) => item.bankroll);
 
   return {
 	labels: labels,
@@ -158,8 +158,8 @@ const resultsByMonth = computed(() => {
 	let removedInitialMonth = props.bankrollData.slice(1);
 	let months = removedInitialMonth.map((item) => {
 		return {
-			month: item.Month,
-			profit: item.Profit,
+		month: item.month,
+		profit: item.profit,
 		}
 	})
 
@@ -168,7 +168,7 @@ const resultsByMonth = computed(() => {
 
 const totalProfit = computed(() => {
 	if (!props.bankrollData?.length || props.bankrollData.length < 2) return 0;
-	return (props.bankrollData.at(-1).Bankroll - props.bankrollData.at(0).Bankroll);
+	return (props.bankrollData.at(-1).bankroll - props.bankrollData.at(0).bankroll);
 })
 </script>
 
