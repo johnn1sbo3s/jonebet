@@ -52,16 +52,12 @@
 </template>
 
 <script setup>
-import { init } from '@fullstory/browser';
 const { isMobile } = useDevice();
-
-if (process.client) {
-	init({ orgId: 'o-22P180-na1' });
-}
 
 useHead({
 	title: "DataPlay",
 });
+
 
 const menuState = useMenuStore();
 

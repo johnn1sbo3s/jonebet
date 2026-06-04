@@ -197,8 +197,6 @@
 import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
 const { isMobile } = useDevice();
 
 const driverObj = driver({
