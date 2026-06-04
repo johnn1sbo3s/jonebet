@@ -43,10 +43,9 @@
 			<template #header>
 				<div class="flex justify-between items-center">
 					<p class="font-semibold">Resultados de {{ formatDate(chosenDate) }}</p>
-					<UInput
-						type="date"
+					<UInputDate
 						v-model="chosenDate"
-						:max="maxDate"
+						:max-value="maxDate"
 						size="sm"
 					/>
 				</div>
@@ -107,6 +106,7 @@
 
 <script setup>
 import { DateTime } from 'luxon';
+import { CalendarDate } from '@internationalized/date';
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
@@ -148,15 +148,20 @@ const data = computed(() => {
 // Date picker
 const timezone = 'America/Sao_Paulo';
 const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
-const chosenDate = ref(yesterday);
-const maxDate = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
+const yesterdayParts = yesterday.split('-').map(Number);
+const chosenDate = ref(new CalendarDate(yesterdayParts[0], yesterdayParts[1], yesterdayParts[2]));
+const maxDate = new CalendarDate(...DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd').split('-').map(Number));
 const dayLoading = ref(false);
 const yesterdayData = ref({});
 
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${d}/${m}/${y}`;
+function calendarToDateStr(cal) {
+  if (!cal) return '';
+  return `${cal.year}-${String(cal.month).padStart(2, '0')}-${String(cal.day).padStart(2, '0')}`;
+}
+
+function formatDate(cal) {
+  if (!cal) return '';
+  return `${String(cal.day).padStart(2, '0')}/${String(cal.month).padStart(2, '0')}/${cal.year}`;
 }
 
 const dayMetrics = computed(() => {
@@ -194,14 +199,15 @@ async function fetchDayResults(date) {
 // Load initial date (use dashboard fallback data or fetch)
 if (data.value?.yesterday?.results?.length) {
   yesterdayData.value = data.value.yesterday;
-  chosenDate.value = data.value.yesterday.date;
+  const parts = data.value.yesterday.date.split('-').map(Number);
+  chosenDate.value = new CalendarDate(parts[0], parts[1], parts[2]);
 } else {
   await fetchDayResults(yesterday);
 }
 
 // Refetch when date changes
 watch(chosenDate, (newDate) => {
-  if (newDate) fetchDayResults(newDate);
+  if (newDate) fetchDayResults(calendarToDateStr(newDate));
 });
 
 // Store for other pages
