@@ -1,5 +1,5 @@
 <template>
-    <u-card class="w-full">
+    <u-card class="w-full h-full">
         <template #header>
         <p class="font-semibold">Métricas</p>
         </template>
