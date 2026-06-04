@@ -44,6 +44,6 @@ const navItems = [
   </UHeader>
 
   <UMain>
-    <NuxtPage />
+    <NuxtPage class="p-6" />
   </UMain>
 </template>
