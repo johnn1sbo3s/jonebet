@@ -21,7 +21,7 @@
 		/>
 		<u-card v-else id="bankroll-evolution">
 			<template #header>
-				<div class="flex gap-1 items-baseline">
+				<div>
 					<p class="font-semibold">Evolução da banca</p>
 					<p class="text-sm text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
 				</div>
