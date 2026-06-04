@@ -1,5 +1,5 @@
 <template>
-    <u-card class="w-full">
+    <u-card class="w-full h-full">
         <template #header>
             <div class="flex justify-between">
                 <p class="font-semibold">{{ title }}</p>
@@ -21,8 +21,8 @@
                     :key="item.id"
                     class="flex align-middle justify-between"
                 >
-                    <nuxt-link :to="`performance/${modelNameToIdName(item.name)}`">
-                        <div class="hover:text-teal-600 hover:cursor-pointer">{{ item.name }}</div>
+                    <nuxt-link :to="`/performance/${modelNameToIdName(item.name)}`">
+                        <div class="hover:text-teal-600 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
                     </nuxt-link>
                     <div
                         class="font-semibold"

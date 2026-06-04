@@ -14,7 +14,6 @@
 			@close="showAlert = false"
 		/>
 
-
 		<u-skeleton v-if="status === 'pending'" class="w-full h-[510px]" />
 		<data-error-card
 			v-else-if="!data?.bankrollEvolution?.length"
@@ -37,29 +36,38 @@
 
 		<u-skeleton v-if="status === 'pending'" class="w-full h-[330px]" />
 		<data-error-card
-			v-else-if="!data?.yesterday?.results?.length"
-			:message="`Não foi possível carregar os resultados de ${data?.yesterday?.isFallback ? 'anteontem' : 'ontem'}`"
+			v-else-if="!yesterdayData?.results?.length && !dayLoading"
+			:message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
 		/>
 		<u-card v-else id="yesterday-metrics">
 			<template #header>
-				<p class="font-semibold">{{ data?.yesterday?.isFallback ? `Resultados de anteontem - ${formatDate(data?.yesterday?.date)}` : `Resultados de ontem - ${formatDate(data?.yesterday?.date)}` }}</p>
-			</template>
-			<div class="row sm:flex gap-3 w-full">
-				<div class="w-full">
-					<yesterday-metrics-card :items="yesterdayMetrics" />
+				<div class="flex justify-between items-center">
+					<p class="font-semibold">Resultados de {{ formatDate(chosenDate) }}</p>
+					<UInput
+						type="date"
+						v-model="chosenDate"
+						:max="maxDate"
+						size="sm"
+					/>
 				</div>
-				<div v-if="data?.yesterday?.topModels?.length" class="my-3 sm:my-0 w-full">
+			</template>
+			<u-skeleton v-if="dayLoading" class="w-full h-[200px]" />
+			<div v-else class="row sm:flex gap-3 w-full">
+				<div class="w-full">
+					<yesterday-metrics-card :items="dayMetrics" />
+				</div>
+				<div v-if="yesterdayData?.topModels?.length" class="my-3 sm:my-0 w-full">
 					<ranking-models
 						:title="'Top 3 modelos'"
-						:items="data.yesterday.topModels"
-						:all-results-data="data.yesterday.results"
+						:items="yesterdayData.topModels"
+						:all-results-data="yesterdayData.results"
 					/>
 				</div>
 				<div class="w-full">
 					<yesterday-details-card
-						:number-bets="data?.yesterday?.metrics?.bets"
-						:number-models="data?.yesterday?.metrics?.models"
-						:positive-models="data?.yesterday?.positiveModels || 0"
+						:number-bets="yesterdayData?.metrics?.bets"
+						:number-models="yesterdayData?.metrics?.models"
+						:positive-models="yesterdayData?.positiveModels || 0"
 					/>
 				</div>
 			</div>
@@ -90,25 +98,65 @@
 				/>
 			</div>
 		</u-card>
-  </div>
+	</div>
 </template>
 
 <script setup>
+import { DateTime } from 'luxon';
+
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
 const yesterdayStore = useYesterdayModelsStore();
 const showAlert = ref(true);
 
-const { data, status, error } = await useFetch(`${apiUrl}/dashboard`);
+const { data: rawData, status, error } = await useFetch(`${apiUrl}/dashboard`);
 
+// Clean undefined properties for SSR serialization
+function cleanObj(obj) {
+  if (!obj || typeof obj !== 'object') return obj;
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== undefined)
+  );
+}
+function cleanArray(arr) {
+  if (!arr?.length) return [];
+  return arr.map(item => cleanObj(item));
+}
+
+const data = computed(() => {
+  if (!rawData.value) return null;
+  const d = rawData.value;
+  return {
+    ...d,
+    bankrollEvolution: cleanArray(d.bankrollEvolution),
+    yesterday: d.yesterday ? {
+      ...d.yesterday,
+      topModels: cleanArray(d.yesterday.topModels),
+      results: cleanArray(d.yesterday.results),
+    } : null,
+    month: d.month ? {
+      ...d.month,
+      topModels: cleanArray(d.month.topModels),
+      results: cleanArray(d.month.results),
+    } : null,
+  };
+});
+
+// Date picker
+const timezone = 'America/Sao_Paulo';
+const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
+const chosenDate = ref(yesterday);
+const maxDate = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd');
+const dayLoading = ref(false);
+const yesterdayData = ref({});
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
   return `${d}/${m}/${y}`;
 }
 
-const yesterdayMetrics = computed(() => {
-  const m = data.value?.yesterday?.metrics;
+const dayMetrics = computed(() => {
+  const m = yesterdayData.value?.metrics;
   if (!m) return [];
   return [
     { name: 'Profit', value: m.profit, sufix: 'u' },
@@ -127,11 +175,35 @@ const monthMetrics = computed(() => {
   ];
 });
 
-watch(() => data.value?.yesterday, (val) => {
-  if (val?.results?.length) {
-    yesterdayStore.setYesterdayModels(val.results);
+async function fetchDayResults(date) {
+  dayLoading.value = true;
+  try {
+    const result = await $fetch(`${apiUrl}/daily-results/${date}`);
+    yesterdayData.value = result;
+  } catch (e) {
+    yesterdayData.value = null;
+  } finally {
+    dayLoading.value = false;
+  }
+}
+
+// Load initial date (use dashboard fallback data or fetch)
+if (data.value?.yesterday?.results?.length) {
+  yesterdayData.value = data.value.yesterday;
+  chosenDate.value = data.value.yesterday.date;
+} else {
+  await fetchDayResults(yesterday);
+}
+
+// Refetch when date changes
+watch(chosenDate, (newDate) => {
+  if (newDate) fetchDayResults(newDate);
+});
+
+// Store for other pages
+watch(() => yesterdayData.value?.results, (val) => {
+  if (val?.length) {
+    yesterdayStore.setYesterdayModels(val);
   }
 }, { immediate: true });
 </script>
-
-<style lang="scss" scoped></style>

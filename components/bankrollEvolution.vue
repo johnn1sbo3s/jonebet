@@ -155,8 +155,7 @@ const chartData = computed(() => {
 
 const resultsByMonth = computed(() => {
 	if (!props.bankrollData?.length) return [];
-	let removedInitialMonth = props.bankrollData.slice(1);
-	let months = removedInitialMonth.map((item) => {
+	let months = props.bankrollData.map((item) => {
 		return {
 		month: item.month,
 		profit: item.profit,
