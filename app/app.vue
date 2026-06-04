@@ -29,7 +29,7 @@
 
 		<div class="hidden sm:block w-80 h-full">
 			<UVerticalNavigation
-				class="fixed px-2 h-full w-[17rem] pt-2 bg-slate-50 dark:bg-gray-900"
+				class="fixed px-2 h-full w-68 pt-2 bg-slate-50 dark:bg-gray-900"
 				:links="sidebarItems"
 				:ui="{
 					padding: 'p-4',

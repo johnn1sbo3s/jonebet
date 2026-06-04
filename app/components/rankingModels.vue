@@ -1,11 +1,11 @@
 <template>
-    <u-card class="w-full h-full">
+    <u-card class="w-full">
         <template #header>
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>
                 <u-button
-                    color="blue"
-                    size="2xs"
+                    color="primary"
+                    size="xs"
                     variant="soft"
                     @click="isModalOpen = true"
                 >
@@ -19,7 +19,7 @@
                 <div
                     v-for="item in items"
                     :key="item.id"
-                    class="flex align-middle justify-between"
+                    class="flex items-center justify-between"
                 >
                     <nuxt-link :to="`/performance/${modelNameToIdName(item.name)}`">
                         <div class="hover:text-teal-600 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
@@ -28,46 +28,25 @@
                         class="font-semibold"
                         :class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
                     >
-                    {{ item.profit.toLocaleString() }} u</div>
+                        {{ item.profit.toLocaleString() }} u
+                    </div>
                 </div>
             </div>
         </template>
     </u-card>
 
     <u-modal
-        v-model="isModalOpen"
+        v-model:open="isModalOpen"
+        :title="title"
     >
-        <div class="flex justify-center">
-            <u-card
-                class="w-fit"
-            >
-                <template #header>
-                    <div class="flex justify-between items-center">
-                        <p class="font-semibold">{{ title }}</p>
-                        <p
-                            class="text-xl hover:cursor-pointer"
-                            @click="isModalOpen = false"
-                        >
-                            x
-                        </p>
-                    </div>
-                </template>
-
-                <template #default>
-                    <u-table
-                        style="width: 45dvw;"
-                        :rows="sanitizedAllResultsData"
-                        :columns="columns"
-                        :ui="{
-                            wrapper:
-                                'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg',
-                        }"
-                    />
-                </template>
-            </u-card>
-        </div>
+        <template #body>
+            <u-table
+                style="width: 45dvw;"
+                :rows="sanitizedAllResultsData"
+                :columns="columns"
+            />
+        </template>
     </u-modal>
-
 </template>
 
 <script setup>
@@ -112,7 +91,3 @@ const sanitizedAllResultsData = computed(() => {
 });
 
 </script>
-
-<style>
-
-</style>
