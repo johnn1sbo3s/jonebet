@@ -14,19 +14,6 @@
 			@close="showAlert = false"
 		/>
 
-		<div class="flex flex-col gap-2">
-			<p class="text-sm">{{ data?.batchAlerts?.length || 0 }} alertas</p>
-			<u-carousel
-				v-slot="{ item }"
-				id="carousel"
-				:items="data?.batchAlerts || []"
-				:ui="{ item: 'snap-align-none',
-					container: 'relative w-full flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-2',
-				 }"
-			>
-				<batch-alert-card class="p-0.5" :model="item" />
-			</u-carousel>
-		</div>
 
 		<u-skeleton v-if="status === 'pending'" class="w-full h-[510px]" />
 		<data-error-card
@@ -55,7 +42,7 @@
 		/>
 		<u-card v-else id="yesterday-metrics">
 			<template #header>
-				<p class="font-semibold">{{ data?.yesterday?.isFallback ? `Resultados de anteontem - ${data?.yesterday?.date}` : `Resultados de ontem - ${data?.yesterday?.date}` }}</p>
+				<p class="font-semibold">{{ data?.yesterday?.isFallback ? `Resultados de anteontem - ${formatDate(data?.yesterday?.date)}` : `Resultados de ontem - ${formatDate(data?.yesterday?.date)}` }}</p>
 			</template>
 			<div class="row sm:flex gap-3 w-full">
 				<div class="w-full">
@@ -113,6 +100,12 @@ const yesterdayStore = useYesterdayModelsStore();
 const showAlert = ref(true);
 
 const { data, status, error } = await useFetch(`${apiUrl}/dashboard`);
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
 
 const yesterdayMetrics = computed(() => {
   const m = data.value?.yesterday?.metrics;
