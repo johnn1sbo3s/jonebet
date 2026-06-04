@@ -198,10 +198,10 @@ const dayBeforeYesterday = DateTime.now().setZone(timezone).minus({ days: 2 }).t
 const onlyChosenModels = ref(false);
 
 const requests = [
-	useFetch(`${apiUrl}/bankroll-evolution`, { params: { filtered: onlyChosenModels }}),
-	useFetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: onlyChosenModels }}),
-	useFetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: onlyChosenModels }}),
-	useFetch(`${apiUrl}/monthly-results/${month}`, { params: { filtered: onlyChosenModels }}),
+	useFetch(`${apiUrl}/bankroll-evolution`, { params: { filtered: onlyChosenModels.value }}),
+	useFetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: onlyChosenModels.value }}),
+	useFetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: onlyChosenModels.value }}),
+	useFetch(`${apiUrl}/monthly-results/${month}`, { params: { filtered: onlyChosenModels.value }}),
 	useFetch(`${apiUrl}/model-performance`),
 ];
 
@@ -225,9 +225,13 @@ const batchModels = computed(() => {
 })
 
 const yesterdayResults = computed(() => {
-	let lastResults = yesterdayData?.value ? yesterdayData.value : dayBeforeYesterdayData.value;
-	yesterdayStore.setYesterdayModels(lastResults);
-	return lastResults;
+	const data = yesterdayData?.value || dayBeforeYesterdayData?.value;
+	return data || [];
+});
+watch(yesterdayResults, (val) => {
+	if (val && val.length > 0) {
+		yesterdayStore.setYesterdayModels(val);
+	}
 });
 
 const monthResults = computed(() => {

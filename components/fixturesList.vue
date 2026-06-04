@@ -185,9 +185,9 @@ watch(() => chosenDay.value, (newValue, oldValue) => {
     emits('change', newValue);
 });
 
-watch(() => betfairFixtures, () => {
+watch(betfairFixtures, () => {
     emits('source-change', betfairFixtures.value);
-}, { deep: true });
+});
 
 watch(() => showMobileModal.value, (newValue) => {
     if (newValue === false) {
