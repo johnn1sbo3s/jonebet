@@ -14,7 +14,7 @@
 			@update:open="showAlert = false"
 		/>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-[510px]" />
+		<u-skeleton v-if="status === 'pending'" class="w-full h-127.5" />
 		<data-error-card
 			v-else-if="!data?.bankrollEvolution?.length"
 			message="Não foi possível carregar a evolução da banca"
@@ -23,7 +23,7 @@
 			<template #header>
 				<div>
 					<p class="font-semibold">Evolução da banca</p>
-					<p class="text-sm text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+					<p class="text-xs text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
 				</div>
 			</template>
 			<div class="w-full">
@@ -34,7 +34,7 @@
 			</div>
 		</u-card>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-[330px]" />
+		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
 		<data-error-card
 			v-else-if="!yesterdayData?.results?.length && !dayLoading"
 			:message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
@@ -51,7 +51,7 @@
 					/>
 				</div>
 			</template>
-			<u-skeleton v-if="dayLoading" class="w-full h-[200px]" />
+			<u-skeleton v-if="dayLoading" class="w-full h-50" />
 			<div v-else class="sm:flex items-stretch gap-3 w-full">
 				<div class="flex-1 min-w-0">
 					<yesterday-metrics-card :items="dayMetrics" />
@@ -73,7 +73,7 @@
 			</div>
 		</u-card>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-[330px]" />
+		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
 		<data-error-card
 			v-else-if="!data?.month?.results?.length"
 			message="Não foi possível carregar os resultados do mês"
