@@ -45,14 +45,14 @@ const apiUrl = runtimeConfig.public.API_URL;
 const sort = { column: "Time", direction: "asc" };
 
 const columns = [
-  { key: "Date", label: "Data" },
-  { key: "Time", label: "Horário", sortable: true },
-  { key: "Home", label: "Casa", sortable: true },
-  { key: "Away", label: "Fora", sortable: true },
-  { key: "FT_Odds_H", label: "Odds casa" },
-  { key: "FT_Odds_D", label: "Odds empate" },
-  { key: "FT_Odds_A", label: "Odds fora" },
-  { key: "Modelo", label: "Modelo", sortable: true },
+  { id: "Date", key: "Date", label: "Data" },
+  { id: "Time", key: "Time", label: "Horário", sortable: true },
+  { id: "Home", key: "Home", label: "Casa", sortable: true },
+  { id: "Away", key: "Away", label: "Fora", sortable: true },
+  { id: "FT_Odds_H", key: "FT_Odds_H", label: "Odds casa" },
+  { id: "FT_Odds_D", key: "FT_Odds_D", label: "Odds empate" },
+  { id: "FT_Odds_A", key: "FT_Odds_A", label: "Odds fora" },
+  { id: "Modelo", key: "Modelo", label: "Modelo", sortable: true },
 ];
 
 const filterByDate = (selectedDate) => {

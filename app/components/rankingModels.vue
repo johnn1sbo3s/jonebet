@@ -92,12 +92,12 @@ const props = defineProps({
 
 const isModalOpen = ref(false);
 const columns = [
-    { key: "Date", label: "Data", sortable: false },
-    { key: "Method", label: "Modelo", sortable: false },
-    { key: "Profit", label: "Lucro", sortable: false },
-    { key: "ROI", label: "ROI", sortable: false },
-    { key: "Responsibility", label: "Investido", sortable: false },
-    { key: "Num_Bets", label: "Qtd de apostas", sortable: false },
+    { id: "Date", key: "Date", label: "Data", sortable: false },
+    { id: "Method", key: "Method", label: "Modelo", sortable: false },
+    { id: "Profit", key: "Profit", label: "Lucro", sortable: false },
+    { id: "ROI", key: "ROI", label: "ROI", sortable: false },
+    { id: "Responsibility", key: "Responsibility", label: "Investido", sortable: false },
+    { id: "Num_Bets", key: "Num_Bets", label: "Qtd de apostas", sortable: false },
 ];
 
 const sanitizedAllResultsData = computed(() => {

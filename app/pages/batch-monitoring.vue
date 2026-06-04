@@ -104,10 +104,10 @@ const chartKey = ref(0);
 const filterString = ref('');
 const invertOrder = ref(false);
 const blocksTableColumns = [
-	{ label: "Qtd. jogos", key: "Qtd_Jogos" },
-	{ label: "Profit", key: "Profit" },
-	{ label: "ROI", key: "ROI" },
-	{ label: "Último dia do bloco", key: "Ult_Dia" },
+	{ id: "Qtd_Jogos", label: "Qtd. jogos", key: "Qtd_Jogos" },
+	{ id: "Profit", label: "Profit", key: "Profit" },
+	{ id: "ROI", label: "ROI", key: "ROI" },
+	{ id: "Ult_Dia", label: "Último dia do bloco", key: "Ult_Dia" },
 ];
 
 if (import.meta.client) {
@@ -234,11 +234,6 @@ const chartData = computed(() => {
 function resetsZoom() {
 	chartKey.value++;
 }
-
-function filterFavsModels(metricsArray) {
-	return _filter(metricsArray, (item) => CHOSEN_MODELS.includes(item.modelo));
-}
-
 function invertCardsOrder() {
 	invertOrder.value = !invertOrder.value;
 }

@@ -1,5 +1,5 @@
 <template>
-	<div class="row sm:flex gap-3">
+	<div class="sm:flex gap-3">
 		<div class="w-full sm:w-7/12">
 			<LineChart
 				:chartData="chartData"
@@ -28,7 +28,7 @@
 							v-for="item in resultsByMonth"
 							:key="item.month"
 						>
-							<div class="text-sm row sm:flex items-center text-center justify-center sm:justify-between">
+							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
 								<p>{{ item.month }}</p>
 
 								<p

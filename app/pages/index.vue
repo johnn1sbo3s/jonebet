@@ -21,7 +21,7 @@
 		/>
 		<u-card v-else id="bankroll-evolution">
 			<template #header>
-				<div class="row gap-1">
+				<div class="flex gap-1 items-baseline">
 					<p class="font-semibold">Evolução da banca</p>
 					<p class="text-sm text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
 				</div>
@@ -52,18 +52,18 @@
 				</div>
 			</template>
 			<u-skeleton v-if="dayLoading" class="w-full h-[200px]" />
-			<div v-else class="row sm:flex gap-3 w-full">
-				<div class="w-full">
+			<div v-else class="sm:flex gap-3 w-full">
+				<div class="flex-1 min-w-0">
 					<yesterday-metrics-card :items="dayMetrics" />
 				</div>
-				<div v-if="yesterdayData?.topModels?.length" class="my-3 sm:my-0 w-full">
+				<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
 					<ranking-models
 						:title="'Top 3 modelos'"
 						:items="yesterdayData.topModels"
 						:all-results-data="yesterdayData.results"
 					/>
 				</div>
-				<div class="w-full">
+				<div class="flex-1 min-w-0">
 					<yesterday-details-card
 						:number-bets="yesterdayData?.metrics?.bets"
 						:number-models="yesterdayData?.metrics?.models"
@@ -82,20 +82,24 @@
 			<template #header>
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
-			<div class="row sm:flex gap-3 w-full">
-				<yesterday-metrics-card :items="monthMetrics" />
-				<div v-if="data?.month?.topModels?.length" class="my-3 sm:my-0 w-full">
+			<div class="sm:flex gap-3 w-full">
+				<div class="flex-1 min-w-0">
+					<yesterday-metrics-card :items="monthMetrics" />
+				</div>
+				<div v-if="data?.month?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
 					<ranking-models
 						:title="'Top 3 modelos'"
 						:items="data.month.topModels"
 						:all-results-data="data.month.results"
 					/>
 				</div>
-				<yesterday-details-card
-					:number-bets="data?.month?.metrics?.bets"
-					:number-models="data?.month?.metrics?.models"
-					:positive-models="data?.month?.positiveModels || 0"
-				/>
+				<div class="flex-1 min-w-0">
+					<yesterday-details-card
+						:number-bets="data?.month?.metrics?.bets"
+						:number-models="data?.month?.metrics?.models"
+						:positive-models="data?.month?.positiveModels || 0"
+					/>
+				</div>
 			</div>
 		</u-card>
 	</div>

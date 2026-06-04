@@ -197,53 +197,6 @@
 import { DateTime } from 'luxon';
 import { Chart, registerables } from "chart.js";
 import { LineChart } from "vue-chart-3";
-const { isMobile } = useDevice();
-
-const driverObj = driver({
-	showProgress: true,
-	allowClose: false,
-	steps: [
-		{
-			element: '#metrics-cards',
-			popover: {
-				title: 'Métricas do modelo',
-				description: 'Os dois cards de métricas exibem os dados do modelo, tanto em seu conjunto de validação em backtest quanto em seus dados reais.',
-				side: 'left',
-				align: 'start'
-			}
-		},
-		{
-			element: '#model-chart',
-			popover: {
-				title: 'Acúmulo de capital do modelo',
-				description: 'O gráfico apresenta a evolução do lucro do modelo. Tudo que está à esquerda da linha vertical são os dados de validação em backtest, e tudo que está à direita são os dados reais, atualizados dia a dia.',
-				side: 'left',
-				align: 'start'
-			}
-		},
-		{
-			element: '#block-metrics',
-			popover: {
-				title: 'Resultados em blocos de 100 jogos',
-				description: 'Essas métricas levam em consideração blocos de 100 entradas do modelo. Os valores apresentam a média de lucro, desvio padrão e intervalo de confiança do lucro a cada bloco.',
-				side: 'left',
-				align: 'start'
-			}
-		},
-	],
-	onDestroyStarted: () => {
-		if (!driverObj.hasNextStep()) {
-			localStorage.setItem('doneTourPerformance', true);
-			driverObj.destroy();
-		}
-	},
-});
-
-onMounted(() => {
-	if (!isMobile && localStorage.getItem('doneTourPerformance') !== 'true') {
-		driverObj.drive();
-	}
-});
 
 const runtimeConfig = useRuntimeConfig();
 const apiUrl = runtimeConfig.public.API_URL;
@@ -354,33 +307,33 @@ const chartStyle = ref({
 });
 
 const blocksHistoryColumns = ref([
-	{ key: "Profit", label: "Lucro" },
-	{ key: "Qtd_Jogos", label: "Quantidade de jogos" },
-	{ key: "ROI", label: "ROI" },
-	{ key: "Ult_Dia", label: "Último dia do bloco" },
+	{ id: "Profit", key: "Profit", label: "Lucro" },
+	{ id: "Qtd_Jogos", key: "Qtd_Jogos", label: "Quantidade de jogos" },
+	{ id: "ROI", key: "ROI", label: "ROI" },
+	{ id: "Ult_Dia", key: "Ult_Dia", label: "Último dia do bloco" },
 ]);
 
 const dailyBetsColumns = ref([
-	{ key: "date", label: "Dia" },
-	{ key: "gain", label: "Lucro" },
-	{ key: "gameCount", label: "Jogos" },
-	{ key: "accumulated", label: "Acumulado" },
+	{ id: "date", key: "date", label: "Dia" },
+	{ id: "gain", key: "gain", label: "Lucro" },
+	{ id: "gameCount", key: "gameCount", label: "Jogos" },
+	{ id: "accumulated", key: "accumulated", label: "Acumulado" },
 ]);
 
 const monthlyBetsColumns = ref([
-	{ key: "monthYear", label: "Mês" },
-	{ key: "profit", label: "Lucro" },
-	{ key: "gameCount", label: "Jogos" },
-	{ key: "accumulated", label: "Acumulado" },
+	{ id: "monthYear", key: "monthYear", label: "Mês" },
+	{ id: "profit", key: "profit", label: "Lucro" },
+	{ id: "gameCount", key: "gameCount", label: "Jogos" },
+	{ id: "accumulated", key: "accumulated", label: "Acumulado" },
 ]);
 
 const allBetsDataFilteredColumns = ref([
-	{ key: "Date", label: "Data" },
-	{ key: "Home", label: "Casa" },
-	{ key: "Away", label: "Fora" },
-	{ key: "Odds", label: "Odds" },
-	{ key: "Resultado", label: "Resultado" },
-	{ key: "Profit", label: "Lucro" },
+	{ id: "Date", key: "Date", label: "Data" },
+	{ id: "Home", key: "Home", label: "Casa" },
+	{ id: "Away", key: "Away", label: "Fora" },
+	{ id: "Odds", key: "Odds", label: "Odds" },
+	{ id: "Resultado", key: "Resultado", label: "Resultado" },
+	{ id: "Profit", key: "Profit", label: "Lucro" },
 ]);
 
 const realData = ref({});
