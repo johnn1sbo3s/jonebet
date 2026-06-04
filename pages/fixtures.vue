@@ -69,9 +69,9 @@ async function updateFixturesToUse() {
 	}
 
 	isLoading.value = true;
-	const { data } = await useFetch(url, { params: { date: transformedDate } });
+	const data = await $fetch(url, { query: { date: transformedDate } });
 	isLoading.value = false;
-	fixturesToUse.value = data.value;
+	fixturesToUse.value = data;
 }
 
 async function onChangeDate(date) {

@@ -404,20 +404,13 @@ const dayBeforeYesterday = DateTime.now().minus({ days: 2 }).toFormat('yyyy-MM-d
 
 const fetchAllData = async () => {
 	const [performanceData, betsData, yesterdayData, dayBeforeYesterdayData] = await Promise.all([
-	fetch(`${apiUrl}/model-performance`),
-	fetch(`${apiUrl}/model-bets`),
-	fetch(`${apiUrl}/daily-results/${yesterday}`, { params: { filtered: false }}).catch(() => ({ ok: false, json: () => ({}) })),
-	fetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { params: { filtered: false }}),
+		$fetch(`${apiUrl}/model-performance`),
+		$fetch(`${apiUrl}/model-bets`),
+		$fetch(`${apiUrl}/daily-results/${yesterday}`, { query: { filtered: false } }).catch(() => ({})),
+		$fetch(`${apiUrl}/daily-results/${dayBeforeYesterday}`, { query: { filtered: false } }).catch(() => ({})),
 	]);
 
-	const [performanceDataJson, betsDataJson, yesterdayDataJson, dayBeforeYesterdayDataJson] = await Promise.all([
-		performanceData.json(),
-		betsData.json(),
-		yesterdayData.ok ? yesterdayData.json() : {},
-		dayBeforeYesterdayData.ok ? dayBeforeYesterdayData.json() : {},
-	]);
-
-	return [performanceDataJson, betsDataJson, yesterdayDataJson, dayBeforeYesterdayDataJson];
+	return [performanceData, betsData, yesterdayData, dayBeforeYesterdayData];
 };
 
 if (_isEmpty(performanceStore.getBetsData) || _isEmpty(yesterdayStore.getYesterdayModels)) {
