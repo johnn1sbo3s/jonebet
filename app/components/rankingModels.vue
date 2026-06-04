@@ -4,7 +4,7 @@
             <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>
                 <u-button
-                    color="primary"
+                    color="secondary"
                     size="xs"
                     variant="soft"
                     @click="isModalOpen = true"
