@@ -83,3 +83,41 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #4a4a4a;
 }
+
+/* NuxtUI Component Theme Overrides */
+.dark {
+  /* Container */
+  --ui-container: 80rem;
+
+  /* Header */
+  --ui-header-height: 4rem;
+
+  /* Background overrides */
+  --ui-bg: #0a0a0a;
+  --ui-bg-muted: #121212;
+  --ui-bg-elevated: #1a1a1a;
+  --ui-bg-accented: #242424;
+
+  /* Border overrides */
+  --ui-border: #2a2a2a;
+  --ui-border-muted: #2a2a2a;
+  --ui-border-accented: #3a3a3a;
+
+  /* Text overrides */
+  --ui-text: #cccccc;
+  --ui-text-muted: #888888;
+
+  /* Primary color for buttons/interactive elements */
+  --ui-primary: #14B8A6;
+
+  /* Radius */
+  --ui-radius: 0.5rem;
+}
+
+/* Button cursor restoration */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
