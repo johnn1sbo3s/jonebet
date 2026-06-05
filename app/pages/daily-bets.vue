@@ -17,7 +17,7 @@
 		</div>
 
 		<UButton
-			icon="i-heroicons-arrow-down-tray"
+			icon="i-lucide-download"
 			variant="soft"
 			color="blue"
 			@click="exportTableToExcel(bets)"

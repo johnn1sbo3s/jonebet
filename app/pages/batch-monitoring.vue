@@ -17,9 +17,9 @@
 		>
 			<p class="text-sm">{{ sortedSanitizedData.length }} modelos</p>
 
-			<i v-if="!invertOrder" class="i-heroicons-bars-arrow-down text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
+			<i v-if="!invertOrder" class="i-lucide-arrow-down-a-z text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
 
-			<i v-else class="i-heroicons-bars-arrow-up text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
+			<i v-else class="i-lucide-arrow-up-a-z text-xl hover:cursor-pointer" @click="invertCardsOrder"/>
 		</div>
 
 		<div

@@ -60,8 +60,8 @@
 							<div class="inline-block align-middle">
 							<UToggle
 								size="md"
-								on-icon="i-heroicons-check-20-solid"
-								off-icon="i-heroicons-x-mark-20-solid"
+								on-icon="i-lucide-check"
+								off-icon="i-lucide-x"
 								:model-value="chartByDay"
 								@click="changeChartByDay"
 							/>
@@ -191,7 +191,7 @@
 			</p>
 
 			<UButton
-					icon="i-heroicons-arrow-down-tray"
+					icon="i-lucide-download"
 					color="blue"
 					size="sm"
 					variant="soft"

@@ -3,27 +3,27 @@ const navItems = [
   [
     {
       label: 'Dashboard',
-      icon: 'i-heroicons-squares-2x2',
+      icon: 'i-lucide-layout-grid',
       to: '/',
     },
     {
       label: 'Jogos do Dia',
-      icon: 'i-heroicons-calendar-days',
+      icon: 'i-lucide-calendar-days',
       to: '/fixtures',
     },
     {
       label: 'Apostas do Dia',
-      icon: 'i-heroicons-clipboard-document-list',
+      icon: 'i-lucide-clipboard-list',
       to: '/daily-bets',
     },
     {
       label: 'Performance dos modelos',
-      icon: 'i-heroicons-chart-bar',
+      icon: 'i-lucide-bar-chart-3',
       to: '/performance',
     },
     {
       label: 'Monitoramento em Lotes',
-      icon: 'i-heroicons-inbox-stack',
+      icon: 'i-lucide-inbox',
       to: '/batch-monitoring',
     },
   ],

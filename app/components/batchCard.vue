@@ -17,7 +17,7 @@
                     </div>
                 </div>
 
-                <i class="i-heroicons-chevron-right text-2xl text-teal-500 hidden group-hover:block"/>
+                <i class="i-lucide-chevron-right text-2xl text-teal-500 hidden group-hover:block"/>
             </div>
         </template>
 
