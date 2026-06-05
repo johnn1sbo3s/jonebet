@@ -1,8 +1,8 @@
 <template>
 	<div class="flex flex-col gap-5">
-		<page-header title="Jogos do dia" />
+		<PageHeader title="Jogos do dia" />
 
-		<fixtures-list
+		<FixturesList
 			:fixtures="fixturesToUse"
 			:selected-date="selectedDate"
 			:initial-date="initialDate"
@@ -62,7 +62,7 @@ function resolveFixtures() {
 
 async function updateFixturesToUse() {
 	let url = `${apiUrl}/fixtures`
-	let transformedDate = selectedDate.value.split('/').reverse().join('-');
+	const transformedDate = selectedDate.value.split('/').reverse().join('-');
 
 	if (betfairFixtures.value) {
 		url = `${apiUrl}/fixtures-betfair`

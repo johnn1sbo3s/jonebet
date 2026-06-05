@@ -1,6 +1,6 @@
 export function buildMonthlyTable(cumulativeBets) {
   const monthlyData = cumulativeBets.reduce((acc, curr) => {
-    const [day, month, year] = curr.date.split("/"); // Dividindo a data em dia, mês e ano
+    const [, month, year] = curr.date.split("/"); // Dividindo a data em dia, mês e ano
     const monthYear = `${month}/${year}`; // Construindo o formato mês/ano
 
     if (!acc[monthYear]) {

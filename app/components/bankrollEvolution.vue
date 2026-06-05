@@ -1,6 +1,6 @@
 <template>
 	<LineChart
-		:chartData="chartData"
+		:chart-data="chartData"
 		:options="chartOptions"
 		:style="chartStyle"
 	/>
@@ -93,8 +93,8 @@ const chartData = computed(() => {
   if (!props.bankrollData?.length) {
     return { labels: [], datasets: [] };
   }
-  let labels = props.bankrollData.map((item) => item.month);
-  let data = props.bankrollData.map((item) => item.bankroll);
+  const labels = props.bankrollData.map((item) => item.month);
+  const data = props.bankrollData.map((item) => item.bankroll);
 
   return {
 	labels: labels,

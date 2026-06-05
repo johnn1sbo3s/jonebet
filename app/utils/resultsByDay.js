@@ -1,13 +1,15 @@
+import { groupBy, forEach, map, sum } from 'lodash';
+
 export function resultsByDay(betsToShow) {
-  let resultsByDay = _groupBy(betsToShow, "Date");
+  let resultsByDay = groupBy(betsToShow, "Date");
 
   const profitByDay = {};
   let profitSum = 0;
 
-  _forEach(resultsByDay, (apostasDia, date) => {
-    const profit = _map(apostasDia, "Profit");
+  forEach(resultsByDay, (apostasDia, date) => {
+    const profit = map(apostasDia, "Profit");
     const gameCount = apostasDia.length;
-    profitSum += _sum(profit);
+    profitSum += sum(profit);
     profitByDay[date] = {
       profit: profitSum,
       gameCount: gameCount,

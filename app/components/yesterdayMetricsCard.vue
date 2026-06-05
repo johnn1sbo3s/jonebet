@@ -1,5 +1,5 @@
 <template>
-    <u-card class="w-full h-full">
+    <UCard class="w-full h-full">
         <template #header>
         <p class="font-semibold">Métricas</p>
         </template>
@@ -14,6 +14,7 @@
                 class="flex flex-col justify-center"
             >
                 <p>{{ item.name }}</p>
+
                 <p
                     class="text-xl font-black"
                     :class="item.value >= 0 ? 'text-teal-600' : 'text-red-600'"
@@ -27,7 +28,7 @@
         <template #footer>
         <p class="text-xs text-gray-600">Considera-se 1 unidade como 1% da banca</p>
         </template>
-    </u-card>
+    </UCard>
 
 </template>
 

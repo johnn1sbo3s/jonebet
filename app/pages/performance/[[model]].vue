@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col gap-3">
-		<page-header
+		<PageHeader
 			title="Performance dos modelos"
 			description="Acompanhe o desempenho e as métricas de cada modelo"
 			class="mb-3"
@@ -8,12 +8,12 @@
 
 		<div class="flex gap-5">
 			<USelectMenu
+				v-model:model-value="chosenModel"
 				class="w-1/5"
 				searchable
 				searchable-placeholder="Pesquise por um modelo"
 				placeholder="Selecione um modelo"
 				:options="listModels"
-				v-model:model-value="chosenModel"
 			>
 				<template #option="{ option }">
 					<div class="flex items-center my-1">
@@ -25,25 +25,29 @@
 								class="mr-2 w-2 h-2 bg-teal-500 rounded-full"
 							/>
 						</UTooltip>
+
 						<span>{{ option }}</span>
 					</div>
 				</template>
 			</USelectMenu>
 		</div>
+
 		<div class="w-full gap-3 flex">
 			<div
 				id="metrics-cards"
 				class="w-2/5 flex flex-col gap-3"
 			>
-				<metrics-card
+				<MetricsCard
 					:metrics-data="valData"
 					:card-title="'Métricas de validação'"
 				/>
-				<metrics-card
+
+				<MetricsCard
 					:metrics-data="realData"
 					:card-title="'Métricas de jogos reais'"
 				/>
 			</div>
+
 			<UCard
 				id="model-chart"
 				class="w-3/5"
@@ -51,6 +55,7 @@
 				<template #header>
 					<div class="flex justify-between">
 						<p class="font-semibold">Gráfico de acúmulo de capital</p>
+
 						<div class="flex gap-2">
 							<div class="inline-block align-middle">
 							<UToggle
@@ -61,10 +66,12 @@
 								@click="changeChartByDay"
 							/>
 							</div>
+
 							<p class="text-sm">Exibição por dia</p>
 						</div>
 					</div>
 				</template>
+
 				<div>
 					<div
 						class="flex items-center mb-2"
@@ -75,7 +82,9 @@
 							class="flex gap-3 text-sm"
 						>
 							<p>Trend Value: {{ slope.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+
 							<p>|</p>
+
 							<p>Trend Distance: {{ trendDistance < 0 ? '' : '+' }}{{ trendDistance.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} u</p>
 						</div>
 
@@ -83,10 +92,11 @@
 							Restaurar zoom
 						</UButton>
 					</div>
+
 					<LineChart
-						class="w-full"
 						:key="chartKey"
-						:chartData="chartData"
+						class="w-full"
+						:chart-data="chartData"
 						:options="chartOptions"
 						:style="chartStyle"
 					/>
@@ -98,21 +108,25 @@
 		<template #header>
 		<p class="font-semibold">Resultados por blocos de 100 jogos</p>
 		</template>
+
 		<div class="flex h-full gap-3">
 		<div class="flex flex-col gap-3 w-2/5">
-			<block-metrics-card
+			<BlockMetricsCard
 			:metrics-data="totalData"
 			:card-title="'Médias'"
 			/>
-			<current-block-metrics-card
+
+			<CurrentBlockMetricsCard
 			:metrics-data="totalData"
 			:card-title="'Bloco atual'"
 			/>
 		</div>
+
 		<UCard class="w-2/3">
 			<template #header>
 			<p class="font-semibold">Histórico</p>
 			</template>
+
 			<div>
 			<UTable
 				class="h-80"
@@ -127,12 +141,15 @@
 		</UCard>
 		</div>
 	</UCard>
+
 	<div class="grid grid-cols-2 gap-3">
 		<UCard>
 		<template #header>
 			<p class="font-semibold">Resultados por mês</p>
 		</template>
+
 		<p class="mb-3 text-sm">{{ monthlyBetsRows.length }} meses</p>
+
 		<UTable
 			class="h-80"
 			:ui="{
@@ -143,11 +160,14 @@
 			:columns="monthlyBetsColumns"
 		/>
 		</UCard>
+
 		<UCard>
 		<template #header>
 			<p class="font-semibold">Resultados por dia</p>
 		</template>
+
 		<p class="mb-3 text-sm">{{ dailyBetsRows.length }} dias</p>
+
 		<UTable
 			class="h-80"
 			:ui="{
@@ -159,6 +179,7 @@
 		/>
 		</UCard>
 	</div>
+
 	<UCard>
 		<template #header>
 			<p class="font-semibold">Jogos reais</p>
@@ -385,18 +406,22 @@ const changeChartByDay = () => {
 };
 
 Object.values(performanceData).forEach((item) => {
-	let name = modelNameToNaturalName(item.modelo);
+	const name = modelNameToNaturalName(item.modelo);
 	if (!listModels.value.includes(name)) {
 	listModels.value.push(name);
 	}
 });
 
 const chosenModel = ref(listModels.value[0]);
-route.params.model ? chosenModel.value = modelNameToNaturalName(route.params.model) : chosenModel.value = listModels.value[0];
+if (route.params.model) {
+  chosenModel.value = modelNameToNaturalName(route.params.model);
+} else {
+  chosenModel.value = listModels.value[0];
+}
 
 const changeModel = () => {
 	Object.values(performanceData).forEach((item) => {
-	let name = item.modelo;
+	const name = item.modelo;
 	if (name === modelNameToIdName(chosenModel.value)) {
 		objectModel.value = item;
 		const { real } = objectModel.value;
@@ -411,7 +436,7 @@ const changeModel = () => {
 };
 
 const getBetsArray = () => {
-	let betsToShow = totalData.value.pl_history;
+	const betsToShow = totalData.value.pl_history;
 	let nRange = -100;
 
 	slope.value = 0;
@@ -446,7 +471,7 @@ const getBetsArray = () => {
 };
 
 const allBetsDataFilteredRows = computed(() => {
-	let name = modelNameToIdName(chosenModel.value);
+	const name = modelNameToIdName(chosenModel.value);
 	let filteredBets = _filter(betsData, { Metodo: name });
 	filteredBets = _uniqWith(filteredBets, (a, b) => a.Date === b.Date && a.Home === b.Home && a.Away === b.Away);
 	return _sortBy(filteredBets, ['Date']);
@@ -471,10 +496,10 @@ function calculateSlopeAndIntercept(bets) {
 	const sumSquareGames = games.reduce((acc, curr) => acc + curr * curr, 0);
 
 	// Calcula o slope (m)
-	let slope = (n * sumProduct - sumGames * sumCapital) / (n * sumSquareGames - sumGames * sumGames);
+	const slope = (n * sumProduct - sumGames * sumCapital) / (n * sumSquareGames - sumGames * sumGames);
 
 	// Calcula o intercepto (b)
-	let intercept = (sumCapital - slope * sumGames) / n;
+	const intercept = (sumCapital - slope * sumGames) / n;
 
 	return [slope, intercept];
 }
@@ -495,8 +520,8 @@ function cumulativeSum(array) {
 		return [];
 	}
 
-	let cumSum = [array[0]];
-	let listIndex = [];
+	const cumSum = [array[0]];
+	const listIndex = [];
 
 	for (let i = 1; i < array.length; i++) {
 		cumSum.push(cumSum[i - 1] + array[i]);

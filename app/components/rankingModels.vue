@@ -1,16 +1,17 @@
 <template>
-    <u-card class="w-full h-full">
+    <UCard class="w-full h-full">
         <template #header>
             <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>
-                <u-button
+
+                <UButton
                     color="secondary"
                     size="xs"
                     variant="soft"
                     @click="isModalOpen = true"
                 >
                     Ver todos
-                </u-button>
+                </UButton>
             </div>
         </template>
 
@@ -21,9 +22,10 @@
                     :key="item.id"
                     class="flex items-center justify-between"
                 >
-                    <nuxt-link :to="`/performance/${modelNameToIdName(item.name)}`">
+                    <NuxtLink :to="`/performance/${modelNameToIdName(item.name)}`">
                         <div class="hover:text-teal-600 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
-                    </nuxt-link>
+                    </NuxtLink>
+
                     <div
                         class="font-semibold"
                         :class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
@@ -33,21 +35,21 @@
                 </div>
             </div>
         </template>
-    </u-card>
+    </UCard>
 
-    <u-modal
+    <UModal
         v-model:open="isModalOpen"
         :title="`Todos os modelos — ${formatDate(sanitizedAllResultsData[0]?.Date)}`"
     >
         <template #body>
             <div class="overflow-x-auto">
-                <u-table
+                <UTable
                     :data="sanitizedAllResultsData"
                     :columns="columns"
                 />
             </div>
         </template>
-    </u-modal>
+    </UModal>
 </template>
 
 <script setup>

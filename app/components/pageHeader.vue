@@ -13,12 +13,12 @@
 			</div>
 		</div>
 
-		<slot name="right"></slot>
+		<slot name="right"/>
 	</div>
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
 	title: {
 			type: String,
 			required: true,

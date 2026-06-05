@@ -33,7 +33,7 @@ const navItems = [
 <template>
   <UHeader>
     <template #title>
-      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" />
+      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
     </template>
 
     <UNavigationMenu :items="navItems" />

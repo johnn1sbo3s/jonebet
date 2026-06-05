@@ -1,7 +1,7 @@
 <template>
 	<div class="flex flex-col gap-5">
 		<div class="flex justify-between items-start">
-			<page-header title="Bem-vindo(a) ao DataPlay!" />
+			<PageHeader title="Bem-vindo(a) ao DataPlay!" />
 		</div>
 
 		<UAlert
@@ -14,30 +14,36 @@
 			@update:open="showAlert = false"
 		/>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-127.5" />
-		<data-error-card
+		<USkeleton v-if="status === 'pending'" class="w-full h-127.5" />
+
+		<DataErrorCard
 			v-else-if="!data?.bankrollEvolution?.length"
 			message="Não foi possível carregar a evolução da banca"
 		/>
+
 		<div v-else class="sm:flex gap-3">
-			<u-card class="w-full sm:w-7/12">
+			<UCard class="w-full sm:w-7/12">
 				<template #header>
 					<div>
 						<p class="font-semibold">Evolução da banca</p>
+
 						<p class="text-xs text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
 					</div>
 				</template>
+
 				<div class="w-full">
-					<bankroll-evolution
+					<BankrollEvolution
 						:model-value="status === 'pending'"
 						:bankroll-data="data?.bankrollEvolution || []"
 					/>
 				</div>
-			</u-card>
-			<u-card class="w-full sm:w-5/12">
+			</UCard>
+
+			<UCard class="w-full sm:w-5/12">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">
 						<p>Resultados por mês</p>
+
 						<p
 							class="text-lg"
 							:class="totalProfit > 0 ? 'text-teal-600' : 'text-red-600'"
@@ -46,14 +52,16 @@
 						</p>
 					</div>
 				</template>
+
 				<div class="relative">
 					<div class="grid grid-cols-2 max-h-112.5 gap-2 overflow-y-scroll p-0.5 pb-6">
-						<u-card
+						<UCard
 							v-for="item in resultsByMonth"
 							:key="item.month"
 						>
 							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
 								<p>{{ item.month }}</p>
+
 								<p
 									class="font-semibold"
 									:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
@@ -61,18 +69,21 @@
 									{{ item.profit.toLocaleString('pt-BR') }} u
 								</p>
 							</div>
-						</u-card>
+						</UCard>
 					</div>
+
 					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-default to-transparent" />
 				</div>
-			</u-card>
+			</UCard>
 		</div>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
-		<u-card v-else id="yesterday-metrics">
+		<USkeleton v-if="status === 'pending'" class="w-full h-82.5" />
+
+		<UCard v-else id="yesterday-metrics">
 			<template #header>
 				<div class="flex justify-between items-center">
 					<p class="font-semibold">Resultados de {{ formatDate(chosenDate) }}</p>
+
 					<div class="flex items-center gap-1">
 						<UButton
 							icon="i-lucide-chevron-left"
@@ -81,6 +92,7 @@
 							variant="soft"
 							@click="prevDay"
 						/>
+
 						<UPopover :popper="{ placement: 'bottom' }">
 							<UButton
 								:label="formatDate(chosenDate)"
@@ -89,6 +101,7 @@
 								variant="soft"
 								class="w-28 justify-center"
 							/>
+
 							<template #content>
 								<UCalendar
 									v-model="chosenDate"
@@ -97,6 +110,7 @@
 								/>
 							</template>
 						</UPopover>
+
 						<UButton
 							icon="i-lucide-chevron-right"
 							size="xs"
@@ -108,25 +122,30 @@
 					</div>
 				</div>
 			</template>
-			<data-error-card
+
+			<DataErrorCard
 				v-if="!yesterdayData?.results?.length && !dayLoading"
 				:message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
 			/>
+
 			<template v-else>
-				<u-skeleton v-if="dayLoading" class="w-full h-50" />
+				<USkeleton v-if="dayLoading" class="w-full h-50" />
+
 				<div v-else class="sm:flex items-stretch gap-3 w-full">
 					<div class="flex-1 min-w-0">
-						<yesterday-metrics-card :items="dayMetrics" />
+						<YesterdayMetricsCard :items="dayMetrics" />
 					</div>
+
 					<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
-						<ranking-models
+						<RankingModels
 							:title="'Top 3 modelos'"
 							:items="yesterdayData.topModels"
 							:all-results-data="yesterdayData.results"
 						/>
 					</div>
+
 					<div class="flex-1 min-w-0">
-						<yesterday-details-card
+						<YesterdayDetailsCard
 							:number-bets="yesterdayData?.metrics?.bets"
 							:number-models="yesterdayData?.metrics?.models"
 							:positive-models="yesterdayData?.positiveModels || 0"
@@ -134,37 +153,42 @@
 					</div>
 				</div>
 			</template>
-		</u-card>
+		</UCard>
 
-		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
-		<data-error-card
+		<USkeleton v-if="status === 'pending'" class="w-full h-82.5" />
+
+		<DataErrorCard
 			v-else-if="!data?.month?.results?.length"
 			message="Não foi possível carregar os resultados do mês"
 		/>
-		<u-card v-else id="month-metrics">
+
+		<UCard v-else id="month-metrics">
 			<template #header>
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
+
 			<div class="sm:flex items-stretch gap-3 w-full">
 				<div class="flex-1 min-w-0">
-					<yesterday-metrics-card :items="monthMetrics" />
+					<YesterdayMetricsCard :items="monthMetrics" />
 				</div>
+
 				<div v-if="data?.month?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
-					<ranking-models
+					<RankingModels
 						:title="'Top 3 modelos'"
 						:items="data.month.topModels"
 						:all-results-data="data.month.results"
 					/>
 				</div>
+
 				<div class="flex-1 min-w-0">
-					<yesterday-details-card
+					<YesterdayDetailsCard
 						:number-bets="data?.month?.metrics?.bets"
 						:number-models="data?.month?.metrics?.models"
 						:positive-models="data?.month?.positiveModels || 0"
 					/>
 				</div>
 			</div>
-		</u-card>
+		</UCard>
 	</div>
 </template>
 
@@ -177,7 +201,7 @@ const apiUrl = runtimeConfig.public.API_URL;
 const yesterdayStore = useYesterdayModelsStore();
 const showAlert = ref(true);
 
-const { data: rawData, status, error } = await useFetch(`${apiUrl}/dashboard`);
+const { data: rawData, status } = await useFetch(`${apiUrl}/dashboard`);
 
 // Clean undefined properties for SSR serialization
 function cleanObj(obj) {
@@ -289,7 +313,7 @@ async function fetchDayResults(date) {
   try {
     const result = await $fetch(`${apiUrl}/daily-results/${date}`);
     yesterdayData.value = result;
-  } catch (e) {
+  } catch {
     yesterdayData.value = null;
   } finally {
     dayLoading.value = false;

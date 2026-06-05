@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:tailwind": "node scripts/check-arbitrary-values.cjs app/",
-    "backend": "json-server --watch db/db.json --port 5000"
+    "backend": "json-server --watch db/db.json --port 5000",
+    "prepare": "husky"
   },
   "dependencies": {
     "@nuxt/fonts": "^0.14.0",
@@ -34,6 +35,13 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/eslint-config": "^1.15.2",
-    "eslint": "^10.4.1"
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --fix",
+    "*.{vue,ts}": "node scripts/check-arbitrary-values.cjs"
   }
 }
