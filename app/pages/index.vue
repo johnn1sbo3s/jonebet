@@ -63,7 +63,7 @@
 							</div>
 						</u-card>
 					</div>
-					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-(--ui-bg) to-transparent" />
+					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-default to-transparent" />
 				</div>
 			</u-card>
 		</div>
