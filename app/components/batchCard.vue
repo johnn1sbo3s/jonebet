@@ -1,6 +1,6 @@
 <template>
     <UCard
-        class="max-w-150 hover:cursor-pointer hover:outline hover:outline-teal-400 hover:outline-1 group"
+        class="max-w-150 hover:cursor-pointer hover:outline hover:outline-teal-400 group"
         @click="emit('click')"
     >
         <template #header>
@@ -63,7 +63,6 @@ const props = defineProps({
     metricItem: {
         type: Object,
         required: true,
-        default: () => {}
     },
 });
 

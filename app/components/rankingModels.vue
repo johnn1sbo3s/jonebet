@@ -40,19 +40,54 @@
     <UModal
         v-model:open="isModalOpen"
         :title="`Todos os modelos — ${formatDate(sanitizedAllResultsData[0]?.Date)}`"
+        :ui="{ content: 'max-w-3xl' }"
     >
         <template #body>
-            <div class="overflow-x-auto">
-                <UTable
-                    :data="sanitizedAllResultsData"
-                    :columns="columns"
-                />
+            <!-- Desktop: tabela -->
+            <UTable
+                v-if="!isMobile"
+                :data="sanitizedAllResultsData"
+                :columns="columns"
+            />
+
+            <!-- Mobile: cards -->
+            <div v-else class="flex flex-col gap-2 max-h-96 overflow-y-auto">
+                <div
+                    v-for="(item, index) in sanitizedAllResultsData"
+                    :key="index"
+                    class="border border-default rounded-lg p-3"
+                >
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold">{{ item.Method }}</span>
+
+                        <span
+                            class="font-bold text-sm"
+                            :class="item.ProfitRaw >= 0 ? 'text-teal-600' : 'text-red-600'"
+                        >
+                            {{ item.Profit }} u
+                        </span>
+                    </div>
+
+                    <div class="flex gap-2 text-sm text-muted">
+                        <span>ROI: {{ item.ROI }}%</span>
+
+                        <span>|</span>
+
+                        <span>Investido: {{ item.Responsibility }} u</span>
+
+                        <span>|</span>
+
+                        <span>{{ item.Num_Bets }} apostas</span>
+                    </div>
+                </div>
             </div>
         </template>
     </UModal>
 </template>
 
 <script setup>
+
+const { isMobile } = useDevice();
 
 const props = defineProps({
     items: {
@@ -101,6 +136,7 @@ const sanitizedAllResultsData = computed(() => {
     return props.allResultsData.map(item => {
         return {
             ...item,
+            ProfitRaw: item.Profit,
             Profit: item.Profit.toLocaleString('pt-BR'),
             ROI: item.ROI.toLocaleString('pt-BR'),
             Num_Bets: item.Num_Bets.toLocaleString('pt-BR')
