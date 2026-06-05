@@ -14,7 +14,7 @@
 			@update:open="showAlert = false"
 		/>
 
-		<USkeleton v-if="status === 'pending'" class="w-full h-127.5 mt-2" />
+		<USkeleton v-if="status === 'pending'" class="w-full h-60 mt-2 rounded-2xl" />
 
 		<DataErrorCard
 			v-else-if="!data?.bankrollEvolution?.length"
@@ -79,7 +79,7 @@
 			</UCard>
 		</div>
 
-		<USkeleton v-if="status === 'pending'" class="w-full h-82.5" />
+		<USkeleton v-if="status === 'pending'" class="w-full h-60 rounded-2xl" />
 
 		<UCard v-else id="yesterday-metrics" class="bg-zinc-900 border border-zinc-800">
 			<template #header>
@@ -131,7 +131,7 @@
 			/>
 
 			<template v-else>
-				<USkeleton v-if="dayLoading" class="w-full h-50" />
+				<USkeleton v-if="dayLoading" class="w-full h-60 rounded-2xl" />
 
 				<div v-else class="flex flex-col lg:flex-row items-stretch gap-2 w-full">
 					<div class="flex-1 min-w-0">
@@ -157,7 +157,7 @@
 			</template>
 		</UCard>
 
-		<USkeleton v-if="status === 'pending'" class="w-full h-82.5" />
+		<USkeleton v-if="status === 'pending'" class="w-full h-60 rounded-2xl" />
 
 		<DataErrorCard
 			v-else-if="!data?.month?.results?.length"
