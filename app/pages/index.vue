@@ -58,7 +58,7 @@
 						<UCard
 							v-for="item in resultsByMonth"
 							:key="item.month"
-							class="bg-zinc-950 border border-zinc-800"
+							class="bg-zinc-900 border border-zinc-800"
 						>
 							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
 								<p class="text-zinc-300">{{ item.month }}</p>
