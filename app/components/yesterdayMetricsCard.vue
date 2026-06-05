@@ -1,11 +1,14 @@
 <template>
-  <UCard class="w-full h-full bg-zinc-900 border border-zinc-800">
+  <UCard
+    class="w-full h-full bg-zinc-950/80 border border-zinc-800"
+    :ui="{ root: 'flex flex-col h-full', body: 'flex-1' }"
+  >
     <template #header>
       <p class="font-semibold text-white">Métricas</p>
     </template>
 
     <template #default>
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <div
           v-for="(item, index) in items"
           :key="index"
@@ -34,7 +37,6 @@ defineProps({
     items: {
         type: Array,
         required: true,
-        default: () => []
     }
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <UCard class="w-full h-full bg-zinc-900 border border-zinc-800">
+    <UCard class="w-full h-full bg-zinc-950/80 border border-zinc-800">
         <template #header>
             <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>
@@ -16,11 +16,11 @@
         </template>
 
         <template #default>
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
                 <div
                     v-for="item in items"
                     :key="item.id"
-                    class="flex items-center justify-between"
+                    class="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-md px-3 py-2 text-sm"
                 >
                     <NuxtLink :to="`/performance/${modelNameToIdName(item.name)}`">
                         <div class="hover:text-teal-500 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
