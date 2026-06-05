@@ -6,11 +6,11 @@
 
 		<UAlert
 			v-if="showAlert"
-			color="info"
+			color="warning"
 			variant="soft"
 			title="Atenção"
 			close
-			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder. Aposte com consciência!"
+			description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder."
 			@update:open="showAlert = false"
 		/>
 
