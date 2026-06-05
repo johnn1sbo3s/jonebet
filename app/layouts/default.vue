@@ -1,4 +1,9 @@
 <script setup>
+const navUi = {
+  item: 'text-[#888888] hover:text-white',
+  active: 'text-[#14B8A6] bg-[#1a1a1a] rounded-lg',
+}
+
 const navItems = [
   [
     {
@@ -31,7 +36,7 @@ const navItems = [
 </script>
 
 <template>
-  <UHeader class="bg-[#0a0a0a] border-b border-[#2a2a2a]">
+  <UHeader class="bg-[#0a0a0a] border-b border-[#2a2a2a]" aria-label="Main navigation">
     <template #title>
       <div class="flex items-center gap-2">
         <UIcon name="i-lucide-chart-bar" class="text-[#14B8A6] w-6 h-6" />
@@ -43,14 +48,14 @@ const navItems = [
     <UNavigationMenu
       :items="navItems"
       class="hidden xl:flex xl:justify-center"
-      :ui="{ item: 'text-[#888888] hover:text-white', active: 'text-[#14B8A6] bg-[#1a1a1a] rounded-lg' }"
+      :ui="navUi"
     />
 
     <template #right>
       <UNavigationMenu
         :items="navItems"
         class="hidden lg:flex xl:hidden"
-        :ui="{ item: 'text-[#888888] hover:text-white', active: 'text-[#14B8A6] bg-[#1a1a1a] rounded-lg' }"
+        :ui="navUi"
       />
     </template>
 
@@ -59,7 +64,7 @@ const navItems = [
         :items="navItems"
         orientation="vertical"
         class="-mx-2.5"
-        :ui="{ item: 'text-[#888888] hover:text-white', active: 'text-[#14B8A6] bg-[#1a1a1a] rounded-lg' }"
+        :ui="navUi"
       />
     </template>
   </UHeader>
