@@ -3,7 +3,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/fonts',
     '@pinia/nuxt',
-    '@nuxtjs/device'
+    '@nuxtjs/device',
+    '@nuxt/eslint'
   ],
 
   css: ['@/assets/css/main.css'],
