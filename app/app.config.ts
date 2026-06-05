@@ -4,6 +4,11 @@ export default defineAppConfig({
       primary: 'teal',
       secondary: 'blue',
       neutral: 'slate'
+    },
+    card: {
+      slots: {
+        root: 'rounded-2xl'
+      }
     }
   }
 })
