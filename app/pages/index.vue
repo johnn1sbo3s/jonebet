@@ -46,21 +46,24 @@
 						</p>
 					</div>
 				</template>
-				<div class="grid grid-cols-2 max-h-[450px] gap-2 overflow-y-scroll p-0.5">
-					<u-card
-						v-for="item in resultsByMonth"
-						:key="item.month"
-					>
-						<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
-							<p>{{ item.month }}</p>
-							<p
-								class="font-semibold"
-								:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
-							>
-								{{ item.profit.toLocaleString('pt-BR') }} u
-							</p>
-						</div>
-					</u-card>
+				<div class="relative">
+					<div class="grid grid-cols-2 max-h-112.5 gap-2 overflow-y-scroll p-0.5 pb-6">
+						<u-card
+							v-for="item in resultsByMonth"
+							:key="item.month"
+						>
+							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
+								<p>{{ item.month }}</p>
+								<p
+									class="font-semibold"
+									:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
+								>
+									{{ item.profit.toLocaleString('pt-BR') }} u
+								</p>
+							</div>
+						</u-card>
+					</div>
+					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-(--ui-bg) to-transparent" />
 				</div>
 			</u-card>
 		</div>
