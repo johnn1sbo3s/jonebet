@@ -17,22 +17,21 @@
 
         <template #default>
             <div class="flex flex-col gap-2">
-                <div
+                <NuxtLink
                     v-for="item in items"
                     :key="item.id"
-                    class="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-md px-3 py-2 text-sm"
+                    :to="`/performance/${modelNameToIdName(item.name)}`"
+                    class="ranking-item flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-md px-3 py-2 text-sm cursor-pointer relative overflow-hidden"
                 >
-                    <NuxtLink :to="`/performance/${modelNameToIdName(item.name)}`">
-                        <div class="hover:text-teal-500 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
-                    </NuxtLink>
+                    <span class="relative z-10">{{ modelNameToNaturalName(item.name) }}</span>
 
-                    <div
-                        class="font-semibold"
+                    <span
+                        class="font-semibold relative z-10"
                         :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'"
                     >
                         {{ item.profit.toLocaleString() }} u
-                    </div>
-                </div>
+                    </span>
+                </NuxtLink>
             </div>
         </template>
     </UCard>
@@ -140,3 +139,22 @@ const sanitizedAllResultsData = computed(() => {
 });
 
 </script>
+<style scoped>
+.ranking-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.08),
+        transparent
+    );
+    transition: transform 0.6s ease;
+}
+
+.ranking-item:hover::after {
+    transform: translateX(100%);
+}
+</style>
