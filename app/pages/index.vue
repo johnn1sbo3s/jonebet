@@ -73,7 +73,7 @@
 						</UCard>
 					</div>
 
-					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-default to-transparent" />
+					<div class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-zinc-900 to-transparent" />
 				</div>
 			</UCard>
 		</div>
