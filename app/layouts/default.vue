@@ -36,13 +36,9 @@ const navItems = [
 </script>
 
 <template>
-  <UHeader class="bg-[#0a0a0a] border-b border-[#2a2a2a]" aria-label="Main navigation">
+  <UHeader class="bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-[#2a2a2a]/50" aria-label="Main navigation">
     <template #title>
-      <div class="flex items-center gap-2">
-        <UIcon name="i-lucide-chart-bar" class="text-[#14B8A6] w-6 h-6" />
-
-        <span class="text-white font-bold text-lg tracking-tight">DataPlay</span>
-      </div>
+      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
     </template>
 
     <UNavigationMenu
