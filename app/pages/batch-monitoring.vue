@@ -40,7 +40,7 @@
 					<BatchCard
 						v-for="item in sortedSanitizedData"
 						:key="item._id"
-						:class="item._id === chosenModel._id ? 'outline outline-teal-400 outline-1' : ''"
+						:class="item._id === chosenModel._id ? 'outline outline-teal-400' : ''"
 						:metric-item="item"
 						:selected-id="chosenModel._id"
 						@click="chosenModel = item"
