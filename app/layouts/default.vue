@@ -36,7 +36,7 @@ const navItems = [
 </script>
 
 <template>
-  <UHeader class="bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800/50" aria-label="Main navigation">
+  <UHeader class="bg-zinc-950/60 backdrop-blur-xl border-b border-zinc-800/50" aria-label="Main navigation">
     <template #title>
       <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
     </template>
