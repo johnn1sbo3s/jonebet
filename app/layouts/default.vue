@@ -36,7 +36,13 @@ const navItems = [
       <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
     </template>
 
-    <UNavigationMenu :items="navItems" />
+    <!-- Desktop: centro quando xl+, escondido menor que xl -->
+    <UNavigationMenu :items="navItems" class="hidden xl:flex xl:justify-center" />
+
+    <!-- Mobile/tablet: sempre à direita, escondido xl+ -->
+    <template #right>
+      <UNavigationMenu :items="navItems" class="xl:hidden" />
+    </template>
 
     <template #body>
       <UNavigationMenu :items="navItems" orientation="vertical" class="-mx-2.5" />
