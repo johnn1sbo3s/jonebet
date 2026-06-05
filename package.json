@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:tailwind": "node scripts/check-arbitrary-values.cjs app/",
     "backend": "json-server --watch db/db.json --port 5000"
   },
   "dependencies": {
