@@ -47,22 +47,21 @@ const chartOptions = ref({
 	legend: {
 	  position: "top",
 	  display: true,
+	  labels: {
+		color: '#cccccc'
+	  }
 	},
 	zoom: {
 	  zoom: {
-		wheel: {
+		wheel: { enabled: true },
+		pinch: { enabled: true },
+		mode: "x",
+		drag: {
 		  enabled: true,
+		  borderColor: "#14B8A6",
+		  borderWidth: 1,
+		  backgroundColor: "rgba(20, 184, 166, 0.15)",
 		},
-		pinch: {
-		  enabled: true,
-		},
-        mode: "x",
-        drag: {
-          enabled: true,
-          borderColor: "rgb(20 184 166)",
-          borderWidth: 1,
-          backgroundColor: "rgba(20, 184, 166, 0.15)",
-        },
 	  },
 	  pan: {
 		enabled: true,
@@ -76,12 +75,22 @@ const chartOptions = ref({
 		  type: "line",
 		  xMin: -100,
 		  xMax: -100,
-		  borderColor: "rgb(20 184 166)",
+		  borderColor: "#14B8A6",
 		  borderWidth: 2,
 		},
 	  },
 	},
   },
+  scales: {
+	x: {
+	  ticks: { color: '#888888' },
+	  grid: { color: '#2a2a2a' }
+	},
+	y: {
+	  ticks: { color: '#888888' },
+	  grid: { color: '#2a2a2a' }
+	}
+  }
 });
 
 const chartStyle = ref({
@@ -96,14 +105,14 @@ const chartData = computed(() => {
   const labels = props.bankrollData.map((item) => item.month);
   const data = props.bankrollData.map((item) => item.bankroll);
 
-  return {
+	return {
 	labels: labels,
 	datasets: [
 	  {
 		label: "Acúmulo de capital",
 		data: data,
-		borderColor: "#25D88B",
-		backgroundColor: "rgb(37, 216, 139, 0.05)",
+		borderColor: "#14B8A6",
+		backgroundColor: "rgba(20, 184, 166, 0.1)",
 		pointRadius: 3,
 		pointHoverRadius: 7,
 		fill: true,
