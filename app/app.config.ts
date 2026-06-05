@@ -9,6 +9,9 @@ export default defineAppConfig({
       slots: {
         root: 'rounded-2xl'
       }
+    },
+    skeleton: {
+      base: 'animate-pulse rounded-2xl bg-zinc-800'
     }
   }
 })
