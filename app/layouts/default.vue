@@ -17,12 +17,12 @@ const navItems = [
       to: '/daily-bets',
     },
     {
-      label: 'Performance dos modelos',
+      label: 'Performance',
       icon: 'i-lucide-bar-chart-3',
       to: '/performance',
     },
     {
-      label: 'Monitoramento em Lotes',
+      label: 'Monitoramento',
       icon: 'i-lucide-inbox',
       to: '/batch-monitoring',
     },
@@ -39,9 +39,9 @@ const navItems = [
     <!-- Desktop: centro quando xl+, escondido menor que xl -->
     <UNavigationMenu :items="navItems" class="hidden xl:flex xl:justify-center" />
 
-    <!-- Mobile/tablet: sempre à direita, escondido xl+ -->
+    <!-- Mobile/tablet: à direita entre lg e xl, escondido fora disso -->
     <template #right>
-      <UNavigationMenu :items="navItems" class="xl:hidden" />
+      <UNavigationMenu :items="navItems" class="hidden lg:flex xl:hidden" />
     </template>
 
     <template #body>
