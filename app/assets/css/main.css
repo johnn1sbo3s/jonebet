@@ -49,21 +49,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
 
 /* Utility Classes */
 .animate-fade-in {
   animation: fade-in 300ms ease-out;
 }
 
-.skeleton-shimmer {
-  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.05) 50%, transparent 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
