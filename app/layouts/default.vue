@@ -50,6 +50,8 @@ const navItems = [
   </UHeader>
 
   <UMain>
-    <NuxtPage class="p-6" />
+    <UContainer class="py-6">
+      <NuxtPage />
+    </UContainer>
   </UMain>
 </template>

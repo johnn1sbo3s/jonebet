@@ -6,6 +6,9 @@ export default defineAppConfig({
     },
     button: {
       base: 'cursor-pointer'
+    },
+    container: {
+      base: 'w-full max-w-400 mx-auto px-4 sm:px-6 lg:px-8'
     }
   }
 })
