@@ -21,8 +21,8 @@
 			message="Não foi possível carregar a evolução da banca"
 		/>
 
-		<div v-else class="sm:flex gap-3">
-			<UCard class="w-full sm:w-7/12">
+		<div v-else class="flex flex-col lg:flex-row gap-3">
+			<UCard class="w-full lg:w-[70%]">
 				<template #header>
 					<div>
 						<p class="font-semibold">Evolução da banca</p>
@@ -39,13 +39,13 @@
 				</div>
 			</UCard>
 
-			<UCard class="w-full sm:w-5/12">
+			<UCard class="w-full lg:w-[30%]">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">
 						<p>Resultados por mês</p>
 
 						<p
-							class="text-lg"
+							class="font-bold text-sm xl:text-base"
 							:class="totalProfit > 0 ? 'text-teal-600' : 'text-red-600'"
 						>
 							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
@@ -54,7 +54,7 @@
 				</template>
 
 				<div class="relative">
-					<div class="grid grid-cols-2 max-h-112.5 gap-2 overflow-y-scroll p-0.5 pb-6">
+					<div class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] max-h-112.5 gap-2 overflow-y-scroll p-0.5 pb-6">
 						<UCard
 							v-for="item in resultsByMonth"
 							:key="item.month"
