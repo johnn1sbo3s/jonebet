@@ -22,12 +22,12 @@
 		/>
 
 		<div v-else class="flex flex-col lg:flex-row gap-2">
-			<UCard class="w-full lg:w-[70%] bg-[#1a1a1a] border border-[#2a2a2a]">
+			<UCard class="w-full lg:w-[70%] bg-zinc-900 border border-zinc-800">
 				<template #header>
 					<div>
 						<p class="font-semibold text-white">Evolução da banca</p>
 
-						<p class="text-xs text-[#888888]">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+						<p class="text-xs text-zinc-400">Crescimento da banca mês a mês desde Janeiro de 2024</p>
 					</div>
 				</template>
 
@@ -39,14 +39,14 @@
 				</div>
 			</UCard>
 
-			<UCard class="w-full lg:w-[30%] bg-[#1a1a1a] border border-[#2a2a2a]">
+			<UCard class="w-full lg:w-[30%] bg-zinc-900 border border-zinc-800">
 				<template #header>
 					<div class="flex justify-between items-center font-semibold">
 						<p class="text-white">Resultados por mês</p>
 
 						<p
 							class="font-bold text-sm xl:text-base"
-							:class="totalProfit > 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'"
+							:class="totalProfit > 0 ? 'text-teal-500' : 'text-red-500'"
 						>
 							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
 						</p>
@@ -58,14 +58,14 @@
 						<UCard
 							v-for="item in resultsByMonth"
 							:key="item.month"
-							class="bg-[#121212] border border-[#2a2a2a]"
+							class="bg-zinc-950 border border-zinc-800"
 						>
 							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
-								<p class="text-[#cccccc]">{{ item.month }}</p>
+								<p class="text-zinc-300">{{ item.month }}</p>
 
 								<p
 									class="font-semibold"
-									:class="item.profit >= 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'"
+									:class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'"
 								>
 									{{ item.profit.toLocaleString('pt-BR') }} u
 								</p>
@@ -80,7 +80,7 @@
 
 		<USkeleton v-if="status === 'pending'" class="w-full h-82.5" />
 
-		<UCard v-else id="yesterday-metrics" class="bg-[#1a1a1a] border border-[#2a2a2a]">
+		<UCard v-else id="yesterday-metrics" class="bg-zinc-900 border border-zinc-800">
 			<template #header>
 				<div class="flex justify-between items-center">
 					<p class="font-semibold text-white">Resultados de {{ formatDate(chosenDate) }}</p>
@@ -163,7 +163,7 @@
 			message="Não foi possível carregar os resultados do mês"
 		/>
 
-		<UCard v-else id="month-metrics" class="bg-[#1a1a1a] border border-[#2a2a2a]">
+		<UCard v-else id="month-metrics" class="bg-zinc-900 border border-zinc-800">
 			<template #header>
 				<p class="font-semibold text-white">Resultados do mês</p>
 			</template>

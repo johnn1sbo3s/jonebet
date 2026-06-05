@@ -1,6 +1,6 @@
 <template>
     <UCard
-        class="max-w-150 bg-[#1a1a1a] border border-[#2a2a2a] hover:cursor-pointer hover:outline hover:outline-[#14B8A6] group"
+        class="max-w-150 bg-zinc-900 border border-zinc-800 hover:cursor-pointer hover:outline hover:outline-teal-500 group"
         @click="emit('click')"
     >
         <template #header>
@@ -9,45 +9,45 @@
                     <p class="text-white">{{ metricItem.modelo }}</p>
 
                     <div class="flex gap-3">
-                        <p :class="metricItem.profit >= 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'">{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
+                        <p :class="metricItem.profit >= 0 ? 'text-teal-500' : 'text-red-500'">{{ metricItem.profit > 0 ? '+' : '' }}{{ metricItem.profit }} u</p>
 
                         <UDivider orientation="vertical" class="w-min"/>
 
-                        <p class="text-[#cccccc]">{{ metricItem.qtd_jgs }} jogos</p>
+                        <p class="text-zinc-300">{{ metricItem.qtd_jgs }} jogos</p>
                     </div>
                 </div>
 
-                <i class="i-lucide-chevron-right text-2xl text-[#14B8A6] hidden group-hover:block"/>
+                <i class="i-lucide-chevron-right text-2xl text-teal-500 hidden group-hover:block"/>
             </div>
         </template>
 
         <template #default>
             <div class="w-full flex gap-8">
                 <div class="w-80">
-                    <p class="font-semibold text-[#cccccc]">Médias</p>
+                    <p class="font-semibold text-zinc-300">Médias</p>
 
-<span class="text-[#888888]">({{ metricItem.qtd_blocks }} blocos)</span>
+<span class="text-zinc-400">({{ metricItem.qtd_blocks }} blocos)</span>
 
                     <div class="mt-3 flex flex-col gap-2">
-                        <p class="text-[#cccccc]">Média Profit: {{ metricItem.media_profit }} u</p>
+                        <p class="text-zinc-300">Média Profit: {{ metricItem.media_profit }} u</p>
 
-                        <p class="text-[#cccccc]">EV: {{ metricItem.ev }}</p>
+                        <p class="text-zinc-300">EV: {{ metricItem.ev }}</p>
 
-                        <p class="text-[#cccccc]">Dias: {{ blockDays }}</p>
+                        <p class="text-zinc-300">Dias: {{ blockDays }}</p>
                     </div>
                 </div>
 
                 <UDivider orientation="vertical" class="w-min" />
 
                 <div class="w-full">
-                    <p class="font-semibold text-center text-[#cccccc]">Intervalo de confiança</p>
+                    <p class="font-semibold text-center text-zinc-300">Intervalo de confiança</p>
 
                     <div class="flex gap-3 h-[80%]">
-                        <p class="text-[#ef4444] self-center font-semibold">{{ metricItem.bottom_int_conf }}</p>
+                        <p class="text-red-500 self-center font-semibold">{{ metricItem.bottom_int_conf }}</p>
 
                         <UDivider label="a" />
 
-                        <p class="text-[#14B8A6] self-center font-semibold">{{  metricItem.top_int_conf }}</p>
+                        <p class="text-teal-500 self-center font-semibold">{{  metricItem.top_int_conf }}</p>
                     </div>
                 </div>
             </div>

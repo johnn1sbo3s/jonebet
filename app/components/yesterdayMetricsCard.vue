@@ -1,5 +1,5 @@
 <template>
-  <UCard class="w-full h-full bg-[#1a1a1a] border border-[#2a2a2a]">
+  <UCard class="w-full h-full bg-zinc-900 border border-zinc-800">
     <template #header>
       <p class="font-semibold text-white">Métricas</p>
     </template>
@@ -11,11 +11,11 @@
           :key="index"
           class="flex flex-col justify-center"
         >
-          <p class="text-[#888888] text-sm">{{ item.name }}</p>
+          <p class="text-zinc-400 text-sm">{{ item.name }}</p>
 
           <p
             class="text-xl font-black"
-            :class="item.value >= 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'"
+            :class="item.value >= 0 ? 'text-teal-500' : 'text-red-500'"
           >
             {{ item.value.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }} {{ item.sufix }}
           </p>
@@ -24,7 +24,7 @@
     </template>
 
     <template #footer>
-      <p class="text-xs text-[#5a5a5a]">1 un = 1% da banca</p>
+      <p class="text-xs text-zinc-500">1 un = 1% da banca</p>
     </template>
   </UCard>
 </template>

@@ -12,7 +12,7 @@
 
 	<div>
 	  <div class="flex justify-between items-center mb-3">
-		<div v-if="bets.length > 0" class="text-sm text-[#888888]">
+		<div v-if="bets.length > 0" class="text-sm text-zinc-400">
 			{{ qtd_games }} apostas encontradas
 		</div>
 
@@ -28,14 +28,14 @@
 
 	  <UTable
 		:ui="{
-		  wrapper: 'relative overflow-x-auto border border-[#2a2a2a] rounded-xl',
-		  th: 'bg-[#121212] text-[#888888] text-xs uppercase',
-		  td: 'border-t border-[#2a2a2a] text-[#cccccc]'
+		  wrapper: 'relative overflow-x-auto border border-zinc-800 rounded-xl',
+		  th: 'bg-zinc-950 text-zinc-400 text-xs uppercase',
+		  td: 'border-t border-zinc-800 text-zinc-300'
 		}"
 		:rows="bets"
 		:columns="columns"
 		:sort="sort"
-		class="bg-[#1a1a1a]"
+		class="bg-zinc-900"
 	  />
 	</div>
   </div>

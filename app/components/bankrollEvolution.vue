@@ -48,7 +48,7 @@ const chartOptions = ref({
 	  position: "top",
 	  display: true,
 	  labels: {
-		color: '#cccccc'
+		color: '#d4d4d8'
 	  }
 	},
 	zoom: {
@@ -83,12 +83,12 @@ const chartOptions = ref({
   },
   scales: {
 	x: {
-	  ticks: { color: '#888888' },
-	  grid: { color: '#2a2a2a' }
+	  ticks: { color: '#a1a1aa' },
+	  grid: { color: '#27272a' }
 	},
 	y: {
-	  ticks: { color: '#888888' },
-	  grid: { color: '#2a2a2a' }
+	  ticks: { color: '#a1a1aa' },
+	  grid: { color: '#27272a' }
 	}
   }
 });

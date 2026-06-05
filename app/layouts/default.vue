@@ -1,7 +1,7 @@
 <script setup>
 const navUi = {
-  item: 'text-[#888888] hover:text-white',
-  active: 'text-[#14B8A6] bg-[#1a1a1a] rounded-lg',
+  item: 'text-zinc-400 hover:text-white',
+  active: 'text-teal-500 bg-zinc-900 rounded-lg',
 }
 
 const navItems = [
@@ -36,7 +36,7 @@ const navItems = [
 </script>
 
 <template>
-  <UHeader class="bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-[#2a2a2a]/50" aria-label="Main navigation">
+  <UHeader class="bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800/50" aria-label="Main navigation">
     <template #title>
       <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
     </template>
@@ -65,7 +65,7 @@ const navItems = [
     </template>
   </UHeader>
 
-  <UMain class="bg-[#0a0a0a]">
+  <UMain class="bg-zinc-950">
     <UContainer class="py-8">
       <NuxtPage />
     </UContainer>

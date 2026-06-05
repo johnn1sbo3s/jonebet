@@ -15,11 +15,11 @@
 			v-if="sortedSanitizedData.length"
 			class="pl-0.5 w-147.5 flex justify-between"
 		>
-			<p class="text-sm text-[#888888]">{{ sortedSanitizedData.length }} modelos</p>
+			<p class="text-sm text-zinc-400">{{ sortedSanitizedData.length }} modelos</p>
 
-			<i v-if="!invertOrder" class="i-lucide-arrow-down-a-z text-xl text-[#888888] hover:cursor-pointer" @click="invertCardsOrder"/>
+			<i v-if="!invertOrder" class="i-lucide-arrow-down-a-z text-xl text-zinc-400 hover:cursor-pointer" @click="invertCardsOrder"/>
 
-			<i v-else class="i-lucide-arrow-up-a-z text-xl text-[#888888] hover:cursor-pointer" @click="invertCardsOrder"/>
+			<i v-else class="i-lucide-arrow-up-a-z text-xl text-zinc-400 hover:cursor-pointer" @click="invertCardsOrder"/>
 		</div>
 
 		<div
@@ -50,9 +50,9 @@
 
 			<div
 				v-if="!chosenModel._id"
-				class="w-full h-130 flex items-center justify-center outline-dashed outline-1 outline-[#3a3a3a] p-10 rounded-md"
+				class="w-full h-130 flex items-center justify-center outline-dashed outline-1 outline-zinc-700 p-10 rounded-md"
 			>
-				<p class="text-center text-[#666666] text-2xl">
+				<p class="text-center text-zinc-500 text-2xl">
 					Selecione um card ao lado para ver o gráfico de acúmulo de capital do modelo.
 				</p>
 			</div>
@@ -88,9 +88,9 @@
 					<UTable
 						class="max-h-screen-30"
 						:ui="{
-							wrapper: 'relative overflow-x-auto border border-[#2a2a2a] rounded-xl',
-							th: 'bg-[#121212] text-[#888888] text-xs uppercase',
-							td: 'border-t border-[#2a2a2a] text-[#cccccc]'
+							wrapper: 'relative overflow-x-auto border border-zinc-800 rounded-xl',
+							th: 'bg-zinc-950 text-zinc-400 text-xs uppercase',
+							td: 'border-t border-zinc-800 text-zinc-300'
 						}"
 						:rows="chosenModel.blocks"
 						:columns="blocksTableColumns"

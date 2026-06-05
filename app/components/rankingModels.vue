@@ -1,5 +1,5 @@
 <template>
-    <UCard class="w-full h-full bg-[#1a1a1a] border border-[#2a2a2a]">
+    <UCard class="w-full h-full bg-zinc-900 border border-zinc-800">
         <template #header>
             <div class="flex justify-between items-center">
                 <p class="font-semibold">{{ title }}</p>
@@ -23,12 +23,12 @@
                     class="flex items-center justify-between"
                 >
                     <NuxtLink :to="`/performance/${modelNameToIdName(item.name)}`">
-                        <div class="hover:text-[#14B8A6] hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
+                        <div class="hover:text-teal-500 hover:cursor-pointer">{{ modelNameToNaturalName(item.name) }}</div>
                     </NuxtLink>
 
                     <div
                         class="font-semibold"
-                        :class="item.profit >= 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'"
+                        :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'"
                     >
                         {{ item.profit.toLocaleString() }} u
                     </div>
@@ -60,7 +60,7 @@
 
                         <span
                             class="font-bold text-sm"
-                            :class="item.ProfitRaw >= 0 ? 'text-[#14B8A6]' : 'text-[#ef4444]'"
+                            :class="item.ProfitRaw >= 0 ? 'text-teal-500' : 'text-red-500'"
                         >
                             {{ item.Profit }} u
                         </span>
