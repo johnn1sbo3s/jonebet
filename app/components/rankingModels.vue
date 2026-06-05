@@ -37,14 +37,15 @@
 
     <u-modal
         v-model:open="isModalOpen"
-        :title="title"
+        :title="`Todos os modelos — ${formatDate(sanitizedAllResultsData[0]?.Date)}`"
     >
         <template #body>
-            <u-table
-                style="width: 45dvw;"
-                :rows="sanitizedAllResultsData"
-                :columns="columns"
-            />
+            <div class="overflow-x-auto">
+                <u-table
+                    :data="sanitizedAllResultsData"
+                    :columns="columns"
+                />
+            </div>
         </template>
     </u-modal>
 </template>
@@ -69,14 +70,29 @@ const props = defineProps({
     }
 })
 
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    if (parts.length === 2) {
+        return `${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
+}
+
 const isModalOpen = ref(false);
 const columns = [
-    { id: "Date", key: "Date", label: "Data", sortable: false },
-    { id: "Method", key: "Method", label: "Modelo", sortable: false },
-    { id: "Profit", key: "Profit", label: "Lucro", sortable: false },
-    { id: "ROI", key: "ROI", label: "ROI", sortable: false },
-    { id: "Responsibility", key: "Responsibility", label: "Investido", sortable: false },
-    { id: "Num_Bets", key: "Num_Bets", label: "Qtd de apostas", sortable: false },
+    {
+        accessorKey: "Method",
+        header: "Modelo",
+        cell: ({ row }) => modelNameToNaturalName(row.getValue("Method"))
+    },
+    { accessorKey: "Profit", header: "Lucro" },
+    { accessorKey: "ROI", header: "ROI" },
+    { accessorKey: "Responsibility", header: "Investido" },
+    { accessorKey: "Num_Bets", header: "Qtd de apostas" },
 ];
 
 const sanitizedAllResultsData = computed(() => {
