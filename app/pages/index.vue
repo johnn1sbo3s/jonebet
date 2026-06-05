@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col gap-5">
+	<div class="flex flex-col gap-3">
 		<div class="flex justify-between items-start">
 			<PageHeader title="Bem-vindo(a) ao DataPlay!" />
 		</div>
@@ -14,14 +14,15 @@
 			@update:open="showAlert = false"
 		/>
 
-		<USkeleton v-if="status === 'pending'" class="w-full h-127.5" />
+		<USkeleton v-if="status === 'pending'" class="w-full h-127.5 mt-2" />
 
 		<DataErrorCard
 			v-else-if="!data?.bankrollEvolution?.length"
+			class="mt-2"
 			message="Não foi possível carregar a evolução da banca"
 		/>
 
-		<div v-else class="flex flex-col lg:flex-row gap-2">
+		<div v-else class="flex flex-col lg:flex-row gap-3 mt-2">
 			<UCard class="w-full lg:w-[70%] bg-zinc-900 border border-zinc-800">
 				<template #header>
 					<div>
