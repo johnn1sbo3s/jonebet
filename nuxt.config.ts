@@ -11,6 +11,8 @@ export default defineNuxtConfig({
 
   devtools: { enabled: false },
 
+  compatibilityDate: '2026-06-05',
+
   colorMode: {
     preference: 'dark',
   },
@@ -19,5 +21,16 @@ export default defineNuxtConfig({
     public: {
       API_URL: 'https://api.jonebet.xyz',
     },
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        'chart.js',
+        'chartjs-plugin-annotation',
+        'chartjs-plugin-zoom',
+        'pinia'
+      ]
+    }
   }
 })
