@@ -43,14 +43,12 @@
         :ui="{ content: 'max-w-3xl' }"
     >
         <template #body>
-            <!-- Desktop: tabela -->
             <UTable
                 v-if="!isMobile"
                 :data="sanitizedAllResultsData"
                 :columns="columns"
             />
 
-            <!-- Mobile: cards -->
             <div v-else class="flex flex-col gap-2 max-h-96 overflow-y-auto">
                 <div
                     v-for="(item, index) in sanitizedAllResultsData"

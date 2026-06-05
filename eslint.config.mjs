@@ -1,5 +1,6 @@
 import { createConfigForNuxt } from '@nuxt/eslint-config'
 import blankLineBetweenSiblings from './eslint-rules/vue-blank-line-between-siblings.js'
+import noHtmlComments from './eslint-rules/no-html-comments.js'
 import globals from 'globals'
 
 const nuxtGlobals = {
@@ -62,12 +63,14 @@ const customPlugin = {
   plugins: {
     custom: {
       rules: {
-        'vue-blank-line-between-siblings': blankLineBetweenSiblings
+        'vue-blank-line-between-siblings': blankLineBetweenSiblings,
+        'no-html-comments': noHtmlComments
       }
     }
   },
   rules: {
-    'custom/vue-blank-line-between-siblings': 'error'
+    'custom/vue-blank-line-between-siblings': 'error',
+    'custom/no-html-comments': 'error'
   }
 }
 
