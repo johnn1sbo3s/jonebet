@@ -1,49 +1,9 @@
 <template>
-	<div class="sm:flex gap-3">
-		<div class="w-full sm:w-7/12">
-			<LineChart
-				:chartData="chartData"
-				:options="chartOptions"
-				:style="chartStyle"
-			/>
-		</div>
-
-		<div class="w-full sm:w-5/12 pt-8 pb-7 h-full">
-			<u-card class="h-full">
-				<template #header>
-					<div class="flex justify-between items-center font-semibold">
-						<p>Acúmulo total</p>
-						<p
-							class="text-lg"
-							:class="totalProfit > 0 ? 'text-teal-600' : 'text-red-600'"
-						>
-							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
-						</p>
-					</div>
-				</template>
-
-				<template #default>
-					<div class="grid grid-cols-2 max-h-56 gap-2 overflow-y-scroll p-0.5">
-						<u-card
-							v-for="item in resultsByMonth"
-							:key="item.month"
-						>
-							<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
-								<p>{{ item.month }}</p>
-
-								<p
-									class="font-semibold"
-									:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
-								>
-									{{ item.profit.toLocaleString('pt-BR') }} u
-								</p>
-							</div>
-						</u-card>
-					</div>
-				</template>
-			</u-card>
-		</div>
-	</div>
+	<LineChart
+		:chartData="chartData"
+		:options="chartOptions"
+		:style="chartStyle"
+	/>
 </template>
 
 <script setup>
@@ -153,22 +113,7 @@ const chartData = computed(() => {
   };
 })
 
-const resultsByMonth = computed(() => {
-	if (!props.bankrollData?.length) return [];
-	let months = props.bankrollData.map((item) => {
-		return {
-		month: item.month,
-		profit: item.profit,
-		}
-	})
 
-	return months.reverse();
-})
-
-const totalProfit = computed(() => {
-	if (!props.bankrollData?.length || props.bankrollData.length < 2) return 0;
-	return (props.bankrollData.at(-1).bankroll - props.bankrollData.at(0).bankroll);
-})
 </script>
 
 <style lang="scss" scoped>

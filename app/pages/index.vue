@@ -19,20 +19,51 @@
 			v-else-if="!data?.bankrollEvolution?.length"
 			message="Não foi possível carregar a evolução da banca"
 		/>
-		<u-card v-else id="bankroll-evolution">
-			<template #header>
-				<div>
-					<p class="font-semibold">Evolução da banca</p>
-					<p class="text-xs text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+		<div v-else class="sm:flex gap-3">
+			<u-card class="w-full sm:w-7/12">
+				<template #header>
+					<div>
+						<p class="font-semibold">Evolução da banca</p>
+						<p class="text-xs text-gray-500">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+					</div>
+				</template>
+				<div class="w-full">
+					<bankroll-evolution
+						:model-value="status === 'pending'"
+						:bankroll-data="data?.bankrollEvolution || []"
+					/>
 				</div>
-			</template>
-			<div class="w-full">
-				<bankroll-evolution
-					:model-value="status === 'pending'"
-					:bankroll-data="data?.bankrollEvolution || []"
-				/>
-			</div>
-		</u-card>
+			</u-card>
+			<u-card class="w-full sm:w-5/12">
+				<template #header>
+					<div class="flex justify-between items-center font-semibold">
+						<p>Resultados por mês</p>
+						<p
+							class="text-lg"
+							:class="totalProfit > 0 ? 'text-teal-600' : 'text-red-600'"
+						>
+							{{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
+						</p>
+					</div>
+				</template>
+				<div class="grid grid-cols-2 max-h-[450px] gap-2 overflow-y-scroll p-0.5">
+					<u-card
+						v-for="item in resultsByMonth"
+						:key="item.month"
+					>
+						<div class="text-sm sm:flex items-center text-center justify-center sm:justify-between">
+							<p>{{ item.month }}</p>
+							<p
+								class="font-semibold"
+								:class="item.profit >= 0 ? 'text-teal-600' : 'text-red-600'"
+							>
+								{{ item.profit.toLocaleString('pt-BR') }} u
+							</p>
+						</div>
+					</u-card>
+				</div>
+			</u-card>
+		</div>
 
 		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
 		<u-card v-else id="yesterday-metrics">
@@ -215,6 +246,20 @@ function nextDay() {
     chosenDate.value = addDays(chosenDate.value, 1);
   }
 }
+
+const resultsByMonth = computed(() => {
+	if (!data.value?.bankrollEvolution?.length) return [];
+	return data.value.bankrollEvolution.map((item) => ({
+		month: item.month,
+		profit: item.profit,
+	})).reverse();
+});
+
+const totalProfit = computed(() => {
+	const b = data.value?.bankrollEvolution;
+	if (!b?.length || b.length < 2) return 0;
+	return b.at(-1).bankroll - b.at(0).bankroll;
+});
 
 const dayMetrics = computed(() => {
   const m = yesterdayData.value?.metrics;
