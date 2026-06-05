@@ -21,7 +21,7 @@
 			message="Não foi possível carregar a evolução da banca"
 		/>
 
-		<div v-else class="flex flex-col lg:flex-row gap-3">
+		<div v-else class="flex flex-col lg:flex-row gap-2">
 			<UCard class="w-full lg:w-[70%]">
 				<template #header>
 					<div>
@@ -131,12 +131,12 @@
 			<template v-else>
 				<USkeleton v-if="dayLoading" class="w-full h-50" />
 
-				<div v-else class="sm:flex items-stretch gap-3 w-full">
+				<div v-else class="flex flex-col lg:flex-row items-stretch gap-2 w-full">
 					<div class="flex-1 min-w-0">
 						<YesterdayMetricsCard :items="dayMetrics" />
 					</div>
 
-					<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
+					<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0">
 						<RankingModels
 							:title="'Top 3 modelos'"
 							:items="yesterdayData.topModels"
@@ -167,12 +167,12 @@
 				<p class="font-semibold">Resultados do mês</p>
 			</template>
 
-			<div class="sm:flex items-stretch gap-3 w-full">
+			<div class="flex flex-col lg:flex-row items-stretch gap-2 w-full">
 				<div class="flex-1 min-w-0">
 					<YesterdayMetricsCard :items="monthMetrics" />
 				</div>
 
-				<div v-if="data?.month?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
+				<div v-if="data?.month?.topModels?.length" class="flex-1 min-w-0">
 					<RankingModels
 						:title="'Top 3 modelos'"
 						:items="data.month.topModels"
