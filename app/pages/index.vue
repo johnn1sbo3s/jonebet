@@ -35,10 +35,6 @@
 		</u-card>
 
 		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
-		<data-error-card
-			v-else-if="!yesterdayData?.results?.length && !dayLoading"
-			:message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
-		/>
 		<u-card v-else id="yesterday-metrics">
 			<template #header>
 				<div class="flex justify-between items-center">
@@ -47,6 +43,7 @@
 						<UButton
 							icon="i-lucide-chevron-left"
 							size="xs"
+							color="secondary"
 							variant="soft"
 							@click="prevDay"
 						/>
@@ -54,7 +51,9 @@
 							<UButton
 								:label="formatDate(chosenDate)"
 								size="xs"
+								color="secondary"
 								variant="soft"
+								class="w-28 justify-center"
 							/>
 							<template #content>
 								<UCalendar
@@ -67,6 +66,7 @@
 						<UButton
 							icon="i-lucide-chevron-right"
 							size="xs"
+							color="secondary"
 							variant="soft"
 							:disabled="isAtMaxDate"
 							@click="nextDay"
@@ -74,26 +74,32 @@
 					</div>
 				</div>
 			</template>
-			<u-skeleton v-if="dayLoading" class="w-full h-50" />
-			<div v-else class="sm:flex items-stretch gap-3 w-full">
-				<div class="flex-1 min-w-0">
-					<yesterday-metrics-card :items="dayMetrics" />
+			<data-error-card
+				v-if="!yesterdayData?.results?.length && !dayLoading"
+				:message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
+			/>
+			<template v-else>
+				<u-skeleton v-if="dayLoading" class="w-full h-50" />
+				<div v-else class="sm:flex items-stretch gap-3 w-full">
+					<div class="flex-1 min-w-0">
+						<yesterday-metrics-card :items="dayMetrics" />
+					</div>
+					<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
+						<ranking-models
+							:title="'Top 3 modelos'"
+							:items="yesterdayData.topModels"
+							:all-results-data="yesterdayData.results"
+						/>
+					</div>
+					<div class="flex-1 min-w-0">
+						<yesterday-details-card
+							:number-bets="yesterdayData?.metrics?.bets"
+							:number-models="yesterdayData?.metrics?.models"
+							:positive-models="yesterdayData?.positiveModels || 0"
+						/>
+					</div>
 				</div>
-				<div v-if="yesterdayData?.topModels?.length" class="flex-1 min-w-0 my-3 sm:my-0">
-					<ranking-models
-						:title="'Top 3 modelos'"
-						:items="yesterdayData.topModels"
-						:all-results-data="yesterdayData.results"
-					/>
-				</div>
-				<div class="flex-1 min-w-0">
-					<yesterday-details-card
-						:number-bets="yesterdayData?.metrics?.bets"
-						:number-models="yesterdayData?.metrics?.models"
-						:positive-models="yesterdayData?.positiveModels || 0"
-					/>
-				</div>
-			</div>
+			</template>
 		</u-card>
 
 		<u-skeleton v-if="status === 'pending'" class="w-full h-82.5" />
