@@ -4,7 +4,7 @@
 
 Dark-only dashboard para análise de performance de apostas esportivas. Canvas near-black (`#09090b`) com teal (`#14B8A6`) como cor primária e azul (`#3B82F6`) como secundária. Profundidade via contraste de superfícies — sem drop shadows.
 
-Identidade visual: **teal + preto**. Números de profit positivo em teal, negativo em vermelho. Inter como família tipográfica única.
+Identidade visual: **teal + preto**. Números de profit positivo em teal, negativo em vermelho. Plus Jakarta Sans como família tipográfica única.
 
 ---
 
@@ -87,7 +87,7 @@ ui: {
 
 ### Font Family
 
-- **Primária:** Inter (`--font-sans: 'Inter', system-ui, sans-serif`)
+- **Primária:** Plus Jakarta Sans (`--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif`)
 - Via `@nuxt/fonts`, fallback automático
 
 ### Type Scale
