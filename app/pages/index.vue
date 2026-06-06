@@ -89,7 +89,7 @@
           <div class="flex items-center gap-1">
             <UButton icon="i-lucide-chevron-left" size="xs" color="secondary" variant="soft" @click="prevDay" />
 
-            <UPopover :popper="{ placement: 'bottom' }">
+            <UPopover v-model:open="calendarOpen" :popper="{ placement: 'bottom' }">
               <UButton
                 :label="formatDate(chosenDate)"
                 size="xs"
