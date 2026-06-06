@@ -1,3 +1,4 @@
+import prettierConfig from 'eslint-config-prettier'
 import { createConfigForNuxt } from '@nuxt/eslint-config'
 import blankLineBetweenSiblings from './eslint-rules/vue-blank-line-between-siblings.js'
 import noHtmlComments from './eslint-rules/no-html-comments.js'
@@ -86,5 +87,6 @@ export default createConfigForNuxt(
       'nuxt/nuxt-config-keys-order': 'off',
       'indent': ['error', 2]
     }
-  }
+  },
+  prettierConfig
 )
