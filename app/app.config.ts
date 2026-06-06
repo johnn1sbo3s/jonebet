@@ -13,5 +13,11 @@ export default defineAppConfig({
     skeleton: {
       base: 'animate-pulse rounded-2xl bg-zinc-800',
     },
+    modal: {
+      slots: {
+        content: 'bg-zinc-900',
+        overlay: 'bg-black/80',
+      },
+    },
   },
 })
