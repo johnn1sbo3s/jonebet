@@ -521,12 +521,25 @@ function playedYesterday(modelName) {
 }
 
 async function exportTableToExcel(tableData) {
-  const XLSX = await import('xlsx')
-  const worksheet = XLSX.utils.json_to_sheet(tableData)
-  const workbook = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela')
+  const ExcelJS = await import('exceljs')
+  const workbook = new ExcelJS.Workbook()
+  const worksheet = workbook.addWorksheet('Tabela')
 
-  XLSX.writeFile(workbook, `jogos_reais_${chosenModel.value}.xlsx`)
+  if (tableData.length > 0) {
+    worksheet.columns = Object.keys(tableData[0]).map((key) => ({ header: key, key }))
+    worksheet.addRows(tableData)
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer()
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `jogos_reais_${chosenModel.value}.xlsx`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 watchEffect(() => {

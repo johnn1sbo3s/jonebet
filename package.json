@@ -22,6 +22,7 @@
     "chart.js": "^3.9.1",
     "chartjs-plugin-annotation": "^2.2.1",
     "chartjs-plugin-zoom": "^2.0.1",
+    "exceljs": "^4.4.0",
     "json-server": "^1.0.0-alpha.23",
     "luxon": "^3.4.4",
     "nuxt": "^4.4.7",
@@ -29,8 +30,7 @@
     "tailwindcss": "^4.3.0",
     "vue": "^3.4.21",
     "vue-chart-3": "^3.1.8",
-    "vue-router": "^4.3.0",
-    "xlsx": "^0.18.5"
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.111",
@@ -45,7 +45,13 @@
     "prettier-plugin-tailwindcss": "^0.8.0"
   },
   "lint-staged": {
-    "*.{js,ts,vue}": ["prettier --write", "eslint --fix"],
+    "*.{js,ts,vue}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
     "*.{vue,ts}": "node scripts/check-arbitrary-values.cjs"
+  },
+  "overrides": {
+    "picomatch": "2.3.2"
   }
 }
