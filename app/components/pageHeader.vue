@@ -19,14 +19,14 @@
 
 <script setup>
 defineProps({
-	title: {
-			type: String,
-			required: true,
-	},
-	description: {
-			type: String,
-			required: false,
-			default: () => ''
-	}
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: false,
+    default: () => ''
+  }
 })
 </script>

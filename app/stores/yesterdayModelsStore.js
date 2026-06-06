@@ -1,11 +1,11 @@
 export const useYesterdayModelsStore = defineStore('yesterdayModels', () => {
-    const yesterdayModels = ref({});
+  const yesterdayModels = ref({});
 
-    const getYesterdayModels = computed(() => yesterdayModels.value);
+  const getYesterdayModels = computed(() => yesterdayModels.value);
 
-    function setYesterdayModels(data) {
-        yesterdayModels.value = data;
-    }
+  function setYesterdayModels(data) {
+    yesterdayModels.value = data;
+  }
 
-    return { getYesterdayModels, setYesterdayModels };
+  return { getYesterdayModels, setYesterdayModels };
 });

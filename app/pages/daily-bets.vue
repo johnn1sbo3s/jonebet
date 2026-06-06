@@ -64,22 +64,22 @@ const filterByDate = (selectedDate) => {
 
 const normalizeColumns = (object_data) => {
   return object_data.map((item) => ({
-	...item,
-	Modelo: modelNameToNaturalName(item.Modelo),
-	FT_Odds_H: parseFloat(item.FT_Odds_H).toFixed(2),
-	FT_Odds_D: parseFloat(item.FT_Odds_D).toFixed(2),
-	FT_Odds_A: parseFloat(item.FT_Odds_A).toFixed(2),
+    ...item,
+    Modelo: modelNameToNaturalName(item.Modelo),
+    FT_Odds_H: parseFloat(item.FT_Odds_H).toFixed(2),
+    FT_Odds_D: parseFloat(item.FT_Odds_D).toFixed(2),
+    FT_Odds_A: parseFloat(item.FT_Odds_A).toFixed(2),
   }));
 };
 
 const fetchData = async () => {
   try {
-	const req = await fetch(`${apiUrl}/daily-bets`);
-	const data = await req.json();
-	return data;
+    const req = await fetch(`${apiUrl}/daily-bets`);
+    const data = await req.json();
+    return data;
   } catch (error) {
-	console.error("Erro ao buscar os dados:", error);
-	return [];
+    console.error("Erro ao buscar os dados:", error);
+    return [];
   }
 };
 
@@ -96,36 +96,36 @@ dates.value = Array.from(uniqueDates).slice(-7);
 const date = ref(dates.value[dates.value?.length - 1]);
 
 const modelsOptions = computed(() => {
-	const uniqueModels = new Set();
-	Object.values(games).filter((item) => item.Date === date.value)
-		.forEach((item) => {
-			uniqueModels.add(item.Modelo);
-		});
+  const uniqueModels = new Set();
+  Object.values(games).filter((item) => item.Date === date.value)
+    .forEach((item) => {
+      uniqueModels.add(item.Modelo);
+    });
 
-	return [
-		{ value: null, label: "Todos os modelos" },
-		...Array.from(uniqueModels)
-			.map((item) => modelNameToNaturalName(item))
-			.sort((a, b) => a.localeCompare(b)),
-	];
+  return [
+    { value: null, label: "Todos os modelos" },
+    ...Array.from(uniqueModels)
+      .map((item) => modelNameToNaturalName(item))
+      .sort((a, b) => a.localeCompare(b)),
+  ];
 });
 
 const bets = ref([]);
 
 watch(() => date.value, () => {
-	selectedModel.value = "Todos os modelos";
+  selectedModel.value = "Todos os modelos";
 });
 
 const buildTableData = async (chosenDate) => {
   try {
-	let filteredBets = filterByDate(chosenDate);
-	if (selectedModel.value !== "Todos os modelos") {
-		filteredBets = filteredBets.filter((item) => item.Modelo === selectedModel.value);
-	}
-	bets.value = normalizeColumns(filteredBets);
+    let filteredBets = filterByDate(chosenDate);
+    if (selectedModel.value !== "Todos os modelos") {
+      filteredBets = filteredBets.filter((item) => item.Modelo === selectedModel.value);
+    }
+    bets.value = normalizeColumns(filteredBets);
   } catch (error) {
-	console.error("Erro ao buscar apostas do dia:", error);
-	bets.value = []; // Limpar a lista em caso de erro
+    console.error("Erro ao buscar apostas do dia:", error);
+    bets.value = []; // Limpar a lista em caso de erro
   }
 };
 
@@ -136,12 +136,12 @@ watchEffect(() => {
 });
 
 async function exportTableToExcel(tableData) {
-	const XLSX = await import('xlsx');
-	const worksheet = XLSX.utils.json_to_sheet(tableData);
-	const workbook = XLSX.utils.book_new();
-	XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
+  const XLSX = await import('xlsx');
+  const worksheet = XLSX.utils.json_to_sheet(tableData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Tabela');
 
-	XLSX.writeFile(workbook, `jogos_do_dia_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(workbook, `jogos_do_dia_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 </script>
 

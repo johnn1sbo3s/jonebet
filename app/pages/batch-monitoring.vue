@@ -117,10 +117,10 @@ const chartKey = ref(0);
 const filterString = ref('');
 const invertOrder = ref(false);
 const blocksTableColumns = [
-	{ id: "Qtd_Jogos", label: "Qtd. jogos", key: "Qtd_Jogos" },
-	{ id: "Profit", label: "Profit", key: "Profit" },
-	{ id: "ROI", label: "ROI", key: "ROI" },
-	{ id: "Ult_Dia", label: "Último dia do bloco", key: "Ult_Dia" },
+  { id: "Qtd_Jogos", label: "Qtd. jogos", key: "Qtd_Jogos" },
+  { id: "Profit", label: "Profit", key: "Profit" },
+  { id: "ROI", label: "ROI", key: "ROI" },
+  { id: "Ult_Dia", label: "Último dia do bloco", key: "Ult_Dia" },
 ];
 
 if (import.meta.client) {
@@ -135,51 +135,51 @@ const chartOptions = ref({
   responsive: true,
   maintainAspectRatio: false,
   transitions: {
-	zoom: {
+    zoom: {
 	  animation: {
-		duration: 1000,
-		easing: "easeOutCubic",
+        duration: 1000,
+        easing: "easeOutCubic",
 	  },
-	},
+    },
   },
   plugins: {
-	legend: {
+    legend: {
 	  position: "bottom",
 	  display: true,
-	},
-	zoom: {
+    },
+    zoom: {
 	  zoom: {
-		wheel: {
+        wheel: {
 		  enabled: true,
-		},
-		pinch: {
+        },
+        pinch: {
 		  enabled: true,
-		},
-		mode: "x",
-		drag: {
+        },
+        mode: "x",
+        drag: {
 		  enabled: true,
 		  borderColor: "rgb(20 184 166)",
 		  borderWidth: 1,
 		  backgroundColor: "rgba(20, 184, 166, 0.15)",
-		},
+        },
 	  },
 	  pan: {
-		enabled: true,
-		mode: "x",
-		modifierKey: "ctrl",
+        enabled: true,
+        mode: "x",
+        modifierKey: "ctrl",
 	  },
-	},
-	annotation: {
+    },
+    annotation: {
 	  annotations: {
-		line1: {
+        line1: {
 		  type: "line",
 		  xMin: -100,
 		  xMax: -100,
 		  borderColor: "rgb(20 184 166)",
 		  borderWidth: 2,
-		},
+        },
 	  },
-	},
+    },
   },
 });
 
@@ -190,71 +190,71 @@ const chartStyle = ref({
 
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
-	const orderDirection = invertOrder.value ? 'asc' : 'desc';
-	let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection]);
-	sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
+  const orderDirection = invertOrder.value ? 'asc' : 'desc';
+  let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection]);
+  sorted = sorted.filter(item => modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()));
 
-	return sorted.map((item) => ({
-		_id: item._id,
-		modelo: modelNameToNaturalName(item.modelo),
-		profit: (item.total.media_atual * 100).toFixed(2).toLocaleString('pt-BR'),
-		ev: item.total.ev.toFixed(2).toLocaleString('pt-BR'),
-		media_profit: (item.total.media * 100).toFixed(2).toLocaleString('pt-BR'),
-		qtd_jgs: item.total.qtd_jgs_atual,
-		last_block_day: item.total.blocks_history?.at(-2)?.Ult_Dia,
-		bottom_int_conf: (item.total.intervalo_confianca[0] * 100).toFixed(2).toLocaleString('pt-BR'),
-		top_int_conf: (item.total.intervalo_confianca[1] * 100).toFixed(2).toLocaleString('pt-BR'),
-		blocks: item.total.blocks_history,
-		qtd_blocks: item.total.blocks_history?.length - 1,
-		pl_history: item.total.pl_history
-	}));
+  return sorted.map((item) => ({
+    _id: item._id,
+    modelo: modelNameToNaturalName(item.modelo),
+    profit: (item.total.media_atual * 100).toFixed(2).toLocaleString('pt-BR'),
+    ev: item.total.ev.toFixed(2).toLocaleString('pt-BR'),
+    media_profit: (item.total.media * 100).toFixed(2).toLocaleString('pt-BR'),
+    qtd_jgs: item.total.qtd_jgs_atual,
+    last_block_day: item.total.blocks_history?.at(-2)?.Ult_Dia,
+    bottom_int_conf: (item.total.intervalo_confianca[0] * 100).toFixed(2).toLocaleString('pt-BR'),
+    top_int_conf: (item.total.intervalo_confianca[1] * 100).toFixed(2).toLocaleString('pt-BR'),
+    blocks: item.total.blocks_history,
+    qtd_blocks: item.total.blocks_history?.length - 1,
+    pl_history: item.total.pl_history
+  }));
 });
 
 const chartData = computed(() => {
-	if (!chosenModel.value.pl_history) {
-		return {};
-	}
+  if (!chosenModel.value.pl_history) {
+    return {};
+  }
 
-	const profits =  chosenModel.value.pl_history.map((item) => item.Profit);
-	const data = profits.reduce((acc, curr, index) => {
-		if (index === 0) {
-			return [curr];
-		}
+  const profits =  chosenModel.value.pl_history.map((item) => item.Profit);
+  const data = profits.reduce((acc, curr, index) => {
+    if (index === 0) {
+      return [curr];
+    }
 
-		return [...acc, curr + acc[index - 1]];
-	}, []);
+    return [...acc, curr + acc[index - 1]];
+  }, []);
 
-	const labels = Array.from({ length: data.length }, (_, i) => i + 1);
+  const labels = Array.from({ length: data.length }, (_, i) => i + 1);
 
-	return {
-		labels: labels,
-		datasets: [
-		{
-			label: "Acúmulo de capital",
-			data: data,
-			borderColor: "#25D88B",
-			backgroundColor: "rgb(37, 216, 139, 0.05)",
-			pointRadius: 1,
-			pointHoverRadius: 7,
-			fill: true,
-			tension: 0.2,
-		},
-		],
-	};
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: "Acúmulo de capital",
+        data: data,
+        borderColor: "#25D88B",
+        backgroundColor: "rgb(37, 216, 139, 0.05)",
+        pointRadius: 1,
+        pointHoverRadius: 7,
+        fill: true,
+        tension: 0.2,
+      },
+    ],
+  };
 })
 
 // Métodos
 function resetsZoom() {
-	chartKey.value++;
+  chartKey.value++;
 }
 function invertCardsOrder() {
-	invertOrder.value = !invertOrder.value;
+  invertOrder.value = !invertOrder.value;
 }
 
 // Código
 if (_isEmpty(store.getPerformanceData)) {
-	const { data } = await useFetch(`${apiUrl}/model-performance`);
-	store.setPerformanceData(data.value);
+  const { data } = await useFetch(`${apiUrl}/model-performance`);
+  store.setPerformanceData(data.value);
 }
 data.value = store.getPerformanceData;
 

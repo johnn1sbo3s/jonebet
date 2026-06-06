@@ -76,18 +76,18 @@
 <script setup>
 
 const props = defineProps({
-    fixtures: {
-        type: Array,
-        required: true
-    },
-    bets: {
-        type: Array,
-        required: true
-    },
-    chosen: {
-        type: Object,
-        default: () => {}
-    },
+  fixtures: {
+    type: Array,
+    required: true
+  },
+  bets: {
+    type: Array,
+    required: true
+  },
+  chosen: {
+    type: Object,
+    default: () => {}
+  },
 });
 
 const emits = defineEmits(['click']);
@@ -95,11 +95,11 @@ const emits = defineEmits(['click']);
 const internalFixtures = ref([]);
 
 watch(() => props.fixtures, (value) => {
-    internalFixtures.value = value;
+  internalFixtures.value = value;
 }, { immediate: true });
 
 function countModels(fixture) {
-    return props.bets.filter((bet) => bet.Date === fixture.Date && bet.Home === fixture.Home && bet.Away === fixture.Away).length;
+  return props.bets.filter((bet) => bet.Date === fixture.Date && bet.Home === fixture.Home && bet.Away === fixture.Away).length;
 }
 
 </script>

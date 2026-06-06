@@ -10,9 +10,9 @@
 
 <script setup>
 defineProps({
-	message: {
-		type: String,
-		default: 'Não foi possível carregar as informações'
-	}
+  message: {
+    type: String,
+    default: 'Não foi possível carregar as informações'
+  }
 })
 </script>

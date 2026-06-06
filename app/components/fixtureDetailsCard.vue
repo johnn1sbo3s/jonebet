@@ -111,20 +111,20 @@
 <script setup>
 
 const props = defineProps({
-    fixture: {
-        type: Object,
-        required: true
-    },
-    bets: {
-        type: Array,
-        required: true
-    }
+  fixture: {
+    type: Object,
+    required: true
+  },
+  bets: {
+    type: Array,
+    required: true
+  }
 });
 
 const { isMobile } = useDevice();
 
 const fixtureAllowedModels = computed(() => {
-    return props.bets.map((item) => modelNameToNaturalName(item.Modelo));
+  return props.bets.map((item) => modelNameToNaturalName(item.Modelo));
 });
 
 </script>

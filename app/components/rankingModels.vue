@@ -87,55 +87,55 @@
 const { isMobile } = useDevice();
 
 const props = defineProps({
-    items: {
-        type: Array,
-        required: true,
-    },
-    title: {
-        type: String,
-        required: true,
-    },
-    allResultsData: {
-        type: Array,
-        required: true,
-    }
+  items: {
+    type: Array,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  allResultsData: {
+    type: Array,
+    required: true,
+  }
 })
 
 function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const parts = dateStr.split('-');
-    if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    if (parts.length === 2) {
-        return `${parts[1]}/${parts[0]}`;
-    }
-    return dateStr;
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  if (parts.length === 2) {
+    return `${parts[1]}/${parts[0]}`;
+  }
+  return dateStr;
 }
 
 const isModalOpen = ref(false);
 const columns = [
-    {
-        accessorKey: "Method",
-        header: "Modelo",
-        cell: ({ row }) => modelNameToNaturalName(row.getValue("Method"))
-    },
-    { accessorKey: "Profit", header: "Lucro" },
-    { accessorKey: "ROI", header: "ROI" },
-    { accessorKey: "Responsibility", header: "Investido" },
-    { accessorKey: "Num_Bets", header: "Qtd de apostas" },
+  {
+    accessorKey: "Method",
+    header: "Modelo",
+    cell: ({ row }) => modelNameToNaturalName(row.getValue("Method"))
+  },
+  { accessorKey: "Profit", header: "Lucro" },
+  { accessorKey: "ROI", header: "ROI" },
+  { accessorKey: "Responsibility", header: "Investido" },
+  { accessorKey: "Num_Bets", header: "Qtd de apostas" },
 ];
 
 const sanitizedAllResultsData = computed(() => {
-    return props.allResultsData.map(item => {
-        return {
-            ...item,
-            ProfitRaw: item.Profit,
-            Profit: item.Profit.toLocaleString('pt-BR'),
-            ROI: item.ROI.toLocaleString('pt-BR'),
-            Num_Bets: item.Num_Bets.toLocaleString('pt-BR')
-        };
-    });
+  return props.allResultsData.map(item => {
+    return {
+      ...item,
+      ProfitRaw: item.Profit,
+      Profit: item.Profit.toLocaleString('pt-BR'),
+      ROI: item.ROI.toLocaleString('pt-BR'),
+      Num_Bets: item.Num_Bets.toLocaleString('pt-BR')
+    };
+  });
 });
 
 </script>

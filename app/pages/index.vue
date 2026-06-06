@@ -277,17 +277,17 @@ function nextDay() {
 }
 
 const resultsByMonth = computed(() => {
-	if (!data.value?.bankrollEvolution?.length) return [];
-	return data.value.bankrollEvolution.map((item) => ({
-		month: item.month,
-		profit: item.profit,
-	})).reverse();
+  if (!data.value?.bankrollEvolution?.length) return [];
+  return data.value.bankrollEvolution.map((item) => ({
+    month: item.month,
+    profit: item.profit,
+  })).reverse();
 });
 
 const totalProfit = computed(() => {
-	const b = data.value?.bankrollEvolution;
-	if (!b?.length || b.length < 2) return 0;
-	return b.at(-1).bankroll - b.at(0).bankroll;
+  const b = data.value?.bankrollEvolution;
+  if (!b?.length || b.length < 2) return 0;
+  return b.at(-1).bankroll - b.at(0).bankroll;
 });
 
 const dayMetrics = computed(() => {

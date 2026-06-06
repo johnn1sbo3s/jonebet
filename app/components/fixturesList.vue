@@ -121,39 +121,39 @@ v-if="_isEmpty(chosenGame)"
 const { isMobile } = useDevice();
 
 const props = defineProps({
-    fixtures: {
-        type: Array,
-        required: true
-    },
-    bets: {
-        type: Array,
-        required: true
-    },
-    selectedDate: {
-        type: String,
-        default: ''
-    },
-    initialDate: {
-        type: String,
-        default: ''
-    },
-    loading: {
-        type: Boolean,
-        default: false
-    },
+  fixtures: {
+    type: Array,
+    required: true
+  },
+  bets: {
+    type: Array,
+    required: true
+  },
+  selectedDate: {
+    type: String,
+    default: ''
+  },
+  initialDate: {
+    type: String,
+    default: ''
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
 });
 
 const emits = defineEmits(['change', 'source-change']);
 
 const tabItems = [
-    {
-        label: 'Exchange',
-        value: 'exchange',
-    },
-    {
-        label: 'Bookie',
-        value: 'bookie',
-    },
+  {
+    label: 'Exchange',
+    value: 'exchange',
+  },
+  {
+    label: 'Bookie',
+    value: 'bookie',
+  },
 ];
 
 const internalFixtures = ref([]);
@@ -166,68 +166,68 @@ const showSkeleton = ref(false);
 const showMobileModal = ref(false);
 
 const datesOptions = computed(() => {
-    const dates = [];
-    const currentDate = props.initialDate ? new Date(props.initialDate) : new Date();
+  const dates = [];
+  const currentDate = props.initialDate ? new Date(props.initialDate) : new Date();
 
-    for (let i = 0; i < 7; i++) {
-        const virtualDate = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
-        dates.push(formatDate(virtualDate));
-    }
+  for (let i = 0; i < 7; i++) {
+    const virtualDate = new Date(currentDate.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+    dates.push(formatDate(virtualDate));
+  }
 
-    return dates;
+  return dates;
 });
 
 watch(() => props.fixtures, (value) => {
-    internalFixtures.value = value.sort((a, b) => a.Time > b.Time ? 1 : -1);
+  internalFixtures.value = value.sort((a, b) => a.Time > b.Time ? 1 : -1);
 }, { immediate: true });
 
 watch(() => chosenDay.value, (newValue, oldValue) => {
-    if (newValue === oldValue) return;
-    emits('change', newValue);
+  if (newValue === oldValue) return;
+  emits('change', newValue);
 });
 
 watch(betfairFixtures, () => {
-    emits('source-change', betfairFixtures.value);
+  emits('source-change', betfairFixtures.value);
 });
 
 watch(() => showMobileModal.value, (newValue) => {
-    if (newValue === false) {
-        setTimeout(() => {
-            chosenGame.value = {};
-        }, 300);
-    }
+  if (newValue === false) {
+    setTimeout(() => {
+      chosenGame.value = {};
+    }, 300);
+  }
 });
 
 function onTabChange(tab) {
-    selectedTab.value = tabItems[tab].value;
-    if (selectedTab.value === 'bookie') {
-        betfairFixtures.value = false;
-    } else {
-        betfairFixtures.value = true;
-    }
+  selectedTab.value = tabItems[tab].value;
+  if (selectedTab.value === 'bookie') {
+    betfairFixtures.value = false;
+  } else {
+    betfairFixtures.value = true;
+  }
 }
 
 async function handleGameClick(game) {
-    showMobileModal.value = true;
-    showSkeleton.value = true;
+  showMobileModal.value = true;
+  showSkeleton.value = true;
 
-    setTimeout(() => {
-        if (game._id === chosenGame.value._id) {
-            chosenGame.value = {};
-            return;
-        }
+  setTimeout(() => {
+    if (game._id === chosenGame.value._id) {
+      chosenGame.value = {};
+      return;
+    }
 
-        chosenGame.value = game;
-        filterBets();
+    chosenGame.value = game;
+    filterBets();
 
-        showSkeleton.value = false;
-    }, 100);
+    showSkeleton.value = false;
+  }, 100);
 }
 
 function filterBets() {
-    filteredBets.value = props.bets.filter((bet) => {
-        return bet.Home === chosenGame.value.Home && bet.Away === chosenGame.value.Away;
-    });
+  filteredBets.value = props.bets.filter((bet) => {
+    return bet.Home === chosenGame.value.Home && bet.Away === chosenGame.value.Away;
+  });
 }
 
 </script>

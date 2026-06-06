@@ -62,10 +62,10 @@ import { DateTime } from 'luxon';
 
 // Props
 const props = defineProps({
-    metricItem: {
-        type: Object,
-        required: true,
-    },
+  metricItem: {
+    type: Object,
+    required: true,
+  },
 });
 
 // Emits
@@ -73,8 +73,8 @@ const emit = defineEmits(['click']);
 
 // Variáveis computadas
 const blockDays = computed(() => {
-    const lastDay = DateTime.fromISO(props.metricItem.last_block_day);
-    return Math.floor(DateTime.now().diff(lastDay, 'days').toObject().days);
+  const lastDay = DateTime.fromISO(props.metricItem.last_block_day);
+  return Math.floor(DateTime.now().diff(lastDay, 'days').toObject().days);
 })
 
 </script>

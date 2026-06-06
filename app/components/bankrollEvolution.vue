@@ -12,15 +12,15 @@ import { LineChart } from "vue-chart-3";
 
 const props = defineProps({
   modelValue: {
-	type: Boolean,
-	required: true,
-	default: () => true
+    type: Boolean,
+    required: true,
+    default: () => true
   },
 
   bankrollData: {
-	type: Object,
-	required: true,
-	default: () => {}
+    type: Object,
+    required: true,
+    default: () => {}
   }
 })
 
@@ -36,60 +36,60 @@ const chartOptions = ref({
   responsive: true,
   maintainAspectRatio: false,
   transitions: {
-	zoom: {
+    zoom: {
 	  animation: {
-		duration: 1000,
-		easing: "easeOutCubic",
+        duration: 1000,
+        easing: "easeOutCubic",
 	  },
-	},
+    },
   },
   plugins: {
-	legend: {
+    legend: {
 	  position: "top",
 	  display: true,
 	  labels: {
-		color: '#d4d4d8'
+        color: '#d4d4d8'
 	  }
-	},
-	zoom: {
+    },
+    zoom: {
 	  zoom: {
-		wheel: { enabled: true },
-		pinch: { enabled: true },
-		mode: "x",
-		drag: {
+        wheel: { enabled: true },
+        pinch: { enabled: true },
+        mode: "x",
+        drag: {
 		  enabled: true,
 		  borderColor: "#14B8A6",
 		  borderWidth: 1,
 		  backgroundColor: "rgba(20, 184, 166, 0.15)",
-		},
+        },
 	  },
 	  pan: {
-		enabled: true,
-		mode: "x",
-		modifierKey: "ctrl",
+        enabled: true,
+        mode: "x",
+        modifierKey: "ctrl",
 	  },
-	},
-	annotation: {
+    },
+    annotation: {
 	  annotations: {
-		line1: {
+        line1: {
 		  type: "line",
 		  xMin: -100,
 		  xMax: -100,
 		  borderColor: "#14B8A6",
 		  borderWidth: 2,
-		},
+        },
 	  },
-	},
+    },
   },
   scales: {
-	x: {
+    x: {
 	  ticks: { color: '#a1a1aa' },
 	  grid: { color: '#27272a' }
-	},
-	y: {
+    },
+    y: {
 	  ticks: { color: '#a1a1aa' },
 	  grid: { color: '#27272a' }
-	}
+    }
   }
 });
 
@@ -105,20 +105,20 @@ const chartData = computed(() => {
   const labels = props.bankrollData.map((item) => item.month);
   const data = props.bankrollData.map((item) => item.bankroll);
 
-	return {
-	labels: labels,
-	datasets: [
+  return {
+    labels: labels,
+    datasets: [
 	  {
-		label: "Acúmulo de capital",
-		data: data,
-		borderColor: "#14B8A6",
-		backgroundColor: "rgba(20, 184, 166, 0.1)",
-		pointRadius: 3,
-		pointHoverRadius: 7,
-		fill: true,
-		tension: 0.2,
+        label: "Acúmulo de capital",
+        data: data,
+        borderColor: "#14B8A6",
+        backgroundColor: "rgba(20, 184, 166, 0.1)",
+        pointRadius: 3,
+        pointHoverRadius: 7,
+        fill: true,
+        tension: 0.2,
 	  },
-	],
+    ],
   };
 })
 
