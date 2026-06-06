@@ -83,7 +83,8 @@ export default createConfigForNuxt(
       'vue/no-multiple-template-root': 'off',
       'vue/max-attributes-per-line': ['error', { singleline: 3 }],
       'vue/component-name-in-template-casing': ['error', 'PascalCase', { registeredComponentsOnly: false }],
-      'nuxt/nuxt-config-keys-order': 'off'
+      'nuxt/nuxt-config-keys-order': 'off',
+      'indent': ['error', 2]
     }
   }
 )
