@@ -1,11 +1,10 @@
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/ui',
-    '@nuxt/fonts',
-    '@pinia/nuxt',
-    '@nuxtjs/device',
-    '@nuxt/eslint'
-  ],
+  app: {
+    head: {
+      title: 'JoneBet',
+    },
+  },
+  modules: ['@nuxt/ui', '@nuxt/fonts', '@pinia/nuxt', '@nuxtjs/device', '@nuxt/eslint'],
 
   css: ['@/assets/css/main.css'],
 
@@ -25,12 +24,7 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: [
-        'chart.js',
-        'chartjs-plugin-annotation',
-        'chartjs-plugin-zoom',
-        'pinia'
-      ]
-    }
-  }
+      include: ['chart.js', 'chartjs-plugin-annotation', 'chartjs-plugin-zoom', 'pinia'],
+    },
+  },
 })
