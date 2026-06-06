@@ -36,32 +36,19 @@ const navItems = [
 </script>
 
 <template>
-  <UHeader class="bg-zinc-950/60 backdrop-blur-xl border-b border-zinc-800/50" aria-label="Main navigation">
+  <UHeader class="border-b border-zinc-800/50 bg-zinc-950/60 backdrop-blur-xl" aria-label="Main navigation">
     <template #title>
-      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" >
+      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" />
     </template>
 
-    <UNavigationMenu
-      :items="navItems"
-      class="hidden xl:flex xl:justify-center"
-      :ui="navUi"
-    />
+    <UNavigationMenu :items="navItems" class="hidden xl:flex xl:justify-center" :ui="navUi" />
 
     <template #right>
-      <UNavigationMenu
-        :items="navItems"
-        class="hidden lg:flex xl:hidden"
-        :ui="navUi"
-      />
+      <UNavigationMenu :items="navItems" class="hidden lg:flex xl:hidden" :ui="navUi" />
     </template>
 
     <template #body>
-      <UNavigationMenu
-        :items="navItems"
-        orientation="vertical"
-        class="-mx-2.5"
-        :ui="navUi"
-      />
+      <UNavigationMenu :items="navItems" orientation="vertical" class="-mx-2.5" :ui="navUi" />
     </template>
   </UHeader>
 

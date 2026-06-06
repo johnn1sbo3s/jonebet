@@ -16,16 +16,14 @@ export function _filter(array, predicate) {
   if (typeof predicate === 'function') return array.filter(predicate)
   // Object shorthand: _.filter(items, { key: value })
   if (typeof predicate === 'object' && predicate !== null) {
-    return array.filter(item =>
-      Object.entries(predicate).every(([key, val]) => item[key] === val)
-    )
+    return array.filter((item) => Object.entries(predicate).every(([key, val]) => item[key] === val))
   }
   return [...array]
 }
 
 export function _map(array, iteratee) {
   if (!Array.isArray(array)) return []
-  if (typeof iteratee === 'string') return array.map(item => item[iteratee])
+  if (typeof iteratee === 'string') return array.map((item) => item[iteratee])
   return array.map(iteratee)
 }
 
@@ -64,9 +62,7 @@ export function _sortBy(array, iteratees) {
 
 export function _uniqWith(array, comparator) {
   if (!Array.isArray(array)) return []
-  return array.filter((item, index) =>
-    array.findIndex(other => comparator(item, other)) === index
-  )
+  return array.filter((item, index) => array.findIndex((other) => comparator(item, other)) === index)
 }
 
 export function _orderBy(array, keys, orders) {

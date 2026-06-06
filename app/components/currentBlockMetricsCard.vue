@@ -4,17 +4,23 @@
       <p class="font-semibold">{{ cardTitle }}</p>
     </template>
 
-    <div class="grid grid-cols-2 text-sm gap-y-5">
+    <div class="grid grid-cols-2 gap-y-5 text-sm">
       <div class="flex gap-1">
         <p class="font-semibold">Profit:</p>
 
-        <p>{{ metricsData.media_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+        <p>
+          {{ metricsData.media_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }) }}
+        </p>
       </div>
 
       <div class="flex gap-1">
         <p class="font-semibold">Desvpad:</p>
 
-        <p>{{ metricsData.desvpad_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2}) }}</p>
+        <p>
+          {{
+            metricsData.desvpad_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+          }}
+        </p>
       </div>
 
       <div class="flex gap-1">
@@ -27,5 +33,14 @@
 </template>
 
 <script setup>
-defineProps(["metricsData", "cardTitle"]);
+defineProps({
+  metricsData: {
+    type: Object,
+    required: true,
+  },
+  cardTitle: {
+    type: String,
+    required: true,
+  },
+})
 </script>

@@ -3,15 +3,15 @@ export default defineAppConfig({
     colors: {
       primary: 'teal',
       secondary: 'blue',
-      neutral: 'slate'
+      neutral: 'slate',
     },
     card: {
       slots: {
-        root: 'rounded-2xl'
-      }
+        root: 'rounded-2xl',
+      },
     },
     skeleton: {
-      base: 'animate-pulse rounded-2xl bg-zinc-800'
-    }
-  }
+      base: 'animate-pulse rounded-2xl bg-zinc-800',
+    },
+  },
 })

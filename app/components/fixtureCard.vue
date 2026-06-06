@@ -1,109 +1,87 @@
 <template>
-    <div class="flex flex-col">
-        <div
-            v-for="item in internalFixtures"
-            :key="item._id"
-            class="flex gap-3 sm:gap-5 justify-between bg-slate-900 items-center w-full border border-gray-700 rounded-lg py-4 px-4 sm:px-6 mb-2 cursor-pointer hover:border-teal-400"
-            :class="item._id === chosen._id ? 'sm:border sm:border-teal-400 border-1' : ''"
-            @click="emits('click', item)"
-        >
-            <div class="flex gap-7 items-center">
-                <div
-                    class="flex flex-col items-center"
-                >
-                    <div class="font-semibold text-sm sm:text-base">
-                        {{ item.Time }}
-                    </div>
+  <div class="flex flex-col">
+    <div
+      v-for="item in internalFixtures"
+      :key="item._id"
+      class="mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-700 bg-slate-900 px-4 py-4 hover:border-teal-400 sm:gap-5 sm:px-6"
+      :class="item._id === chosen._id ? 'border-1 sm:border sm:border-teal-400' : ''"
+      @click="emits('click', item)"
+    >
+      <div class="flex items-center gap-7">
+        <div class="flex flex-col items-center">
+          <div class="text-sm font-semibold sm:text-base">
+            {{ item.Time }}
+          </div>
 
-                    <div class="text-xs sm:text-sm text-gray-500">
-                        {{ formatDate(item.Date) }}
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2 text-sm sm:text-base">
-                    <div>
-                        {{ item.Home }} x {{ item.Away }}
-                    </div>
-
-                    <div class="flex gap-1">
-                        <UBadge
-                            :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'"
-                            variant="soft"
-                        >
-                            {{ item.FT_Odds_H.toFixed(2) }}
-                        </UBadge>
-
-                        <UBadge
-                            color="neutral"
-                            variant="soft"
-                        >
-                            {{ item.FT_Odds_D.toFixed(2) }}
-                        </UBadge>
-
-                        <UBadge
-                            :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'error'"
-                            variant="soft"
-                        >
-                            {{ item.FT_Odds_A.toFixed(2) }}
-                        </UBadge>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col items-end gap-1 min-w-16 text-end">
-                <div class="text-xs text-gray-600">
-                    Entrada em
-                </div>
-
-                <div
-                    v-if="countModels(item) === 0"
-                    class="text-gray-500 text-xs sm:text-sm font-semibold"
-                >
-                    Nenhum
-                </div>
-
-                <div
-                    v-else
-                    class="text-gray-500 text-xs sm:text-sm font-semibold"
-                >
-                    {{ countModels(item) }} {{ countModels(item) === 1 ? 'modelo' : 'modelos' }}
-                </div>
-            </div>
+          <div class="text-xs text-gray-500 sm:text-sm">
+            {{ formatDate(item.Date) }}
+          </div>
         </div>
+
+        <div class="flex flex-col gap-2 text-sm sm:text-base">
+          <div>{{ item.Home }} x {{ item.Away }}</div>
+
+          <div class="flex gap-1">
+            <UBadge :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'" variant="soft">
+              {{ item.FT_Odds_H.toFixed(2) }}
+            </UBadge>
+
+            <UBadge color="neutral" variant="soft">
+              {{ item.FT_Odds_D.toFixed(2) }}
+            </UBadge>
+
+            <UBadge :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'error'" variant="soft">
+              {{ item.FT_Odds_A.toFixed(2) }}
+            </UBadge>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex min-w-16 flex-col items-end gap-1 text-end">
+        <div class="text-xs text-gray-600">Entrada em</div>
+
+        <div v-if="countModels(item) === 0" class="text-xs font-semibold text-gray-500 sm:text-sm">Nenhum</div>
+
+        <div v-else class="text-xs font-semibold text-gray-500 sm:text-sm">
+          {{ countModels(item) }} {{ countModels(item) === 1 ? 'modelo' : 'modelos' }}
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-
 const props = defineProps({
   fixtures: {
     type: Array,
-    required: true
+    required: true,
   },
   bets: {
     type: Array,
-    required: true
+    required: true,
   },
   chosen: {
     type: Object,
-    default: () => {}
+    default: () => {},
   },
-});
+})
 
-const emits = defineEmits(['click']);
+const emits = defineEmits(['click'])
 
-const internalFixtures = ref([]);
+const internalFixtures = ref([])
 
-watch(() => props.fixtures, (value) => {
-  internalFixtures.value = value;
-}, { immediate: true });
+watch(
+  () => props.fixtures,
+  (value) => {
+    internalFixtures.value = value
+  },
+  { immediate: true },
+)
 
 function countModels(fixture) {
-  return props.bets.filter((bet) => bet.Date === fixture.Date && bet.Home === fixture.Home && bet.Away === fixture.Away).length;
+  return props.bets.filter((bet) => bet.Date === fixture.Date && bet.Home === fixture.Home && bet.Away === fixture.Away)
+    .length
 }
-
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

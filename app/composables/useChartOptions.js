@@ -6,13 +6,13 @@ export function useChartOptions() {
       zoom: {
         animation: {
           duration: 1000,
-          easing: "easeOutCubic",
+          easing: 'easeOutCubic',
         },
       },
     },
     plugins: {
       legend: {
-        position: "top",
+        position: 'top',
         display: true,
       },
       zoom: {
@@ -23,31 +23,31 @@ export function useChartOptions() {
           pinch: {
             enabled: true,
           },
-          mode: "x",
+          mode: 'x',
           drag: {
             enabled: true,
-            borderColor: "rgb(20 184 166)",
+            borderColor: 'rgb(20 184 166)',
             borderWidth: 1,
-            backgroundColor: "rgba(20, 184, 166, 0.15)",
+            backgroundColor: 'rgba(20, 184, 166, 0.15)',
           },
         },
         pan: {
           enabled: true,
-          mode: "x",
-          modifierKey: "ctrl",
+          mode: 'x',
+          modifierKey: 'ctrl',
         },
       },
       annotation: {
         annotations: {
           line1: {
-            type: "line",
+            type: 'line',
             xMin: -100,
             xMax: -100,
-            borderColor: "rgb(20 184 166)",
+            borderColor: 'rgb(20 184 166)',
             borderWidth: 2,
           },
         },
       },
     },
-  };
+  }
 }
