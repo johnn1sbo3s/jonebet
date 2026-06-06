@@ -52,7 +52,16 @@
           <div
             class="grid max-h-112.5 grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-2 overflow-y-scroll p-0.5 pb-6"
           >
-            <UCard v-for="item in resultsByMonth" :key="item.month" class="border border-zinc-800 bg-zinc-950">
+            <UCard
+              v-for="item in resultsByMonth"
+              :key="item.month"
+              class="border bg-zinc-950/80"
+              :class="
+                item.profit >= 0
+                  ? 'border-l-2 border-teal-500/20 border-l-teal-500'
+                  : 'border-l-2 border-red-500/20 border-l-red-500'
+              "
+            >
               <div class="items-center justify-center text-center text-sm sm:flex sm:justify-between">
                 <p class="text-zinc-300">{{ item.month }}</p>
 
