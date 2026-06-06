@@ -1,333 +1,318 @@
+# DataPlay Design System
+
 ## Overview
 
-O design system do DataPlay usa uma base **near-pure black canvas** (`{colors.canvas}` — #0a0a0a) com **teal elétrico** (`{colors.primary}` — #14B8A6) como cor primária e **azul** (`{colors.secondary}` — #3B82F6) como secundária. O teal é usado em CTAs primários, números de stats, badges e destaques. Tipografia branca em peso 700 sans-serif ancora o corpo editorial.
+Dark-only dashboard para análise de performance de apostas esportivas. Canvas near-black (`#09090b`) com teal (`#14B8A6`) como cor primária e azul (`#3B82F6`) como secundária. Profundidade via contraste de superfícies — sem drop shadows.
 
-A combinação teal + preto é a identidade visual do DataPlay. Code blocks, terminal output e fragmentos de UI do produto são incorporados diretamente em cards `{colors.surface-card}` (#1a1a1a) escuros.
-
-A voz tipográfica usa **Inter** em pesos confiáveis — 700 para headlines display (com letter-spacing negativo -1 a -2.5px), 600 para subtítulos e botões, 400 para corpo. O sistema não usa contraparte serif/display; tudo é uma família geométrica humanist sans, escalada e pesada para hierarquia.
-
-**Características Principais:**
-- Near-pure black canvas (`{colors.canvas}` — #0a0a0a) com texto branco. Sem surface de light-mode.
-- Teal primário (`{colors.primary}` — #14B8A6). Usado em CTAs primários, números de stats grandes ("2.8k+", "74k+"), e bands CTA teal full-bleed.
-- Blue secundário (`{colors.secondary}` — #3B82F6). Usado em links, badges secundários e destaques de suporte.
-- Inter em peso 700 para display, peso 600 para subtítulos + botões, peso 400 para corpo. Sem contraparte serif.
-- Dark surface cards (`{colors.surface-card}` — #1a1a1a) para feature cards, code windows e product mockups. Cards pouco mais claros que o canvas — contraste sutil.
-- Code blocks renderizados em JetBrains Mono dentro de `{colors.surface-card}`.
-- Stat numbers em teal + sans-700 + tamanho grande transmitem credibilidade.
-- Border radius hierárquico: `{rounded.md}` (8px) para botões, `{rounded.lg}` (12px) para content cards.
-- Ritmo de seção `{spacing.section}` (96px) entre bands editoriais.
-
-## Colors
-
-### Brand & Accent
-- **Primary (Teal)** (`{colors.primary}` — #14B8A6): Cor principal da marca. Todos os CTAs primários, números de stats grandes, cards CTA teal full-bleed.
-- **Primary Active** (`{colors.primary-active}` — #0D9488): Variante hover/pressed mais escura.
-- **Primary Disabled** (`{colors.primary-disabled}` — #1a2a2a): Teal dessaturado em canvas escuro.
-- **Secondary (Blue)** (`{colors.secondary}` — #3B82F6): Cor secundária para links, badges e destaques de suporte.
-
-### Surface
-- **Canvas** (`{colors.canvas}` — #0a0a0a): Piso padrão da página. Preto puro.
-- **Surface Soft** (`{colors.surface-soft}` — #121212): Divisores de seção, tintas band suaves.
-- **Surface Card** (`{colors.surface-card}` — #1a1a1a): Feature cards, code windows, product mockups, pricing tier cards.
-- **Surface Elevated** (`{colors.surface-elevated}` — #242424): Cards nested dentro de cards maiores.
-- **Surface Teal Band** (`{colors.surface-teal-band}` — #14B8A6): Card/band CTA teal full-bleed — mesmo hex do primary.
-- **Hairline** (`{colors.hairline}` — #2a2a2a): Bordas 1px nos cards.
-- **Hairline Strong** (`{colors.hairline-strong}` — #3a3a3a): Divisor mais pesado em underlines de input e ênfase.
-
-### Text
-- **Ink / On Dark** (`{colors.on-dark}` — #ffffff): Todo headline e texto primário.
-- **Body** (`{colors.body}` — #cccccc): Cor de texto running-text padrão.
-- **Body Strong** (`{colors.body-strong}` — #e6e6e6): Parágrafos enfatizados.
-- **Muted** (`{colors.muted}` — #888888): Links de footer, captions, breadcrumbs.
-- **Muted Soft** (`{colors.muted-soft}` — #5a5a5a): Texto terciário — letra miúda.
-- **On Primary / On Teal** (`{colors.on-primary}` / `{colors.on-teal}` — #0a0a0a): Texto preto em CTAs teal e bands CTA teal. A combinação teal + preto de alto contraste é o sinal de ação da marca.
-
-### Semantic / Accent
-- **Accent Emerald** (`{colors.accent-emerald}` — #22c55e): Estados de sucesso, indicadores "ativo" na UI do produto.
-- **Accent Rose** (`{colors.accent-rose}` — #ef4444): Estados de erro, indicadores "queda".
-- **Accent Blue** (`{colors.accent-blue}` — #3B82F6): Estados info, highlighting de syntax de código.
-- **Warning** (`{colors.warning}` — #F59E0B): Estados de aviso, alertas importantes.
+Identidade visual: **teal + preto**. Números de profit positivo em teal, negativo em vermelho. Inter como família tipográfica única.
 
 ---
 
-## Tailwind CSS Tokens
+## Colors
 
-> Estes tokens são usados tanto no Pencil (mockups) quanto no projeto (CSS variables).
-> Mapeamento direto entre o design system visual e o código.
+### Canvas & Surface
 
-### CSS Variables (main.css)
+| Token | Hex | Tailwind | Uso |
+|-------|-----|----------|-----|
+| Canvas | `#09090b` | `zinc-950` | Fundo da página (`bg-zinc-950`) |
+| Surface Soft | `#18181b` | `zinc-900` | Cards, fundos secundários |
+| Surface Card | `#18181b` | `zinc-900` | UCard background padrão |
+| Surface Elevated | `#27272a` | `zinc-800` | Cards nested dentro de cards |
 
-```css
-@theme {
-  /* Canvas & Surface */
-  --color-canvas: #0a0a0a;
-  --color-surface-soft: #121212;
-  --color-surface-card: #1a1a1a;
-  --color-surface-elevated: #242424;
+### Brand
 
-  /* Brand */
-  --color-primary: #14B8A6;
-  --color-primary-active: #0D9488;
-  --color-primary-disabled: #1a2a2a;
-  --color-secondary: #3B82F6;
+| Token | Hex | Tailwind | Uso |
+|-------|-----|----------|-----|
+| Primary | `#14B8A6` | `teal-500` | CTAs, stats positivos, nav ativo, linha de gráfico |
+| Primary Active | `#0D9488` | `teal-600` | Hover/pressed em botões primários |
+| Primary Disabled | `#1a2a2a` | — | Teal dessaturado para estados desabilitados |
+| Secondary | `#3B82F6` | `blue-500` | Botões secundários, links, badges |
 
-  /* Borders */
-  --color-hairline: #2a2a2a;
-  --color-hairline-strong: #3a3a3a;
+### Borders
 
-  /* Text */
-  --color-text-on-dark: #ffffff;
-  --color-text-body: #cccccc;
-  --color-text-body-strong: #e6e6e6;
-  --color-text-muted: #888888;
-  --color-text-muted-soft: #5a5a5a;
-  --color-text-on-primary: #0a0a0a;
+| Token | Hex | Tailwind | Uso |
+|-------|-----|----------|-----|
+| Hairline | `#27272a` | `zinc-800` | Bordas de cards, tabelas, rows de detalhe |
+| Hairline Strong | `#3f3f46` | `zinc-700` | Bordas mais fortes, scrollbar thumbs |
 
-  /* Semantic */
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
-  --color-warning: #F59E0B;
+### Text
+
+| Token | Hex | Tailwind | Uso |
+|-------|-----|----------|-----|
+| On Dark | `#ffffff` | `text-white` | Títulos, texto primário em cards |
+| Body | `#d4d4d8` | `zinc-300` | Labels de detalhe, texto corrido |
+| Body Strong | `#e4e4e7` | `zinc-200` | Texto enfatizado |
+| Muted | `#a1a1aa` | `zinc-400` | Labels, captions, nav inativo |
+| Muted Soft | `#71717a` | `zinc-500` | Texto terciário, footers |
+| On Primary | `#09090b` | `zinc-950` | Texto em fundos teal |
+
+### Semantic
+
+| Token | Hex | Tailwind | Uso |
+|-------|-----|----------|-----|
+| Success / Positive | `#22c55e` | `emerald-500` | Estados de sucesso |
+| Danger / Negative | `#ef4444` | `red-500` | Profit negativo (`text-red-500`) |
+| Info / Secondary Accent | `#3B82F6` | `blue-500` | Estados info |
+| Warning | `#F59E0B` | `amber-500` | UAlert, alertas importantes |
+
+### NuxtUI Color Mapping
+
+```ts
+// app.config.ts
+ui: {
+  colors: {
+    primary: 'teal',
+    secondary: 'blue',
+    neutral: 'slate'
+  }
 }
 ```
 
-### Uso em Classes Tailwind
+### Chart.js Colors
 
-| Token | Classe Tailwind | Uso |
-|-------|-----------------|-----|
-| Canvas | `bg-[#0a0a0a]` | Fundo da página |
-| Surface Card | `bg-[#1a1a1a]` | Cards, inputs |
-| Surface Soft | `bg-[#121212]` | Divisores, tintas |
-| Hairline | `border-[#2a2a2a]` | Bordas de cards |
-| Text On Dark | `text-white` | Títulos |
-| Text Body | `text-[#cccccc]` | Texto corrido |
-| Text Muted | `text-[#888888]` | Labels, captions |
-| Primary | `bg-[#14B8A6]` | Botões primários |
-| Primary Active | `bg-[#0D9488]` | Hover de botões |
-| Secondary | `bg-[#3B82F6]` | Links, badges |
-| Success | `text-[#22c55e]` | Lucro positivo |
-| Danger | `text-[#ef4444]` | Lucro negativo |
-| Warning | `bg-[#291C0F]` | Alertas (fundo) |
-
-### Uso no Pencil
-
-As variáveis no Pencil usam os mesmos valores hex:
-- `--color-canvas` → `#0a0a0a`
-- `--color-surface-card` → `#1a1a1a`
-- `--color-primary` → `#14B8A6`
-- `--color-warning` → `#F59E0B`
-
-> **Nota:** As variáveis do Pencil são para referência visual nos mockups.
-> Na implementação, traduzimos pra classes Tailwind diretamente.
+| Uso | Valor |
+|-----|-------|
+| Linha capital (dashboard) | `#14B8A6` |
+| Linha capital (performance) | `#25D88B` |
+| Linha tendência | `rgb(30, 158, 244, 0.6)` |
+| Fill do gráfico (dashboard) | `rgba(20, 184, 166, 0.1)` |
+| Grid do gráfico | `#27272a` |
+| Labels do eixo | `#a1a1aa` |
+| Zoom drag border | `#14B8A6` |
+| Zoom drag fill | `rgba(20, 184, 166, 0.15)` |
 
 ---
 
 ## Typography
 
 ### Font Family
-O sistema usa **Inter** para tudo — display, corpo, navegação, botões, captions. **JetBrains Mono** lida com code blocks. A stack de fallback caminha `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`.
 
-A abordagem de família única é deliberada: Inter em pesos 700 + 600 + 400 cobre toda a hierarquia sem precisar de contraparte serif ou display. O caráter geométrico humanist de Inter em peso bold confiável dá ao DataPlay uma sensação precisa e engineered que combina com a positionamento de performance-first.
+- **Primária:** Inter (`--font-sans: 'Inter', system-ui, sans-serif`)
+- Via `@nuxt/fonts`, fallback automático
 
-### Hierarchy
+### Type Scale
 
-| Token | Size | Weight | Line Height | Letter Spacing | Use |
-|---|---|---|---|---|---|
-| `{typography.display-xl}` | 72px | 700 | 1.05 | -2.5px | Homepage h1 |
-| `{typography.display-lg}` | 56px | 700 | 1.1 | -2px | Section heads |
-| `{typography.display-md}` | 40px | 700 | 1.15 | -1.5px | Sub-section heads, CTA-band heads |
-| `{typography.display-sm}` | 32px | 700 | 1.2 | -1px | Card titles, pricing tier prices |
-| `{typography.title-lg}` | 24px | 700 | 1.3 | -0.3px | Pricing plan names, larger feature titles |
-| `{typography.title-md}` | 18px | 600 | 1.4 | 0 | Card titles, intro paragraphs |
-| `{typography.title-sm}` | 16px | 600 | 1.4 | 0 | Small card titles, list labels |
-| `{typography.stat-display}` | 56px | 700 | 1.0 | -1.5px | Stat callouts — ALWAYS teal |
-| `{typography.body-md}` | 16px | 400 | 1.55 | 0 | Default running-text |
-| `{typography.body-sm}` | 14px | 400 | 1.55 | 0 | Footer body, fine-print |
-| `{typography.caption}` | 13px | 500 | 1.4 | 0 | Badge labels, captions |
-| `{typography.caption-uppercase}` | 12px | 600 | 1.4 | 1.5px | Section labels, "NEW" badges |
-| `{typography.code}` | 14px | 400 | 1.55 | 0 | Code blocks — JetBrains Mono |
-| `{typography.button}` | 14px | 600 | 1.0 | 0 | Standard button labels |
-| `{typography.nav-link}` | 14px | 500 | 1.4 | 0 | Top-nav menu items |
+| Tailwind | px | Uso |
+|----------|-----|-----|
+| `text-xs` | 12px | Subtítulos, datas, captions (`text-zinc-400`/`500`) |
+| `text-sm` | 14px | Body em cards, labels de stats, valores de detalhe |
+| `text-base` | 16px | Body padrão |
+| `text-lg` | 18px | Títulos de partidas, valores de métrica |
+| `text-xl` | 20px | PageHeader h1, valores de métrica |
+| `text-2xl` | 24px | PageHeader h1 (sm+), botões de zoom, headings de estado vazio |
 
-### Principles
-Pesos display ficam em 700 em todos os tamanhos. Letter-spacing negativo (-1 a -2.5px) é essencial — Inter em peso 700 sem tracking negativo parece largo / Apple-marketing. O tracking apertado dá ao DataPlay a sensação precisa e engineered.
+### Font Weight
 
-Corpo e labels ficam em pesos 400 / 500 / 600. A hierarquia é construída em tamanho + peso, não em contraste de família.
+| Classe | Valor | Uso |
+|--------|-------|-----|
+| `font-normal` | 400 | Body padrão |
+| `font-medium` | 500 | Mensagens de erro |
+| `font-semibold` | 600 | Títulos de seção, headers de card, labels de stat |
+| `font-bold` | 700 | Valores de profit, títulos de página |
+| `font-black` | 900 | Valores de métrica grandes (yesterdayMetricsCard) |
 
-### Nota sobre Substitutos de Fonte
-Inter é open-source e a escolha documentada. **Söhne** é uma alternativa comercial próxima se licenciada. **Geist** é outra alternativa moderna.
+### Text Colors
 
-## Layout
+| Classe | Hex | Uso |
+|--------|-----|-----|
+| `text-white` | `#ffffff` | Headers de card, valores de detalhe, títulos |
+| `text-zinc-300` | `#d4d4d8` | Labels de detalhe |
+| `text-zinc-400` | `#a1a1aa` | Nav inativo, nomes de métrica, footnotes |
+| `text-zinc-500` | `#71717a` | Texto terciário, footer |
+| `text-teal-500` | `#14B8A6` | Profit positivo, nav ativo |
+| `text-red-500` | `#ef4444` | Profit negativo |
+| `text-slate-500` | `#64748b` | Descrição do PageHeader |
 
-### Spacing System
-- **Base unit:** 4px.
-- **Tokens:** `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.xxl}` 48px · `{spacing.section}` 96px.
-- **Section padding:** `{spacing.section}` (96px) entre bands maiores.
-- **Card internal padding:** `{spacing.xl}` (32px) para feature cards, pricing tiers; `{spacing.lg}` (24px) para code-window cards e event cards.
+---
 
-### Grid & Container
-- **Max content width:** ~1280px centralizado.
-- **Editorial body:** Grid de 12 colunas; hero frequentemente usa split 7/5 (h1 esquerda, code mockup direita).
-- **Feature card grids:** 3-up em desktop, 2-up em tablet, 1-up em mobile.
-- **Pricing grid:** 3-4 up em desktop, 1-up em mobile.
+## Spacing
 
-### Whitespace Philosophy
-O DataPlay usa whitespace dense e levemente comprimido apropriado para uma marca de developer-tooling — generoso o suficiente para ler editorialmente, apertado o suficiente para parecer "engineering-grade" ao invés de "marketing-soft." Ritmo de seção em 96px é padrão; padding interno de card fica em 32px para feature cards.
+### Base Unit: 4px
 
-## Elevation & Depth
+| Classe | px | Uso principal |
+|--------|-----|---------------|
+| `gap-1` | 4px | Espaçamento interno de rows, ícones |
+| `gap-2` | 8px | Grupos de conteúdo dentro de cards |
+| `gap-3` | 12px | Entre cards na página |
+| `gap-5` | 20px | Header, Within fixture cards |
 
-| Level | Treatment | Use |
-|---|---|---|
-| Flat | Sem shadow, sem border | Body sections, top nav, hero |
-| Soft hairline | 1px `{colors.hairline}` border | Code-window cards, content cards |
-| Surface card | `{colors.surface-card}` background — sem shadow | Feature cards, pricing tiers, event cards |
-| Teal band | `{colors.primary}` background — sem shadow | Full-bleed teal CTA cards / bands |
+### Padding
 
-O sistema não usa drop shadows. A profundidade vem do contraste entre black canvas e `{colors.surface-card}` (um tom levemente mais claro que o canvas) — o contraste é sutil, mais como um "painel dim engineering-grade" que um "card elevado."
+| Classe | px | Uso |
+|--------|-----|-----|
+| `py-8` | 32px | UContainer vertical (layout) |
+| `py-12` | 48px | Error card vertical |
+| `px-3` / `py-2` | 12px / 8px | Rows de stat detalhe |
+| `px-4` / `py-4` | 16px | Fixture cards |
 
-### Decorative Depth
-- Code-window cards carregam seu chrome interno do produto — line numbers, syntax highlighting, status bars no fundo — adicionando densidade visual sem shadows externos.
-- O contraste teal-on-black faz a maior parte do trabalho de elevação para CTAs.
+### Page Structure
 
-## Shapes
+- **Gap entre cards:** `gap-3` (12px)
+- **Gap header/content:** `gap-3` (12px) + `mt-2` (8px) = 20px
+- **Container padding:** `py-8` (32px)
 
-### Border Radius Scale
+---
 
-| Token | Value | Use |
-|---|---|---|
-| `{rounded.xs}` | 4px | Reservado para badge accents |
-| `{rounded.sm}` | 6px | Botões inline pequenos |
-| `{rounded.md}` | 8px | Botões CTA padrão, text inputs |
-| `{rounded.lg}` | 12px | Content cards, code-window cards, pricing tiers |
-| `{rounded.pill}` | 9999px | Badge pills |
-| `{rounded.full}` | 9999px / 50% | Avatars, botões de ícone |
+## Border Radius
 
-## Components
+| Classe | px | Uso |
+|--------|-----|-----|
+| `rounded-md` | 6px | Rows de stat detalhe |
+| `rounded-lg` | 8px | Fixture cards, nav items, modais mobile |
+| `rounded-xl` | 12px | UTable wrapper |
+| `rounded-2xl` | 16px | UCard padrão (global via app.config.ts), USkeleton |
+| `rounded-full` | 9999px | Indicador de status (performance) |
 
-### Top Navigation
+### Global Config
 
-**`top-nav`** — Nav bar preta fixa no topo. 64px tall, `{colors.canvas}` background. Carrega o logo + wordmark do DataPlay à esquerda, menu horizontal primário (Dashboard, Jogos, Apostas, Performance, Monitoramento) center-left, cluster à direita com "Sign in" + "Get Started" `{component.button-primary}` (teal). Itens do menu em `{typography.nav-link}` (Inter 14px / 500).
+```ts
+// app.config.ts
+card: {
+  slots: {
+    root: 'rounded-2xl'
+  }
+}
+```
 
-### Buttons
+---
 
-**`button-primary`** — O CTA teal signature. Background `{colors.primary}` (#14B8A6), texto `{colors.on-primary}` (preto), tipo `{typography.button}` (Inter 14px / 600), padding 12px × 20px, height 40px, rounded `{rounded.md}` (8px). A combinação teal + preto é icônica.
+## Borders & Elevation
 
-**`button-secondary`** — Botão dark surface card. Background `{colors.surface-card}`, texto `{colors.on-dark}`, mesma forma do primary.
+### Sem Drop Shadows
 
-**`button-text-link`** — Botão inline sem background. Usado para "Sign in" e CTAs inline.
+O sistema **não usa** drop shadows. Profundidade vem do contraste entre superfícies:
+- Canvas `#09090b` → Card `#18181b` → Elevated `#27272a`
+- Bordas `border-zinc-800` (`#27272a`) marcam limites
 
-**`text-link`** — Links inline em `{colors.primary}` (teal no dark). Sublinhado.
+### Bordas
 
-**`button-icon-circular`** — 36 × 36 botão de ícone circular no dark.
+| Classe | Uso |
+|--------|-----|
+| `border border-zinc-800` | Cards, tabelas, rows |
+| `border border-zinc-800/50` | Header inferior |
+| `border border-teal-400` | Fixture card hover/selecionado |
+| `border border-teal-500` | Modal mobile |
 
-### Cards & Containers
+### Outros Efeitos
 
-**`hero-band`** — Hero black-canvas com grid 7-5: h1 + sub-headline + row de botões à esquerda, code-window ou product mockup à direita. Padding vertical `{spacing.section}` (96px).
+| Efeito | Classe | Uso |
+|--------|--------|-----|
+| Header glass | `backdrop-blur-xl bg-zinc-950/60` | UHeader |
+| Gradient fade-out | `bg-linear-to-t from-zinc-900 to-transparent` | Scroll containers |
+| Outline hover | `hover:outline hover:outline-teal-500` | Batch cards |
 
-**`hero-stat-card`** — Números stat-display teal ("779+", "47k+") inline no canvas. Sem surface — apenas texto teal em `{typography.stat-display}` (56px / 700).
+---
 
-**`feature-card-teal`** — Card teal full-bleed. Background `{colors.primary}`, texto `{colors.on-teal}` (preto), rounded `{rounded.lg}` (12px), padding `{spacing.xl}` (32px). O card teal É a ênfase visual.
+## Animations
 
-**`feature-card-dark`** — Feature card dark padrão. Background `{colors.surface-card}`, texto `{colors.on-dark}`, rounded `{rounded.lg}`, padding `{spacing.xl}` (32px).
+| Efeito | Implementação | Local |
+|--------|---------------|-------|
+| Ranking shimmer | `::after` pseudo-element com gradient translateX em 0.6s | rankingModels.vue |
+| Skeleton pulse | `animate-pulse` | USkeleton |
+| Chart zoom | `duration: 1000, easing: 'easeOutCubic'` | Chart.js |
+| Fade-in | `opacity 0→1 + translateY(10px→0)`, 300ms ease-out | main.css |
+| Glow pulse | `box-shadow` oscillation teal | main.css (definido, não usado) |
+| Loading bar | Gradient teal→blue | NuxtLoadingIndicator |
 
-**`code-window-card`** — Card dark mostrando um code block SQL. Background `{colors.surface-card}`, code em JetBrains Mono com syntax highlighting, rounded `{rounded.lg}`, padding `{spacing.lg}` (24px).
+---
 
-**`product-mockup-card`** — Card mostrando UI real do produto DataPlay. Mesma forma do `{component.feature-card-dark}` mas com chrome do produto embutido.
+## Component Patterns
 
-**`pricing-tier-card`** — Card tier padrão. Background `{colors.surface-card}`, rounded `{rounded.lg}`, padding `{spacing.xl}` (32px).
+### Card (UCard)
 
-**`pricing-tier-card-featured`** — O tier featured muda para `{colors.primary}` (teal). A superfície teal É o sinal de featured.
+```
+border border-zinc-800 + bg-zinc-900
+rounded-2xl (global)
+header: font-semibold text-white
+```
 
-**`stat-callout`** — Números stat inline teal ("779+", "2.8k+", "47k+"). Background transparente, texto `{colors.primary}`, tipo `{typography.stat-display}`. Usado como bloco de layout flat, não como card com surface.
+### Detail Stat Row
 
-**`events-card`** — Card dark com título do evento, data em `{typography.caption-uppercase}`, localização, e CTA "Register". Rounded `{rounded.lg}`, padding `{spacing.lg}`.
+```
+rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2
+label: text-zinc-300
+value: font-semibold text-white
+```
 
-**`customer-logo-strip`** — Strip horizontal de logos monocromáticos. Background `{colors.canvas}`, logos em `{colors.muted}`, padding vertical `{spacing.xl}` (32px).
+### Ranking Item
 
-### Inputs & Forms
+```
+border border-zinc-800 bg-zinc-900 px-3 py-2
+cursor-pointer relative overflow-hidden
+shimmer hover effect (::after gradient slide)
+profit: text-teal-500 (positivo) / text-red-500 (negativo)
+```
 
-**`text-input`** — Input de texto dark. Background `{colors.surface-card}`, texto `{colors.on-dark}`, rounded `{rounded.md}` (8px), padding 10px × 14px, height 40px.
+### Metric Display
 
-**`text-input-focused`** — Borda engrossa para `{colors.primary}` (teal) para ênfase.
+```
+label: text-sm text-zinc-400
+value: text-xl font-black + text-teal-500/text-red-500
+footer: text-xs text-zinc-500
+```
 
-### Tags / Badges
+### Page Header
 
-**`badge-pill`** — Label pill dark pequeno. Background `{colors.surface-card}`, texto `{colors.on-dark}`, tipo `{typography.caption}`, rounded `{rounded.pill}`.
+```
+flex gap-5
+h1: text-xl font-semibold sm:text-2xl
+description: text-sm text-slate-500
+```
 
-**`badge-teal`** — Pill teal para ênfase "NEW", "GET STARTED". Background `{colors.primary}`, texto `{colors.on-primary}`, tipo `{typography.caption-uppercase}`, rounded `{rounded.pill}`.
+### Navigation
 
-**`badge-blue`** — Pill azul para badges secundários. Background `{colors.secondary}`, texto "#ffffff", tipo `{typography.caption-uppercase}`, rounded `{rounded.pill}`.
+```
+active: text-teal-500 bg-zinc-900 rounded-lg
+inactive: text-zinc-400 hover:text-white
+container: bg-zinc-950/60 backdrop-blur-xl border-b border-zinc-800/50
+```
 
-### Tab / Filter
+### Error/Empty State
 
-**`category-tab`** + **`category-tab-active`** — Navegação tab dark. Inactive: transparente + texto muted. Active: fundo surface-card + texto on-dark. Padding 8px × 14px, rounded `{rounded.md}`.
+```
+centered flex-col py-12
+icon: h-12 w-12 text-gray-400
+message: font-medium text-gray-500
+```
 
-### CTA / Footer
+### Table (UTable)
 
-**`cta-band-teal`** — Band CTA pré-footer full teal fill, texto preto, rounded `{rounded.lg}`, padding 64px. Carrega h2 em `{typography.display-md}` e um CTA — geralmente botão preto na superfície teal.
+```
+wrapper: border border-zinc-800 rounded-xl
+header: bg-zinc-950 text-zinc-400 text-xs uppercase
+cell: border-t border-zinc-800 text-zinc-300
+```
 
-**`footer`** — Footer preto que fecha cada página. Background `{colors.canvas}`, texto `{colors.muted}`. Lista de links em 4 colunas em desktop cobrindo Produto / Casos de Uso / Recursos / Empresa. Padding vertical 64px. O wordmark do DataPlay fica no topo em `{colors.on-dark}`.
+### Skeleton
+
+```
+animate-pulse rounded-2xl bg-zinc-800
+height: h-60 (240px) padrão
+```
+
+---
 
 ## Do's and Don'ts
 
 ### Do
-- Ancore cada página no black canvas. A combinação teal + preto é a voltagem da marca.
-- Reserve `{colors.primary}` (teal) para CTAs primários, números de stat-callout e bands CTA teal full-bleed. A escassez do teal em nível de elemento + abundância em nível de band é o que o torna poderoso.
-- Use Inter em peso 700 para cada display headline, com -1 a -2.5px letter-spacing.
-- Mostre code blocks SQL reais dentro de `{component.code-window-card}` — DataPlay é uma ferramenta de dados; mostre a query, não ilustrações abstratas.
-- Use números `{component.stat-callout}` para estabelecer credibilidade. Os números stat teal são a signature.
-- Ancore cada band com ritmo de seção `{spacing.section}` (96px).
+- Use `text-teal-500` para profit positivo e `text-red-500` para negativo — sempre.
+- Cards usam `border border-zinc-800` para definir limites, nunca shadow.
+- Mantenha `rounded-2xl` para todos os UCard.
+- Use `gap-3` (12px) entre cards e `gap-2` (8px) dentro de cards.
+- Prefira `font-semibold` para headers de card e `font-black` para métricas grandes.
 
 ### Don't
-- Não introduza uma segunda cor de marca. DataPlay é monocromático + teal.
-- Não bold display weight além de 700 ou use peso 500 para headlines. A hierarquia depende de tamanho, não de graduação de peso.
-- Não use teal para texto corpo ou fills de superfície grandes fora de cards teal intencionais.
-- Não use botões arredondados / pills fora de badges pequenos. O border radius padrão do botão é 8px (md).
-- Não repita o mesmo modo de surface em duas bands consecutivas. Black canvas → dark feature card → teal CTA card → black canvas → code-window card.
-- Não substitua code mockups SQL por ilustrações abstratas. O code É a voltagem de marketing.
-- Não adicione hover state styling além do que o sistema já codifica.
+- Não introduza drop shadows — a profundidade é por contraste de superfície.
+- Não use `text-teal-500` para texto corpo ou labels grandes.
+- Não misture paletas zinc e slate no mesmo contexto (fixture pages usam slate, o resto usa zinc — manter separado).
+- Não crie variações de border radius para cards — todos são `rounded-2xl`.
+- Não use mais de 2 cores de profit (teal positivo, vermelho negativo).
 
-## Responsive Behavior
-
-### Breakpoints
-
-| Name | Width | Key Changes |
-|---|---|---|
-| Mobile | < 768px | Hamburger nav; hero h1 72→36px; code-window-card empilha abaixo; feature grids 1-up; pricing 1-up |
-| Tablet | 768–1024px | Top nav aperta; feature cards 2-up; pricing 2-up |
-| Desktop | 1024–1440px | Top-nav completo; 3-up feature cards; 3-4 up pricing tiers |
-| Wide | > 1440px | Igual ao desktop com mais espaço; max content 1280px |
-
-### Touch Targets
-- `{component.button-primary}` no mínimo 40 × 40px.
-- `{component.button-icon-circular}` em exatamente 36 × 36 — levemente abaixo de WCAG 44, visualmente centralizado.
-- `{component.text-input}` height é 40px.
-
-### Collapsing Strategy
-- Top nav colapsa para hamburger em < 768px.
-- Hero grid 7-5 → single-column em mobile.
-- Feature card grids reduzem colunas ao invés de escalar.
-- Code-window cards retêm font-size; scroll horizontal dentro do card em mobile.
-- Pricing tier cards colapsam 4 → 2 → 1; featured tier teal permanece distinto.
-
-### Image Behavior
-- Code blocks dentro de mockups dark retêm font-size fixo; scroll horizontal em mobile ao invés de wrapping.
-- Logos de clientes em strip monocromática retêm larguras nativas; linha envolve em mobile.
-
-## Iteration Guide
-
-1. Foque em UM componente por vez. Referencie sua YAML key (`{component.code-window-card}`, `{component.pricing-tier-card-featured}`).
-2. Variants de um componente existente (`-active`, `-disabled`, `-focused`) vivem como entries separados.
-3. Use `{token.refs}` em todo lugar — nunca inline hex.
-4. Nunca documente hover. Apenas estados Default e Active/Pressed.
-5. Display headlines ficam Inter 700 com negative letter-spacing. Body fica Inter 400.
-6. A combinação teal + black é o contrato da marca. Não suavize com acentos secundários.
-7. Em dúvida sobre ênfase: Inter 700 maior antes de adicionar cor.
+---
 
 ## Known Gaps
 
-- O hex exato do teal (#14B8A6) é a cor principal documentada do DataPlay.
-- Valores do eixo de peso do Inter além de 400 / 500 / 600 / 700 não são formalizados — apenas os pesos estáticos observados são documentados.
-- Timings de animação e transição não estão no escopo.
-- Estados de validação de formulário além de `{component.text-input-focused}` não são extraídos.
-- A superfície real do produto DataPlay compartilha alguns tokens com o site de marketing mas adiciona muitos componentes específicos do produto que estão fora do escopo.
-- A opacidade/tratamento exato da strip de logos de clientes varia — o cinza muted é aproximado.
+- **Fixtures pages** usam paleta slate (`bg-slate-900`, `border-gray-700`) enquanto o resto usa zinc. Consistência pendente.
+- **Glow-pulse** e **animate-fade-in** estão definidos em main.css mas não usados em componentes.
+- **JetBrains Mono** não está configurada — code blocks usam fallback do sistema.
+- **Breakpoints responsivos** não estão documentados por componente.
