@@ -1,43 +1,36 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: [
-		"@nuxt/ui",
-		"nuxt-lodash",
-		"@nuxt/fonts",
-		"@pinia/nuxt",
-		"@nuxt/scripts",
-		"@nuxtjs/device"
-	],
+  modules: [
+    '@nuxt/ui',
+    '@nuxt/fonts',
+    '@pinia/nuxt',
+    '@nuxtjs/device',
+    '@nuxt/eslint'
+  ],
 
-	colorMode: {
-		preference: 'dark',
-	},
+  css: ['@/assets/css/main.css'],
 
-	devtools: { enabled: false },
+  devtools: { enabled: false },
 
-	scripts: {
-		registry: {
-			clarity: {
-			id: 'q35mj3r8vd'
-			}
-		}
-	},
+  compatibilityDate: '2026-06-05',
 
-	lodash: {
-		prefix: "_",
-		prefixSkip: ["string"],
-		upperAfterPrefix: false,
-		exclude: [],
-		alias: [
-			["camelCase", "stringToCamelCase"], // => stringToCamelCase
-			["kebabCase", "stringToKebab"], // => stringToKebab
-			["isDate", "isLodashDate"], // => _isLodashDate
-		],
-	},
+  colorMode: {
+    preference: 'dark',
+  },
 
-	runtimeConfig: {
-		public: {
-			API_URL: 'https://api.jonebet.xyz',
-		},
-	}
-});
+  runtimeConfig: {
+    public: {
+      API_URL: 'https://api.jonebet.xyz',
+    },
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        'chart.js',
+        'chartjs-plugin-annotation',
+        'chartjs-plugin-zoom',
+        'pinia'
+      ]
+    }
+  }
+})

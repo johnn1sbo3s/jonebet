@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Colors - Canvas & Surface (zinc palette) */
+  --color-canvas: #09090b;
+  --color-surface-soft: #18181b;
+  --color-surface-card: #18181b;
+  --color-surface-elevated: #27272a;
+
+  /* Colors - Brand */
+  --color-primary: #14B8A6;
+  --color-primary-active: #0D9488;
+  --color-primary-disabled: #1a2a2a;
+  --color-secondary: #3B82F6;
+
+  /* Colors - Borders (zinc palette) */
+  --color-hairline: #27272a;
+  --color-hairline-strong: #3f3f46;
+
+  /* Colors - Text (zinc palette) */
+  --color-text-on-dark: #ffffff;
+  --color-text-body: #d4d4d8;
+  --color-text-body-strong: #e4e4e7;
+  --color-text-muted: #a1a1aa;
+  --color-text-muted-soft: #71717a;
+  --color-text-on-primary: #09090b;
+
+  /* Colors - Semantic */
+  --color-accent-emerald: #22c55e;
+  --color-accent-rose: #ef4444;
+  --color-accent-blue: #3B82F6;
+  --color-warning: #F59E0B;
+
+  /* Spacing */
+  --spacing-section: 96px;
+}
+
+/* Animations */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(20, 184, 166, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(20, 184, 166, 0.5); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Utility Classes */
+.animate-fade-in {
+  animation: fade-in 300ms ease-out;
+}
+
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+/* NuxtUI Component Theme Overrides */
+.dark {
+  --ui-container: 80rem;
+  --ui-header-height: 4rem;
+  --ui-bg: #09090b;
+  --ui-bg-muted: #18181b;
+  --ui-bg-elevated: #18181b;
+  --ui-bg-accented: #27272a;
+  --ui-border: #27272a;
+  --ui-border-muted: #27272a;
+  --ui-border-accented: #3f3f46;
+  --ui-text: #d4d4d8;
+  --ui-text-muted: #a1a1aa;
+  --ui-primary: #14B8A6;
+}
+
+/* Button cursor restoration */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
