@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:gap-5">
+    <div class="mb-4 flex flex-wrap items-center gap-2 sm:gap-5">
       <SegmentedControl v-model="selectedTab" :options="tabItems" />
-
-      <p class="text-sm text-zinc-400">{{ internalFixtures.length }} jogos</p>
     </div>
 
     <FixturesListSkeleton v-if="loading" />
 
     <div v-else>
+      <div class="mb-3 text-sm text-zinc-400">{{ internalFixtures.length }} jogos</div>
+
       <div class="flex gap-3">
         <div class="w-full sm:w-1/2">
           <FixtureCard
