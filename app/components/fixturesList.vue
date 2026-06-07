@@ -3,7 +3,7 @@
     <FixturesListSkeleton v-if="loading" />
 
     <div v-else>
-      <div class="mb-4 flex items-center justify-between gap-2 sm:gap-3">
+      <div class="mb-4 flex w-full items-center justify-between gap-2 sm:w-1/2 sm:gap-3">
         <p class="text-sm text-zinc-400">{{ internalFixtures.length }} jogos</p>
 
         <SegmentedControl v-model="selectedTab" :options="tabItems" />
