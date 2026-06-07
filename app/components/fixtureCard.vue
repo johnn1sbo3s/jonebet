@@ -4,7 +4,7 @@
       v-for="item in internalFixtures"
       :key="item._id"
       class="fixture-card mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-4 hover:border-zinc-700 sm:gap-5 sm:px-6"
-      :class="item._id === chosen._id ? 'border-1 border-teal-400 sm:border' : ''"
+      :class="item._id === chosen._id ? 'border border-teal-400 sm:border' : ''"
       @click="emits('click', item)"
     >
       <div class="flex items-center gap-7">
@@ -22,15 +22,15 @@
           <div>{{ item.Home }} x {{ item.Away }}</div>
 
           <div class="flex gap-1">
-            <UBadge color="primary" variant="soft">
+            <UBadge :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'" variant="soft">
               {{ item.FT_Odds_H.toFixed(2) }}
             </UBadge>
 
-            <UBadge color="primary" variant="soft">
+            <UBadge color="neutral" variant="soft">
               {{ item.FT_Odds_D.toFixed(2) }}
             </UBadge>
 
-            <UBadge color="primary" variant="soft">
+            <UBadge :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'neutral'" variant="soft">
               {{ item.FT_Odds_A.toFixed(2) }}
             </UBadge>
           </div>

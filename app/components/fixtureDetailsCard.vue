@@ -1,7 +1,7 @@
 <template>
   <div class="relative flex w-full flex-col gap-3">
-    <div class="flex flex-col items-center gap-1 text-sm text-zinc-300 sm:text-base">
-      <span>{{ fixture.Date ? formatDate(fixture.Date) : '' }} - {{ fixture?.Time }}</span>
+    <div class="flex flex-col items-center text-sm text-zinc-300">
+      <span> {{ fixture.Date ? formatDate(fixture.Date) : '' }} - {{ fixture?.Time }} </span>
 
       <span>{{ fixture?.League || '' }}</span>
     </div>
@@ -12,24 +12,30 @@
 
     <div class="mt-2 flex flex-col gap-2">
       <div class="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2">
-        <p class="text-xs text-zinc-300">H / D / A</p>
+        <p class="text-xs text-zinc-300">Match odds</p>
 
         <div class="mt-1 flex items-center gap-2 text-sm">
           <span class="font-semibold text-white">H</span>
 
-          <span class="text-white">{{ fixture?.FT_Odds_H?.toFixed(2) }}</span>
+          <span class="text-white">
+            {{ fixture?.FT_Odds_H?.toFixed(2) }}
+          </span>
 
           <span class="text-zinc-500">·</span>
 
           <span class="font-semibold text-white">D</span>
 
-          <span class="text-white">{{ fixture?.FT_Odds_D?.toFixed(2) }}</span>
+          <span class="text-white">
+            {{ fixture?.FT_Odds_D?.toFixed(2) }}
+          </span>
 
           <span class="text-zinc-500">·</span>
 
           <span class="font-semibold text-white">A</span>
 
-          <span class="text-white">{{ fixture?.FT_Odds_A?.toFixed(2) }}</span>
+          <span class="text-white">
+            {{ fixture?.FT_Odds_A?.toFixed(2) }}
+          </span>
         </div>
       </div>
 
