@@ -6,74 +6,46 @@
       </template>
     </PageHeader>
 
-    <FixturesList :fixtures="fixturesToUse" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
+    <FixturesList :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
   </div>
 </template>
 
 <script setup>
-import { DateTime } from 'luxon'
-
 const apiUrl = useRuntimeConfig().public.API_URL
 
-const today = DateTime.now().toFormat('yyyy-MM-dd')
-const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd')
 const selectedDate = ref('')
 const isLoading = ref(true)
-const betfairFixtures = ref(true)
+const source = ref('exchange')
+const fixtures = ref([])
+const bets = ref([])
 
-const fixturesToUse = ref([])
+const { data } = await useFetch(`${apiUrl}/fixtures/daily`, { params: { source: source.value } })
 
-const requests = [
-  useFetch(`${apiUrl}/fixtures-betfair`, { params: { date: today } }),
-  useFetch(`${apiUrl}/fixtures-betfair`, { params: { date: tomorrow } }),
-  useFetch(`${apiUrl}/daily-bets`),
-]
-
-const responses = await Promise.all(requests)
-const { data: todayFixtures } = responses[0]
-const { data: tomorrowFixtures } = responses[1]
-const { data: bets } = responses[2]
-
-onMounted(() => {
-  resolveFixtures()
-})
-
-function resolveFixtures() {
-  if (_isEmpty(tomorrowFixtures.value)) {
-    fixturesToUse.value = todayFixtures.value
-    selectedDate.value = today
-
-    isLoading.value = false
-    return
-  }
-
-  fixturesToUse.value = tomorrowFixtures.value
-  selectedDate.value = tomorrow
-  isLoading.value = false
-  return
+if (data.value) {
+  selectedDate.value = data.value.date
+  fixtures.value = data.value.fixtures
+  bets.value = data.value.bets
 }
 
-async function updateFixturesToUse() {
-  let url = `${apiUrl}/fixtures`
-  const transformedDate = selectedDate.value
+isLoading.value = false
 
-  if (betfairFixtures.value) {
-    url = `${apiUrl}/fixtures-betfair`
-  }
-
+async function fetchDaily() {
   isLoading.value = true
-  const data = await $fetch(url, { query: { date: transformedDate } })
+  const result = await $fetch(`${apiUrl}/fixtures/daily`, {
+    query: { date: selectedDate.value, source: source.value },
+  })
+  fixtures.value = result.fixtures
+  bets.value = result.bets
   isLoading.value = false
-  fixturesToUse.value = data
 }
 
 watch(selectedDate, () => {
-  updateFixturesToUse()
+  fetchDaily()
 })
 
-function onSourceChange(betfairToggleStatus) {
-  betfairFixtures.value = betfairToggleStatus
-  updateFixturesToUse()
+function onSourceChange(newSource) {
+  source.value = newSource
+  fetchDaily()
 }
 </script>
 
