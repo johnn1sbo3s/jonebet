@@ -1,18 +1,16 @@
 <template>
   <div>
-    <div class="mb-4 flex items-baseline gap-2 sm:gap-5">
-      <USelectMenu v-model="chosenDay" class="w-1/2 sm:w-1/5" placeholder="Selecione um dia" :options="datesOptions" />
-
-      <UTabs :items="tabItems" @change="onTabChange" />
-    </div>
-
     <FixturesListSkeleton v-if="loading" />
 
     <div v-else>
-      <div class="mb-3 text-sm">{{ internalFixtures.length }} jogos</div>
+      <div class="mb-4 flex w-full items-center justify-between gap-2 gap-3 lg:w-1/2">
+        <p class="text-sm text-zinc-400">{{ internalFixtures.length }} jogos</p>
+
+        <SegmentedControl v-model="selectedTab" :options="tabItems" />
+      </div>
 
       <div class="flex gap-3">
-        <div class="w-full sm:w-1/2">
+        <div class="w-full lg:w-1/2">
           <FixtureCard
             class="w-full"
             :fixtures="internalFixtures"
@@ -22,26 +20,19 @@
           />
         </div>
 
-        <div v-if="!$device.isMobile" class="sticky top-4 h-full w-1/2">
+        <div v-if="!isNarrow" class="sticky top-4 h-full w-1/2">
           <div
             v-if="!chosenGame._id"
-            class="flex h-[50svh] w-full items-center justify-center rounded-md p-10 outline-1 outline-gray-400 outline-dashed"
+            class="flex h-[50svh] w-full flex-col items-center justify-center gap-2 rounded-2xl p-10 outline-1 outline-zinc-800 outline-dashed"
           >
-            <p class="text-center text-2xl text-gray-400">
-              Selecione um card ao lado para ver informações sobre o jogo
-            </p>
-          </div>
+            <UIcon name="i-lucide-mouse-pointer-click" class="text-2xl text-zinc-500" />
 
-          <div
-            v-else-if="showSkeleton"
-            class="flex h-[50svh] w-full items-center justify-center rounded-md bg-slate-800 p-10 outline-1 outline-slate-900 outline-dashed"
-          >
-            <p class="text-center text-sm text-gray-400">Carregando...</p>
+            <p class="text-center text-sm text-zinc-500">Selecione um card ao lado para ver informações sobre o jogo</p>
           </div>
 
           <div
             v-else
-            class="flex w-full justify-center rounded-md bg-slate-900 p-10 outline outline-1 outline-slate-700"
+            class="flex w-full justify-center rounded-2xl bg-zinc-900 p-10 outline outline-1 outline-zinc-800"
           >
             <FixtureDetailsCard :fixture="chosenGame" :bets="filteredBets" />
           </div>
@@ -49,32 +40,41 @@
       </div>
     </div>
 
-    <UModal v-if="isMobile" v-model="showMobileModal">
-      <div class="border-opacity-40 flex h-[60vh] flex-col gap-3 rounded-lg border border-teal-500 bg-slate-900 p-5">
-        <div v-if="_isEmpty(chosenGame)" class="flex flex-col items-center gap-2">
-          <USkeleton class="h-5 w-1/2" />
+    <UDrawer v-model:open="showMobileModal" :ui="{ content: 'bg-zinc-900' }">
+      <template #content>
+        <div class="flex flex-col gap-3 p-5">
+          <div v-if="!chosenGame._id" class="flex flex-col items-center gap-2 py-10">
+            <USkeleton class="h-5 w-1/2" />
 
-          <USkeleton class="h-5 w-28" />
+            <USkeleton class="h-5 w-28" />
 
-          <USkeleton class="mt-8 mb-6 h-16 w-3/4" />
+            <USkeleton class="mt-8 mb-6 h-16 w-3/4" />
 
-          <USkeleton v-for="i in 5" :key="i" class="mb-2 h-5 w-5/6" />
+            <USkeleton v-for="i in 5" :key="i" class="mb-2 h-5 w-5/6" />
+          </div>
+
+          <FixtureDetailsCard v-else :fixture="chosenGame" :bets="filteredBets" />
+
+          <div class="mt-auto pt-4">
+            <UButton block color="primary" variant="link" size="lg" @click="() => (showMobileModal = false)">
+              Fechar
+            </UButton>
+          </div>
         </div>
-
-        <FixtureDetailsCard v-else :fixture="chosenGame" :bets="filteredBets" />
-
-        <div class="absolute right-0 bottom-0 left-0 p-4">
-          <UButton block color="teal" variant="soft" size="lg" @click="() => (showMobileModal = false)">
-            Fechar
-          </UButton>
-        </div>
-      </div>
-    </UModal>
+      </template>
+    </UDrawer>
   </div>
 </template>
 
 <script setup>
-const { isMobile } = useDevice()
+const isNarrow = ref(false)
+
+onMounted(() => {
+  isNarrow.value = window.innerWidth < 1024
+  window.addEventListener('resize', () => {
+    isNarrow.value = window.innerWidth < 1024
+  })
+})
 
 const props = defineProps({
   fixtures: {
@@ -85,53 +85,25 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  selectedDate: {
-    type: String,
-    default: '',
-  },
-  initialDate: {
-    type: String,
-    default: '',
-  },
   loading: {
     type: Boolean,
     default: false,
   },
 })
 
-const emits = defineEmits(['change', 'source-change'])
+const emits = defineEmits(['source-change'])
 
 const tabItems = [
-  {
-    label: 'Exchange',
-    value: 'exchange',
-  },
-  {
-    label: 'Bookie',
-    value: 'bookie',
-  },
+  { label: 'Exchange', value: 'exchange' },
+  { label: 'Bookie', value: 'bookie' },
 ]
 
 const internalFixtures = ref([])
-const chosenDay = ref(props.selectedDate || formatDate(new Date().toISOString().split('T')[0]))
 const chosenGame = ref({})
 const filteredBets = ref([])
 const selectedTab = ref('exchange')
 const betfairFixtures = ref(true)
-const showSkeleton = ref(false)
 const showMobileModal = ref(false)
-
-const datesOptions = computed(() => {
-  const dates = []
-  const currentDate = props.initialDate ? new Date(props.initialDate) : new Date()
-
-  for (let i = 0; i < 7; i++) {
-    const virtualDate = new Date(currentDate.getTime() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    dates.push(formatDate(virtualDate))
-  }
-
-  return dates
-})
 
 watch(
   () => props.fixtures,
@@ -141,15 +113,8 @@ watch(
   { immediate: true },
 )
 
-watch(
-  () => chosenDay.value,
-  (newValue, oldValue) => {
-    if (newValue === oldValue) return
-    emits('change', newValue)
-  },
-)
-
-watch(betfairFixtures, () => {
+watch(selectedTab, (value) => {
+  betfairFixtures.value = value !== 'bookie'
   emits('source-change', betfairFixtures.value)
 })
 
@@ -164,30 +129,19 @@ watch(
   },
 )
 
-function onTabChange(tab) {
-  selectedTab.value = tabItems[tab].value
-  if (selectedTab.value === 'bookie') {
-    betfairFixtures.value = false
-  } else {
-    betfairFixtures.value = true
-  }
-}
-
 async function handleGameClick(game) {
-  showMobileModal.value = true
-  showSkeleton.value = true
+  if (game._id === chosenGame.value._id) {
+    chosenGame.value = {}
+    showMobileModal.value = false
+    return
+  }
 
-  setTimeout(() => {
-    if (game._id === chosenGame.value._id) {
-      chosenGame.value = {}
-      return
-    }
+  chosenGame.value = game
+  filterBets()
 
-    chosenGame.value = game
-    filterBets()
-
-    showSkeleton.value = false
-  }, 100)
+  if (isNarrow.value) {
+    showMobileModal.value = true
+  }
 }
 
 function filterBets() {
