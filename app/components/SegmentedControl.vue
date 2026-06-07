@@ -5,7 +5,11 @@
       :key="opt.value"
       type="button"
       class="rounded-md px-3 py-1 text-sm transition"
-      :class="opt.value === modelValue ? 'bg-teal-500 text-zinc-950' : 'text-zinc-400 hover:text-white'"
+      :class="
+        opt.value === modelValue
+          ? 'bg-teal-500 font-semibold text-zinc-950'
+          : 'font-medium text-zinc-400 hover:text-white'
+      "
       @click="emit('update:modelValue', opt.value)"
     >
       {{ opt.label }}
@@ -15,7 +19,7 @@
 
 <script setup>
 defineProps({
-  modelValue: { type: String, default: '' },
+  modelValue: { type: String, required: true },
   options: {
     type: Array,
     required: true,
