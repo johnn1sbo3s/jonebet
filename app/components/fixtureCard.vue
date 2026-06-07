@@ -3,7 +3,7 @@
     <div
       v-for="item in internalFixtures"
       :key="item._id"
-      class="mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-4 hover:border-zinc-700 sm:gap-5 sm:px-6"
+      class="fixture-card mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-4 hover:border-zinc-700 sm:gap-5 sm:px-6"
       :class="item._id === chosen._id ? 'border-1 border-teal-400 sm:border' : ''"
       @click="emits('click', item)"
     >
@@ -84,4 +84,22 @@ function countModels(fixture) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.fixture-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.fixture-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transition: transform 0.6s ease;
+}
+
+.fixture-card:hover::after {
+  transform: translateX(100%);
+}
+</style>

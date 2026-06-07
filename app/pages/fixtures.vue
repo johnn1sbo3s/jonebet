@@ -1,15 +1,12 @@
 <template>
   <div class="flex flex-col gap-5">
-    <PageHeader title="Jogos do dia" />
+    <PageHeader title="Jogos do dia">
+      <template #right>
+        <DatePicker v-model="selectedDate" />
+      </template>
+    </PageHeader>
 
-    <FixturesList
-      :fixtures="fixturesToUse"
-      :selected-date="selectedDate"
-      :bets="bets"
-      :loading="isLoading"
-      @change="onChangeDate"
-      @source-change="onSourceChange"
-    />
+    <FixturesList :fixtures="fixturesToUse" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
   </div>
 </template>
 
@@ -70,10 +67,9 @@ async function updateFixturesToUse() {
   fixturesToUse.value = data
 }
 
-async function onChangeDate(date) {
-  selectedDate.value = date
+watch(selectedDate, () => {
   updateFixturesToUse()
-}
+})
 
 function onSourceChange(betfairToggleStatus) {
   betfairFixtures.value = betfairToggleStatus

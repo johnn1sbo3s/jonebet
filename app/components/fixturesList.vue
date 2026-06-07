@@ -1,16 +1,14 @@
 <template>
   <div>
-    <div class="mb-4 flex flex-wrap items-center gap-2 sm:gap-5">
-      <DatePicker v-model="chosenDay" />
-
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:gap-5">
       <SegmentedControl v-model="selectedTab" :options="tabItems" />
+
+      <p class="text-sm text-zinc-400">{{ internalFixtures.length }} jogos</p>
     </div>
 
     <FixturesListSkeleton v-if="loading" />
 
     <div v-else>
-      <div class="mb-3 text-sm text-zinc-400">{{ internalFixtures.length }} jogos</div>
-
       <div class="flex gap-3">
         <div class="w-full sm:w-1/2">
           <FixtureCard
@@ -80,17 +78,13 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  selectedDate: {
-    type: String,
-    default: '',
-  },
   loading: {
     type: Boolean,
     default: false,
   },
 })
 
-const emits = defineEmits(['change', 'source-change'])
+const emits = defineEmits(['source-change'])
 
 const tabItems = [
   { label: 'Exchange', value: 'exchange' },
@@ -98,7 +92,6 @@ const tabItems = [
 ]
 
 const internalFixtures = ref([])
-const chosenDay = ref(props.selectedDate || new Date().toISOString().split('T')[0])
 const chosenGame = ref({})
 const filteredBets = ref([])
 const selectedTab = ref('exchange')
@@ -112,14 +105,6 @@ watch(
     internalFixtures.value = value.sort((a, b) => (a.Time > b.Time ? 1 : -1))
   },
   { immediate: true },
-)
-
-watch(
-  () => chosenDay.value,
-  (newValue, oldValue) => {
-    if (newValue === oldValue) return
-    emits('change', newValue)
-  },
 )
 
 watch(selectedTab, (value) => {
