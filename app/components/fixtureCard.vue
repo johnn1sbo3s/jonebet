@@ -13,7 +13,7 @@
             {{ item.Time }}
           </div>
 
-          <div class="text-xs text-zinc-500 sm:text-sm">
+          <div class="text-xs text-zinc-500">
             {{ formatDate(item.Date) }}
           </div>
         </div>
