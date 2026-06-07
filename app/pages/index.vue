@@ -205,7 +205,7 @@ const data = computed(() => {
 const timezone = 'America/Sao_Paulo'
 const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd')
 const chosenDateIso = ref(yesterday)
-const maxDateIso = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd')
+const maxDateIso = yesterday
 const dayLoading = ref(false)
 const yesterdayData = ref({})
 
