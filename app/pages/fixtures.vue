@@ -62,7 +62,7 @@ function resolveFixtures() {
 
 async function updateFixturesToUse() {
   let url = `${apiUrl}/fixtures`
-  const transformedDate = selectedDate.value.split('/').reverse().join('-')
+  const transformedDate = selectedDate.value
 
   if (betfairFixtures.value) {
     url = `${apiUrl}/fixtures-betfair`

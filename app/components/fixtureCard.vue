@@ -3,8 +3,8 @@
     <div
       v-for="item in internalFixtures"
       :key="item._id"
-      class="mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-700 bg-slate-900 px-4 py-4 hover:border-teal-400 sm:gap-5 sm:px-6"
-      :class="item._id === chosen._id ? 'border-1 sm:border sm:border-teal-400' : ''"
+      class="mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-4 hover:border-zinc-700 sm:gap-5 sm:px-6"
+      :class="item._id === chosen._id ? 'border-1 border-teal-400 sm:border' : ''"
       @click="emits('click', item)"
     >
       <div class="flex items-center gap-7">
@@ -13,7 +13,7 @@
             {{ item.Time }}
           </div>
 
-          <div class="text-xs text-gray-500 sm:text-sm">
+          <div class="text-xs text-zinc-500 sm:text-sm">
             {{ formatDate(item.Date) }}
           </div>
         </div>
@@ -22,15 +22,15 @@
           <div>{{ item.Home }} x {{ item.Away }}</div>
 
           <div class="flex gap-1">
-            <UBadge :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'" variant="soft">
+            <UBadge color="primary" variant="soft">
               {{ item.FT_Odds_H.toFixed(2) }}
             </UBadge>
 
-            <UBadge color="neutral" variant="soft">
+            <UBadge color="primary" variant="soft">
               {{ item.FT_Odds_D.toFixed(2) }}
             </UBadge>
 
-            <UBadge :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'error'" variant="soft">
+            <UBadge color="primary" variant="soft">
               {{ item.FT_Odds_A.toFixed(2) }}
             </UBadge>
           </div>
@@ -38,11 +38,11 @@
       </div>
 
       <div class="flex min-w-16 flex-col items-end gap-1 text-end">
-        <div class="text-xs text-gray-600">Entrada em</div>
+        <div class="text-xs text-zinc-500">Entrada em</div>
 
-        <div v-if="countModels(item) === 0" class="text-xs font-semibold text-gray-500 sm:text-sm">Nenhum</div>
+        <div v-if="countModels(item) === 0" class="text-xs font-semibold text-zinc-500 sm:text-sm">Nenhum</div>
 
-        <div v-else class="text-xs font-semibold text-gray-500 sm:text-sm">
+        <div v-else class="text-xs font-semibold text-teal-500 sm:text-sm">
           {{ countModels(item) }} {{ countModels(item) === 1 ? 'modelo' : 'modelos' }}
         </div>
       </div>
