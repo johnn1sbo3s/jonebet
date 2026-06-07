@@ -11,7 +11,7 @@
     </div>
 
     <div class="mt-2 flex flex-col gap-2">
-      <div class="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2">
+      <div class="rounded-xl border border-zinc-800 bg-zinc-950/80 px-3 py-2">
         <p class="text-xs text-zinc-300">Match odds</p>
 
         <div class="mt-1 flex items-center gap-2 text-sm">
@@ -40,7 +40,7 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2">
-        <div class="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2">
+        <div class="rounded-xl border border-zinc-800 bg-zinc-950/80 px-3 py-2">
           <p class="text-xs text-zinc-300">O/U 2.5</p>
 
           <div class="mt-1 flex items-center gap-2 text-sm">
@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <div class="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2">
+        <div class="rounded-xl border border-zinc-800 bg-zinc-950/80 px-3 py-2">
           <p class="text-xs text-zinc-300">BTTS</p>
 
           <div class="mt-1 flex items-center gap-2 text-sm">

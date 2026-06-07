@@ -23,7 +23,7 @@
         <div v-if="!$device.isMobile" class="sticky top-4 h-full w-1/2">
           <div
             v-if="!chosenGame._id"
-            class="flex h-[50svh] w-full flex-col items-center justify-center gap-2 rounded-md p-10 outline-1 outline-zinc-800 outline-dashed"
+            class="flex h-[50svh] w-full flex-col items-center justify-center gap-2 rounded-2xl p-10 outline-1 outline-zinc-800 outline-dashed"
           >
             <UIcon name="i-lucide-mouse-pointer-click" class="text-2xl text-zinc-500" />
 
@@ -32,12 +32,15 @@
 
           <div
             v-else-if="showSkeleton"
-            class="flex h-[50svh] w-full items-center justify-center rounded-md bg-zinc-800 p-10"
+            class="flex h-[50svh] w-full items-center justify-center rounded-2xl bg-zinc-800 p-10"
           >
             <p class="text-center text-sm text-zinc-400">Carregando...</p>
           </div>
 
-          <div v-else class="flex w-full justify-center rounded-md bg-zinc-900 p-10 outline outline-1 outline-zinc-800">
+          <div
+            v-else
+            class="flex w-full justify-center rounded-2xl bg-zinc-900 p-10 outline outline-1 outline-zinc-800"
+          >
             <FixtureDetailsCard :fixture="chosenGame" :bets="filteredBets" />
           </div>
         </div>
@@ -45,7 +48,7 @@
     </div>
 
     <UModal v-if="isMobile" v-model="showMobileModal">
-      <div class="flex h-[60vh] flex-col gap-3 rounded-lg border border-teal-500 bg-zinc-900 p-5">
+      <div class="flex h-[60vh] flex-col gap-3 rounded-2xl border border-teal-500 bg-zinc-900 p-5">
         <div v-if="_isEmpty(chosenGame)" class="flex flex-col items-center gap-2">
           <USkeleton class="h-5 w-1/2" />
 
