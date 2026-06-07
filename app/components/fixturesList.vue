@@ -84,10 +84,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  initialDate: {
-    type: String,
-    default: '',
-  },
   loading: {
     type: Boolean,
     default: false,

@@ -5,7 +5,6 @@
     <FixturesList
       :fixtures="fixturesToUse"
       :selected-date="selectedDate"
-      :initial-date="initialDate"
       :bets="bets"
       :loading="isLoading"
       @change="onChangeDate"
@@ -21,7 +20,6 @@ const apiUrl = useRuntimeConfig().public.API_URL
 
 const today = DateTime.now().toFormat('yyyy-MM-dd')
 const tomorrow = DateTime.now().plus({ days: 1 }).toFormat('yyyy-MM-dd')
-const initialDate = ref('')
 const selectedDate = ref('')
 const isLoading = ref(true)
 const betfairFixtures = ref(true)
@@ -46,7 +44,6 @@ onMounted(() => {
 function resolveFixtures() {
   if (_isEmpty(tomorrowFixtures.value)) {
     fixturesToUse.value = todayFixtures.value
-    initialDate.value = today
     selectedDate.value = today
 
     isLoading.value = false
@@ -54,7 +51,6 @@ function resolveFixtures() {
   }
 
   fixturesToUse.value = tomorrowFixtures.value
-  initialDate.value = tomorrow
   selectedDate.value = tomorrow
   isLoading.value = false
   return
