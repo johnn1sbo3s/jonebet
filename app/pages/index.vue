@@ -84,40 +84,17 @@
     <UCard v-else id="yesterday-metrics" class="border border-zinc-800 bg-zinc-900">
       <template #header>
         <div class="flex items-center justify-between">
-          <p class="font-semibold text-white">Resultados de {{ formatDate(chosenDate) }}</p>
+          <p class="font-semibold text-white">Resultados de {{ formatDate(chosenDateIso) }}</p>
 
           <div class="flex items-center gap-1">
-            <UButton icon="i-lucide-chevron-left" size="xs" color="secondary" variant="soft" @click="prevDay" />
-
-            <UPopover v-model:open="calendarOpen" :popper="{ placement: 'bottom' }">
-              <UButton
-                :label="formatDate(chosenDate)"
-                size="xs"
-                color="secondary"
-                variant="soft"
-                class="w-28 justify-center"
-              />
-
-              <template #content>
-                <UCalendar v-model="chosenDate" :max-value="maxDate" @update:model-value="calendarOpen = false" />
-              </template>
-            </UPopover>
-
-            <UButton
-              icon="i-lucide-chevron-right"
-              size="xs"
-              color="secondary"
-              variant="soft"
-              :disabled="isAtMaxDate"
-              @click="nextDay"
-            />
+            <DatePicker v-model="chosenDateIso" :max-value="maxDateIso" />
           </div>
         </div>
       </template>
 
       <DataErrorCard
         v-if="!yesterdayData?.results?.length && !dayLoading"
-        :message="`Não foi possível carregar os resultados de ${formatDate(chosenDate)}`"
+        :message="`Não foi possível carregar os resultados de ${formatDate(chosenDateIso)}`"
       />
 
       <template v-else>
@@ -183,7 +160,6 @@
 
 <script setup>
 import { DateTime } from 'luxon'
-import { CalendarDate } from '@internationalized/date'
 
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
@@ -224,48 +200,14 @@ const data = computed(() => {
       : null,
   }
 })
+
 // Date picker
 const timezone = 'America/Sao_Paulo'
 const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd')
-const yesterdayParts = yesterday.split('-').map(Number)
-const chosenDate = ref(new CalendarDate(yesterdayParts[0], yesterdayParts[1], yesterdayParts[2]))
-const maxDate = new CalendarDate(
-  ...DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd').split('-').map(Number),
-)
+const chosenDateIso = ref(yesterday)
+const maxDateIso = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd')
 const dayLoading = ref(false)
 const yesterdayData = ref({})
-
-function calendarToDateStr(cal) {
-  if (!cal) return ''
-  return `${cal.year}-${String(cal.month).padStart(2, '0')}-${String(cal.day).padStart(2, '0')}`
-}
-
-function formatDate(cal) {
-  if (!cal) return ''
-  return `${String(cal.day).padStart(2, '0')}/${String(cal.month).padStart(2, '0')}/${cal.year}`
-}
-
-function addDays(cal, days) {
-  const d = new Date(cal.year, cal.month - 1, cal.day + days)
-  return new CalendarDate(d.getFullYear(), d.getMonth() + 1, d.getDate())
-}
-
-function isSameDate(a, b) {
-  return a && b && a.year === b.year && a.month === b.month && a.day === b.day
-}
-
-const calendarOpen = ref(false)
-const isAtMaxDate = computed(() => isSameDate(chosenDate.value, maxDate))
-
-function prevDay() {
-  chosenDate.value = addDays(chosenDate.value, -1)
-}
-
-function nextDay() {
-  if (!isAtMaxDate.value) {
-    chosenDate.value = addDays(chosenDate.value, 1)
-  }
-}
 
 const resultsByMonth = computed(() => {
   if (!data.value?.bankrollEvolution?.length) return []
@@ -318,15 +260,16 @@ async function fetchDayResults(date) {
 // Load initial date (use dashboard fallback data or fetch)
 if (data.value?.yesterday?.results?.length) {
   yesterdayData.value = data.value.yesterday
-  const parts = data.value.yesterday.date.split('-').map(Number)
-  chosenDate.value = new CalendarDate(parts[0], parts[1], parts[2])
+  if (data.value.yesterday.date) {
+    chosenDateIso.value = data.value.yesterday.date
+  }
 } else {
   await fetchDayResults(yesterday)
 }
 
 // Refetch when date changes
-watch(chosenDate, (newDate) => {
-  if (newDate) fetchDayResults(calendarToDateStr(newDate))
+watch(chosenDateIso, (newDate) => {
+  if (newDate) fetchDayResults(newDate)
 })
 
 // Store for other pages
