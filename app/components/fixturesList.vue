@@ -102,7 +102,6 @@ const internalFixtures = ref([])
 const chosenGame = ref({})
 const filteredBets = ref([])
 const selectedTab = ref('exchange')
-const betfairFixtures = ref(true)
 const showMobileModal = ref(false)
 
 watch(
@@ -114,8 +113,7 @@ watch(
 )
 
 watch(selectedTab, (value) => {
-  betfairFixtures.value = value !== 'bookie'
-  emits('source-change', betfairFixtures.value)
+  emits('source-change', value)
 })
 
 watch(
