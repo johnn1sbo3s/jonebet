@@ -214,7 +214,7 @@ const chartByDay = ref(false)
 const groupBy = computed(() => (chartByDay.value ? 'day' : 'bet'))
 
 // --- Per-model data: each composable re-runs when chosenModelId changes ---
-const { data: modelData, status: statusModel } = useModel(chosenModelId)
+const { data: modelData, status: statusModel } = useModelById(chosenModelId)
 const { data: chartPayload } = useModelChart(chosenModelId, groupBy)
 const { data: trend } = useModelTrend(
   chosenModelId,

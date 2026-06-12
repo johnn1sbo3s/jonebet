@@ -12,7 +12,7 @@ export function useModelsList({ playedOn = null } = {}) {
   })
 }
 
-export function useModel(id) {
+export function useModelById(id) {
   return useFetch(() => `${apiUrl}/models/${id.value}`, {
     key: () => `model-${id.value}`,
     default: () => null,
