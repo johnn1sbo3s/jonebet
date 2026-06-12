@@ -8,21 +8,20 @@
 
     <div class="flex gap-5">
       <USelectMenu
-        v-model:model-value="chosenModel"
+        v-model="chosenModel"
         class="w-1/5"
         searchable
-        searchable-placeholder="Pesquise por um modelo"
         placeholder="Selecione um modelo"
-        :options="listModels"
+        :items="listModelItems"
         :loading="statusModels === 'pending'"
       >
-        <template #option="{ option }">
+        <template #item-label="{ item }">
           <div class="my-1 flex items-center">
-            <UTooltip v-if="playedOnSet.has(option)" text="O modelo possui atualização de resultados de ontem">
+            <UTooltip v-if="playedOnSet.has(item.value)" text="O modelo possui atualização de resultados de ontem">
               <span class="mr-2 h-2 w-2 rounded-full bg-teal-500" />
             </UTooltip>
 
-            <span>{{ option }}</span>
+            <span>{{ item.label }}</span>
           </div>
         </template>
       </USelectMenu>
@@ -49,13 +48,7 @@
 
               <div class="flex gap-2">
                 <div class="inline-block align-middle">
-                  <UToggle
-                    size="md"
-                    on-icon="i-lucide-check"
-                    off-icon="i-lucide-x"
-                    :model-value="chartByDay"
-                    @click="toggleChartByDay"
-                  />
+                  <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
                 </div>
 
                 <p class="text-sm">Exibição por dia</p>
@@ -106,7 +99,7 @@
 
             <UTable
               class="h-80"
-              :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
+              :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
               :data="modelData.blocksHistory"
               :columns="blocksHistoryColumns"
             />
@@ -124,7 +117,7 @@
 
           <UTable
             class="h-80"
-            :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
+            :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
             :data="monthlyResults"
             :columns="monthlyBetsColumns"
           />
@@ -139,7 +132,7 @@
 
           <UTable
             class="h-80"
-            :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
+            :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
             :data="dailyResults"
             :columns="dailyBetsColumns"
           />
@@ -157,7 +150,7 @@
           <div class="flex items-center gap-2">
             <UButton size="xs" variant="soft" :disabled="betsPage <= 1" @click="betsPage--">Anterior</UButton>
 
-            <span class="text-sm text-zinc-400">Página {{ betsPage }} de {{ betsTotalPages }}</span>
+            <span class="text-muted text-sm">Página {{ betsPage }} de {{ betsTotalPages }}</span>
 
             <UButton size="xs" variant="soft" :disabled="betsPage >= betsTotalPages" @click="betsPage++"
               >Próxima</UButton
@@ -167,7 +160,7 @@
 
         <UTable
           class="h-96"
-          :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
+          :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
           :data="betsItems"
           :columns="allBetsDataFilteredColumns"
         />
@@ -187,6 +180,7 @@ const route = useRoute()
 const yesterdayIso = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd')
 const { data: modelsPayload, status: statusModels } = await useModelsList({ playedOn: yesterdayIso })
 const listModels = computed(() => (modelsPayload.value?.items || []).map((m) => m.name))
+const listModelItems = computed(() => listModels.value.map((name) => ({ label: name, value: name })))
 const playedOnSet = computed(() => {
   const set = new Set()
   for (const m of modelsPayload.value?.items || []) {
@@ -233,9 +227,6 @@ watch(chosenModelId, () => {
   betsPage.value = 1
 })
 
-function toggleChartByDay() {
-  chartByDay.value = !chartByDay.value
-}
 function resetsZoom() {
   chartKey.value++
 }
