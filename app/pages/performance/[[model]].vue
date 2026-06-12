@@ -67,7 +67,7 @@
                 <p>Trend Distance: {{ formatTrendDistance(trend.distance) }} u</p>
               </div>
 
-              <UButton color="blue" variant="soft" @click="resetsZoom">Restaurar zoom</UButton>
+              <UButton color="blue" variant="ghost" @click="resetsZoom">Restaurar zoom</UButton>
             </div>
 
             <LineChart
@@ -339,7 +339,6 @@ watchEffect(() => {
   chartData.value = { labels: payload.labels || [], datasets }
   chartOptions.value.plugins.annotation.annotations.line1.xMin = payload.annotationIndex
   chartOptions.value.plugins.annotation.annotations.line1.xMax = payload.annotationIndex
-  chartKey.value++
 })
 
 // Register Chart.js plugins on the client only (after mount, so the
