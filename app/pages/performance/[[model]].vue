@@ -13,6 +13,7 @@
         searchable
         placeholder="Selecione um modelo"
         :items="listModelItems"
+        value-key="value"
         :loading="statusModels === 'pending'"
       >
         <template #item-label="{ item }">
@@ -180,7 +181,12 @@ const route = useRoute()
 const yesterdayIso = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd')
 const { data: modelsPayload, status: statusModels } = await useModelsList({ playedOn: yesterdayIso })
 const listModels = computed(() => (modelsPayload.value?.items || []).map((m) => m.name))
-const listModelItems = computed(() => listModels.value.map((name) => ({ label: name, value: name })))
+const listModelItems = computed(() =>
+  listModels.value.map((rawId) => ({
+    label: modelNameToNaturalName(rawId),
+    value: rawId,
+  })),
+)
 const playedOnSet = computed(() => {
   const set = new Set()
   for (const m of modelsPayload.value?.items || []) {
@@ -190,9 +196,8 @@ const playedOnSet = computed(() => {
 })
 
 const chosenModel = ref(listModels.value[0])
-if (route.params.model) {
-  const fromRoute = modelNameToNaturalName(route.params.model)
-  if (listModels.value.includes(fromRoute)) chosenModel.value = fromRoute
+if (route.params.model && listModels.value.includes(route.params.model)) {
+  chosenModel.value = route.params.model
 }
 
 const chosenModelId = computed(() => modelNameToIdName(chosenModel.value))
@@ -212,12 +217,16 @@ const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 // --- Bets pagination ---
 const betsPage = ref(1)
 const betsSize = ref(100)
-const { data: betsPayload } = useModelBets(chosenModelId, {
-  page: betsPage,
-  size: betsSize,
-  sort: ref('Date'),
-  order: ref('asc'),
-})
+const apiUrl = useRuntimeConfig().public.API_URL
+
+const { data: betsPayload } = await useAsyncData(
+  () => `bets-${chosenModelId.value}-${betsPage.value}-${betsSize.value}`,
+  () =>
+    $fetch(`${apiUrl}/models/${chosenModelId.value}/bets`, {
+      query: { page: betsPage.value, size: betsSize.value, sort: 'Date', order: 'asc' },
+    }),
+  { watch: [chosenModelId, betsPage, betsSize], default: () => ({ items: [], total: 0 }) },
+)
 const betsItems = computed(() => betsPayload.value?.items || [])
 const betsTotal = computed(() => betsPayload.value?.total || 0)
 const betsTotalPages = computed(() => Math.max(1, Math.ceil(betsTotal.value / betsSize.value)))
