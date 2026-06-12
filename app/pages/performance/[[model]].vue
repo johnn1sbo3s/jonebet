@@ -107,7 +107,7 @@
             <UTable
               class="h-80"
               :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
-              :rows="modelData.blocksHistory"
+              :data="modelData.blocksHistory"
               :columns="blocksHistoryColumns"
             />
           </UCard>
@@ -125,7 +125,7 @@
           <UTable
             class="h-80"
             :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
-            :rows="monthlyResults"
+            :data="monthlyResults"
             :columns="monthlyBetsColumns"
           />
         </UCard>
@@ -140,7 +140,7 @@
           <UTable
             class="h-80"
             :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
-            :rows="dailyResults"
+            :data="dailyResults"
             :columns="dailyBetsColumns"
           />
         </UCard>
@@ -168,7 +168,7 @@
         <UTable
           class="h-96"
           :ui="{ wrapper: 'relative overflow-x-auto border border-slate-300 dark:border-slate-700 rounded-lg' }"
-          :rows="betsItems"
+          :data="betsItems"
           :columns="allBetsDataFilteredColumns"
         />
       </UCard>
@@ -242,30 +242,30 @@ function resetsZoom() {
 
 // --- Table columns ---
 const blocksHistoryColumns = [
-  { id: 'Profit', key: 'Profit', label: 'Lucro' },
-  { id: 'Qtd_Jogos', key: 'Qtd_Jogos', label: 'Quantidade de jogos' },
-  { id: 'ROI', key: 'ROI', label: 'ROI' },
-  { id: 'Ult_Dia', key: 'Ult_Dia', label: 'Último dia do bloco' },
+  { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
+  { id: 'Qtd_Jogos', accessorKey: 'Qtd_Jogos', header: 'Quantidade de jogos' },
+  { id: 'ROI', accessorKey: 'ROI', header: 'ROI' },
+  { id: 'Ult_Dia', accessorKey: 'Ult_Dia', header: 'Último dia do bloco' },
 ]
 const dailyBetsColumns = [
-  { id: 'date', key: 'date', label: 'Dia' },
-  { id: 'gain', key: 'gain', label: 'Lucro' },
-  { id: 'gameCount', key: 'gameCount', label: 'Jogos' },
-  { id: 'accumulated', key: 'accumulated', label: 'Acumulado' },
+  { id: 'date', accessorKey: 'date', header: 'Dia' },
+  { id: 'gain', accessorKey: 'gain', header: 'Lucro' },
+  { id: 'gameCount', accessorKey: 'gameCount', header: 'Jogos' },
+  { id: 'accumulated', accessorKey: 'accumulated', header: 'Acumulado' },
 ]
 const monthlyBetsColumns = [
-  { id: 'monthYear', key: 'monthYear', label: 'Mês' },
-  { id: 'profit', key: 'profit', label: 'Lucro' },
-  { id: 'gameCount', key: 'gameCount', label: 'Jogos' },
-  { id: 'accumulated', key: 'accumulated', label: 'Acumulado' },
+  { id: 'monthYear', accessorKey: 'monthYear', header: 'Mês' },
+  { id: 'profit', accessorKey: 'profit', header: 'Lucro' },
+  { id: 'gameCount', accessorKey: 'gameCount', header: 'Jogos' },
+  { id: 'accumulated', accessorKey: 'accumulated', header: 'Acumulado' },
 ]
 const allBetsDataFilteredColumns = [
-  { id: 'Date', key: 'Date', label: 'Data' },
-  { id: 'Home', key: 'Home', label: 'Casa' },
-  { id: 'Away', key: 'Away', label: 'Fora' },
-  { id: 'Odds', key: 'Odds', label: 'Odds' },
-  { id: 'Resultado', key: 'Resultado', label: 'Resultado' },
-  { id: 'Profit', key: 'Profit', label: 'Lucro' },
+  { id: 'Date', accessorKey: 'Date', header: 'Data' },
+  { id: 'Home', accessorKey: 'Home', header: 'Casa' },
+  { id: 'Away', accessorKey: 'Away', header: 'Fora' },
+  { id: 'Odds', accessorKey: 'Odds', header: 'Odds' },
+  { id: 'Resultado', accessorKey: 'Resultado', header: 'Resultado' },
+  { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
 ]
 
 // --- Chart ---
