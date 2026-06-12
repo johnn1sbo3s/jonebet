@@ -13,44 +13,45 @@ export function useModelsList({ playedOn = null } = {}) {
 }
 
 export function useModel(id) {
-  return useFetch(`${apiUrl}/models/${id}`, {
-    key: `model-${id}`,
+  return useFetch(() => `${apiUrl}/models/${id.value}`, {
+    key: () => `model-${id.value}`,
     default: () => null,
+    watch: [id],
   })
 }
 
 export function useModelChart(id, groupBy) {
-  return useFetch(`${apiUrl}/models/${id}/chart`, {
-    key: `model-${id}-chart-${groupBy}`,
-    query: { groupBy },
+  return useFetch(() => `${apiUrl}/models/${id.value}/chart`, {
+    key: () => `model-${id.value}-chart-${groupBy.value}`,
+    query: computed(() => ({ groupBy: groupBy.value })),
     default: () => ({ labels: [], data: [], annotationIndex: 0 }),
-    watch: [groupBy],
+    watch: [id, groupBy],
   })
 }
 
 export function useModelTrend(id, enabled) {
-  return useFetch(`${apiUrl}/models/${id}/chart/trend`, {
-    key: `model-${id}-trend`,
+  return useFetch(() => `${apiUrl}/models/${id.value}/chart/trend`, {
+    key: () => `model-${id.value}-trend`,
     immediate: enabled,
     default: () => ({ slope: 0, intercept: 0, line: [], distance: 0 }),
-    watch: [enabled],
+    watch: [id, enabled],
   })
 }
 
 export function useModelResults(id, period) {
-  return useFetch(`${apiUrl}/models/${id}/results`, {
-    key: `model-${id}-results-${period}`,
-    query: { period },
+  return useFetch(() => `${apiUrl}/models/${id.value}/results`, {
+    key: () => `model-${id.value}-results-${period.value}`,
+    query: computed(() => ({ period: period.value })),
     default: () => [],
-    watch: [period],
+    watch: [id, period],
   })
 }
 
 export function useModelBets(id, { page, size, sort, order }) {
-  return useFetch(`${apiUrl}/models/${id}/bets`, {
-    key: `model-${id}-bets-${page}-${size}-${sort}-${order}`,
-    query: { page, size, sort, order },
-    default: () => ({ items: [], total: 0, page: 1, size }),
-    watch: [page, size, sort, order],
+  return useFetch(() => `${apiUrl}/models/${id.value}/bets`, {
+    key: () => `model-${id.value}-bets-${page.value}-${size.value}-${sort.value}-${order.value}`,
+    query: computed(() => ({ page: page.value, size: size.value, sort: sort.value, order: order.value })),
+    default: () => ({ items: [], total: 0, page: page.value, size: size.value }),
+    watch: [id, page, size, sort, order],
   })
 }
