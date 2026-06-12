@@ -181,14 +181,6 @@ import { Chart, registerables } from 'chart.js'
 import { LineChart } from 'vue-chart-3'
 import { DateTime } from 'luxon'
 
-if (import.meta.client) {
-  const zoomPlugin = (await import('chartjs-plugin-zoom')).default
-  const annotationPlugin = (await import('chartjs-plugin-annotation')).default
-  Chart.register(zoomPlugin)
-  Chart.register(annotationPlugin)
-  Chart.register(...registerables)
-}
-
 const route = useRoute()
 
 // --- Models list (with playedOn flag for the green dot) ---
@@ -220,8 +212,8 @@ const { data: trend } = useModelTrend(
   chosenModelId,
   computed(() => !chartByDay.value),
 )
-const { data: dailyResults } = useModelResults(chosenModelId, 'daily')
-const { data: monthlyResults } = useModelResults(chosenModelId, 'monthly')
+const { data: dailyResults } = useModelResults(chosenModelId, ref('daily'))
+const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 
 // --- Bets pagination ---
 const betsPage = ref(1)
@@ -348,6 +340,16 @@ watchEffect(() => {
   chartOptions.value.plugins.annotation.annotations.line1.xMin = payload.annotationIndex
   chartOptions.value.plugins.annotation.annotations.line1.xMax = payload.annotationIndex
   chartKey.value++
+})
+
+// Register Chart.js plugins on the client only (after mount, so the
+// top-level await doesn't break the Nuxt setup context).
+onMounted(async () => {
+  const zoomPlugin = (await import('chartjs-plugin-zoom')).default
+  const annotationPlugin = (await import('chartjs-plugin-annotation')).default
+  Chart.register(zoomPlugin)
+  Chart.register(annotationPlugin)
+  Chart.register(...registerables)
 })
 
 // --- Helpers for template formatting ---
