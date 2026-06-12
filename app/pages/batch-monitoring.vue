@@ -89,9 +89,48 @@ import { LineChart } from 'vue-chart-3'
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
 
-const store = usePerformanceStore()
+// Fetch the list of models to get ids + display names
+const { data: modelsList } = await useModelsList({ playedOn: null })
+const modelIds = computed(() => (modelsList.value?.items || []).map((m) => m.id))
+const modelNamesById = computed(() => {
+  const map = {}
+  for (const m of modelsList.value?.items || []) {
+    map[m.id] = m.name
+  }
+  return map
+})
 
-const data = ref({})
+// Fetch each model's full data in parallel; Nuxt/useAsyncData cache by key
+const { data: modelsMap } = await useAsyncData(
+  'batch-monitoring-models',
+  async () => {
+    const results = await Promise.all(
+      modelIds.value.map(async (id) => {
+        const d = await $fetch(`${apiUrl}/models/${id}`)
+        return [id, d]
+      }),
+    )
+    return Object.fromEntries(results)
+  },
+  { watch: [modelIds] },
+)
+
+const data = computed(() => {
+  const map = modelsMap.value || {}
+  return Object.entries(map).map(([id, m]) => ({
+    _id: id,
+    modelo: modelNamesById.value[id] ?? m?.modelo ?? '',
+    total: {
+      media_atual: m?.metrics?.total?.media_atual ?? 0,
+      ev: m?.metrics?.total?.ev ?? 0,
+      media: m?.metrics?.total?.media ?? 0,
+      qtd_jgs_atual: m?.metrics?.total?.qtd_jgs_atual ?? 0,
+      blocks_history: m?.blocksHistory ?? [],
+      intervalo_confianca: m?.metrics?.total?.intervalo_confianca ?? [0, 0],
+      pl_history: m?.metrics?.total?.pl_history ?? [],
+    },
+  }))
+})
 const chosenModel = ref({})
 const chartKey = ref(0)
 const filterString = ref('')
@@ -232,13 +271,6 @@ function resetsZoom() {
 function invertCardsOrder() {
   invertOrder.value = !invertOrder.value
 }
-
-// Código
-if (_isEmpty(store.getPerformanceData)) {
-  const { data } = await useFetch(`${apiUrl}/model-performance`)
-  store.setPerformanceData(data.value)
-}
-data.value = store.getPerformanceData
 </script>
 
 <style lang="css" scoped>
