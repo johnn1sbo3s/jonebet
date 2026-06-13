@@ -9,7 +9,7 @@
     <div class="flex gap-5">
       <USelectMenu
         v-model="chosenModel"
-        class="w-1/5"
+        class="w-full sm:w-95"
         searchable
         placeholder="Selecione um modelo"
         :items="listModelItems"
@@ -33,19 +33,19 @@
     <DataErrorCard v-else-if="!modelData" message="Não foi possível carregar as métricas do modelo" />
 
     <template v-else>
-      <div class="grid w-full grid-cols-10 gap-3">
-        <div id="metrics-cards" class="col-span-3 flex flex-col gap-3">
+      <div class="grid w-full grid-cols-1 gap-3 lg:grid-cols-10">
+        <div id="metrics-cards" class="order-2 flex flex-col gap-3 lg:order-1 lg:col-span-3">
           <MetricsCard :metrics-data="modelData.metrics.val" :card-title="'Métricas de validação'" />
 
           <MetricsCard :metrics-data="modelData.metrics.real" :card-title="'Métricas de jogos reais'" />
         </div>
 
-        <UCard id="model-chart" class="col-span-7 border border-zinc-800 bg-zinc-900">
+        <UCard id="model-chart" class="order-1 border border-zinc-800 bg-zinc-900 lg:order-2 lg:col-span-7">
           <template #header>
             <div class="flex justify-between">
               <p class="font-semibold">Gráfico de acúmulo de capital</p>
 
-              <div class="flex items-center gap-4">
+              <div class="hidden items-center gap-4 sm:flex">
                 <div class="flex items-center gap-2">
                   <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
 
@@ -58,6 +58,16 @@
           </template>
 
           <div>
+            <div class="mb-3 flex flex-wrap items-center justify-end gap-3 sm:hidden">
+              <div class="flex items-center gap-2">
+                <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
+
+                <p class="text-sm">Exibição por dia</p>
+              </div>
+
+              <UButton color="secondary" variant="soft" size="sm" @click="resetsZoom">Restaurar zoom</UButton>
+            </div>
+
             <LineChart
               :key="chartKey"
               class="w-full"
@@ -67,11 +77,10 @@
             />
 
             <div class="mt-3 border-t border-zinc-800 pt-3">
-              <div class="grid grid-cols-4 gap-3">
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <div v-if="trend && trend.slope != 0">
                   <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                    Inclinação{{ ' '
-                    }}<span class="text-zinc-600 lowercase">(por {{ groupBy === 'day' ? 'dia' : 'aposta' }})</span>
+                    Inclinação<span class="text-zinc-600">/{{ groupBy === 'day' ? 'dia' : 'aposta' }}</span>
                   </p>
 
                   <p class="mt-0.5 text-base font-medium" :class="slopeClass">{{ formatNumber(trend.slope) }}</p>
@@ -117,7 +126,7 @@
               />
             </div>
 
-            <div v-if="dailyStats" class="mt-3 grid grid-cols-3 gap-3 border-t border-zinc-800 pt-3">
+            <div v-if="dailyStats" class="mt-3 grid grid-cols-2 gap-3 border-t border-zinc-800 pt-3 sm:grid-cols-3">
               <div>
                 <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Sharpe (anualizado)</p>
 
