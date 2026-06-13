@@ -5,7 +5,7 @@
     </template>
 
     <div class="flex flex-col gap-4">
-      <div class="grid grid-cols-2 gap-4 border-b border-zinc-800 pb-3">
+      <div class="grid min-w-0 grid-cols-2 gap-4 border-b border-zinc-800 pb-3">
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Média P/L</p>
 
@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid min-w-0 grid-cols-2 gap-3">
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
