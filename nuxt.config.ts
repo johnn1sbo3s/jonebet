@@ -24,7 +24,15 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ['chart.js', 'chartjs-plugin-annotation', 'chartjs-plugin-zoom', 'pinia'],
+      include: [
+        '@internationalized/date',
+        'chart.js',
+        'chartjs-plugin-annotation',
+        'chartjs-plugin-zoom',
+        'luxon',
+        'pinia',
+        'vue-chart-3',
+      ],
     },
   },
 })
