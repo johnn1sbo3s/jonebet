@@ -42,7 +42,7 @@
           <MetricsCard :metrics-data="modelData.metrics.real" :card-title="'Métricas de jogos reais'" />
         </div>
 
-        <UCard id="model-chart" class="w-3/5">
+        <UCard id="model-chart" class="w-3/5 border border-zinc-800 bg-zinc-900">
           <template #header>
             <div class="flex justify-between">
               <p class="font-semibold">Gráfico de acúmulo de capital</p>
@@ -67,7 +67,7 @@
                 <p>Trend Distance: {{ formatTrendDistance(trend.distance) }} u</p>
               </div>
 
-              <UButton color="blue" variant="ghost" @click="resetsZoom">Restaurar zoom</UButton>
+              <UButton color="secondary" variant="soft" @click="resetsZoom">Restaurar zoom</UButton>
             </div>
 
             <LineChart
@@ -81,7 +81,7 @@
         </UCard>
       </div>
 
-      <UCard id="block-metrics">
+      <UCard id="block-metrics" class="border border-zinc-800 bg-zinc-900">
         <template #header>
           <p class="font-semibold">Resultados por blocos de 100 jogos</p>
         </template>
@@ -93,7 +93,7 @@
             <CurrentBlockMetricsCard :metrics-data="modelData.metrics.total" :card-title="'Bloco atual'" />
           </div>
 
-          <UCard class="w-2/3">
+          <UCard class="w-2/3 border border-zinc-800 bg-zinc-950/80">
             <template #header>
               <p class="font-semibold">Histórico</p>
             </template>
@@ -109,7 +109,7 @@
       </UCard>
 
       <div class="grid grid-cols-2 gap-3">
-        <UCard>
+        <UCard class="border border-zinc-800 bg-zinc-900">
           <template #header>
             <p class="font-semibold">Resultados por mês</p>
           </template>
@@ -124,7 +124,7 @@
           />
         </UCard>
 
-        <UCard>
+        <UCard class="border border-zinc-800 bg-zinc-900">
           <template #header>
             <p class="font-semibold">Resultados por dia</p>
           </template>
@@ -140,7 +140,7 @@
         </UCard>
       </div>
 
-      <UCard>
+      <UCard class="border border-zinc-800 bg-zinc-900">
         <template #header>
           <p class="font-semibold">Jogos reais</p>
         </template>
