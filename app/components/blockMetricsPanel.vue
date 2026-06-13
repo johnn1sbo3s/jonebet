@@ -11,18 +11,9 @@
         <CurrentBlockMetricsCard :metrics-data="metricsTotal" :card-title="'Bloco atual'" />
       </div>
 
-      <UCard class="border border-zinc-800 bg-zinc-950/80">
-        <template #header>
-          <p class="font-semibold">Histórico</p>
-        </template>
-
-        <UTable
-          class="h-80"
-          :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
-          :data="blocksHistory"
-          :columns="blocksHistoryColumns"
-        />
-      </UCard>
+      <div class="relative min-h-0">
+        <BlocksHistoryList class="absolute inset-0" :blocks="blocksHistory" />
+      </div>
     </div>
   </UCard>
 </template>
@@ -38,22 +29,4 @@ defineProps({
     required: true,
   },
 })
-
-function formatDate(iso) {
-  if (!iso) return ''
-  const [y, m, d] = iso.split('-')
-  return `${d}/${m}/${y}`
-}
-
-const blocksHistoryColumns = [
-  { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
-  { id: 'Qtd_Jogos', accessorKey: 'Qtd_Jogos', header: 'Quantidade de jogos' },
-  { id: 'ROI', accessorKey: 'ROI', header: 'ROI' },
-  {
-    id: 'Ult_Dia',
-    accessorKey: 'Ult_Dia',
-    header: 'Último dia do bloco',
-    cell: ({ row }) => formatDate(row.getValue('Ult_Dia')),
-  },
-]
 </script>
