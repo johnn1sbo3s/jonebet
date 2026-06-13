@@ -398,6 +398,10 @@ const streakClass = computed(() => {
 const chartKey = ref(0)
 const chartStyle = ref({ height: '400px', width: '100%' })
 
+function resetsZoom() {
+  chartKey.value++
+}
+
 const chartData = computed(() => {
   if (chartPending.value) return { labels: [], datasets: [] }
   const payload = chartPayload.value

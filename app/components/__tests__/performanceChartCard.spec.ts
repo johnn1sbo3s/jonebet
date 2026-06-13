@@ -49,4 +49,13 @@ describe('PerformanceChartCard', () => {
     // see it — query the document directly.
     expect(document.body.textContent).toContain('retorno médio por unidade de risco')
   })
+
+  it('does not error when Restaurar zoom is clicked', async () => {
+    const wrapper = await mountSuspended(PerformanceChartCard, {
+      props: { chosenModelId, chartByDay, dailyResults, dailyResultsPending },
+    })
+    const button = wrapper.findAll('button').find((b) => b.text() === 'Restaurar zoom')
+    expect(button).toBeTruthy()
+    await expect(button!.trigger('click')).resolves.not.toThrow()
+  })
 })
