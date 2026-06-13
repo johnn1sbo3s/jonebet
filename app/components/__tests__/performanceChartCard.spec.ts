@@ -56,4 +56,15 @@ describe('PerformanceChartCard', () => {
     expect(button).toBeTruthy()
     await expect(button!.trigger('click')).resolves.not.toThrow()
   })
+
+  it('emits update:chartByDay when the switch is toggled', async () => {
+    const wrapper = await mountSuspended(PerformanceChartCard, {
+      props: { chosenModelId, chartByDay: false, dailyResults, dailyResultsPending },
+    })
+    // USwitch in @nuxt/ui v4 renders a button with role="switch".
+    const switchBtn = wrapper.find('[role="switch"]')
+    expect(switchBtn.exists()).toBe(true)
+    await switchBtn.trigger('click')
+    expect(wrapper.emitted('update:chartByDay')?.[0]).toEqual([true])
+  })
 })
