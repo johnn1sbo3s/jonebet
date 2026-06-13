@@ -6,7 +6,7 @@
 
         <div class="hidden items-center gap-4 sm:flex">
           <div class="flex items-center gap-2">
-            <USwitch v-model="chartByDayModel" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
+            <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
 
             <p class="text-sm">Exibição por dia</p>
           </div>
@@ -19,7 +19,7 @@
     <div>
       <div class="mb-3 flex flex-wrap items-center justify-end gap-3 sm:hidden">
         <div class="flex items-center gap-2">
-          <USwitch v-model="chartByDayModel" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
+          <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
 
           <p class="text-sm">Exibição por dia</p>
         </div>
@@ -237,26 +237,22 @@ import { Chart, registerables } from 'chart.js'
 import { LineChart } from 'vue-chart-3'
 
 const props = defineProps({
-  chosenModelId: { type: Object, required: true },
-  chartByDay: { type: Object, required: true },
-  dailyResults: { type: Object, required: true },
-  dailyResultsPending: { type: Object, required: true },
+  chosenModelId: { type: String, required: true },
+  dailyResults: { type: Array, required: true },
+  dailyResultsPending: { type: Boolean, required: true },
 })
 
-const groupBy = computed(() => (props.chartByDay.value ? 'day' : 'bet'))
+const chartByDay = defineModel('chartByDay', { type: Boolean, default: false })
 
-const chartByDayModel = computed({
-  get: () => props.chartByDay.value,
-  set: (val) => {
-    // eslint-disable-next-line vue/no-mutating-props
-    props.chartByDay.value = val
-  },
-})
+const groupBy = computed(() => (chartByDay.value ? 'day' : 'bet'))
 
-const { data: chartPayload, pending: chartPending } = useModelChart(props.chosenModelId, groupBy)
+// Wrap chosenModelId as a ref so the composables re-fetch on model change.
+const chosenModelIdRef = toRef(props, 'chosenModelId')
+
+const { data: chartPayload, pending: chartPending } = useModelChart(chosenModelIdRef, groupBy)
 const { data: trend, pending: trendPending } = useModelTrend(
-  props.chosenModelId,
-  computed(() => !props.chartByDay.value),
+  chosenModelIdRef,
+  computed(() => !chartByDay.value),
 )
 
 // --- Trend stats (computed from the accumulation + trend line) ---
@@ -293,8 +289,8 @@ const slopeClass = computed(() => {
   return trend.value.slope > 0 ? 'text-teal-400' : 'text-red-400'
 })
 const period = computed(() => {
-  if (props.dailyResultsPending.value) return null
-  const days = props.dailyResults.value
+  if (props.dailyResultsPending) return null
+  const days = props.dailyResults
   if (!days || !days.length) return null
   const start = days[0].date
   const end = days[days.length - 1].date
@@ -352,8 +348,8 @@ const drawdownOptions = {
 
 // --- Risk stats (computed from the daily results series) ---
 const dailyStats = computed(() => {
-  if (props.dailyResultsPending.value) return null
-  const days = props.dailyResults.value
+  if (props.dailyResultsPending) return null
+  const days = props.dailyResults
   if (!days || !days.length) return null
   const gains = days.map((d) => Number(d.gain) || 0)
   const negativeDays = gains.filter((g) => g < 0).length
@@ -471,7 +467,7 @@ const chartOptions = computed(() => ({
 
 // Remount the chart when the model or grouping changes so the
 // internal zoom/pan state is reset (and pending state shows empty).
-watch([props.chosenModelId, groupBy], () => {
+watch([chosenModelIdRef, groupBy], () => {
   chartKey.value++
 })
 
