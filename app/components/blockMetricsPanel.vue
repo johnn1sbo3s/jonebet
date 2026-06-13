@@ -11,7 +11,7 @@
         <CurrentBlockMetricsCard :metrics-data="metricsTotal" :card-title="'Bloco atual'" />
       </div>
 
-      <UCard class="w-2/3 border border-zinc-800 bg-zinc-950/80">
+      <UCard class="w-3/5 border border-zinc-800 bg-zinc-950/80">
         <template #header>
           <p class="font-semibold">Histórico</p>
         </template>
