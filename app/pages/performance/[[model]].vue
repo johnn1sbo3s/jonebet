@@ -128,7 +128,9 @@
 
             <div v-if="dailyStats" class="mt-3 grid grid-cols-2 gap-3 border-t border-zinc-800 pt-3 sm:grid-cols-3">
               <div>
-                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Sharpe (anualizado)</p>
+                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+                  Sharpe<span class="text-zinc-600">/ano</span>
+                </p>
 
                 <p class="mt-0.5 text-base font-medium" :class="sharpeClass">{{ dailyStats.sharpe }}</p>
               </div>
