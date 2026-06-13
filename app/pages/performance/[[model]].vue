@@ -28,21 +28,19 @@
       </USelectMenu>
     </div>
 
-    <template v-if="statusModel === 'pending'">
-      <USkeleton class="h-40 w-full rounded-2xl" />
-    </template>
+    <PerformancePageSkeleton v-if="statusModel === 'pending'" />
 
     <DataErrorCard v-else-if="!modelData" message="Não foi possível carregar as métricas do modelo" />
 
     <template v-else>
-      <div class="flex w-full gap-3">
-        <div id="metrics-cards" class="flex w-2/5 flex-col gap-3">
+      <div class="grid w-full grid-cols-10 gap-3">
+        <div id="metrics-cards" class="col-span-3 flex flex-col gap-3">
           <MetricsCard :metrics-data="modelData.metrics.val" :card-title="'Métricas de validação'" />
 
           <MetricsCard :metrics-data="modelData.metrics.real" :card-title="'Métricas de jogos reais'" />
         </div>
 
-        <UCard id="model-chart" class="w-3/5 border border-zinc-800 bg-zinc-900">
+        <UCard id="model-chart" class="col-span-7 border border-zinc-800 bg-zinc-900">
           <template #header>
             <div class="flex justify-between">
               <p class="font-semibold">Gráfico de acúmulo de capital</p>
@@ -206,8 +204,8 @@ const groupBy = computed(() => (chartByDay.value ? 'day' : 'bet'))
 
 // --- Per-model data: each composable re-runs when chosenModelId changes ---
 const { data: modelData, status: statusModel } = useModelById(chosenModelId)
-const { data: chartPayload } = useModelChart(chosenModelId, groupBy)
-const { data: trend } = useModelTrend(
+const { data: chartPayload, status: statusChart } = useModelChart(chosenModelId, groupBy)
+const { data: trend, status: statusTrend } = useModelTrend(
   chosenModelId,
   computed(() => !chartByDay.value),
 )
@@ -307,9 +305,21 @@ const chartOptions = ref({
   },
 })
 
-// --- Sync chart data from server payload ---
-watchEffect(() => {
-  const payload = chartPayload.value
+// --- Reset chart state when the model or grouping changes so the
+// LineChart never briefly shows the previous model's data while the
+// new payload is in flight. Without this, useFetch preserves the
+// stale data during refetch and the watchEffect below would re-emit
+// it to the chart before the new payload arrives.
+watch([chosenModelId, groupBy], () => {
+  chartData.value = { labels: [], datasets: [] }
+  chartOptions.value.plugins.annotation.annotations.line1.xMin = -100
+  chartOptions.value.plugins.annotation.annotations.line1.xMax = -100
+  chartKey.value++
+})
+
+// --- Sync chart data from server payload (only when fetches settle) ---
+watch([chartPayload, trend, statusChart, statusTrend], ([payload, trendVal, cStatus, tStatus]) => {
+  if (cStatus === 'pending' || tStatus === 'pending') return
   if (!payload) return
   const datasets = [
     {
@@ -323,10 +333,10 @@ watchEffect(() => {
       tension: 0.2,
     },
   ]
-  if (trend.value?.line) {
+  if (trendVal?.line) {
     datasets.push({
       label: 'Linha de tendência',
-      data: trend.value.line,
+      data: trendVal.line,
       borderColor: 'rgb(30, 158, 244, 0.6)',
       borderWidth: 2,
       backgroundColor: 'rgb(109, 40, 217, 0.0)',
