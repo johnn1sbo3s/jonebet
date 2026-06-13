@@ -45,29 +45,19 @@
             <div class="flex justify-between">
               <p class="font-semibold">Gráfico de acúmulo de capital</p>
 
-              <div class="flex gap-2">
-                <div class="inline-block align-middle">
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
                   <USwitch v-model="chartByDay" size="md" checked-icon="i-lucide-check" unchecked-icon="i-lucide-x" />
+
+                  <p class="text-sm">Exibição por dia</p>
                 </div>
 
-                <p class="text-sm">Exibição por dia</p>
+                <UButton color="secondary" variant="soft" size="sm" @click="resetsZoom">Restaurar zoom</UButton>
               </div>
             </div>
           </template>
 
           <div>
-            <div class="mb-2 flex items-center" :class="trend && trend.slope != 0 ? 'justify-between' : 'justify-end'">
-              <div v-if="trend && trend.slope != 0" class="flex gap-3 text-sm">
-                <p>Trend Value: {{ formatNumber(trend.slope) }}</p>
-
-                <p>|</p>
-
-                <p>Trend Distance: {{ formatTrendDistance(trend.distance) }} u</p>
-              </div>
-
-              <UButton color="secondary" variant="soft" @click="resetsZoom">Restaurar zoom</UButton>
-            </div>
-
             <LineChart
               :key="chartKey"
               class="w-full"
@@ -75,6 +65,77 @@
               :options="chartOptions"
               :style="chartStyle"
             />
+
+            <div class="mt-3 border-t border-zinc-800 pt-3">
+              <div class="grid grid-cols-4 gap-3">
+                <div v-if="trend && trend.slope != 0">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+                    Inclinação{{ ' '
+                    }}<span class="text-zinc-600 lowercase">(por {{ groupBy === 'day' ? 'dia' : 'aposta' }})</span>
+                  </p>
+
+                  <p class="mt-0.5 text-base font-medium" :class="slopeClass">{{ formatNumber(trend.slope) }}</p>
+                </div>
+
+                <div v-if="r2 != null">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">R²</p>
+
+                  <p class="mt-0.5 text-base font-medium text-white">{{ r2.toFixed(4) }}</p>
+                </div>
+
+                <div v-if="totalAccumulated != null">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Total acumulado</p>
+
+                  <p class="mt-0.5 text-base font-medium" :class="totalAccumulatedClass">
+                    {{ formatNumber(totalAccumulated) }}
+                  </p>
+                </div>
+
+                <div v-if="period">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Período</p>
+
+                  <p class="mt-0.5 text-sm font-medium text-white">{{ period }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 border-t border-zinc-800 pt-3">
+              <div class="mb-1 flex items-center justify-between">
+                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Drawdown</p>
+
+                <p v-if="maxDrawdown != null" class="text-xs text-zinc-400">
+                  Máx: <span class="font-semibold text-red-400">{{ formatNumber(maxDrawdown) }}</span>
+                </p>
+              </div>
+
+              <LineChart
+                :key="`dd-${chartKey}`"
+                class="w-full"
+                :chart-data="drawdownChartData"
+                :options="drawdownOptions"
+                :style="{ height: '72px' }"
+              />
+            </div>
+
+            <div v-if="dailyStats" class="mt-3 grid grid-cols-3 gap-3 border-t border-zinc-800 pt-3">
+              <div>
+                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Sharpe (anualizado)</p>
+
+                <p class="mt-0.5 text-base font-medium" :class="sharpeClass">{{ dailyStats.sharpe }}</p>
+              </div>
+
+              <div>
+                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Streak atual</p>
+
+                <p class="mt-0.5 text-base font-medium" :class="streakClass">{{ dailyStats.streak }}</p>
+              </div>
+
+              <div>
+                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">% dias negativos</p>
+
+                <p class="mt-0.5 text-base font-medium text-white">{{ dailyStats.pctNegative }}%</p>
+              </div>
+            </div>
           </div>
         </UCard>
       </div>
@@ -204,12 +265,12 @@ const groupBy = computed(() => (chartByDay.value ? 'day' : 'bet'))
 
 // --- Per-model data: each composable re-runs when chosenModelId changes ---
 const { data: modelData, status: statusModel } = useModelById(chosenModelId)
-const { data: chartPayload, status: statusChart } = useModelChart(chosenModelId, groupBy)
-const { data: trend, status: statusTrend } = useModelTrend(
+const { data: chartPayload, pending: chartPending } = useModelChart(chosenModelId, groupBy)
+const { data: trend, pending: trendPending } = useModelTrend(
   chosenModelId,
   computed(() => !chartByDay.value),
 )
-const { data: dailyResults } = useModelResults(chosenModelId, ref('daily'))
+const { data: dailyResults, pending: dailyResultsPending } = useModelResults(chosenModelId, ref('daily'))
 const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 
 // --- Bets pagination ---
@@ -266,11 +327,178 @@ const allBetsDataFilteredColumns = [
   { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
 ]
 
-// --- Chart ---
-const chartData = ref({ labels: [], datasets: [] })
+// --- Trend stats (computed from the accumulation + trend line) ---
+const totalAccumulated = computed(() => {
+  if (chartPending.value) return null
+  const acc = chartPayload.value?.data
+  if (!acc || !acc.length) return null
+  return acc[acc.length - 1]
+})
+const totalAccumulatedClass = computed(() => {
+  const v = totalAccumulated.value
+  if (v == null) return 'text-white'
+  if (v > 0) return 'text-teal-400'
+  if (v < 0) return 'text-red-400'
+  return 'text-white'
+})
+const r2 = computed(() => {
+  if (chartPending.value || trendPending.value) return null
+  const acc = chartPayload.value?.data
+  const line = trend.value?.line
+  if (!acc || !line || acc.length < 2 || line.length !== acc.length) return null
+  const meanY = acc.reduce((a, b) => a + b, 0) / acc.length
+  let ssRes = 0
+  let ssTot = 0
+  for (let i = 0; i < acc.length; i++) {
+    ssRes += (acc[i] - line[i]) ** 2
+    ssTot += (acc[i] - meanY) ** 2
+  }
+  if (ssTot === 0) return null
+  return 1 - ssRes / ssTot
+})
+const slopeClass = computed(() => {
+  if (trendPending.value || !trend.value || trend.value.slope === 0) return 'text-white'
+  return trend.value.slope > 0 ? 'text-teal-400' : 'text-red-400'
+})
+const period = computed(() => {
+  if (dailyResultsPending.value) return null
+  const days = dailyResults.value
+  if (!days || !days.length) return null
+  const start = days[0].date
+  const end = days[days.length - 1].date
+  return `${formatDate(start)} → ${formatDate(end)}`
+})
+function formatDate(iso) {
+  if (!iso) return ''
+  const [y, m, d] = iso.split('-')
+  return `${d}/${m}/${y.slice(-2)}`
+}
+
+// --- Drawdown (computed from the accumulation series) ---
+const drawdownSeries = computed(() => {
+  if (chartPending.value) return []
+  const acc = chartPayload.value?.data || []
+  if (!acc.length) return []
+  let peak = -Infinity
+  return acc.map((v) => {
+    if (v > peak) peak = v
+    return Math.max(0, peak - v)
+  })
+})
+const maxDrawdown = computed(() => {
+  const s = drawdownSeries.value
+  return s.length ? Math.max(...s) : null
+})
+const drawdownChartData = computed(() => ({
+  labels: chartPayload.value?.labels || [],
+  datasets: [
+    {
+      label: 'Drawdown',
+      data: drawdownSeries.value,
+      borderColor: 'rgb(248, 113, 113)',
+      backgroundColor: 'rgba(248, 113, 113, 0.15)',
+      pointRadius: 0,
+      borderWidth: 1.5,
+      fill: 'origin',
+      tension: 0.2,
+    },
+  ],
+}))
+const drawdownOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: false,
+  scales: {
+    y: { beginAtZero: true, display: false },
+    x: { display: false },
+  },
+  plugins: {
+    legend: { display: false },
+    tooltip: { enabled: false },
+  },
+}
+
+// --- Risk stats (computed from the daily results series) ---
+const dailyStats = computed(() => {
+  if (dailyResultsPending.value) return null
+  const days = dailyResults.value
+  if (!days || !days.length) return null
+  const gains = days.map((d) => Number(d.gain) || 0)
+  const negativeDays = gains.filter((g) => g < 0).length
+  const pctNegative = (negativeDays / gains.length) * 100
+  const mean = gains.reduce((a, b) => a + b, 0) / gains.length
+  const variance = gains.reduce((a, b) => a + (b - mean) ** 2, 0) / gains.length
+  const std = Math.sqrt(variance)
+  const sharpe = std > 0 ? (mean / std) * Math.sqrt(252) : 0
+  let streak = 0
+  let streakType = null
+  for (let i = days.length - 1; i >= 0; i--) {
+    const g = Number(days[i].gain) || 0
+    if (g === 0) continue
+    if (streakType === null) {
+      streakType = g > 0 ? 'W' : 'L'
+      streak = 1
+    } else if ((g > 0 && streakType === 'W') || (g < 0 && streakType === 'L')) {
+      streak++
+    } else {
+      break
+    }
+  }
+  return {
+    sharpe: sharpe.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }),
+    streak: streak ? `${streak}${streakType}` : '—',
+    pctNegative: pctNegative.toLocaleString('pt-BR', { maximumFractionDigits: 1, minimumFractionDigits: 1 }),
+  }
+})
+const sharpeClass = computed(() => {
+  if (!dailyStats.value) return 'text-white'
+  const v = Number(dailyStats.value.sharpe.replace(',', '.'))
+  if (v > 1) return 'text-teal-400'
+  if (v < 0) return 'text-red-400'
+  return 'text-white'
+})
+const streakClass = computed(() => {
+  if (!dailyStats.value) return 'text-white'
+  return dailyStats.value.streak.endsWith('W') ? 'text-teal-400' : 'text-red-400'
+})
+
+// --- Chart (all reactive, no manual sync) ---
 const chartKey = ref(0)
 const chartStyle = ref({ height: '400px', width: '100%' })
-const chartOptions = ref({
+
+const chartData = computed(() => {
+  if (chartPending.value) return { labels: [], datasets: [] }
+  const payload = chartPayload.value
+  if (!payload || !payload.data) return { labels: [], datasets: [] }
+  const datasets = [
+    {
+      label: 'Acúmulo de capital',
+      data: payload.data || [],
+      borderColor: '#25D88B',
+      backgroundColor: 'rgb(37, 216, 139, 0.05)',
+      pointRadius: 1,
+      pointHoverRadius: 7,
+      fill: true,
+      tension: 0.2,
+    },
+  ]
+  if (trend.value?.line?.length) {
+    datasets.push({
+      label: 'Linha de tendência',
+      data: trend.value.line,
+      borderColor: 'rgb(30, 158, 244, 0.6)',
+      borderWidth: 2,
+      backgroundColor: 'rgb(109, 40, 217, 0.0)',
+      pointRadius: 0,
+      pointHoverRadius: 7,
+      fill: true,
+      tension: 0.2,
+    })
+  }
+  return { labels: payload.labels || [], datasets }
+})
+
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   transitions: { zoom: { animation: { duration: 1000, easing: 'easeOutCubic' } } },
@@ -295,60 +523,20 @@ const chartOptions = ref({
       annotations: {
         line1: {
           type: 'line',
-          xMin: -100,
-          xMax: -100,
+          xMin: chartPayload.value?.annotationIndex ?? -100,
+          xMax: chartPayload.value?.annotationIndex ?? -100,
           borderColor: 'rgb(20 184 166)',
           borderWidth: 2,
         },
       },
     },
   },
-})
+}))
 
-// --- Reset chart state when the model or grouping changes so the
-// LineChart never briefly shows the previous model's data while the
-// new payload is in flight. Without this, useFetch preserves the
-// stale data during refetch and the watchEffect below would re-emit
-// it to the chart before the new payload arrives.
+// Remount the chart when the model or grouping changes so the
+// internal zoom/pan state is reset (and pending state shows empty).
 watch([chosenModelId, groupBy], () => {
-  chartData.value = { labels: [], datasets: [] }
-  chartOptions.value.plugins.annotation.annotations.line1.xMin = -100
-  chartOptions.value.plugins.annotation.annotations.line1.xMax = -100
   chartKey.value++
-})
-
-// --- Sync chart data from server payload (only when fetches settle) ---
-watch([chartPayload, trend, statusChart, statusTrend], ([payload, trendVal, cStatus, tStatus]) => {
-  if (cStatus === 'pending' || tStatus === 'pending') return
-  if (!payload) return
-  const datasets = [
-    {
-      label: 'Acúmulo de capital',
-      data: payload.data || [],
-      borderColor: '#25D88B',
-      backgroundColor: 'rgb(37, 216, 139, 0.05)',
-      pointRadius: 1,
-      pointHoverRadius: 7,
-      fill: true,
-      tension: 0.2,
-    },
-  ]
-  if (trendVal?.line) {
-    datasets.push({
-      label: 'Linha de tendência',
-      data: trendVal.line,
-      borderColor: 'rgb(30, 158, 244, 0.6)',
-      borderWidth: 2,
-      backgroundColor: 'rgb(109, 40, 217, 0.0)',
-      pointRadius: 0,
-      pointHoverRadius: 7,
-      fill: true,
-      tension: 0.2,
-    })
-  }
-  chartData.value = { labels: payload.labels || [], datasets }
-  chartOptions.value.plugins.annotation.annotations.line1.xMin = payload.annotationIndex
-  chartOptions.value.plugins.annotation.annotations.line1.xMax = payload.annotationIndex
 })
 
 // Register Chart.js plugins on the client only (after mount, so the
@@ -364,9 +552,5 @@ onMounted(async () => {
 // --- Helpers for template formatting ---
 function formatNumber(n) {
   return Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
-}
-function formatTrendDistance(n) {
-  const v = Number(n || 0)
-  return `${v < 0 ? '' : v > 0 ? '+' : ''}${v.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`
 }
 </script>
