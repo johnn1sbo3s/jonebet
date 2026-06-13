@@ -9,7 +9,7 @@
     <div class="flex gap-5">
       <USelectMenu
         v-model="chosenModel"
-        class="w-full sm:w-95"
+        class="w-full max-w-89 rounded-xl border border-zinc-800 bg-zinc-900"
         searchable
         placeholder="Selecione um modelo"
         :items="listModelItems"

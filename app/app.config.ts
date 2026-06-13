@@ -19,5 +19,10 @@ export default defineAppConfig({
         overlay: 'bg-black/80',
       },
     },
+    selectMenu: {
+      slots: {
+        base: 'rounded-xl',
+      },
+    },
   },
 })
