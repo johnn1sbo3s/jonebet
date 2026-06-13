@@ -1,5 +1,5 @@
 <template>
-  <UCard class="h-full">
+  <UCard class="h-full border border-zinc-800 bg-zinc-950/80">
     <template #header>
       <p class="font-semibold">{{ cardTitle }}</p>
     </template>
