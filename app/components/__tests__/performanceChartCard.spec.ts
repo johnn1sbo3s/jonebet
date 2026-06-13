@@ -44,6 +44,9 @@ describe('PerformanceChartCard', () => {
     const button = wrapper.findAll('button').find((b) => b.attributes('aria-label') === 'O que é Sharpe anualizado?')
     expect(button).toBeTruthy()
     await button!.trigger('click')
-    expect(wrapper.text()).toContain('retorno médio por unidade de risco')
+    await wrapper.vm.$nextTick()
+    // UModal portals its body to document.body, so wrapper.text() can't
+    // see it — query the document directly.
+    expect(document.body.textContent).toContain('retorno médio por unidade de risco')
   })
 })
