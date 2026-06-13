@@ -47,12 +47,12 @@ const props = defineProps({
 })
 
 const formatNumber = (n, decimals = 2) =>
-  n.toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
+  Number(n ?? 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
 const formatPercent = (n, decimals = 2) => `${formatNumber(n, decimals)}%`
 
 const lucroEfetivo = computed(() => {
-  if (props.metricsData.med_loss === 0) return 0
-  return (props.metricsData.ev / -props.metricsData.med_loss) * 100
+  if (props.metricsData.medLoss === 0) return 0
+  return (props.metricsData.ev / -props.metricsData.medLoss) * 100
 })
 
 const profitClass = computed(() => {
@@ -72,8 +72,8 @@ const roiClass = computed(() => {
 const metrics = computed(() => [
   { label: 'WR', value: `${(props.metricsData.wr * 100).toFixed(0)}%` },
   { label: 'Odd média', value: formatNumber(props.metricsData.odds) },
-  { label: 'Win médio', value: formatNumber(props.metricsData.med_gain) },
-  { label: 'Loss médio', value: formatNumber(props.metricsData.med_loss) },
+  { label: 'Win médio', value: formatNumber(props.metricsData.medGain) },
+  { label: 'Loss médio', value: formatNumber(props.metricsData.medLoss) },
   { label: 'EV', value: formatNumber(props.metricsData.ev) },
   { label: 'Lucro efetivo', value: formatPercent(lucroEfetivo.value) },
   { label: 'Máx DD', value: formatNumber(props.metricsData.dd) },

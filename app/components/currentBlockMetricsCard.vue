@@ -10,7 +10,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Profit</p>
 
           <p class="mt-1 text-xl font-semibold" :class="profitClass">
-            {{ formatNumber(metricsData.media_atual) }}
+            {{ formatNumber(metricsData.currentMean) }}
           </p>
         </div>
       </div>
@@ -20,14 +20,16 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
           <p class="mt-0.5 text-sm font-medium text-white">
-            {{ formatNumber(metricsData.desvpad_atual) }}
+            {{ formatNumber(metricsData.currentStdDev) }}
           </p>
         </div>
 
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Jogos</p>
 
-          <p class="mt-0.5 text-sm font-medium text-white">{{ metricsData.qtd_jgs_atual.toFixed(0) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">
+            {{ Number(metricsData.currentGameCount || 0).toFixed(0) }}
+          </p>
         </div>
       </div>
     </div>
@@ -50,7 +52,7 @@ const formatNumber = (n, decimals = 2) =>
   Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
 
 const profitClass = computed(() => {
-  const v = props.metricsData.media_atual
+  const v = props.metricsData.currentMean
   if (v > 0) return 'text-teal-400'
   if (v < 0) return 'text-red-400'
   return 'text-white'

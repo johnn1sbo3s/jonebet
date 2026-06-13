@@ -15,13 +15,18 @@
           class="mb-2 flex items-center justify-between rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 last:mb-0"
         >
           <div class="min-w-0">
-            <p class="truncate text-sm font-medium text-white">{{ formatDate(block.Ult_Dia) }}</p>
+            <p class="truncate text-sm font-medium text-white">
+              #{{ blocks.length - index }} <span class="text-zinc-500">({{ formatDate(block.endDate) }})</span>
+            </p>
 
-            <p class="text-xs text-zinc-500">{{ block.Qtd_Jogos }} jogos · ROI {{ formatPercent(block.ROI) }}</p>
+            <p class="text-xs text-zinc-500">
+              <template v-if="block.gameCount < 100">{{ block.gameCount }} jogos · </template>
+              ROI {{ formatPercent(block.roi) }}
+            </p>
           </div>
 
-          <span class="shrink-0 text-base font-semibold" :class="block.Profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ formatNumber(block.Profit) }} u
+          <span class="shrink-0 text-base font-semibold" :class="block.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
+            {{ formatNumber(block.profit) }}
           </span>
         </div>
       </div>

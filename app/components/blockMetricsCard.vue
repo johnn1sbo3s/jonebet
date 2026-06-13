@@ -10,7 +10,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Média P/L</p>
 
           <p class="mt-1 text-xl font-semibold" :class="mediaClass">
-            {{ formatNumber(metricsData.media) }}
+            {{ formatNumber(metricsData.mean) }}
           </p>
         </div>
       </div>
@@ -19,20 +19,20 @@
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
-          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.desvpad) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.stdDev) }}</p>
         </div>
 
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Méd/Desvpad</p>
 
-          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.med_dp) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.meanStdDev) }}</p>
         </div>
 
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Dif. valid.</p>
 
           <p class="mt-0.5 text-sm font-medium" :class="difValidClass">
-            {{ formatNumber(metricsData.diff_med_dp_um_96_raiz) }}
+            {{ formatNumber(metricsData.diffMeanStdDev96Sqrt) }}
           </p>
         </div>
 
@@ -40,8 +40,8 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Int. conf.</p>
 
           <p class="mt-0.5 text-sm font-medium text-white">
-            {{ formatNumber(metricsData.intervalo_confianca[0]) }} →
-            {{ formatNumber(metricsData.intervalo_confianca[1]) }}
+            {{ formatNumber(metricsData.confidenceInterval?.[0]) }} →
+            {{ formatNumber(metricsData.confidenceInterval?.[1]) }}
           </p>
         </div>
       </div>
@@ -70,6 +70,6 @@ const signClass = (v) => {
   return 'text-white'
 }
 
-const mediaClass = computed(() => signClass(props.metricsData.media))
-const difValidClass = computed(() => signClass(props.metricsData.diff_med_dp_um_96_raiz))
+const mediaClass = computed(() => signClass(props.metricsData.mean))
+const difValidClass = computed(() => signClass(props.metricsData.diffMeanStdDev96Sqrt))
 </script>

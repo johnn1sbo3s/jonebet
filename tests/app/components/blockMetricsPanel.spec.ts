@@ -5,16 +5,16 @@ import BlockMetricsPanel from '~/components/blockMetricsPanel.vue'
 
 describe('BlockMetricsPanel', () => {
   const metricsTotal = {
-    media: 1.5,
-    desvpad: 2.3,
-    med_dp: 0.65,
-    diff_med_dp_um_96_raiz: 0.12,
-    intervalo_confianca: [-0.5, 3.5],
-    media_atual: 0.8,
-    desvpad_atual: 1.2,
-    qtd_jgs_atual: 73,
+    mean: 1.5,
+    stdDev: 2.3,
+    meanStdDev: 0.65,
+    diffMeanStdDev96Sqrt: 0.12,
+    confidenceInterval: [-0.5, 3.5],
+    currentMean: 0.8,
+    currentStdDev: 1.2,
+    currentGameCount: 73,
   }
-  const blocksHistory = [{ profit: 10, qtd_jogos: 100, roi: 0.1, ult_dia: '2026-01-31' }]
+  const blocksHistory = [{ profit: 10, gameCount: 100, roi: 0.1, endDate: '2026-01-31' }]
 
   it('renders the block-metrics header', async () => {
     const wrapper = await mountSuspended(BlockMetricsPanel, {
