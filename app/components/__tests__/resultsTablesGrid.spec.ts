@@ -1,4 +1,7 @@
 // @vitest-environment nuxt
+// @vitest-environment nuxt
+// (mountSuspended requires the nuxt runtime; the global config uses
+// happy-dom, so this per-file directive opts the test into nuxt env)
 import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ResultsTablesGrid from '~/components/resultsTablesGrid.vue'
