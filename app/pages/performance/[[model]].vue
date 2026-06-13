@@ -79,15 +79,39 @@
             <div class="mt-3 border-t border-zinc-800 pt-3">
               <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <div v-if="trend && trend.slope != 0">
-                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                    Inclinação<span class="text-zinc-600">/{{ groupBy === 'day' ? 'dia' : 'aposta' }}</span>
-                  </p>
+                  <div class="flex items-center gap-1">
+                    <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+                      Inclinação<span class="text-zinc-600">/{{ groupBy === 'day' ? 'dia' : 'aposta' }}</span>
+                    </p>
+
+                    <UButton
+                      variant="ghost"
+                      size="xs"
+                      icon="i-lucide-info"
+                      color="neutral"
+                      aria-label="O que é Inclinação?"
+                      class="-mt-0.5 cursor-pointer p-0 text-zinc-700 hover:text-zinc-400"
+                      @click="showSlopeInfo = true"
+                    />
+                  </div>
 
                   <p class="mt-0.5 text-base font-medium" :class="slopeClass">{{ formatNumber(trend.slope) }}</p>
                 </div>
 
                 <div v-if="r2 != null">
-                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">R²</p>
+                  <div class="flex items-center gap-1">
+                    <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">R²</p>
+
+                    <UButton
+                      variant="ghost"
+                      size="xs"
+                      icon="i-lucide-info"
+                      color="neutral"
+                      aria-label="O que é R²?"
+                      class="-mt-0.5 cursor-pointer p-0 text-zinc-700 hover:text-zinc-400"
+                      @click="showR2Info = true"
+                    />
+                  </div>
 
                   <p class="mt-0.5 text-base font-medium text-white">{{ r2.toFixed(4) }}</p>
                 </div>
@@ -128,25 +152,129 @@
 
             <div v-if="dailyStats" class="mt-3 grid grid-cols-2 gap-3 border-t border-zinc-800 pt-3 sm:grid-cols-3">
               <div>
-                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                  Sharpe<span class="text-zinc-600">/ano</span>
-                </p>
+                <div class="flex items-center gap-1">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+                    Sharpe<span class="text-zinc-600">/ano</span>
+                  </p>
+
+                  <UButton
+                    variant="ghost"
+                    size="xs"
+                    icon="i-lucide-info"
+                    color="neutral"
+                    aria-label="O que é Sharpe anualizado?"
+                    class="-mt-0.5 cursor-pointer p-0 text-zinc-700 hover:text-zinc-400"
+                    @click="showSharpeInfo = true"
+                  />
+                </div>
 
                 <p class="mt-0.5 text-base font-medium" :class="sharpeClass">{{ dailyStats.sharpe }}</p>
               </div>
 
               <div>
-                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Streak atual</p>
+                <div class="flex items-center gap-1">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Streak atual</p>
+
+                  <UButton
+                    variant="ghost"
+                    size="xs"
+                    icon="i-lucide-info"
+                    color="neutral"
+                    aria-label="O que é Streak atual?"
+                    class="-mt-0.5 cursor-pointer p-0 text-zinc-700 hover:text-zinc-400"
+                    @click="showStreakInfo = true"
+                  />
+                </div>
 
                 <p class="mt-0.5 text-base font-medium" :class="streakClass">{{ dailyStats.streak }}</p>
               </div>
 
               <div>
-                <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">% dias negativos</p>
+                <div class="flex items-center gap-1">
+                  <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">% dias negativos</p>
+
+                  <UButton
+                    variant="ghost"
+                    size="xs"
+                    icon="i-lucide-info"
+                    color="neutral"
+                    aria-label="O que é % dias negativos?"
+                    class="-mt-0.5 cursor-pointer p-0 text-zinc-700 hover:text-zinc-400"
+                    @click="showNegativeDaysInfo = true"
+                  />
+                </div>
 
                 <p class="mt-0.5 text-base font-medium text-white">{{ dailyStats.pctNegative }}%</p>
               </div>
             </div>
+
+            <UModal v-model:open="showSlopeInfo" title="Inclinação">
+              <template #body>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                  Mede quanto o capital acumulado cresce a cada unidade (por aposta ou por dia, conforme a
+                  visualização). É a inclinação da linha de tendência do gráfico.
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-zinc-300">
+                  Valores positivos indicam tendência de alta; negativos, de baixa. Quanto maior o módulo, mais
+                  agressiva a tendência.
+                </p>
+              </template>
+            </UModal>
+
+            <UModal v-model:open="showR2Info" title="R²">
+              <template #body>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                  Indica o quanto da variação do capital acumulado é explicada pela linha de tendência. Varia de 0 a 1.
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-zinc-300">
+                  Quanto mais próximo de 1, mais linear e consistente é o crescimento. Valores baixos não significam que
+                  o modelo é ruim — apenas que a tendência é ruidosa.
+                </p>
+              </template>
+            </UModal>
+
+            <UModal v-model:open="showSharpeInfo" title="Sharpe anualizado">
+              <template #body>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                  Mede o retorno médio por unidade de risco dos resultados diários, anualizado. Quanto maior, melhor —
+                  indica que o modelo gera mais lucro por unidade de volatilidade.
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-zinc-300">
+                  Acima de 1 é considerado bom; acima de 2, muito bom. Valores negativos indicam que o modelo perde
+                  dinheiro em média.
+                </p>
+              </template>
+            </UModal>
+
+            <UModal v-model:open="showStreakInfo" title="Streak atual">
+              <template #body>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                  Sequência consecutiva mais recente de vitórias (W) ou derrotas (L). Indica o momento atual do modelo —
+                  se está em uma fase positiva ou negativa.
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-zinc-300">
+                  Dias com ganho zero (sem apostas) são ignorados na contagem.
+                </p>
+              </template>
+            </UModal>
+
+            <UModal v-model:open="showNegativeDaysInfo" title="% dias negativos">
+              <template #body>
+                <p class="text-sm leading-relaxed text-zinc-300">
+                  Porcentagem de dias em que o modelo fechou no prejuízo. Quanto menor, melhor — mostra a consistência
+                  do modelo ao longo do tempo.
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-zinc-300">
+                  Dias sem apostas (ganho zero) são contabilizados no total, o que dilui o indicador em modelos com
+                  calendário irregular.
+                </p>
+              </template>
+            </UModal>
           </div>
         </UCard>
       </div>
@@ -570,4 +698,11 @@ onMounted(async () => {
 function formatNumber(n) {
   return Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
 }
+
+// --- Info modals for the risk metrics ---
+const showSlopeInfo = ref(false)
+const showR2Info = ref(false)
+const showSharpeInfo = ref(false)
+const showStreakInfo = ref(false)
+const showNegativeDaysInfo = ref(false)
 </script>
