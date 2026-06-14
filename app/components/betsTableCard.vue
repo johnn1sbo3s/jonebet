@@ -20,6 +20,12 @@
       <template #Date-cell="{ row }">
         {{ formatDate(row.original.Date) }}
       </template>
+
+      <template #Placar-cell="{ row }">
+        <span :class="row.original.Placar ? 'text-zinc-200' : 'text-zinc-600'">
+          {{ row.original.Placar || '—' }}
+        </span>
+      </template>
     </UTable>
 
     <div class="flex justify-center pt-3">
@@ -61,6 +67,7 @@ const allBetsDataFilteredColumns = [
   { id: 'Date', accessorKey: 'Date', header: 'Data' },
   { id: 'Home', accessorKey: 'Home', header: 'Casa' },
   { id: 'Away', accessorKey: 'Away', header: 'Fora' },
+  { id: 'Placar', accessorKey: 'Placar', header: 'Placar' },
   { id: 'Odds', accessorKey: 'Odds', header: 'Odds' },
   { id: 'Resultado', accessorKey: 'Resultado', header: 'Resultado' },
   { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },

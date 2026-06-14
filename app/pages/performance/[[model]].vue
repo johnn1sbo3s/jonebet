@@ -103,7 +103,7 @@ const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 const betsPage = ref(1)
 const betsSize = ref(100)
 const betsSort = ref('Date')
-const betsOrder = ref('asc')
+const betsOrder = ref('desc')
 
 const { data: betsPayload } = useModelBets(chosenModelId, {
   page: betsPage,
