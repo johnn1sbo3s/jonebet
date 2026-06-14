@@ -17,13 +17,13 @@
       :data="betsItems"
       :columns="allBetsDataFilteredColumns"
     >
-      <template #Date-cell="{ row }">
-        {{ formatDate(row.original.Date) }}
+      <template #date-cell="{ row }">
+        {{ formatDate(row.original.date) }}
       </template>
 
-      <template #Placar-cell="{ row }">
-        <span :class="row.original.Placar ? 'text-zinc-200' : 'text-zinc-600'">
-          {{ row.original.Placar || '—' }}
+      <template #score-cell="{ row }">
+        <span :class="row.original.score ? 'text-zinc-200' : 'text-zinc-600'">
+          {{ row.original.score || '—' }}
         </span>
       </template>
     </UTable>
@@ -64,12 +64,12 @@ watch(
 )
 
 const allBetsDataFilteredColumns = [
-  { id: 'Date', accessorKey: 'Date', header: 'Data' },
-  { id: 'Home', accessorKey: 'Home', header: 'Casa' },
-  { id: 'Away', accessorKey: 'Away', header: 'Fora' },
-  { id: 'Placar', accessorKey: 'Placar', header: 'Placar' },
-  { id: 'Odds', accessorKey: 'Odds', header: 'Odds' },
-  { id: 'Resultado', accessorKey: 'Resultado', header: 'Resultado' },
-  { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
+  { id: 'date', accessorKey: 'date', header: 'Data' },
+  { id: 'home', accessorKey: 'home', header: 'Casa' },
+  { id: 'away', accessorKey: 'away', header: 'Fora' },
+  { id: 'score', accessorKey: 'score', header: 'Placar' },
+  { id: 'odds', accessorKey: 'odds', header: 'Odds' },
+  { id: 'result', accessorKey: 'result', header: 'Resultado' },
+  { id: 'profit', accessorKey: 'profit', header: 'Lucro' },
 ]
 </script>
