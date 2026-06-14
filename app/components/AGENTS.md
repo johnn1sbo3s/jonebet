@@ -1,0 +1,52 @@
+# app/components/ — Vue Components
+
+## Purpose
+
+All 20 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
+
+## Ownership
+
+- Every `.vue` file in this directory is a self-contained component
+- Components are auto-imported by Nuxt; no manual registration needed
+
+## Local Contracts
+
+- All components use `<script setup>` (no TypeScript)
+- Multi-word filenames in camelCase
+- Props passed via `defineProps()`, emits via `defineEmits()`
+- No lodash — use `_isEmpty`, `_filter`, etc. from auto-imported utils
+- Profit coloring: `text-teal-500` positive, `text-red-500` negative
+- No shadows — depth via zinc surface contrast (950→900→800)
+
+## Work Guidance
+
+| Component | Purpose | Key Notes |
+|-----------|---------|-----------|
+| `bankrollEvolution.vue` | Line chart: bankroll growth over months | Uses `LineChart` from vue-chart-3, zoom plugin |
+| `batchCard.vue` | Batch monitoring card: model metrics + confidence interval | Links to performance page |
+| `betsTableCard.vue` | Paginated table of model bets | UTable + UPagination, page emit |
+| `blockMetricsCard.vue` | Statistical metrics: mean P/L, std dev, confidence interval | |
+| `blockMetricsPanel.vue` | Panel combining block metrics + history | Layout orchestrator |
+| `blocksHistoryList.vue` | Scrollable list of 100-game blocks with profit/ROI | |
+| `currentBlockMetricsCard.vue` | Current block: profit, std dev, game count | |
+| `dataErrorCard.vue` | Error/empty state card with icon + message | |
+| `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
+| `fixtureCard.vue` | Individual fixture card with odds + model count | |
+| `fixtureDetailsCard.vue` | Fixture detail: odds, O/U, BTTS, allowed models | |
+| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie) | Mobile: UDrawer |
+| `fixturesListSkeleton.vue` | Loading skeleton for fixtures list | |
+| `metricsCard.vue` | Model metrics: PLB, ROI, WR, odds, EV, drawdown, entries | |
+| `monthlyResultsList.vue` | Scrollable monthly results with border accent | |
+| `pageHeader.vue` | Reusable page header (title + description + right slot) | |
+| `performanceChartCard.vue` | Performance chart: accumulation, trend, drawdown, Sharpe, streak | Most complex component |
+| `performancePageSkeleton.vue` | Loading skeleton for performance page | |
+| `rankingModels.vue` | Top N models ranking with shimmer + "see all" modal | |
+| `resultsTablesGrid.vue` | 2-column grid: monthly + daily results tables | |
+| `SegmentedControl.vue` | Custom segmented control (Exchange/Bookie toggle) | |
+| `yesterdayDetailsCard.vue` | Details: bets count, models count, positive models | |
+| `yesterdayMetricsCard.vue` | Metric display: profit, invested, ROI | |
+
+## Verification
+
+- User runs `pnpm run dev` and checks component rendering in browser
+- Existing tests: `pnpm test:unit` (tests for betsTableCard, blockMetricsPanel, performanceChartCard, resultsTablesGrid)
