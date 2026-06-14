@@ -8,14 +8,14 @@ describe('BetsTableCard', () => {
 
   it('renders the bets total count', async () => {
     const wrapper = await mountSuspended(BetsTableCard, {
-      props: { betsItems: bets, betsTotal: 250, betsPage: 1, betsTotalPages: 3 },
+      props: { betsItems: bets, betsTotal: 250, page: 1, betsTotalPages: 3, betsSize: 100 },
     })
     expect(wrapper.text()).toContain('250 jogos')
   })
 
   it('disables "Anterior" on page 1', async () => {
     const wrapper = await mountSuspended(BetsTableCard, {
-      props: { betsItems: bets, betsTotal: 250, betsPage: 1, betsTotalPages: 3 },
+      props: { betsItems: bets, betsTotal: 250, page: 1, betsTotalPages: 3, betsSize: 100 },
     })
     const prev = wrapper.findAll('button').find((b) => b.text() === 'Anterior')
     expect(prev?.attributes('disabled')).toBeDefined()
@@ -23,7 +23,7 @@ describe('BetsTableCard', () => {
 
   it('disables "Próxima" on the last page', async () => {
     const wrapper = await mountSuspended(BetsTableCard, {
-      props: { betsItems: bets, betsTotal: 250, betsPage: 3, betsTotalPages: 3 },
+      props: { betsItems: bets, betsTotal: 250, page: 3, betsTotalPages: 3, betsSize: 100 },
     })
     const next = wrapper.findAll('button').find((b) => b.text() === 'Próxima')
     expect(next?.attributes('disabled')).toBeDefined()
@@ -31,7 +31,7 @@ describe('BetsTableCard', () => {
 
   it('emits update:page when "Próxima" is clicked', async () => {
     const wrapper = await mountSuspended(BetsTableCard, {
-      props: { betsItems: bets, betsTotal: 250, betsPage: 1, betsTotalPages: 3 },
+      props: { betsItems: bets, betsTotal: 250, page: 1, betsTotalPages: 3, betsSize: 100 },
     })
     const next = wrapper.findAll('button').find((b) => b.text() === 'Próxima')
     await next?.trigger('click')

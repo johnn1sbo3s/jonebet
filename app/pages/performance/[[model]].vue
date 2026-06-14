@@ -57,6 +57,7 @@
         :bets-items="betsItems"
         :bets-total="betsTotal"
         :bets-total-pages="betsTotalPages"
+        :bets-size="betsSize"
       />
     </template>
   </div>
@@ -101,22 +102,15 @@ const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 // --- Bets pagination ---
 const betsPage = ref(1)
 const betsSize = ref(100)
-const apiUrl = useRuntimeConfig().public.API_URL
+const betsSort = ref('Date')
+const betsOrder = ref('asc')
 
-const cache = useState('model-api-cache', () => ({}))
-
-const { data: betsPayload } = await useAsyncData(
-  () => `bets-${chosenModelId.value}-${betsPage.value}-${betsSize.value}`,
-  () =>
-    $fetch(`${apiUrl}/models/${chosenModelId.value}/bets`, {
-      query: { page: betsPage.value, size: betsSize.value, sort: 'Date', order: 'asc' },
-    }),
-  {
-    watch: [chosenModelId, betsPage, betsSize],
-    default: () => ({ items: [], total: 0 }),
-    getCachedData: (k) => cache.value[k],
-  },
-)
+const { data: betsPayload } = useModelBets(chosenModelId, {
+  page: betsPage,
+  size: betsSize,
+  sort: betsSort,
+  order: betsOrder,
+})
 const betsItems = computed(() => betsPayload.value?.items || [])
 const betsTotal = computed(() => betsPayload.value?.total || 0)
 const betsTotalPages = computed(() => Math.max(1, Math.ceil(betsTotal.value / betsSize.value)))

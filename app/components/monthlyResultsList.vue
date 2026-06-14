@@ -85,7 +85,7 @@ function formatMonthYear(raw) {
   return String(raw)
 }
 
-const sortedResults = computed(() => [...props.results].sort((a, b) => new Date(b.monthYear) - new Date(a.monthYear)))
+const sortedResults = computed(() => [...props.results].reverse())
 
 function profitClassFor(month) {
   if (month.profit > 0) return 'text-teal-500'

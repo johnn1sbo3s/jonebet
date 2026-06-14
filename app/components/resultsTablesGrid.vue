@@ -11,15 +11,25 @@
 
       <UTable
         class="h-80"
-        :ui="{ wrapper: 'relative overflow-x-auto border border-muted rounded-lg' }"
+        :ui="{
+          wrapper: 'relative overflow-x-auto overflow-y-auto border border-muted rounded-lg',
+          thead: 'sticky top-0 z-10',
+          th: 'bg-zinc-950',
+        }"
         :data="dailyResults"
         :columns="dailyBetsColumns"
-      />
+      >
+        <template #date-cell="{ row }">
+          {{ formatDate(row.original.date) }}
+        </template>
+      </UTable>
     </UCard>
   </div>
 </template>
 
 <script setup>
+import { formatDate } from '~/utils/formatDate'
+
 defineProps({
   monthlyResults: { type: Array, required: true },
   dailyResults: { type: Array, required: true },
