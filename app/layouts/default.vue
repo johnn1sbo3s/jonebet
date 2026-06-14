@@ -53,7 +53,7 @@ const navItems = [
   </UHeader>
 
   <UMain class="bg-zinc-950">
-    <UContainer class="py-8">
+    <UContainer class="pt-5 pb-8">
       <NuxtPage />
     </UContainer>
   </UMain>

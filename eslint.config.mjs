@@ -15,6 +15,7 @@ const nuxtGlobals = {
       defineNuxtRouteMiddleware: 'readonly',
       defineAppConfig: 'readonly',
       useRuntimeConfig: 'readonly',
+      useState: 'readonly',
       useFetch: 'readonly',
       useAsyncData: 'readonly',
       navigateTo: 'readonly',

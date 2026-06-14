@@ -89,18 +89,57 @@ import { LineChart } from 'vue-chart-3'
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
 
-const store = usePerformanceStore()
+// Fetch the list of models to get ids + display names
+const { data: modelsList } = await useModelsList({ playedOn: null })
+const modelIds = computed(() => (modelsList.value?.items || []).map((m) => m.id))
+const modelNamesById = computed(() => {
+  const map = {}
+  for (const m of modelsList.value?.items || []) {
+    map[m.id] = m.name
+  }
+  return map
+})
 
-const data = ref({})
+// Fetch each model's full data in parallel; Nuxt/useAsyncData cache by key
+const { data: modelsMap } = await useAsyncData(
+  'batch-monitoring-models',
+  async () => {
+    const results = await Promise.all(
+      modelIds.value.map(async (id) => {
+        const d = await $fetch(`${apiUrl}/models/${id}`)
+        return [id, d]
+      }),
+    )
+    return Object.fromEntries(results)
+  },
+  { watch: [modelIds] },
+)
+
+const data = computed(() => {
+  const map = modelsMap.value || {}
+  return Object.entries(map).map(([id, m]) => ({
+    _id: id,
+    modelo: modelNamesById.value[id] ?? m?.modelo ?? '',
+    total: {
+      currentMean: m?.metrics?.total?.currentMean ?? 0,
+      ev: m?.metrics?.total?.ev ?? 0,
+      mean: m?.metrics?.total?.mean ?? 0,
+      currentGameCount: m?.metrics?.total?.currentGameCount ?? 0,
+      blocks_history: m?.blocksHistory ?? [],
+      confidenceInterval: m?.metrics?.total?.confidenceInterval ?? [0, 0],
+      pl_history: m?.metrics?.total?.pl_history ?? [],
+    },
+  }))
+})
 const chosenModel = ref({})
 const chartKey = ref(0)
 const filterString = ref('')
 const invertOrder = ref(false)
 const blocksTableColumns = [
-  { id: 'Qtd_Jogos', label: 'Qtd. jogos', key: 'Qtd_Jogos' },
-  { id: 'Profit', label: 'Profit', key: 'Profit' },
-  { id: 'ROI', label: 'ROI', key: 'ROI' },
-  { id: 'Ult_Dia', label: 'Último dia do bloco', key: 'Ult_Dia' },
+  { id: 'gameCount', label: 'Qtd. jogos', key: 'gameCount' },
+  { id: 'profit', label: 'Profit', key: 'profit' },
+  { id: 'roi', label: 'ROI', key: 'roi' },
+  { id: 'endDate', label: 'Último dia do bloco', key: 'endDate' },
 ]
 
 if (import.meta.client) {
@@ -171,7 +210,7 @@ const chartStyle = ref({
 // Variáveis computadas
 const sortedSanitizedData = computed(() => {
   const orderDirection = invertOrder.value ? 'asc' : 'desc'
-  let sorted = _orderBy(data.value, ['total.qtd_jgs_atual'], [orderDirection])
+  let sorted = _orderBy(data.value, ['total.currentGameCount'], [orderDirection])
   sorted = sorted.filter((item) =>
     modelNameToNaturalName(item.modelo).toLowerCase().includes(filterString.value.toLowerCase()),
   )
@@ -179,13 +218,13 @@ const sortedSanitizedData = computed(() => {
   return sorted.map((item) => ({
     _id: item._id,
     modelo: modelNameToNaturalName(item.modelo),
-    profit: (item.total.media_atual * 100).toFixed(2).toLocaleString('pt-BR'),
+    profit: (item.total.currentMean * 100).toFixed(2).toLocaleString('pt-BR'),
     ev: item.total.ev.toFixed(2).toLocaleString('pt-BR'),
-    media_profit: (item.total.media * 100).toFixed(2).toLocaleString('pt-BR'),
-    qtd_jgs: item.total.qtd_jgs_atual,
-    last_block_day: item.total.blocks_history?.at(-2)?.Ult_Dia,
-    bottom_int_conf: (item.total.intervalo_confianca[0] * 100).toFixed(2).toLocaleString('pt-BR'),
-    top_int_conf: (item.total.intervalo_confianca[1] * 100).toFixed(2).toLocaleString('pt-BR'),
+    media_profit: (item.total.mean * 100).toFixed(2).toLocaleString('pt-BR'),
+    qtd_jgs: item.total.currentGameCount,
+    last_block_day: item.total.blocks_history?.at(-2)?.endDate,
+    bottom_int_conf: (item.total.confidenceInterval[0] * 100).toFixed(2).toLocaleString('pt-BR'),
+    top_int_conf: (item.total.confidenceInterval[1] * 100).toFixed(2).toLocaleString('pt-BR'),
     blocks: item.total.blocks_history,
     qtd_blocks: item.total.blocks_history?.length - 1,
     pl_history: item.total.pl_history,
@@ -232,13 +271,6 @@ function resetsZoom() {
 function invertCardsOrder() {
   invertOrder.value = !invertOrder.value
 }
-
-// Código
-if (_isEmpty(store.getPerformanceData)) {
-  const { data } = await useFetch(`${apiUrl}/model-performance`)
-  store.setPerformanceData(data.value)
-}
-data.value = store.getPerformanceData
 </script>
 
 <style lang="css" scoped>

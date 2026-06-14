@@ -1,39 +1,43 @@
 <template>
-  <UCard class="h-full">
+  <UCard class="border border-zinc-800 bg-zinc-950/80">
     <template #header>
       <p class="font-semibold">{{ cardTitle }}</p>
     </template>
 
-    <div class="grid grid-cols-2 gap-y-5 text-sm">
-      <div class="flex gap-1">
-        <p class="font-semibold">Profit:</p>
+    <div class="flex flex-col gap-4">
+      <div class="grid grid-cols-2 gap-4 border-b border-zinc-800 pb-3">
+        <div>
+          <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Profit</p>
 
-        <p>
-          {{ metricsData.media_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }) }}
-        </p>
+          <p class="mt-1 text-xl font-semibold" :class="profitClass">
+            {{ formatNumber(metricsData.currentMean) }}
+          </p>
+        </div>
       </div>
 
-      <div class="flex gap-1">
-        <p class="font-semibold">Desvpad:</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
-        <p>
-          {{
-            metricsData.desvpad_atual.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
-          }}
-        </p>
-      </div>
+          <p class="mt-0.5 text-sm font-medium text-white">
+            {{ formatNumber(metricsData.currentStdDev) }}
+          </p>
+        </div>
 
-      <div class="flex gap-1">
-        <p class="font-semibold">Jogos:</p>
+        <div>
+          <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Jogos</p>
 
-        <p>{{ metricsData.qtd_jgs_atual.toFixed(0) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">
+            {{ Number(metricsData.currentGameCount || 0).toFixed(0) }}
+          </p>
+        </div>
       </div>
     </div>
   </UCard>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   metricsData: {
     type: Object,
     required: true,
@@ -42,5 +46,15 @@ defineProps({
     type: String,
     required: true,
   },
+})
+
+const formatNumber = (n, decimals = 2) =>
+  Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
+
+const profitClass = computed(() => {
+  const v = props.metricsData.currentMean
+  if (v > 0) return 'text-teal-400'
+  if (v < 0) return 'text-red-400'
+  return 'text-white'
 })
 </script>
