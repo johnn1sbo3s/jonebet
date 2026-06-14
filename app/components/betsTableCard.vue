@@ -20,6 +20,12 @@
       <template #date-cell="{ row }">
         {{ formatDate(row.original.date) }}
       </template>
+
+      <template #result-cell="{ row }">
+        <span :class="row.original.result?.toLowerCase() === 'green' ? 'text-teal-400' : 'text-red-400'">
+          {{ row.original.result ? row.original.result[0].toUpperCase() + row.original.result.slice(1) : '—' }}
+        </span>
+      </template>
     </UTable>
 
     <div class="flex justify-center pt-3">
