@@ -20,12 +20,6 @@
       <template #date-cell="{ row }">
         {{ formatDate(row.original.date) }}
       </template>
-
-      <template #score-cell="{ row }">
-        <span :class="row.original.score ? 'text-zinc-200' : 'text-zinc-600'">
-          {{ row.original.score || '—' }}
-        </span>
-      </template>
     </UTable>
 
     <div class="flex justify-center pt-3">
@@ -67,7 +61,6 @@ const allBetsDataFilteredColumns = [
   { id: 'date', accessorKey: 'date', header: 'Data' },
   { id: 'home', accessorKey: 'home', header: 'Casa' },
   { id: 'away', accessorKey: 'away', header: 'Fora' },
-  { id: 'score', accessorKey: 'score', header: 'Placar' },
   { id: 'odds', accessorKey: 'odds', header: 'Odds' },
   { id: 'result', accessorKey: 'result', header: 'Resultado' },
   { id: 'profit', accessorKey: 'profit', header: 'Lucro' },
