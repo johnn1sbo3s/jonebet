@@ -26,11 +26,6 @@ const navItems = [
       icon: 'i-lucide-bar-chart-3',
       to: '/performance',
     },
-    {
-      label: 'Monitoramento',
-      icon: 'i-lucide-inbox',
-      to: '/batch-monitoring',
-    },
   ],
 ]
 </script>

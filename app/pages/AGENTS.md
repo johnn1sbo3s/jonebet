@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Nuxt file-based routing pages. 5 routes total.
+Nuxt file-based routing pages. 4 routes total.
 
 ## Ownership
 
@@ -23,7 +23,6 @@ Nuxt file-based routing pages. 5 routes total.
 | `index.vue` | `/` | Dashboard: bankroll chart, monthly/daily results, monthly metrics |
 | `fixtures.vue` | `/fixtures` | Daily games with date picker + source toggle (Exchange/Bookie) |
 | `daily-bets.vue` | `/daily-bets` | Historical bet table with date/model filter + Excel export |
-| `batch-monitoring.vue` | `/batch-monitoring` | All models overview: cards, search, sort, chart, blocks table |
 | `performance/[[model]].vue` | `/performance` or `/performance/:model` | Model performance: chart, metrics, blocks, bets, results |
 
 ## Work Guidance
@@ -31,7 +30,6 @@ Nuxt file-based routing pages. 5 routes total.
 - `index.vue`: uses `GET /dashboard` and `GET /daily-results/{date}`
 - `fixtures.vue`: uses `GET /fixtures/daily`
 - `daily-bets.vue`: uses `GET /daily-bets`, ExcelJS for export
-- `batch-monitoring.vue`: iterates all models, fetches each via `useModelById`
 - `performance/[[model]].vue`: catch-all route, uses all model-specific composables
 
 ## Verification

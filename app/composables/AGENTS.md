@@ -36,7 +36,7 @@ Shared composable functions for API data fetching and Chart.js configuration.
 
 - Factory function returning Chart.js options object
 - Supports zoom (drag-to-zoom), annotation lines, responsive resizing
-- Shared across bankroll chart, performance chart, batch monitoring chart
+- Shared across bankroll chart and performance chart
 
 ## Verification
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-All 20 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
+All 19 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
 
 ## Ownership
 
@@ -23,7 +23,6 @@ All 20 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | Component | Purpose | Key Notes |
 |-----------|---------|-----------|
 | `bankrollEvolution.vue` | Line chart: bankroll growth over months | Uses `LineChart` from vue-chart-3, zoom plugin |
-| `batchCard.vue` | Batch monitoring card: model metrics + confidence interval | Links to performance page |
 | `betsTableCard.vue` | Paginated table of model bets | UTable + UPagination, page emit |
 | `blockMetricsCard.vue` | Statistical metrics: mean P/L, std dev, confidence interval | |
 | `blockMetricsPanel.vue` | Panel combining block metrics + history | Layout orchestrator |

@@ -21,7 +21,7 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 
 ## Work Guidance
 
-- Component names: camelCase for multi-word files (`batchCard.vue`, `pageHeader.vue`)
+- Component names: camelCase for multi-word files (`betsTableCard.vue`, `pageHeader.vue`)
 - Profit/loss coloring: teal-500 positive, red-500 negative
 - Chart.js plugins must be registered client-only (see `plugins/chartjs.client.js`)
 - API base URL: `https://api.jonebet.xyz` (via `runtimeConfig.public.API_URL`)
@@ -37,9 +37,9 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 
 | Path | Scope |
 |------|-------|
-| `components/` | 20 Vue components: cards, charts, tables, modals, skeletons |
+| `components/` | 19 Vue components: cards, charts, tables, modals, skeletons |
 | `composables/` | API layer (`useModelApi.js`) and chart options (`useChartOptions.js`) |
-| `pages/` | 5 pages: dashboard, fixtures, daily-bets, batch-monitoring, performance |
+| `pages/` | 4 pages: dashboard, fixtures, daily-bets, performance |
 | `stores/` | Pinia store: `yesterdayModelsStore.js` |
 | `utils/` | Helpers: lodash replacements, model name resolvers, date formatter |
 | `layouts/` | Default layout with UHeader navigation |
