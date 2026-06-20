@@ -20,7 +20,7 @@
           />
         </div>
 
-        <div v-if="!isNarrow" class="sticky top-4 h-full w-1/2">
+        <div v-if="!isNarrow" class="sticky top-[calc(var(--ui-header-height)+1rem)] h-full w-1/2">
           <div
             v-if="!chosenGame._id"
             class="flex h-[50svh] w-full flex-col items-center justify-center gap-2 rounded-2xl p-10 outline-1 outline-zinc-800 outline-dashed"
