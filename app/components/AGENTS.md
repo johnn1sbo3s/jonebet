@@ -2,7 +2,7 @@
 
 ## Purpose
 
-All 19 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
+All 20 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
 
 ## Ownership
 
@@ -28,6 +28,7 @@ All 19 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `blockMetricsPanel.vue` | Panel combining block metrics + history | Layout orchestrator |
 | `blocksHistoryList.vue` | Scrollable list of 100-game blocks with profit/ROI | |
 | `currentBlockMetricsCard.vue` | Current block: profit, std dev, game count | |
+| `dailyBetCard.vue` | Single bet card: date badge + header line + split match + 3 odds | Receives `bet` prop; used by `daily-bets.vue` list |
 | `dataErrorCard.vue` | Error/empty state card with icon + message | |
 | `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
 | `fixtureCard.vue` | Individual fixture card with odds + model count | |
