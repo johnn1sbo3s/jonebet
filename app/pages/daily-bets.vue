@@ -37,7 +37,7 @@
     />
 
     <ul v-else class="flex flex-col gap-3">
-      <li v-for="(bet, index) in bets" :key="`${bet.Date}-${bet.Time}-${bet.Home}-${index}`">
+      <li v-for="bet in bets" :key="bet._id || `${bet.Date}-${bet.Time}-${bet.Home}`">
         <DailyBetCard :bet="bet" />
       </li>
     </ul>
