@@ -1,158 +1,103 @@
 <template>
   <div class="flex flex-col gap-5">
     <div class="flex justify-between">
-      <PageHeader title="Apostas do dia" />
+      <PageHeader title="Apostas do dia" description="Histórico de apostas filtrado por data e modelo" />
     </div>
 
-    <div class="flex items-center gap-2">
-      <USelect v-model="date" class="w-1/2 sm:w-1/5" :options="dates" />
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <p v-if="!pending && !error" class="text-sm text-zinc-400">{{ qtd_games }} apostas</p>
 
-      <USelect v-model="selectedModel" class="w-1/2 sm:w-1/5" :options="modelsOptions" />
-    </div>
+      <div class="flex items-center gap-2">
+        <DatePicker v-model="date" :max-value="maxDateIso" />
 
-    <div>
-      <div class="mb-3 flex items-center justify-between">
-        <div v-if="bets.length > 0" class="text-sm text-zinc-400">{{ qtd_games }} apostas encontradas</div>
-
-        <UButton icon="i-lucide-download" variant="soft" color="blue" @click="exportTableToExcel(bets)">
-          Download
-        </UButton>
+        <USelectMenu
+          v-model="selectedModel"
+          class="max-w-89 min-w-60 rounded-xl border border-zinc-800 bg-zinc-900"
+          searchable
+          placeholder="Todos os modelos"
+          :items="modelItems"
+          value-key="value"
+        />
       </div>
-
-      <UTable
-        :ui="{
-          wrapper: 'relative overflow-x-auto border border-zinc-800 rounded-xl',
-          th: 'bg-zinc-950 text-zinc-400 text-xs uppercase',
-          td: 'border-t border-zinc-800 text-zinc-300',
-        }"
-        :rows="bets"
-        :columns="columns"
-        :sort="sort"
-        class="bg-zinc-900"
-      />
     </div>
+
+    <USkeleton v-if="pending" class="h-96 w-full rounded-xl" />
+
+    <DataErrorCard
+      v-else-if="error || !bets.length"
+      :message="
+        error ? 'Não foi possível carregar as apostas' : 'Nenhuma aposta encontrada para os filtros selecionados'
+      "
+    />
+
+    <UTable
+      v-else
+      :ui="{
+        wrapper: 'relative overflow-x-auto border border-zinc-800 rounded-xl',
+        th: 'bg-zinc-950 text-zinc-400 text-xs uppercase',
+        td: 'border-t border-zinc-800 text-zinc-300',
+      }"
+      :data="bets"
+      :columns="columns"
+      :sort="sort"
+      class="bg-zinc-900"
+    >
+      <template #Date-cell="{ row }">
+        {{ formatDate(row.original.Date) }}
+      </template>
+    </UTable>
   </div>
 </template>
 
 <script setup>
-const runtimeConfig = useRuntimeConfig()
-const apiUrl = runtimeConfig.public.API_URL
+import { DateTime } from 'luxon'
+import { formatDate } from '~/utils/formatDate'
+
+const yesterday = DateTime.now().setZone('America/Sao_Paulo').minus({ days: 1 }).toFormat('yyyy-MM-dd')
+
+const date = ref(yesterday)
+const selectedModel = ref(null)
+
+const { data: availableDates } = await useDailyBetsDates()
+const maxDateIso = computed(() => availableDates.value?.[0] || yesterday)
+
+const { data: modelsPayload } = await useModelsList({ playedOn: date })
+const modelItems = computed(() => [
+  { value: null, label: 'Todos os modelos' },
+  ...(modelsPayload.value?.items || [])
+    .filter((m) => m.playedOn)
+    .map((m) => ({ value: m.name, label: modelNameToNaturalName(m.name) }))
+    .sort((a, b) => a.label.localeCompare(b.label)),
+])
+
+const { data: betsRaw, pending, error } = await useDailyBets({ date, model: selectedModel })
+
+const columns = [
+  { id: 'Date', accessorKey: 'Date', header: 'Data' },
+  { id: 'Time', accessorKey: 'Time', header: 'Horário', sortable: true },
+  { id: 'Home', accessorKey: 'Home', header: 'Casa', sortable: true },
+  { id: 'Away', accessorKey: 'Away', header: 'Fora', sortable: true },
+  { id: 'FT_Odds_H', accessorKey: 'FT_Odds_H', header: 'Odds casa' },
+  { id: 'FT_Odds_D', accessorKey: 'FT_Odds_D', header: 'Odds empate' },
+  { id: 'FT_Odds_A', accessorKey: 'FT_Odds_A', header: 'Odds fora' },
+  { id: 'Modelo', accessorKey: 'Modelo', header: 'Modelo', sortable: true },
+]
 
 const sort = { column: 'Time', direction: 'asc' }
 
-const columns = [
-  { id: 'Date', key: 'Date', label: 'Data' },
-  { id: 'Time', key: 'Time', label: 'Horário', sortable: true },
-  { id: 'Home', key: 'Home', label: 'Casa', sortable: true },
-  { id: 'Away', key: 'Away', label: 'Fora', sortable: true },
-  { id: 'FT_Odds_H', key: 'FT_Odds_H', label: 'Odds casa' },
-  { id: 'FT_Odds_D', key: 'FT_Odds_D', label: 'Odds empate' },
-  { id: 'FT_Odds_A', key: 'FT_Odds_A', label: 'Odds fora' },
-  { id: 'Modelo', key: 'Modelo', label: 'Modelo', sortable: true },
-]
-
-const filterByDate = (selectedDate) => {
-  return Object.values(games).filter((item) => item.Date === selectedDate)
-}
-
-const normalizeColumns = (object_data) => {
-  return object_data.map((item) => ({
+const bets = computed(() =>
+  (betsRaw.value || []).map((item) => ({
     ...item,
     Modelo: modelNameToNaturalName(item.Modelo),
-    FT_Odds_H: parseFloat(item.FT_Odds_H).toFixed(2),
-    FT_Odds_D: parseFloat(item.FT_Odds_D).toFixed(2),
-    FT_Odds_A: parseFloat(item.FT_Odds_A).toFixed(2),
-  }))
-}
-
-const fetchData = async () => {
-  try {
-    const req = await fetch(`${apiUrl}/daily-bets`)
-    const data = await req.json()
-    return data
-  } catch (error) {
-    console.error('Erro ao buscar os dados:', error)
-    return []
-  }
-}
-
-const dates = ref([])
-const uniqueDates = new Set()
-const selectedModel = ref('Todos os modelos')
-
-const games = await fetchData()
-
-Object.values(games).forEach((item) => {
-  uniqueDates.add(item.Date)
-})
-dates.value = Array.from(uniqueDates).slice(-7)
-const date = ref(dates.value[dates.value?.length - 1])
-
-const modelsOptions = computed(() => {
-  const uniqueModels = new Set()
-  Object.values(games)
-    .filter((item) => item.Date === date.value)
-    .forEach((item) => {
-      uniqueModels.add(item.Modelo)
-    })
-
-  return [
-    { value: null, label: 'Todos os modelos' },
-    ...Array.from(uniqueModels)
-      .map((item) => modelNameToNaturalName(item))
-      .sort((a, b) => a.localeCompare(b)),
-  ]
-})
-
-const bets = ref([])
-
-watch(
-  () => date.value,
-  () => {
-    selectedModel.value = 'Todos os modelos'
-  },
+    FT_Odds_H: Number(item.FT_Odds_H).toFixed(2),
+    FT_Odds_D: Number(item.FT_Odds_D).toFixed(2),
+    FT_Odds_A: Number(item.FT_Odds_A).toFixed(2),
+  })),
 )
-
-const buildTableData = async (chosenDate) => {
-  try {
-    let filteredBets = filterByDate(chosenDate)
-    if (selectedModel.value !== 'Todos os modelos') {
-      filteredBets = filteredBets.filter((item) => item.Modelo === selectedModel.value)
-    }
-    bets.value = normalizeColumns(filteredBets)
-  } catch (error) {
-    console.error('Erro ao buscar apostas do dia:', error)
-    bets.value = [] // Limpar a lista em caso de erro
-  }
-}
 
 const qtd_games = computed(() => bets.value.length)
 
-watchEffect(() => {
-  buildTableData(date.value)
+watch(date, () => {
+  selectedModel.value = null
 })
-
-async function exportTableToExcel(tableData) {
-  const ExcelJS = await import('exceljs')
-  const workbook = new ExcelJS.Workbook()
-  const worksheet = workbook.addWorksheet('Tabela')
-
-  if (tableData.length > 0) {
-    worksheet.columns = Object.keys(tableData[0]).map((key) => ({ header: key, key }))
-    worksheet.addRows(tableData)
-  }
-
-  const buffer = await workbook.xlsx.writeBuffer()
-  const blob = new Blob([buffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `jogos_do_dia_${new Date().toISOString().slice(0, 10)}.xlsx`
-  a.click()
-  URL.revokeObjectURL(url)
-}
 </script>
-
-<style></style>
