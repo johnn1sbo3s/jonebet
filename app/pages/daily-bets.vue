@@ -21,7 +21,13 @@
       </div>
     </div>
 
-    <USkeleton v-if="pending" class="h-96 w-full rounded-xl" />
+    <template v-if="pending">
+      <USkeleton class="h-52 w-full rounded-2xl" />
+
+      <USkeleton class="h-52 w-full rounded-2xl" />
+
+      <USkeleton class="h-52 w-full rounded-2xl" />
+    </template>
 
     <DataErrorCard
       v-else-if="error || !bets.length"
@@ -30,28 +36,16 @@
       "
     />
 
-    <UTable
-      v-else
-      :ui="{
-        wrapper: 'relative overflow-x-auto border border-zinc-800 rounded-xl',
-        th: 'bg-zinc-950 text-zinc-400 text-xs uppercase',
-        td: 'border-t border-zinc-800 text-zinc-300',
-      }"
-      :data="bets"
-      :columns="columns"
-      :sort="sort"
-      class="bg-zinc-900"
-    >
-      <template #Date-cell="{ row }">
-        {{ formatDate(row.original.Date) }}
-      </template>
-    </UTable>
+    <ul v-else class="flex flex-col gap-3">
+      <li v-for="(bet, index) in bets" :key="`${bet.Date}-${bet.Time}-${bet.Home}-${index}`">
+        <DailyBetCard :bet="bet" />
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup>
 import { DateTime } from 'luxon'
-import { formatDate } from '~/utils/formatDate'
 
 const yesterday = DateTime.now().setZone('America/Sao_Paulo').minus({ days: 1 }).toFormat('yyyy-MM-dd')
 
@@ -71,19 +65,6 @@ const modelItems = computed(() => [
 ])
 
 const { data: betsRaw, pending, error } = await useDailyBets({ date, model: selectedModel })
-
-const columns = [
-  { id: 'Date', accessorKey: 'Date', header: 'Data' },
-  { id: 'Time', accessorKey: 'Time', header: 'Horário', sortable: true },
-  { id: 'Home', accessorKey: 'Home', header: 'Casa', sortable: true },
-  { id: 'Away', accessorKey: 'Away', header: 'Fora', sortable: true },
-  { id: 'FT_Odds_H', accessorKey: 'FT_Odds_H', header: 'Odds casa' },
-  { id: 'FT_Odds_D', accessorKey: 'FT_Odds_D', header: 'Odds empate' },
-  { id: 'FT_Odds_A', accessorKey: 'FT_Odds_A', header: 'Odds fora' },
-  { id: 'Modelo', accessorKey: 'Modelo', header: 'Modelo', sortable: true },
-]
-
-const sort = { column: 'Time', direction: 'asc' }
 
 const bets = computed(() =>
   (betsRaw.value || []).map((item) => ({
