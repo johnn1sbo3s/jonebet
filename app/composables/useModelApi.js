@@ -7,17 +7,18 @@ const useCache = () => useState('model-api-cache', () => ({}))
 
 export function useModelsList({ playedOn = null } = {}) {
   const cache = useCache()
-  const key = `models-list-${playedOn ?? 'default'}`
-  const query = {}
-  if (playedOn) query.playedOn = playedOn
+  const playedOnRef = isRef(playedOn) ? playedOn : ref(playedOn)
+  const key = computed(() => `models-list-${playedOnRef.value ?? 'default'}`)
+  const query = computed(() => (playedOnRef.value ? { playedOn: playedOnRef.value } : {}))
 
   return useFetch(`${apiUrl()}/models`, {
     key,
     query,
     default: () => ({ items: [] }),
+    watch: [playedOnRef],
     getCachedData: (k) => cache.value[k],
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key] = response._data
+      if (response?.ok && response._data) cache.value[key.value] = response._data
     },
   })
 }
@@ -91,6 +92,39 @@ export function useModelBets(id, { page, size, sort, order }) {
     getCachedData: (k) => cache.value[k],
     onResponse({ response }) {
       if (response?.ok && response._data) cache.value[key.value] = response._data
+    },
+  })
+}
+
+export function useDailyBets({ date, model }) {
+  const cache = useCache()
+  const key = computed(() => `daily-bets-${date.value ?? 'any'}-${model.value ?? 'any'}`)
+  return useFetch(() => `${apiUrl()}/daily-bets`, {
+    key,
+    query: computed(() => {
+      const q = {}
+      if (date.value) q.date = date.value
+      if (model.value) q.model = model.value
+      return q
+    }),
+    default: () => [],
+    watch: [date, model],
+    getCachedData: (k) => cache.value[k],
+    onResponse({ response }) {
+      if (response?.ok && response._data !== undefined) cache.value[key.value] = response._data
+    },
+  })
+}
+
+export function useDailyBetsDates() {
+  const cache = useCache()
+  const key = 'daily-bets-available-dates'
+  return useFetch(`${apiUrl()}/daily-bets/available-dates`, {
+    key,
+    default: () => [],
+    getCachedData: () => cache.value[key],
+    onResponse({ response }) {
+      if (response?.ok && response._data) cache.value[key] = response._data
     },
   })
 }

@@ -49,6 +49,7 @@ const nuxtGlobals = {
       toRef: 'readonly',
       toRefs: 'readonly',
       unref: 'readonly',
+      isRef: 'readonly',
       nextTick: 'readonly',
       onMounted: 'readonly',
       onUnmounted: 'readonly',
