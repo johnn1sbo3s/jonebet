@@ -2,7 +2,7 @@
 
 ## Purpose
 
-All 20 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
+All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
 
 ## Ownership
 
