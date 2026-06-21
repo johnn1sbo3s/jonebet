@@ -22,14 +22,14 @@ Nuxt file-based routing pages. 4 routes total.
 |------|-------|-------------|
 | `index.vue` | `/` | Dashboard: bankroll chart, monthly/daily results, monthly metrics |
 | `fixtures.vue` | `/fixtures` | Daily games with date picker + source toggle (Exchange/Bookie) |
-| `daily-bets.vue` | `/daily-bets` | Historical bet table with date/model filter. Uses `useDailyBets` + `useDailyBetsDates` + `useModelsList({ playedOn })`; `DatePicker` for date, `USelectMenu` (searchable) for model. |
+| `daily-bets.vue` | `/daily-bets` | Historical bet list (cards) with date/model filter. Uses `useDailyBets` + `useDailyBetsDates` + `useModelsList({ playedOn })`; `DatePicker` for date, `USelectMenu` (searchable) for model; `<DailyBetCard>` per bet. |
 | `performance/[[model]].vue` | `/performance` or `/performance/:model` | Model performance: chart, metrics, blocks, bets, results |
 
 ## Work Guidance
 
 - `index.vue`: uses `GET /dashboard` and `GET /daily-results/{date}`
 - `fixtures.vue`: uses `GET /fixtures/daily`
-- `daily-bets.vue`: uses `GET /daily-bets?date=&model=`, `GET /daily-bets/available-dates`, `GET /models?playedOn=`.
+- `daily-bets.vue`: uses `GET /daily-bets?date=&model=`, `GET /daily-bets/available-dates`, `GET /models?playedOn=`. Renders a vertical list of `<DailyBetCard>` (no UTable).
 - `performance/[[model]].vue`: catch-all route, uses all model-specific composables
 
 ## Verification
