@@ -5,7 +5,7 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <p v-if="!pending && !error" class="text-sm text-zinc-400">{{ qtd_games }} apostas</p>
+      <p class="min-w-24 text-sm text-zinc-400">{{ qtd_games }} apostas</p>
 
       <div class="flex items-center gap-2">
         <DatePicker v-model="date" :max-value="maxDateIso" />
