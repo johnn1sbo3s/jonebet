@@ -26,7 +26,8 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 - Chart.js plugins must be registered client-only (see `plugins/chartjs.client.js`)
 - API base URL: `https://api.jonebet.xyz` (via `runtimeConfig.public.API_URL`)
 - Date handling: Luxon with `America/Sao_Paulo` timezone
-- Excel export: ExcelJS (used in daily-bets page)
+- Excel export: ExcelJS (declared in `package.json` but currently unused; was previously the daily-bets page's `exportTableToExcel` function)
+
 
 ## Verification
 
