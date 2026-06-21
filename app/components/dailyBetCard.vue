@@ -10,7 +10,9 @@
       <div class="mb-6">
         <div class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Horário · Modelo</div>
 
-        <div class="text-sm text-zinc-200">{{ bet.Time }} · {{ bet.Modelo }}</div>
+        <div class="text-sm text-zinc-200">
+          {{ bet.Time }} · <span class="font-semibold text-teal-400">{{ bet.Modelo }}</span>
+        </div>
       </div>
 
       <div class="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5">
