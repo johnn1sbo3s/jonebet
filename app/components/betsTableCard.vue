@@ -40,7 +40,6 @@
 </template>
 
 <script setup>
-import { formatDate } from '~/utils/formatDate'
 
 const props = defineProps({
   betsItems: { type: Array, required: true },

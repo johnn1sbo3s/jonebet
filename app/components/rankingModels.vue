@@ -28,7 +28,7 @@
 
   <UModal
     v-model:open="isModalOpen"
-    :title="`Todos os modelos — ${formatDate(sanitizedAllResultsData[0]?.Date)}`"
+    :title="`Todos os modelos — ${formatDateOrMonth(sanitizedAllResultsData[0]?.Date)}`"
     :ui="{ content: 'max-w-3xl' }"
   >
     <template #body>
@@ -79,16 +79,16 @@ const props = defineProps({
   },
 })
 
-function formatDate(dateStr) {
+function formatYearMonth(yyyyMm) {
+  const [y, m] = yyyyMm.split('-')
+  return `${m}/${y}`
+}
+
+function formatDateOrMonth(dateStr) {
   if (!dateStr) return ''
   const parts = dateStr.split('-')
-  if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}/${parts[0]}`
-  }
-  if (parts.length === 2) {
-    return `${parts[1]}/${parts[0]}`
-  }
-  return dateStr
+  if (parts.length === 2) return formatYearMonth(dateStr)
+  return formatDate(dateStr)
 }
 
 const isModalOpen = ref(false)

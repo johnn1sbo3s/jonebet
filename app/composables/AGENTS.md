@@ -36,9 +36,13 @@ Shared composable functions for API data fetching and Chart.js configuration.
 
 ### useChartOptions.js
 
-- Factory function returning Chart.js options object
-- Supports zoom (drag-to-zoom), annotation lines, responsive resizing
-- Shared across bankroll chart and performance chart
+Three pure factory functions, no Vue reactivity inside:
+
+- `useStaticLineOptions()` — used by the drawdown sub-chart (no zoom, no legend, no tooltips, no axes)
+- `useBankrollChartOptions()` — used by `BankrollEvolution` (zoom + pan + static annotation)
+- `usePerformanceChartOptions({ annotationIndex })` — used by `performanceChartCard` (zoom + pan + dynamic annotation line)
+
+The Chart.js plugins (zoom, annotation, registerables) are registered ONCE in `plugins/chartjs.client.js`. Do NOT re-register in components. The factory only assembles the options object; Chart.js plugin code lives in the plugin.
 
 ## Verification
 
