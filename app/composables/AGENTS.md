@@ -13,7 +13,9 @@ Shared composable functions for API data fetching and Chart.js configuration.
 
 - **No TypeScript** — plain JavaScript files
 - API base URL via `useRuntimeConfig().public.API_URL` (`https://api.jonebet.xyz`)
-- Cache stored in `useState('model-api-cache')` — shared across components
+- Cache stored in `useState('model-api-cache')` — shared across components, in-memory only, cleared on hard reload
+- Bounded LRU at 200 entries; reads bump recency, writes evict the oldest when full. The cap is intentional — `useModelBets` keys include page+size+sort+order, so unbounded growth is the default.
+- On `onResponseError`, the existing data is kept in cache and returned via `getCachedData`; the composable's `error` ref is set by Nuxt and pages should render `<DataErrorCard>` from it.
 - All API calls are GET-only, no authentication
 
 ## Work Guidance
