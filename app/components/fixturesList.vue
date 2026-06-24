@@ -69,11 +69,17 @@
 <script setup>
 const isNarrow = ref(false)
 
+function handleResize() {
+  isNarrow.value = window.innerWidth < 1024
+}
+
 onMounted(() => {
   isNarrow.value = window.innerWidth < 1024
-  window.addEventListener('resize', () => {
-    isNarrow.value = window.innerWidth < 1024
-  })
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 const props = defineProps({

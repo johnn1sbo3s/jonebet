@@ -9,7 +9,10 @@ Shared utility functions used across components and composables.
 - `lodashHelpers.js`: Native lodash replacements with `_` prefix
 - `modelsGroup.js`: Model name constants
 - `resolveModelName.js`: Model name converters
-- `formatDate.js`: Date formatting
+- `formatDate.js`: Luxon-backed ISO → Brazilian date formatter (`dd/MM/yyyy` or `dd/MM/yy`)
+- `enums.js`: Frozen enum tables (`SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR`) — use instead of magic strings
+- `timezone.js`: `SP_TZ` constant + `yesterdayIso(tz?)` helper
+- `schemas.js`: zod schemas per API endpoint + `safeParse(endpoint, data)` helper
 
 ## Local Contracts
 
@@ -32,7 +35,23 @@ Shared utility functions used across components and composables.
 - `modelNameToIdName(name)`: converts Title Case to snake_case
 
 ### formatDate.js
-- `formatDate(isoString)`: converts ISO date to dd/mm/yyyy (Brazilian format)
+- `formatDate(iso, { style })` — Luxon-backed ISO → Brazilian date formatter.
+- `style: 'long'` (default) → `dd/MM/yyyy`; `style: 'short'` → `dd/MM/yy`.
+- Empty/falsy `iso` returns `''`; an unparseable ISO string is returned as-is (no throw).
+- The function is auto-imported across `app/`. Do not duplicate it per-component — delete any local `function formatDate` re-implementations and import this one instead.
+
+### enums.js
+- Import named exports. Use the frozen tables for category enums: `SOURCE.EXCHANGE`, `PERIOD.DAILY`, `GROUP_BY.DAY`, `RESULT.GREEN`. Never inline the string literal.
+- `TRADING_DAYS_PER_YEAR = 252` is the annualization factor for Sharpe ratio of daily strategies. Use it instead of hardcoding `252` in any Sharpe formula.
+- All tables are `Object.freeze`'d — mutation is a no-op in sloppy mode, throws in strict mode.
+
+### timezone.js
+- Import `SP_TZ` and `yesterdayIso` from anywhere that needs the SP zone or "yesterday" date. Do not duplicate the literal `'America/Sao_Paulo'`.
+
+### schemas.js
+- One zod schema per API endpoint in `endpointSchemas`. Each entry: `{ schema, fallback }`. The fallback MUST match the `default: () => ...` of the composable that reads it.
+- Use `.passthrough()` on object schemas so unknown backend fields don't fail parsing.
+- `safeParse` logs ONE warn line on mismatch and returns the fallback. Never throw.
 
 ## Verification
 

@@ -1,9 +1,33 @@
+import { safeParse } from '~/utils/schemas'
+
 const apiUrl = () => useRuntimeConfig().public.API_URL
 
 // Single shared cache for all model data, persisted across model
 // switches and SPA navigations within the same Nuxt app instance.
 // Cleared on hard reload.
 const useCache = () => useState('model-api-cache', () => ({}))
+// Bounded LRU cache. Cap at 200 entries — plenty for a single-tab session
+// (the cache is in-memory and cleared on hard reload). When the cap is hit,
+// the least-recently-read entry is evicted before a new one is written.
+const CACHE_CAP = 200
+
+function cacheGet(cache, key) {
+  const value = cache.value[key]
+  if (value === undefined) return undefined
+  // Move to end (most recently used). Delete + reassign preserves LRU order.
+  delete cache.value[key]
+  cache.value[key] = value
+  return value
+}
+
+function cacheSet(cache, key, value) {
+  if (key in cache.value) delete cache.value[key]
+  cache.value[key] = value
+  const keys = Object.keys(cache.value)
+  while (keys.length > CACHE_CAP) {
+    delete cache.value[keys.shift()]
+  }
+}
 
 export function useModelsList({ playedOn = null } = {}) {
   const cache = useCache()
@@ -16,9 +40,13 @@ export function useModelsList({ playedOn = null } = {}) {
     query,
     default: () => ({ items: [] }),
     watch: [playedOnRef],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelsList', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -30,9 +58,13 @@ export function useModelById(id) {
     key,
     default: () => null,
     watch: [id],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelById', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -45,9 +77,13 @@ export function useModelChart(id, groupBy) {
     query: computed(() => ({ groupBy: groupBy.value })),
     default: () => ({ labels: [], data: [], annotationIndex: 0 }),
     watch: [id, groupBy],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelChart', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -59,9 +95,13 @@ export function useModelTrend(id, enabled) {
     key,
     default: () => ({ slope: 0, intercept: 0, line: [], distance: 0 }),
     watch: [id, enabled],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelTrend', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -74,9 +114,13 @@ export function useModelResults(id, period) {
     query: computed(() => ({ period: period.value })),
     default: () => [],
     watch: [id, period],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelResults', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -89,9 +133,13 @@ export function useModelBets(id, { page, size, sort, order }) {
     query: computed(() => ({ page: page.value, size: size.value, sort: sort.value, order: order.value })),
     default: () => ({ items: [], total: 0, page: page.value, size: size.value }),
     watch: [id, page, size, sort, order],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key.value] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('modelBets', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -109,9 +157,13 @@ export function useDailyBets({ date, model }) {
     }),
     default: () => ({ date: null, bets: [], total: 0 }),
     watch: [date, model],
-    getCachedData: (k) => cache.value[k],
+    getCachedData: (k) => cacheGet(cache, k),
     onResponse({ response }) {
-      if (response?.ok && response._data !== undefined) cache.value[key.value] = response._data
+      if (response?.ok && response._data !== undefined) {
+        const parsed = safeParse('dailyBets', response._data)
+        cacheSet(cache, key.value, parsed)
+        response._data = parsed
+      }
     },
   })
 }
@@ -122,9 +174,13 @@ export function useDailyBetsDates() {
   return useFetch(`${apiUrl()}/daily-bets/available-dates`, {
     key,
     default: () => [],
-    getCachedData: () => cache.value[key],
+    getCachedData: () => cacheGet(cache, key),
     onResponse({ response }) {
-      if (response?.ok && response._data) cache.value[key] = response._data
+      if (response?.ok && response._data) {
+        const parsed = safeParse('dailyBetsDates', response._data)
+        cacheSet(cache, key, parsed)
+        response._data = parsed
+      }
     },
   })
 }

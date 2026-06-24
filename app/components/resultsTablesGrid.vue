@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { formatDate } from '~/utils/formatDate'
 
 defineProps({
   monthlyResults: { type: Array, required: true },

@@ -22,7 +22,7 @@ All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 
 | Component | Purpose | Key Notes |
 |-----------|---------|-----------|
-| `bankrollEvolution.vue` | Line chart: bankroll growth over months | Uses `LineChart` from vue-chart-3, zoom plugin |
+| `bankrollEvolution.vue` | Line chart: bankroll growth over months | Uses `LineChart` from vue-chart-3, options from `useBankrollChartOptions` |
 | `betsTableCard.vue` | Paginated table of model bets | UTable + UPagination, page emit |
 | `blockMetricsCard.vue` | Statistical metrics: mean P/L, std dev, confidence interval | |
 | `blockMetricsPanel.vue` | Panel combining block metrics + history | Layout orchestrator |
@@ -33,12 +33,12 @@ All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
 | `fixtureCard.vue` | Individual fixture card with odds + model count | |
 | `fixtureDetailsCard.vue` | Fixture detail: odds, O/U, BTTS, allowed models | |
-| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie) | Mobile: UDrawer |
+| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie) | Mobile: UDrawer; resize listener cleaned up in `onUnmounted` |
 | `fixturesListSkeleton.vue` | Loading skeleton for fixtures list | |
 | `metricsCard.vue` | Model metrics: PLB, ROI, WR, odds, EV, drawdown, entries | |
 | `monthlyResultsList.vue` | Scrollable monthly results with border accent | |
 | `pageHeader.vue` | Reusable page header (title + description + right slot) | |
-| `performanceChartCard.vue` | Performance chart: accumulation, trend, drawdown, Sharpe, streak | Most complex component |
+| `performanceChartCard.vue` | Performance chart: accumulation, trend, drawdown, Sharpe, streak | Options from `usePerformanceChartOptions({ annotationIndex })`; `useStaticLineOptions` for the drawdown sub-chart |
 | `performancePageSkeleton.vue` | Loading skeleton for performance page | |
 | `rankingModels.vue` | Top N models ranking with shimmer + "see all" modal | |
 | `resultsTablesGrid.vue` | 2-column grid: monthly + daily results tables | |

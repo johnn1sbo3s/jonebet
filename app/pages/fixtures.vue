@@ -18,8 +18,17 @@ const isLoading = ref(true)
 const source = ref('exchange')
 const fixtures = ref([])
 const bets = ref([])
+const fetchError = ref(null)
 
-const { data } = await useFetch(`${apiUrl}/fixtures/daily`, { params: { source: source.value } })
+const { data } = await useFetch(`${apiUrl}/fixtures/daily`, {
+  query: { source: source.value },
+  onResponse({ response }) {
+    if (response?.ok && response._data) {
+      const parsed = safeParse('fixturesDaily', response._data)
+      response._data = parsed
+    }
+  },
+})
 
 if (data.value) {
   selectedDate.value = data.value.date
@@ -31,12 +40,19 @@ isLoading.value = false
 
 async function fetchDaily() {
   isLoading.value = true
-  const result = await $fetch(`${apiUrl}/fixtures/daily`, {
-    query: { date: selectedDate.value, source: source.value },
-  })
-  fixtures.value = result.fixtures
-  bets.value = result.bets
-  isLoading.value = false
+  fetchError.value = null
+  try {
+    const result = await $fetch(`${apiUrl}/fixtures/daily`, {
+      query: { date: selectedDate.value, source: source.value },
+    })
+    const parsed = safeParse('fixturesDaily', result)
+    fixtures.value = parsed.fixtures || []
+    bets.value = parsed.bets || []
+  } catch {
+    fetchError.value = true
+  } finally {
+    isLoading.value = false
+  }
 }
 
 watch(selectedDate, () => {

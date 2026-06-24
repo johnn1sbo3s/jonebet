@@ -233,8 +233,10 @@
 </template>
 
 <script setup>
-import { Chart, registerables } from 'chart.js'
 import { LineChart } from 'vue-chart-3'
+import { formatDate } from '~/utils/formatDate'
+import { TRADING_DAYS_PER_YEAR } from '~/utils/enums'
+import { usePerformanceChartOptions, useStaticLineOptions } from '~/composables/useChartOptions'
 
 const props = defineProps({
   chosenModelId: { type: String, required: true },
@@ -294,13 +296,8 @@ const period = computed(() => {
   if (!days || !days.length) return null
   const start = days[0].date
   const end = days[days.length - 1].date
-  return `${formatDate(start)} → ${formatDate(end)}`
+  return `${formatDate(start, { style: 'short' })} → ${formatDate(end, { style: 'short' })}`
 })
-function formatDate(iso) {
-  if (!iso) return ''
-  const [y, m, d] = iso.split('-')
-  return `${d}/${m}/${y.slice(-2)}`
-}
 
 // --- Drawdown (computed from the accumulation series) ---
 const drawdownSeries = computed(() => {
@@ -332,19 +329,7 @@ const drawdownChartData = computed(() => ({
     },
   ],
 }))
-const drawdownOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  animation: false,
-  scales: {
-    y: { beginAtZero: true, display: false },
-    x: { display: false },
-  },
-  plugins: {
-    legend: { display: false },
-    tooltip: { enabled: false },
-  },
-}
+const drawdownOptions = useStaticLineOptions()
 
 // --- Risk stats (computed from the daily results series) ---
 const dailyStats = computed(() => {
@@ -357,7 +342,7 @@ const dailyStats = computed(() => {
   const mean = gains.reduce((a, b) => a + b, 0) / gains.length
   const variance = gains.reduce((a, b) => a + (b - mean) ** 2, 0) / gains.length
   const std = Math.sqrt(variance)
-  const sharpe = std > 0 ? (mean / std) * Math.sqrt(252) : 0
+  const sharpe = std > 0 ? (mean / std) * Math.sqrt(TRADING_DAYS_PER_YEAR) : 0
   let streak = 0
   let streakType = null
   for (let i = days.length - 1; i >= 0; i--) {
@@ -430,40 +415,9 @@ const chartData = computed(() => {
   return { labels: payload.labels || [], datasets }
 })
 
-const chartOptions = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  transitions: { zoom: { animation: { duration: 1000, easing: 'easeOutCubic' } } },
-  scales: { y: { beginAtZero: false }, x: { beginAtZero: false } },
-  plugins: {
-    legend: { position: 'top', display: true },
-    zoom: {
-      zoom: {
-        wheel: { enabled: true },
-        pinch: { enabled: true },
-        mode: 'x',
-        drag: {
-          enabled: true,
-          borderColor: 'rgb(20 184 166)',
-          borderWidth: 1,
-          backgroundColor: 'rgba(20, 184, 166, 0.15)',
-        },
-      },
-      pan: { enabled: true, mode: 'x', modifierKey: 'ctrl' },
-    },
-    annotation: {
-      annotations: {
-        line1: {
-          type: 'line',
-          xMin: chartPayload.value?.annotationIndex ?? -100,
-          xMax: chartPayload.value?.annotationIndex ?? -100,
-          borderColor: 'rgb(20 184 166)',
-          borderWidth: 2,
-        },
-      },
-    },
-  },
-}))
+const chartOptions = computed(() =>
+  usePerformanceChartOptions({ annotationIndex: chartPayload.value?.annotationIndex }),
+)
 
 // Remount the chart when the model or grouping changes so the
 // internal zoom/pan state is reset (and pending state shows empty).
@@ -471,15 +425,6 @@ watch([chosenModelIdRef, groupBy], () => {
   chartKey.value++
 })
 
-// Register Chart.js plugins on the client only (after mount, so the
-// top-level await doesn't break the Nuxt setup context).
-onMounted(async () => {
-  const zoomPlugin = (await import('chartjs-plugin-zoom')).default
-  const annotationPlugin = (await import('chartjs-plugin-annotation')).default
-  Chart.register(zoomPlugin)
-  Chart.register(annotationPlugin)
-  Chart.register(...registerables)
-})
 
 // --- Helpers for template formatting ---
 function formatNumber(n) {

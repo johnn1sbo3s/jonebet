@@ -30,6 +30,7 @@ Nuxt file-based routing pages. 4 routes total.
 - `index.vue`: uses `GET /dashboard` and `GET /daily-results/{date}`
 - `fixtures.vue`: uses `GET /fixtures/daily`
 - `daily-bets.vue`: uses `GET /daily-bets?date=&model=`, `GET /daily-bets/available-dates`, `GET /models?playedOn=`. Renders a vertical list of `<DailyBetCard>` (no UTable).
+- `useFetch` query string params go in the `query` option, not `params`. `params` are interpolated into the URL path template and silently dropped for non-template URLs.
 - `performance/[[model]].vue`: catch-all route, uses all model-specific composables
 
 ## Verification

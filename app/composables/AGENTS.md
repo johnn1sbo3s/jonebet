@@ -13,7 +13,9 @@ Shared composable functions for API data fetching and Chart.js configuration.
 
 - **No TypeScript** — plain JavaScript files
 - API base URL via `useRuntimeConfig().public.API_URL` (`https://api.jonebet.xyz`)
-- Cache stored in `useState('model-api-cache')` — shared across components
+- Cache stored in `useState('model-api-cache')` — shared across components, in-memory only, cleared on hard reload
+- Bounded LRU at 200 entries; reads bump recency, writes evict the oldest when full. The cap is intentional — `useModelBets` keys include page+size+sort+order, so unbounded growth is the default.
+- On `onResponseError`, the existing data is kept in cache and returned via `getCachedData`; the composable's `error` ref is set by Nuxt and pages should render `<DataErrorCard>` from it.
 - All API calls are GET-only, no authentication
 
 ## Work Guidance
@@ -34,11 +36,21 @@ Shared composable functions for API data fetching and Chart.js configuration.
 - Also used by `index.vue` for dashboard and daily-results endpoints
 - Cache key pattern: `${endpoint}:${params}`
 
+### Runtime contract validation
+
+- `app/utils/schemas.js` defines a zod schema per endpoint. `safeParse(endpoint, data)` parses and returns the parsed value, or the endpoint's documented fallback with a `console.warn` on mismatch.
+- Every `onResponse` in `useModelApi.js` wraps `_data` through `safeParse`. If the backend renames a field, we get one warn line in the console and the UI shows the empty/error state — never silent `NaN`.
+- When adding a new endpoint, add a schema + fallback to `endpointSchemas` and wire `safeParse` in the composable's `onResponse`.
+
 ### useChartOptions.js
 
-- Factory function returning Chart.js options object
-- Supports zoom (drag-to-zoom), annotation lines, responsive resizing
-- Shared across bankroll chart and performance chart
+Three pure factory functions, no Vue reactivity inside:
+
+- `useStaticLineOptions()` — used by the drawdown sub-chart (no zoom, no legend, no tooltips, no axes)
+- `useBankrollChartOptions()` — used by `BankrollEvolution` (zoom + pan + static annotation)
+- `usePerformanceChartOptions({ annotationIndex })` — used by `performanceChartCard` (zoom + pan + dynamic annotation line)
+
+The Chart.js plugins (zoom, annotation, registerables) are registered ONCE in `plugins/chartjs.client.js`. Do NOT re-register in components. The factory only assembles the options object; Chart.js plugin code lives in the plugin.
 
 ## Verification
 

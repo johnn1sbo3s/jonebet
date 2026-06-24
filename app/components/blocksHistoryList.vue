@@ -73,11 +73,6 @@ watch(
   { deep: true },
 )
 
-function formatDate(iso) {
-  if (!iso) return ''
-  const [y, m, d] = iso.split('-')
-  return `${d}/${m}/${y}`
-}
 
 function formatNumber(n, decimals = 2) {
   return Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })

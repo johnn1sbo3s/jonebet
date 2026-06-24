@@ -18,6 +18,7 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 - **Language**: Portuguese (Brazilian) for all UI text; comments may be mixed PT/EN
 - **Theme**: dark-only, teal primary, zinc surface hierarchy (950→900→800)
 - **No shadows**: depth via surface contrast only
+- **Error boundary**: `app/error.vue` is the top-level error/404 boundary; all unhandled throws render here with `clearError({ redirect: '/' })`. Pages should not swallow errors silently — let them bubble to this boundary or surface via composable `error` refs.
 
 ## Work Guidance
 
@@ -31,8 +32,11 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 
 ## Verification
 
-- User runs `pnpm run dev` and checks browser
+- User runs `pnpm run dev` and checks the browser
 - Unit tests: `pnpm test:unit`
+- The new top-level `app/error.vue` boundary is verified by visiting any non-existent route (e.g. `/__nonexistent__`) — should render the themed error card, not the default Nuxt page
+- Cache bound is verified by inspecting `useState('model-api-cache')` in browser devtools after navigating many pages — should never exceed ~200 entries
+- zod schema mismatches are verified by temporarily breaking a backend field and watching the browser console for a single `[useModelApi] <endpoint>: schema mismatch — …` warn line per request
 
 ## Child DOX Index
 
@@ -41,7 +45,6 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 | `components/` | 23 Vue components: cards, charts, tables, modals, skeletons |
 | `composables/` | API layer (`useModelApi.js`) and chart options (`useChartOptions.js`) |
 | `pages/` | 4 pages: dashboard, fixtures, daily-bets, performance |
-| `stores/` | Pinia store: `yesterdayModelsStore.js` |
 | `utils/` | Helpers: lodash replacements, model name resolvers, date formatter |
 | `layouts/` | Default layout with UHeader navigation |
 | `plugins/` | Client-only Chart.js plugin registration |
