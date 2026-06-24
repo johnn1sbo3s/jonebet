@@ -12,6 +12,7 @@ Shared utility functions used across components and composables.
 - `formatDate.js`: Luxon-backed ISO → Brazilian date formatter (`dd/MM/yyyy` or `dd/MM/yy`)
 - `enums.js`: Frozen enum tables (`SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR`) — use instead of magic strings
 - `timezone.js`: `SP_TZ` constant + `yesterdayIso(tz?)` helper
+- `schemas.js`: zod schemas per API endpoint + `safeParse(endpoint, data)` helper
 
 ## Local Contracts
 
@@ -46,6 +47,11 @@ Shared utility functions used across components and composables.
 
 ### timezone.js
 - Import `SP_TZ` and `yesterdayIso` from anywhere that needs the SP zone or "yesterday" date. Do not duplicate the literal `'America/Sao_Paulo'`.
+
+### schemas.js
+- One zod schema per API endpoint in `endpointSchemas`. Each entry: `{ schema, fallback }`. The fallback MUST match the `default: () => ...` of the composable that reads it.
+- Use `.passthrough()` on object schemas so unknown backend fields don't fail parsing.
+- `safeParse` logs ONE warn line on mismatch and returns the fallback. Never throw.
 
 ## Verification
 

@@ -22,6 +22,12 @@
       message="Não foi possível carregar a evolução da banca"
     />
 
+    <DataErrorCard
+      v-else-if="dashboardError"
+      class="mt-2"
+      message="Não foi possível carregar o dashboard"
+    />
+
     <div v-else class="mt-2 flex flex-col gap-3 lg:flex-row">
       <UCard class="w-full border border-zinc-800 bg-zinc-900 lg:w-[70%]">
         <template #header>
@@ -165,7 +171,14 @@ const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
 const showAlert = ref(true)
 
-const { data: rawData, status } = await useFetch(`${apiUrl}/dashboard`)
+const { data: rawData, status, error: dashboardError } = await useFetch(`${apiUrl}/dashboard`, {
+  onResponse({ response }) {
+    if (response?.ok && response._data) {
+      const parsed = safeParse('dashboard', response._data)
+      response._data = parsed
+    }
+  },
+})
 
 // Clean undefined properties for SSR serialization
 function cleanObj(obj) {
@@ -248,7 +261,7 @@ async function fetchDayResults(date) {
   dayLoading.value = true
   try {
     const result = await $fetch(`${apiUrl}/daily-results/${date}`)
-    yesterdayData.value = result
+    yesterdayData.value = safeParse('dailyResults', result)
   } catch {
     yesterdayData.value = null
   } finally {

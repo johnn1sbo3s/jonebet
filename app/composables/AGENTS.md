@@ -36,6 +36,12 @@ Shared composable functions for API data fetching and Chart.js configuration.
 - Also used by `index.vue` for dashboard and daily-results endpoints
 - Cache key pattern: `${endpoint}:${params}`
 
+### Runtime contract validation
+
+- `app/utils/schemas.js` defines a zod schema per endpoint. `safeParse(endpoint, data)` parses and returns the parsed value, or the endpoint's documented fallback with a `console.warn` on mismatch.
+- Every `onResponse` in `useModelApi.js` wraps `_data` through `safeParse`. If the backend renames a field, we get one warn line in the console and the UI shows the empty/error state — never silent `NaN`.
+- When adding a new endpoint, add a schema + fallback to `endpointSchemas` and wire `safeParse` in the composable's `onResponse`.
+
 ### useChartOptions.js
 
 Three pure factory functions, no Vue reactivity inside:
