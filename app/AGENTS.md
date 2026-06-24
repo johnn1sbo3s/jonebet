@@ -32,8 +32,11 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 
 ## Verification
 
-- User runs `pnpm run dev` and checks browser
+- User runs `pnpm run dev` and checks the browser
 - Unit tests: `pnpm test:unit`
+- The new top-level `app/error.vue` boundary is verified by visiting any non-existent route (e.g. `/__nonexistent__`) — should render the themed error card, not the default Nuxt page
+- Cache bound is verified by inspecting `useState('model-api-cache')` in browser devtools after navigating many pages — should never exceed ~200 entries
+- zod schema mismatches are verified by temporarily breaking a backend field and watching the browser console for a single `[useModelApi] <endpoint>: schema mismatch — …` warn line per request
 
 ## Child DOX Index
 
