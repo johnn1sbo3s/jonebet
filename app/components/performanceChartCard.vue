@@ -236,7 +236,7 @@
 import { LineChart } from 'vue-chart-3'
 import { formatDate } from '~/utils/formatDate'
 import { TRADING_DAYS_PER_YEAR } from '~/utils/enums'
-import { usePerformanceChartOptions } from '~/composables/useChartOptions'
+import { usePerformanceChartOptions, useStaticLineOptions } from '~/composables/useChartOptions'
 
 const props = defineProps({
   chosenModelId: { type: String, required: true },
@@ -329,19 +329,7 @@ const drawdownChartData = computed(() => ({
     },
   ],
 }))
-const drawdownOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  animation: false,
-  scales: {
-    y: { beginAtZero: true, display: false },
-    x: { display: false },
-  },
-  plugins: {
-    legend: { display: false },
-    tooltip: { enabled: false },
-  },
-}
+const drawdownOptions = useStaticLineOptions()
 
 // --- Risk stats (computed from the daily results series) ---
 const dailyStats = computed(() => {
