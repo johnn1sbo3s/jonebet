@@ -9,7 +9,9 @@ Shared utility functions used across components and composables.
 - `lodashHelpers.js`: Native lodash replacements with `_` prefix
 - `modelsGroup.js`: Model name constants
 - `resolveModelName.js`: Model name converters
-- `formatDate.js`: Date formatting
+- `formatDate.js`: Luxon-backed ISO → Brazilian date formatter (`dd/MM/yyyy` or `dd/MM/yy`)
+- `enums.js`: Frozen enum tables (`SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR`) — use instead of magic strings
+- `timezone.js`: `SP_TZ` constant + `yesterdayIso(tz?)` helper
 
 ## Local Contracts
 
@@ -33,6 +35,12 @@ Shared utility functions used across components and composables.
 
 ### formatDate.js
 - `formatDate(isoString)`: converts ISO date to dd/mm/yyyy (Brazilian format)
+
+### enums.js
+- Import named exports (`SOURCE.EXCHANGE`, `PERIOD.DAILY`, etc.). Never inline the string literal.
+
+### timezone.js
+- Import `SP_TZ` and `yesterdayIso` from anywhere that needs the SP zone or "yesterday" date. Do not duplicate the literal `'America/Sao_Paulo'`.
 
 ## Verification
 
