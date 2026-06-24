@@ -18,6 +18,7 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 - **Language**: Portuguese (Brazilian) for all UI text; comments may be mixed PT/EN
 - **Theme**: dark-only, teal primary, zinc surface hierarchy (950→900→800)
 - **No shadows**: depth via surface contrast only
+- **Error boundary**: `app/error.vue` is the top-level error/404 boundary; all unhandled throws render here with `clearError({ redirect: '/' })`. Pages should not swallow errors silently — let them bubble to this boundary or surface via composable `error` refs.
 
 ## Work Guidance
 
