@@ -86,12 +86,19 @@ const playedOnSet = computed(() => {
   return set
 })
 
-const chosenModel = ref(listModels.value[0])
-if (route.params.model && listModels.value.includes(route.params.model)) {
+const chosenModel = ref(listModels.value[0] || null)
+
+if (
+  route.params.model &&
+  listModels.value.length &&
+  listModels.value.includes(route.params.model)
+) {
   chosenModel.value = route.params.model
 }
 
-const chosenModelId = computed(() => modelNameToIdName(chosenModel.value))
+const chosenModelId = computed(() =>
+  chosenModel.value ? modelNameToIdName(chosenModel.value) : null,
+)
 const chartByDay = ref(false)
 
 // --- Per-model data: each composable re-runs when chosenModelId changes ---
