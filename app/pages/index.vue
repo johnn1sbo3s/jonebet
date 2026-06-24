@@ -163,7 +163,6 @@ import { DateTime } from 'luxon'
 
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
-const yesterdayStore = useYesterdayModelsStore()
 const showAlert = ref(true)
 
 const { data: rawData, status } = await useFetch(`${apiUrl}/dashboard`)
@@ -271,15 +270,4 @@ if (data.value?.yesterday?.results?.length) {
 watch(chosenDateIso, (newDate) => {
   if (newDate) fetchDayResults(newDate)
 })
-
-// Store for other pages
-watch(
-  () => yesterdayData.value?.results,
-  (val) => {
-    if (val?.length) {
-      yesterdayStore.setYesterdayModels(val)
-    }
-  },
-  { immediate: true },
-)
 </script>

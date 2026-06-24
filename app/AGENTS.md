@@ -42,7 +42,6 @@ Main source directory for the DataPlay Bets Nuxt 4 application. Contains all fro
 | `components/` | 23 Vue components: cards, charts, tables, modals, skeletons |
 | `composables/` | API layer (`useModelApi.js`) and chart options (`useChartOptions.js`) |
 | `pages/` | 4 pages: dashboard, fixtures, daily-bets, performance |
-| `stores/` | Pinia store: `yesterdayModelsStore.js` |
 | `utils/` | Helpers: lodash replacements, model name resolvers, date formatter |
 | `layouts/` | Default layout with UHeader navigation |
 | `plugins/` | Client-only Chart.js plugin registration |
