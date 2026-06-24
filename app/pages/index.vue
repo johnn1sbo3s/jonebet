@@ -33,7 +33,7 @@
         </template>
 
         <div class="w-full">
-          <BankrollEvolution :model-value="status === 'pending'" :bankroll-data="data?.bankrollEvolution || []" />
+          <BankrollEvolution :bankroll-data="data?.bankrollEvolution || []" />
         </div>
       </UCard>
 

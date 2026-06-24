@@ -3,30 +3,15 @@
 </template>
 
 <script setup>
-import { Chart, registerables } from 'chart.js'
 import { LineChart } from 'vue-chart-3'
 
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-    default: () => true,
-  },
-
   bankrollData: {
     type: Object,
     required: true,
     default: () => {},
   },
 })
-
-if (import.meta.client) {
-  const zoomPlugin = (await import('chartjs-plugin-zoom')).default
-  const annotationPlugin = (await import('chartjs-plugin-annotation')).default
-  Chart.register(zoomPlugin)
-  Chart.register(annotationPlugin)
-  Chart.register(...registerables)
-}
 
 const chartOptions = ref({
   responsive: true,
