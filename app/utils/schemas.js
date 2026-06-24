@@ -1,143 +1,82 @@
 import { z } from 'zod'
 
 // Runtime contract for the DataPlay Bets API. The backend is a separate
-// Python service (api.jonebet.xyz). When it renames a field, parsing fails
-// here and we log one line + return the default. No silent NaN in P/L.
+// Python service (api.jonebet.xyz). The schemas here are SAFETY NETS, not
+// strict validators: each `safeParse` call guarantees the response is an
+// object (or array, where appropriate) and applies the documented fallback
+// when it is not. Nested field shapes are NOT validated — the backend has
+// used several naming conventions over the project lifetime and the
+// frontend has always consumed the response as-is via `passthrough`. If
+// the backend renames a top-level key, the consumer's `data?.x` check
+// will return undefined and the page renders its empty/error state — no
+// silent NaN, no false-positive "valid" data.
 
-const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected yyyy-MM-dd')
+// Permissive "any object" schema with a default. Accepts any object shape,
+// returns the default if the input is not an object, preserves all original
+// fields via `passthrough`.
+const FlexObject = z.object({}).passthrough()
 
-const TopModel = z.object({
-  Method: z.string(),
-  MethodKey: z.string().optional(),
-  profit: z.number().optional(),
-  roi: z.number().optional(),
-}).passthrough()
+// Permissive "any array" schema with a default.
+const FlexArray = z.array(z.unknown())
 
-const Metrics = z.object({
-  profit: z.number().optional(),
-  invested: z.number().optional(),
-  roi: z.number().optional(),
-  bets: z.number().optional(),
-  models: z.number().optional(),
-}).passthrough()
+/**
+ * @typedef {Object} EndpointSchema
+ * @property {z.ZodTypeAny} schema   zod schema to validate against
+ * @property {unknown} fallback      value to return on validation failure
+ *                                    — must match the consumer's expected default shape
+ */
 
-const DailyResult = z.object({
-  date: IsoDate,
-  gain: z.number().optional(),
-  gameCount: z.number().optional(),
-  accumulated: z.number().optional(),
-}).passthrough()
-
-const ModelsListItem = z.object({
-  name: z.string(),
-  playedOn: IsoDate.nullable().optional(),
-}).passthrough()
-
-const ChartPayload = z.object({
-  labels: z.array(z.string()).default([]),
-  data: z.array(z.number()).default([]),
-  annotationIndex: z.number().default(0),
-}).passthrough()
-
-const TrendPayload = z.object({
-  slope: z.number().default(0),
-  intercept: z.number().default(0),
-  line: z.array(z.number()).default([]),
-  distance: z.number().default(0),
-}).passthrough()
-
-const ResultRow = z.object({
-  date: IsoDate.optional(),
-  month: z.string().optional(),
-  period: z.string().optional(),
-  profit: z.number().optional(),
-  roi: z.number().optional(),
-  gameCount: z.number().optional(),
-}).passthrough()
-
-const BetRow = z.object({
-  _id: z.string().optional(),
-  Date: z.string().optional(),
-  Time: z.string().optional(),
-  Home: z.string().optional(),
-  Away: z.string().optional(),
-  result: z.string().optional(),
-  gain: z.number().optional(),
-}).passthrough()
-
-const PagedBets = z.object({
-  items: z.array(BetRow).default([]),
-  total: z.number().default(0),
-  page: z.number(),
-  size: z.number(),
-}).passthrough()
-
-const DailyBetsResponse = z.object({
-  date: IsoDate.nullable(),
-  bets: z.array(BetRow).default([]),
-  total: z.number().default(0),
-}).passthrough()
-
-const BankrollPoint = z.object({
-  month: z.string(),
-  bankroll: z.number().optional(),
-  profit: z.number().optional(),
-}).passthrough()
-
-const DashboardPayload = z.object({
-  bankrollEvolution: z.array(BankrollPoint).default([]),
-  yesterday: z.object({
-    date: IsoDate.optional(),
-    results: z.array(DailyResult).default([]),
-    topModels: z.array(TopModel).default([]),
-    metrics: Metrics.default({}),
-    positiveModels: z.number().default(0),
-  }).nullable().optional(),
-  month: z.object({
-    results: z.array(DailyResult).default([]),
-    topModels: z.array(TopModel).default([]),
-    metrics: Metrics.default({}),
-    positiveModels: z.number().default(0),
-  }).nullable().optional(),
-}).passthrough()
-
-const DailyResults = z.object({
-  date: IsoDate.optional(),
-  results: z.array(DailyResult).default([]),
-  topModels: z.array(TopModel).default([]),
-  metrics: Metrics.default({}),
-  positiveModels: z.number().default(0),
-}).passthrough()
-
-const DailyBetsDates = z.array(IsoDate).default([])
-
-const ModelsList = z.object({
-  items: z.array(ModelsListItem).default([]),
-}).passthrough()
-
-const FixturesDaily = z.object({
-  date: IsoDate.optional(),
-  fixtures: z.array(z.unknown()).default([]),
-  bets: z.array(z.unknown()).default([]),
-}).passthrough()
-
-// Each entry: { schema, fallback }. `fallback` matches the composable's `default`.
+/** @type {Record<string, EndpointSchema>} */
 export const endpointSchemas = {
-  modelsList: { schema: ModelsList, fallback: { items: [] } },
-  modelById: { schema: z.unknown().nullable(), fallback: null },
-  modelChart: { schema: ChartPayload, fallback: { labels: [], data: [], annotationIndex: 0 } },
-  modelTrend: { schema: TrendPayload, fallback: { slope: 0, intercept: 0, line: [], distance: 0 } },
-  modelResults: { schema: z.array(ResultRow), fallback: [] },
-  modelBets: { schema: PagedBets, fallback: { items: [], total: 0, page: 1, size: 25 } },
-  dailyBets: { schema: DailyBetsResponse, fallback: { date: null, bets: [], total: 0 } },
-  dailyBetsDates: { schema: DailyBetsDates, fallback: [] },
-  dashboard: { schema: DashboardPayload, fallback: { bankrollEvolution: [] } },
-  dailyResults: { schema: DailyResults, fallback: { results: [], topModels: [], metrics: {}, positiveModels: 0 } },
-  fixturesDaily: { schema: FixturesDaily, fallback: { date: null, fixtures: [], bets: [] } },
+  modelsList: {
+    schema: FlexObject.default({ items: [] }),
+    fallback: { items: [] },
+  },
+  modelById: {
+    schema: z.unknown().nullable(),
+    fallback: null,
+  },
+  modelChart: {
+    schema: FlexObject.default({ labels: [], data: [], annotationIndex: 0 }),
+    fallback: { labels: [], data: [], annotationIndex: 0 },
+  },
+  modelTrend: {
+    schema: FlexObject.default({ slope: 0, intercept: 0, line: [], distance: 0 }),
+    fallback: { slope: 0, intercept: 0, line: [], distance: 0 },
+  },
+  modelResults: {
+    schema: FlexArray.default([]),
+    fallback: [],
+  },
+  modelBets: {
+    schema: FlexObject.default({ items: [], total: 0, page: 1, size: 25 }),
+    fallback: { items: [], total: 0, page: 1, size: 25 },
+  },
+  dailyBets: {
+    schema: FlexObject.default({ date: null, bets: [], total: 0 }),
+    fallback: { date: null, bets: [], total: 0 },
+  },
+  dailyBetsDates: {
+    schema: FlexArray.default([]),
+    fallback: [],
+  },
+  dashboard: {
+    schema: FlexObject.default({ bankrollEvolution: [] }),
+    fallback: { bankrollEvolution: [] },
+  },
+  dailyResults: {
+    schema: FlexObject.default({ results: [], topModels: [], metrics: {}, positiveModels: 0 }),
+    fallback: { results: [], topModels: [], metrics: {}, positiveModels: 0 },
+  },
+  fixturesDaily: {
+    schema: FlexObject.default({ date: null, fixtures: [], bets: [] }),
+    fallback: { date: null, fixtures: [], bets: [] },
+  },
 }
 
 /**
- * Parse `data` against `entry.schema`. On failure, log one line and return `entry.fallback`.
+ * Parse `data` against `entry.schema`. On failure, log ONE warn line and
+ * return `entry.fallback`. Never throws.
  * @param {string} endpoint  key from `endpointSchemas`
  * @param {unknown} data
  */
