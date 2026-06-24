@@ -19,7 +19,7 @@ const source = ref('exchange')
 const fixtures = ref([])
 const bets = ref([])
 
-const { data } = await useFetch(`${apiUrl}/fixtures/daily`, { params: { source: source.value } })
+const { data } = await useFetch(`${apiUrl}/fixtures/daily`, { query: { source: source.value } })
 
 if (data.value) {
   selectedDate.value = data.value.date
