@@ -49,7 +49,9 @@ import { DateTime } from 'luxon'
 
 const yesterday = DateTime.now().setZone('America/Sao_Paulo').minus({ days: 1 }).toFormat('yyyy-MM-dd')
 
-const date = ref(yesterday)
+// date starts null: the API resolves the effective date (tomorrow, fallback today)
+// and echoes it in the response. The watch below syncs the picker once.
+const date = ref(null)
 const selectedModel = ref(null)
 
 const { data: availableDates } = await useDailyBetsDates()
@@ -64,10 +66,22 @@ const modelItems = computed(() => [
     .sort((a, b) => a.label.localeCompare(b.label)),
 ])
 
-const { data: betsRaw, pending, error } = await useDailyBets({ date, model: selectedModel })
+const { data: dailyBetsResponse, pending, error } = await useDailyBets({ date, model: selectedModel })
+
+// Mirror the API-resolved date into the datepicker on first load only.
+// User navigation after that must not be overridden.
+watch(
+  dailyBetsResponse,
+  (response) => {
+    if (response?.date && date.value === null) {
+      date.value = response.date
+    }
+  },
+  { immediate: true },
+)
 
 const bets = computed(() =>
-  (betsRaw.value || []).map((item) => ({
+  (dailyBetsResponse.value?.bets || []).map((item) => ({
     ...item,
     Modelo: modelNameToNaturalName(item.Modelo),
     FT_Odds_H: Number(item.FT_Odds_H).toFixed(2),

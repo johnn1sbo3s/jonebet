@@ -22,7 +22,7 @@ Nuxt file-based routing pages. 4 routes total.
 |------|-------|-------------|
 | `index.vue` | `/` | Dashboard: bankroll chart, monthly/daily results, monthly metrics |
 | `fixtures.vue` | `/fixtures` | Daily games with date picker + source toggle (Exchange/Bookie) |
-| `daily-bets.vue` | `/daily-bets` | Historical bet list (cards) with date/model filter. Uses `useDailyBets` + `useDailyBetsDates` + `useModelsList({ playedOn })`; `DatePicker` for date, `USelectMenu` (searchable) for model; `<DailyBetCard>` per bet. |
+| `daily-bets.vue` | `/daily-bets` | Effective-date bet list (cards) with model filter. Uses `useDailyBets` + `useDailyBetsDates` + `useModelsList({ playedOn })`. On first load, `date` is synced from the API's resolved effective date (tomorrow, fallback today); `DatePicker` lets the user navigate to any other date. `USelectMenu` (searchable) for model; `<DailyBetCard>` per bet. |
 | `performance/[[model]].vue` | `/performance` or `/performance/:model` | Model performance: chart, metrics, blocks, bets, results |
 
 ## Work Guidance

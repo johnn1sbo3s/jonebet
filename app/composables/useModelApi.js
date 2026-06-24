@@ -107,7 +107,7 @@ export function useDailyBets({ date, model }) {
       if (model.value) q.model = model.value
       return q
     }),
-    default: () => [],
+    default: () => ({ date: null, bets: [], total: 0 }),
     watch: [date, model],
     getCachedData: (k) => cache.value[k],
     onResponse({ response }) {
