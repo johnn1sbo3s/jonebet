@@ -370,6 +370,10 @@ const sharpeClass = computed(() => {
   if (v < 0) return 'text-red-400'
   return 'text-white'
 })
+const streakClass = computed(() => {
+  if (!dailyStats.value) return 'text-white'
+  return dailyStats.value.streak.endsWith('W') ? 'text-teal-400' : 'text-red-400'
+})
 
 // --- Chart (all reactive, no manual sync) ---
 const chartKey = ref(0)
