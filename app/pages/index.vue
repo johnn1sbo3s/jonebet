@@ -22,11 +22,7 @@
       message="Não foi possível carregar a evolução da banca"
     />
 
-    <DataErrorCard
-      v-else-if="dashboardError"
-      class="mt-2"
-      message="Não foi possível carregar o dashboard"
-    />
+    <DataErrorCard v-else-if="dashboardError" class="mt-2" message="Não foi possível carregar o dashboard" />
 
     <div v-else class="mt-2 flex flex-col gap-3 lg:flex-row">
       <UCard class="w-full border border-zinc-800 bg-zinc-900 lg:w-[70%]">
@@ -49,7 +45,7 @@
             <p class="text-white">Resultados por mês</p>
 
             <p class="text-sm font-bold xl:text-base" :class="totalProfit > 0 ? 'text-teal-500' : 'text-red-500'">
-              {{ totalProfit > 0 ? '+' : '' }}{{ totalProfit.toLocaleString('pt-BR') }} u
+              {{ totalProfit > 0 ? '+' : '' }}{{ formatNumber(totalProfit) }}
             </p>
           </div>
         </template>
@@ -72,7 +68,7 @@
                 <p class="text-zinc-300">{{ item.month }}</p>
 
                 <p class="font-semibold" :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-                  {{ item.profit.toLocaleString('pt-BR') }} u
+                  {{ formatNumber(item.profit) }}
                 </p>
               </div>
             </UCard>
@@ -171,7 +167,11 @@ const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
 const showAlert = ref(true)
 
-const { data: rawData, status, error: dashboardError } = await useFetch(`${apiUrl}/dashboard`, {
+const {
+  data: rawData,
+  status,
+  error: dashboardError,
+} = await useFetch(`${apiUrl}/dashboard`, {
   onResponse({ response }) {
     if (response?.ok && response._data) {
       const parsed = safeParse('dashboard', response._data)
@@ -183,7 +183,7 @@ const { data: rawData, status, error: dashboardError } = await useFetch(`${apiUr
 // Clean undefined properties for SSR serialization
 function cleanObj(obj) {
   if (!obj || typeof obj !== 'object') return obj
-  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined))
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
 }
 function cleanArray(arr) {
   if (!arr?.length) return []
@@ -241,9 +241,9 @@ const dayMetrics = computed(() => {
   const m = yesterdayData.value?.metrics
   if (!m) return []
   return [
-    { name: 'Profit', value: m.profit, sufix: 'u' },
-    { name: 'Investido', value: m.invested, sufix: 'u' },
-    { name: 'ROI', value: m.roi, sufix: '' },
+    { name: 'Profit', value: m.profit },
+    { name: 'Investido', value: m.invested },
+    { name: 'ROI', value: m.roi },
   ]
 })
 
@@ -251,9 +251,9 @@ const monthMetrics = computed(() => {
   const m = data.value?.month?.metrics
   if (!m) return []
   return [
-    { name: 'Profit', value: m.profit, sufix: 'u' },
-    { name: 'Investido', value: m.invested, sufix: 'u' },
-    { name: 'ROI', value: m.roi, sufix: '' },
+    { name: 'Profit', value: m.profit },
+    { name: 'Investido', value: m.invested },
+    { name: 'ROI', value: m.roi },
   ]
 })
 

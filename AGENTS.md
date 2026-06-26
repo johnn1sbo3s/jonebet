@@ -117,3 +117,4 @@ When the user requests a durable behavior change, record it here or in the relev
 - **Profit coloring**: teal-500 positive, red-500 negative
 - **No shadows**: depth via surface contrast only
 - **Chart plugins** registered client-only in `plugins/chartjs.client.js`
+- **Number formatting**: dot decimal, no thousands separator. Use `formatNumber` / `formatPercent` from `app/utils/formatNumber.js` for monetary values, odds, and percent fields. Do not use `toLocaleString('pt-BR')` or `toFixed(2)` for these. R² and other statistical scalars may keep raw `toFixed`.

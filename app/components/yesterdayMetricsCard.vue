@@ -13,15 +13,14 @@
           <p class="text-sm text-zinc-400">{{ item.name }}</p>
 
           <p class="text-xl font-black" :class="item.value >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ item.value.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }) }}
-            {{ item.sufix }}
+            {{ formatNumber(item.value) }}
           </p>
         </div>
       </div>
     </template>
 
     <template #footer>
-      <p class="text-xs text-zinc-500">1 un = 1% da banca</p>
+      <p class="text-xs text-zinc-500">Considerando stake = 1% da banca</p>
     </template>
   </UCard>
 </template>

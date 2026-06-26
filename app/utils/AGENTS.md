@@ -10,6 +10,7 @@ Shared utility functions used across components and composables.
 - `modelsGroup.js`: Model name constants
 - `resolveModelName.js`: Model name converters
 - `formatDate.js`: Luxon-backed ISO → Brazilian date formatter (`dd/MM/yyyy` or `dd/MM/yy`)
+- `formatNumber.js`: Number/percent formatters with dot decimal, no thousands separator
 - `enums.js`: Frozen enum tables (`SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR`) — use instead of magic strings
 - `timezone.js`: `SP_TZ` constant + `yesterdayIso(tz?)` helper
 - `schemas.js`: zod schemas per API endpoint + `safeParse(endpoint, data)` helper
@@ -19,6 +20,7 @@ Shared utility functions used across components and composables.
 - No lodash dependency — all helpers are native JS implementations
 - Functions use `_` prefix for backward compatibility with lodash usage patterns
 - All utils are auto-imported by Nuxt
+- **Number formatting convention**: dot as decimal separator, no thousands separator. Use `formatNumber` / `formatPercent` for monetary values, odds, and percent fields. R² and other statistical scalars may keep raw `toFixed` since they are not currency/odds.
 
 ## Work Guidance
 
@@ -39,6 +41,11 @@ Shared utility functions used across components and composables.
 - `style: 'long'` (default) → `dd/MM/yyyy`; `style: 'short'` → `dd/MM/yy`.
 - Empty/falsy `iso` returns `''`; an unparseable ISO string is returned as-is (no throw).
 - The function is auto-imported across `app/`. Do not duplicate it per-component — delete any local `function formatDate` re-implementations and import this one instead.
+
+### formatNumber.js
+- `formatNumber(n, decimals = 2)` and `formatPercent(n, decimals = 2)`. Both auto-imported across `app/`.
+- Do not duplicate per-component — replace any local `function formatNumber`, `toLocaleString('pt-BR', ...)`, or `toFixed(2)` callsites for monetary / odds / percent values with this helper.
+- `null`/`undefined` coerce to `0`; non-finite inputs render as the string `"NaN"` (same as `Number.prototype.toFixed`).
 
 ### enums.js
 - Import named exports. Use the frozen tables for category enums: `SOURCE.EXCHANGE`, `PERIOD.DAILY`, `GROUP_BY.DAY`, `RESULT.GREEN`. Never inline the string literal.

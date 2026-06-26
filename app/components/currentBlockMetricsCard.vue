@@ -48,9 +48,6 @@ const props = defineProps({
   },
 })
 
-const formatNumber = (n, decimals = 2) =>
-  Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
-
 const profitClass = computed(() => {
   const v = props.metricsData.currentMean
   if (v > 0) return 'text-teal-400'

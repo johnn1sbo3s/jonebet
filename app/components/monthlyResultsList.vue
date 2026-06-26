@@ -69,13 +69,6 @@ const MONTHS_PT = [
   'Dezembro',
 ]
 
-function formatNumber(n, decimals = 2) {
-  return Number(n ?? 0).toLocaleString('pt-BR', {
-    maximumFractionDigits: decimals,
-    minimumFractionDigits: decimals,
-  })
-}
-
 function formatMonthYear(raw) {
   if (!raw) return ''
   const d = new Date(raw)

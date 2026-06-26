@@ -23,15 +23,15 @@
 
           <div class="flex gap-1">
             <UBadge :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'" variant="soft">
-              {{ item.FT_Odds_H.toFixed(2) }}
+              {{ formatNumber(item.FT_Odds_H) }}
             </UBadge>
 
             <UBadge color="neutral" variant="soft">
-              {{ item.FT_Odds_D.toFixed(2) }}
+              {{ formatNumber(item.FT_Odds_D) }}
             </UBadge>
 
             <UBadge :color="item.FT_Odds_A < item.FT_Odds_H ? 'primary' : 'neutral'" variant="soft">
-              {{ item.FT_Odds_A.toFixed(2) }}
+              {{ formatNumber(item.FT_Odds_A) }}
             </UBadge>
           </div>
         </div>

@@ -61,9 +61,6 @@ const props = defineProps({
   },
 })
 
-const formatNumber = (n, decimals = 2) =>
-  Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
-
 const signClass = (v) => {
   if (v > 0) return 'text-teal-400'
   if (v < 0) return 'text-red-400'

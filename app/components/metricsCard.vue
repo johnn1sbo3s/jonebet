@@ -46,10 +46,6 @@ const props = defineProps({
   },
 })
 
-const formatNumber = (n, decimals = 2) =>
-  Number(n ?? 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
-const formatPercent = (n, decimals = 2) => `${formatNumber(n, decimals)}%`
-
 const lucroEfetivo = computed(() => {
   if (props.metricsData.medLoss === 0) return 0
   return (props.metricsData.ev / -props.metricsData.medLoss) * 100
@@ -70,7 +66,7 @@ const roiClass = computed(() => {
 })
 
 const metrics = computed(() => [
-  { label: 'WR', value: `${(props.metricsData.wr * 100).toFixed(0)}%` },
+  { label: 'WR', value: formatPercent(props.metricsData.wr * 100, 0) },
   { label: 'Odd média', value: formatNumber(props.metricsData.odds) },
   { label: 'Win médio', value: formatNumber(props.metricsData.medGain) },
   { label: 'Loss médio', value: formatNumber(props.metricsData.medLoss) },

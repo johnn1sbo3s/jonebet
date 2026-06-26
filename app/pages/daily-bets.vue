@@ -91,9 +91,9 @@ const bets = computed(() => {
   return list.map((item) => ({
     ...item,
     Modelo: modelNameToNaturalName(item.Modelo),
-    FT_Odds_H: Number(item.FT_Odds_H).toFixed(2),
-    FT_Odds_D: Number(item.FT_Odds_D).toFixed(2),
-    FT_Odds_A: Number(item.FT_Odds_A).toFixed(2),
+    FT_Odds_H: formatNumber(item.FT_Odds_H),
+    FT_Odds_D: formatNumber(item.FT_Odds_D),
+    FT_Odds_A: formatNumber(item.FT_Odds_A),
   }))
 })
 

@@ -72,13 +72,4 @@ watch(
   },
   { deep: true },
 )
-
-
-function formatNumber(n, decimals = 2) {
-  return Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: decimals, minimumFractionDigits: decimals })
-}
-
-function formatPercent(n, decimals = 2) {
-  return `${formatNumber(n, decimals)}%`
-}
 </script>

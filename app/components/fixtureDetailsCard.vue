@@ -18,7 +18,7 @@
           <span class="font-semibold text-white">H</span>
 
           <span class="text-white">
-            {{ fixture?.FT_Odds_H?.toFixed(2) }}
+            {{ formatNumber(fixture?.FT_Odds_H) }}
           </span>
 
           <span class="text-zinc-500">·</span>
@@ -26,7 +26,7 @@
           <span class="font-semibold text-white">D</span>
 
           <span class="text-white">
-            {{ fixture?.FT_Odds_D?.toFixed(2) }}
+            {{ formatNumber(fixture?.FT_Odds_D) }}
           </span>
 
           <span class="text-zinc-500">·</span>
@@ -34,7 +34,7 @@
           <span class="font-semibold text-white">A</span>
 
           <span class="text-white">
-            {{ fixture?.FT_Odds_A?.toFixed(2) }}
+            {{ formatNumber(fixture?.FT_Odds_A) }}
           </span>
         </div>
       </div>
@@ -46,13 +46,13 @@
           <div class="mt-1 flex items-center gap-2 text-sm">
             <span class="font-semibold text-white">O</span>
 
-            <span class="text-white">{{ fixture?.Odds_O25?.toFixed(2) }}</span>
+            <span class="text-white">{{ formatNumber(fixture?.Odds_O25) }}</span>
 
             <span class="text-zinc-500">·</span>
 
             <span class="font-semibold text-white">U</span>
 
-            <span class="text-white">{{ fixture?.Odds_U25?.toFixed(2) }}</span>
+            <span class="text-white">{{ formatNumber(fixture?.Odds_U25) }}</span>
           </div>
         </div>
 
@@ -62,13 +62,13 @@
           <div class="mt-1 flex items-center gap-2 text-sm">
             <span class="font-semibold text-white">Y</span>
 
-            <span class="text-white">{{ fixture?.BTTS_Yes?.toFixed(2) }}</span>
+            <span class="text-white">{{ formatNumber(fixture?.BTTS_Yes) }}</span>
 
             <span class="text-zinc-500">·</span>
 
             <span class="font-semibold text-white">N</span>
 
-            <span class="text-white">{{ fixture?.BTTS_No?.toFixed(2) }}</span>
+            <span class="text-white">{{ formatNumber(fixture?.BTTS_No) }}</span>
           </div>
         </div>
       </div>

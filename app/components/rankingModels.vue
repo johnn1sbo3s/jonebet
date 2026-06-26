@@ -19,7 +19,7 @@
           <span class="relative z-10">{{ modelNameToNaturalName(item.name) }}</span>
 
           <span class="relative z-10 font-semibold" :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ item.profit.toLocaleString() }} u
+            {{ formatNumber(item.profit) }}
           </span>
         </NuxtLink>
       </div>
@@ -40,7 +40,7 @@
             <span class="font-semibold">{{ item.Method }}</span>
 
             <span class="text-sm font-bold" :class="item.ProfitRaw >= 0 ? 'text-teal-500' : 'text-red-500'">
-              {{ item.Profit }} u
+              {{ item.Profit }}
             </span>
           </div>
 
@@ -49,7 +49,7 @@
 
             <span>|</span>
 
-            <span>Investido: {{ item.Responsibility }} u</span>
+            <span>Investido: {{ formatNumber(item.Responsibility) }}</span>
 
             <span>|</span>
 
@@ -109,9 +109,9 @@ const sanitizedAllResultsData = computed(() => {
     return {
       ...item,
       ProfitRaw: item.Profit,
-      Profit: item.Profit.toLocaleString('pt-BR'),
-      ROI: item.ROI.toLocaleString('pt-BR'),
-      Num_Bets: item.Num_Bets.toLocaleString('pt-BR'),
+      Profit: formatNumber(item.Profit),
+      ROI: formatNumber(item.ROI),
+      Num_Bets: formatNumber(item.Num_Bets),
     }
   })
 })

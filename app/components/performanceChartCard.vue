@@ -121,7 +121,7 @@
             />
           </div>
 
-          <p class="mt-0.5 text-base font-medium" :class="sharpeClass">{{ dailyStats.sharpe }}</p>
+          <p class="mt-0.5 text-base font-medium" :class="sharpeClass">{{ formatNumber(dailyStats.sharpe) }}</p>
         </div>
 
         <div>
@@ -157,7 +157,7 @@
             />
           </div>
 
-          <p class="mt-0.5 text-base font-medium text-white">{{ dailyStats.pctNegative }}%</p>
+          <p class="mt-0.5 text-base font-medium text-white">{{ formatPercent(dailyStats.pctNegative, 1) }}</p>
         </div>
       </div>
 
@@ -358,21 +358,17 @@ const dailyStats = computed(() => {
     }
   }
   return {
-    sharpe: sharpe.toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 }),
+    sharpe,
     streak: streak ? `${streak}${streakType}` : '—',
-    pctNegative: pctNegative.toLocaleString('pt-BR', { maximumFractionDigits: 1, minimumFractionDigits: 1 }),
+    pctNegative,
   }
 })
 const sharpeClass = computed(() => {
   if (!dailyStats.value) return 'text-white'
-  const v = Number(dailyStats.value.sharpe.replace(',', '.'))
+  const v = dailyStats.value.sharpe
   if (v > 1) return 'text-teal-400'
   if (v < 0) return 'text-red-400'
   return 'text-white'
-})
-const streakClass = computed(() => {
-  if (!dailyStats.value) return 'text-white'
-  return dailyStats.value.streak.endsWith('W') ? 'text-teal-400' : 'text-red-400'
 })
 
 // --- Chart (all reactive, no manual sync) ---
@@ -424,12 +420,6 @@ const chartOptions = computed(() =>
 watch([chosenModelIdRef, groupBy], () => {
   chartKey.value++
 })
-
-
-// --- Helpers for template formatting ---
-function formatNumber(n) {
-  return Number(n || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
-}
 
 // --- Info modals for the risk metrics ---
 const showSlopeInfo = ref(false)
