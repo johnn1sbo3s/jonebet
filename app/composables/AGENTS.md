@@ -34,7 +34,9 @@ Shared composable functions for API data fetching and Chart.js configuration.
 | `useDailyBetsDates()` | `GET /daily-bets/available-dates` | ISO dates that have bets |
 
 - Also used by `index.vue` for dashboard and daily-results endpoints
-- Cache key pattern: `${endpoint}:${params}`
+- Cache key pattern: `${endpoint}:${params}` (used as the internal LRU `cacheKey`).
+  The `useFetch` `key` option itself MUST be a static string per composable — a reactive
+  key orphans the returned `data` ref when params change.
 
 ### Runtime contract validation
 

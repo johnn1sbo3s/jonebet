@@ -57,16 +57,20 @@ const selectedModel = ref(null)
 const { data: availableDates } = await useDailyBetsDates()
 const maxDateIso = computed(() => availableDates.value?.[0] || yesterday)
 
-const { data: modelsPayload } = await useModelsList({ playedOn: date })
-const modelItems = computed(() => [
-  { value: null, label: 'Todos os modelos' },
-  ...(modelsPayload.value?.items || [])
-    .filter((m) => m.playedOn)
-    .map((m) => ({ value: m.name, label: modelNameToNaturalName(m.name) }))
-    .sort((a, b) => a.label.localeCompare(b.label)),
-])
+const modelItems = computed(() => {
+  const names = new Set()
+  for (const bet of dailyBetsResponse.value?.bets || []) {
+    if (bet.Modelo) names.add(bet.Modelo)
+  }
+  return [
+    { value: null, label: 'Todos os modelos' },
+    ...[...names]
+      .map((name) => ({ value: name, label: modelNameToNaturalName(name) }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
+  ]
+})
 
-const { data: dailyBetsResponse, pending, error } = await useDailyBets({ date, model: selectedModel })
+const { data: dailyBetsResponse, pending, error } = await useDailyBets({ date })
 
 // Mirror the API-resolved date into the datepicker on first load only.
 // User navigation after that must not be overridden.
@@ -80,15 +84,18 @@ watch(
   { immediate: true },
 )
 
-const bets = computed(() =>
-  (dailyBetsResponse.value?.bets || []).map((item) => ({
+const bets = computed(() => {
+  const list = (dailyBetsResponse.value?.bets || []).filter(
+    (item) => !selectedModel.value || item.Modelo === selectedModel.value,
+  )
+  return list.map((item) => ({
     ...item,
     Modelo: modelNameToNaturalName(item.Modelo),
     FT_Odds_H: Number(item.FT_Odds_H).toFixed(2),
     FT_Odds_D: Number(item.FT_Odds_D).toFixed(2),
     FT_Odds_A: Number(item.FT_Odds_A).toFixed(2),
-  })),
-)
+  }))
+})
 
 const qtd_games = computed(() => bets.value.length)
 

@@ -32,19 +32,19 @@ function cacheSet(cache, key, value) {
 export function useModelsList({ playedOn = null } = {}) {
   const cache = useCache()
   const playedOnRef = isRef(playedOn) ? playedOn : ref(playedOn)
-  const key = computed(() => `models-list-${playedOnRef.value ?? 'default'}`)
+  const cacheKey = computed(() => `models-list-${playedOnRef.value ?? 'default'}`)
   const query = computed(() => (playedOnRef.value ? { playedOn: playedOnRef.value } : {}))
 
   return useFetch(`${apiUrl()}/models`, {
-    key,
+    key: 'models-list',
     query,
     default: () => ({ items: [] }),
     watch: [playedOnRef],
-    getCachedData: (k) => cacheGet(cache, k),
+    getCachedData: () => cacheGet(cache, cacheKey.value),
     onResponse({ response }) {
       if (response?.ok && response._data) {
         const parsed = safeParse('modelsList', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, cacheKey.value, parsed)
         response._data = parsed
       }
     },
@@ -144,24 +144,25 @@ export function useModelBets(id, { page, size, sort, order }) {
   })
 }
 
-export function useDailyBets({ date, model }) {
+export function useDailyBets({ date, model = null } = {}) {
   const cache = useCache()
-  const key = computed(() => `daily-bets-${date.value ?? 'any'}-${model.value ?? 'any'}`)
+  const modelRef = isRef(model) ? model : ref(model)
+  const cacheKey = computed(() => `daily-bets-${date.value ?? 'any'}-${modelRef.value ?? 'any'}`)
   return useFetch(() => `${apiUrl()}/daily-bets`, {
-    key,
+    key: 'daily-bets',
     query: computed(() => {
       const q = {}
       if (date.value) q.date = date.value
-      if (model.value) q.model = model.value
+      if (modelRef.value) q.model = modelRef.value
       return q
     }),
     default: () => ({ date: null, bets: [], total: 0 }),
-    watch: [date, model],
-    getCachedData: (k) => cacheGet(cache, k),
+    watch: [date, modelRef],
+    getCachedData: () => cacheGet(cache, cacheKey.value),
     onResponse({ response }) {
       if (response?.ok && response._data !== undefined) {
         const parsed = safeParse('dailyBets', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, cacheKey.value, parsed)
         response._data = parsed
       }
     },
