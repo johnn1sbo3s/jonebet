@@ -49,4 +49,4 @@ All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 ## Verification
 
 - User runs `pnpm run dev` and checks component rendering in browser
-- Existing tests: `pnpm test:unit` (tests for betsTableCard, blockMetricsPanel, performanceChartCard, resultsTablesGrid)
+- Existing tests: `pnpm test:unit` (tests for betsTableCard, blockMetricsPanel, dailyBetCard, metricsCard, performanceChartCard, resultsTablesGrid)
