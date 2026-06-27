@@ -32,20 +32,36 @@
     :ui="{ content: 'max-w-3xl' }"
   >
     <template #body>
-      <UTable v-if="!isMobile" :data="sanitizedAllResultsData" :columns="columns" />
+      <div class="hidden md:block">
+        <UTable :data="sanitizedAllResultsData" :columns="columns">
+          <template #Profit-cell="{ row }">
+            <span class="font-semibold" :class="row.original.profitClass">
+              {{ row.getValue('Profit') }}
+            </span>
+          </template>
 
-      <div v-else class="flex max-h-96 flex-col gap-2 overflow-y-auto">
-        <div v-for="(item, index) in sanitizedAllResultsData" :key="index" class="border-default rounded-lg border p-3">
+          <template #ROI-cell="{ row }">
+            <span class="font-semibold" :class="row.original.roiClass"> {{ row.getValue('ROI') }}% </span>
+          </template>
+        </UTable>
+      </div>
+
+      <div class="flex max-h-96 flex-col gap-2 overflow-y-auto md:hidden">
+        <div
+          v-for="(item, index) in sanitizedAllResultsData"
+          :key="index"
+          class="border-default rounded-lg border bg-zinc-950 p-3"
+        >
           <div class="mb-2 flex items-center justify-between">
             <span class="font-semibold">{{ item.Method }}</span>
 
-            <span class="text-sm font-bold" :class="item.ProfitRaw >= 0 ? 'text-teal-500' : 'text-red-500'">
+            <span class="text-sm font-bold" :class="item.profitClass">
               {{ item.Profit }}
             </span>
           </div>
 
           <div class="text-muted flex gap-2 text-sm">
-            <span>ROI: {{ item.ROI }}%</span>
+            <span class="font-semibold" :class="item.roiClass">ROI: {{ item.ROI }}%</span>
 
             <span>|</span>
 
@@ -62,8 +78,6 @@
 </template>
 
 <script setup>
-const { isMobile } = useDevice()
-
 const props = defineProps({
   items: {
     type: Array,
@@ -93,25 +107,23 @@ function formatDateOrMonth(dateStr) {
 
 const isModalOpen = ref(false)
 const columns = [
-  {
-    accessorKey: 'Method',
-    header: 'Modelo',
-    cell: ({ row }) => modelNameToNaturalName(row.getValue('Method')),
-  },
-  { accessorKey: 'Profit', header: 'Lucro' },
-  { accessorKey: 'ROI', header: 'ROI' },
-  { accessorKey: 'Responsibility', header: 'Investido' },
-  { accessorKey: 'Num_Bets', header: 'Qtd de apostas' },
+  { id: 'Method', accessorKey: 'Method', header: 'Modelo' },
+  { id: 'Profit', accessorKey: 'Profit', header: 'Lucro' },
+  { id: 'ROI', accessorKey: 'ROI', header: 'ROI' },
+  { id: 'Responsibility', accessorKey: 'Responsibility', header: 'Investido' },
+  { id: 'Num_Bets', accessorKey: 'Num_Bets', header: 'Qtd de apostas' },
 ]
 
 const sanitizedAllResultsData = computed(() => {
   return props.allResultsData.map((item) => {
     return {
       ...item,
-      ProfitRaw: item.Profit,
+      Method: modelNameToNaturalName(item.Method),
+      profitClass: item.Profit >= 0 ? 'text-teal-500' : 'text-red-500',
+      roiClass: item.ROI >= 0 ? 'text-teal-500' : 'text-red-500',
       Profit: formatNumber(item.Profit),
       ROI: formatNumber(item.ROI),
-      Num_Bets: formatNumber(item.Num_Bets),
+      Num_Bets: formatNumber(item.Num_Bets, 0),
     }
   })
 })
