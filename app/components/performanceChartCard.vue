@@ -31,10 +31,10 @@
 
       <div class="mt-3 border-t border-zinc-800 pt-3">
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div v-if="trend && trend.slope != 0">
+          <div v-if="!chartByDay && trend && trend.slope != 0">
             <div class="flex items-center gap-1">
               <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
-                Inclinação<span class="text-zinc-600">/{{ groupBy === 'day' ? 'dia' : 'aposta' }}</span>
+                Inclinação<span class="text-zinc-600">/aposta</span>
               </p>
 
               <UButton
@@ -51,7 +51,7 @@
             <p class="mt-0.5 text-base font-medium" :class="slopeClass">{{ formatNumber(trend.slope) }}</p>
           </div>
 
-          <div v-if="r2 != null">
+          <div v-if="!chartByDay && r2 != null">
             <div class="flex items-center gap-1">
               <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">R²</p>
 
@@ -164,8 +164,8 @@
       <UModal v-model:open="showSlopeInfo" title="Inclinação">
         <template #body>
           <p class="text-sm leading-relaxed text-zinc-300">
-            Mede quanto o capital acumulado cresce a cada unidade (por aposta ou por dia, conforme a visualização). É a
-            inclinação da linha de tendência do gráfico.
+            Mede quanto o capital acumulado cresce a cada aposta. É a inclinação da linha de tendência do gráfico (OLS
+            sobre o cumulativo por aposta).
           </p>
 
           <p class="mt-3 text-sm leading-relaxed text-zinc-300">

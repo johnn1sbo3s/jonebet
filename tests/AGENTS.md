@@ -19,18 +19,17 @@ Unit tests for Vue components using Vitest + @nuxt/test-utils.
 ## Work Guidance
 
 - Test directory mirrors `app/` structure
-- Only 4 component tests exist currently
+- 6 component tests exist (added metricsCard.spec.ts in this revision)
 - Tests use `describe/it/expect` from Vitest
 - Components mounted with `mountSuspended()` for Nuxt integration
 
 ## Existing Tests
-
-| File | Tests |
-|------|-------|
 | `betsTableCard.spec.ts` | Renders count, pagination button states, page emit |
 | `blockMetricsPanel.spec.ts` | Renders header, history sub-header, passes props |
+| `dailyBetCard.spec.ts` | Renders date badge, header, match split, 3 odds, container classes |
+| `metricsCard.spec.ts` | Renders title, formats PLB/ROI/WR/odds/EV/DD/entradas, profit/roi colour classes, lucroEfetivo (incl. medLoss=0 guard) |
 | `performanceChartCard.spec.ts` | Renders header, switch, metric labels, modals, zoom reset, emit |
-| `resultsTablesGrid.spec.ts` | Renders both headers, row counts |
+
 
 ## Verification
 

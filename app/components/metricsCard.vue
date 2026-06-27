@@ -18,7 +18,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">ROI</p>
 
           <p class="mt-1 text-xl font-semibold" :class="roiClass">
-            {{ formatPercent(metricsData.roi * 100) }}
+            {{ formatPercent(metricsData.roi) }}
           </p>
         </div>
       </div>
@@ -59,7 +59,7 @@ const profitClass = computed(() => {
 })
 
 const roiClass = computed(() => {
-  const v = props.metricsData.roi * 100
+  const v = props.metricsData.roi
   if (v > 0) return 'text-teal-400'
   if (v < 0) return 'text-red-400'
   return 'text-white'

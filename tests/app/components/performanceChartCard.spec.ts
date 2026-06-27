@@ -67,4 +67,39 @@ describe('PerformanceChartCard', () => {
     await switchBtn.trigger('click')
     expect(wrapper.emitted('update:chartByDay')?.[0]).toEqual([true])
   })
+  it('hides Inclinação and R² when chart is in day mode', async () => {
+    // The trend endpoint has no groupBy param and always returns the
+    // bet-level OLS, so showing the slope/R² under a "per day" label
+    // would be misleading. The fix is to hide both in day mode and
+    // keep the label as a static "/aposta".
+    const bet = await mountSuspended(PerformanceChartCard, {
+      props: { chosenModelId, chartByDay: false, dailyResults, dailyResultsPending },
+    })
+    expect(bet.text()).toContain('Inclinação')
+    expect(bet.text()).toContain('R²')
+    expect(bet.text()).toContain('Inclinação/aposta')
+
+    const day = await mountSuspended(PerformanceChartCard, {
+      props: { chosenModelId, chartByDay: true, dailyResults, dailyResultsPending },
+    })
+    expect(day.text()).not.toContain('Inclinação')
+    expect(day.text()).not.toContain('R²')
+  })
+
+  it('Inclinação modal explains the metric as per-bet only', async () => {
+    // The modal text used to say "por aposta ou por dia, conforme a
+    // visualização". After the day-mode removal the slope is always
+    // per bet, so the modal must not promise a per-day variant.
+    const wrapper = await mountSuspended(PerformanceChartCard, {
+      props: { chosenModelId, chartByDay: false, dailyResults, dailyResultsPending },
+    })
+    const button = wrapper.findAll('button').find((b) => b.attributes('aria-label') === 'O que é Inclinação?')
+    expect(button).toBeTruthy()
+    await button!.trigger('click')
+    await wrapper.vm.$nextTick()
+    // UModal portals to document.body, so query the document directly.
+    const text = document.body.textContent ?? ''
+    expect(text).toContain('cada aposta')
+    expect(text).not.toContain('por dia')
+  })
 })
