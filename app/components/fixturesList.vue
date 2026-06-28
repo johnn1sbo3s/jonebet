@@ -107,7 +107,7 @@ const tabItems = [
 const internalFixtures = ref([])
 const chosenGame = ref({})
 const filteredBets = ref([])
-const selectedTab = ref('exchange')
+const selectedTab = ref('bookie')
 const showMobileModal = ref(false)
 
 watch(
@@ -119,6 +119,8 @@ watch(
 )
 
 watch(selectedTab, (value) => {
+  chosenGame.value = {}
+  showMobileModal.value = false
   emits('source-change', value)
 })
 
@@ -153,6 +155,14 @@ function filterBets() {
     return bet.Home === chosenGame.value.Home && bet.Away === chosenGame.value.Away
   })
 }
+
+watch(
+  () => props.fixtures,
+  () => {
+    chosenGame.value = {}
+    showMobileModal.value = false
+  },
+)
 </script>
 
 <style lang="scss" scoped></style>

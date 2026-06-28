@@ -33,7 +33,7 @@ All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
 | `fixtureCard.vue` | Individual fixture card with odds + model count | |
 | `fixtureDetailsCard.vue` | Fixture detail: odds, O/U, BTTS, allowed models | |
-| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie) | Mobile: UDrawer; resize listener cleaned up in `onUnmounted` |
+| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie); Bookie is the default tab | Mobile: UDrawer; resize listener cleaned up in `onUnmounted`; `chosenGame` and mobile modal are cleared on tab change and on fixtures refetch (covers tab and date change) |
 | `fixturesListSkeleton.vue` | Loading skeleton for fixtures list | |
 | `metricsCard.vue` | Model metrics: PLB, ROI, WR, odds, EV, drawdown, entries | |
 | `monthlyResultsList.vue` | Scrollable monthly results with border accent | |

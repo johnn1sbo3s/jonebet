@@ -15,7 +15,7 @@ const apiUrl = useRuntimeConfig().public.API_URL
 
 const selectedDate = ref('')
 const isLoading = ref(true)
-const source = ref('exchange')
+const source = ref('bookie')
 const fixtures = ref([])
 const bets = ref([])
 const fetchError = ref(null)
