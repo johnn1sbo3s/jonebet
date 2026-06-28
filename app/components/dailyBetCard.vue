@@ -10,8 +10,20 @@
       <div class="mb-6">
         <div class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Horário · Modelo</div>
 
-        <div class="text-sm text-zinc-200">
-          {{ bet.Time }} · <span class="font-semibold text-teal-400">{{ bet.Modelo }}</span>
+        <div class="flex items-center justify-between text-sm text-zinc-200">
+          <span
+            >{{ bet.Time }} · <span class="font-semibold text-teal-400">{{ bet.Modelo }}</span></span
+          >
+
+          <a
+            v-if="bet.Fixture_ID"
+            :href="flashscoreUrl(bet.Fixture_ID)"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Ver no Flashscore"
+          >
+            <UIcon name="i-lucide-external-link" class="text-lg text-zinc-500 hover:text-teal-400" />
+          </a>
         </div>
       </div>
 

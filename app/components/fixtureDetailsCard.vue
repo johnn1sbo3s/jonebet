@@ -10,6 +10,18 @@
       {{ fixture?.Home }} x {{ fixture?.Away }}
     </div>
 
+    <a
+      v-if="fixture?.Fixture_ID"
+      :href="flashscoreUrl(fixture.Fixture_ID)"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-1 inline-flex items-center gap-1 self-center text-xs text-zinc-500 hover:text-teal-400"
+    >
+      <UIcon name="i-lucide-external-link" />
+
+      <span>Ver no Flashscore</span>
+    </a>
+
     <div class="mt-2 flex flex-col gap-2">
       <div class="rounded-xl border border-zinc-800 bg-zinc-950/80 px-3 py-2">
         <p class="text-xs text-zinc-300">Match odds</p>

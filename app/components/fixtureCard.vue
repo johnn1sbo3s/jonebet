@@ -19,7 +19,21 @@
         </div>
 
         <div class="flex flex-col gap-2 text-sm sm:text-base">
-          <div>{{ item.Home }} x {{ item.Away }}</div>
+          <div class="flex items-center gap-1.5">
+            <span>{{ item.Home }} x {{ item.Away }}</span>
+
+            <a
+              v-if="item.Fixture_ID"
+              :href="flashscoreUrl(item.Fixture_ID)"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ver no Flashscore"
+              class="ml-1 flex items-center"
+              @click.stop
+            >
+              <UIcon name="i-lucide-external-link" class="text-zinc-500 hover:text-teal-400" />
+            </a>
+          </div>
 
           <div class="flex gap-1">
             <UBadge :color="item.FT_Odds_H < item.FT_Odds_A ? 'primary' : 'neutral'" variant="soft">
