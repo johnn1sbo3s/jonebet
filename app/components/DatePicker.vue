@@ -1,29 +1,38 @@
 <template>
-  <div class="flex items-center gap-1">
-    <UButton icon="i-lucide-chevron-left" size="xs" color="secondary" variant="soft" @click="goPrev" />
+  <div class="inline-flex items-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
+    <button
+      type="button"
+      class="hover:bg-elevated flex h-8 items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Data anterior"
+      @click="goPrev"
+    >
+      <UIcon name="i-lucide-chevron-left" class="size-4" />
+    </button>
 
     <UPopover v-model:open="popoverOpen" :popper="{ placement: 'bottom' }">
-      <UButton
-        :label="modelValue ? formatDate(modelValue) : ''"
-        size="xs"
-        color="secondary"
-        variant="soft"
-        class="w-28 justify-center"
-      />
+      <button
+        type="button"
+        class="hover:bg-elevated focus-visible:ring-primary/40 flex h-8 w-28 items-center justify-center gap-1.5 border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
+      >
+        <span>{{ modelValue ? formatDate(modelValue) : '' }}</span>
+
+        <UIcon name="i-lucide-chevron-down" class="size-3.5 text-zinc-400" />
+      </button>
 
       <template #content>
         <UCalendar v-model="calendarValue" :max-value="maxCalendar" @update:model-value="onCalendarSelect" />
       </template>
     </UPopover>
 
-    <UButton
-      icon="i-lucide-chevron-right"
-      size="xs"
-      color="secondary"
-      variant="soft"
+    <button
+      type="button"
+      class="hover:bg-elevated flex h-8 items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Próxima data"
       :disabled="isAtMax"
       @click="goNext"
-    />
+    >
+      <UIcon name="i-lucide-chevron-right" class="size-4" />
+    </button>
   </div>
 </template>
 
