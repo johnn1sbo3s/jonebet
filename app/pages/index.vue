@@ -243,7 +243,7 @@ const dayMetrics = computed(() => {
   return [
     { name: 'Profit', value: m.profit },
     { name: 'Investido', value: m.invested },
-    { name: 'ROI', value: m.roi },
+    { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })
 
@@ -253,7 +253,7 @@ const monthMetrics = computed(() => {
   return [
     { name: 'Profit', value: m.profit },
     { name: 'Investido', value: m.invested },
-    { name: 'ROI', value: m.roi },
+    { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })
 
