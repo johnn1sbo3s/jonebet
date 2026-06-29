@@ -36,7 +36,7 @@ describe('MetricsCard', () => {
     expect(wrapper.text()).toContain('Profit (PLB)')
     // PLB is the first `text-xl` element (header row, left column).
     const plb = wrapper.findAll('p.text-xl')[0]
-    expect(plb.text()).toBe('85.36')
+    expect(plb.text()).toBe('85.36u')
   })
 
   it('renders ROI as percentage directly from the API value', async () => {

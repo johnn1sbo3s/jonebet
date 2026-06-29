@@ -45,7 +45,7 @@
             <p class="text-white">Resultados por mês</p>
 
             <p class="text-sm font-bold xl:text-base" :class="totalProfit > 0 ? 'text-teal-500' : 'text-red-500'">
-              {{ totalProfit > 0 ? '+' : '' }}{{ formatNumber(totalProfit) }}
+              {{ totalProfit > 0 ? '+' : '' }}{{ formatUnit(totalProfit) }}
             </p>
           </div>
         </template>
@@ -68,7 +68,7 @@
                 <p class="text-zinc-300">{{ item.month }}</p>
 
                 <p class="font-semibold" :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-                  {{ formatNumber(item.profit) }}
+                  {{ formatUnit(item.profit) }}
                 </p>
               </div>
             </UCard>
@@ -241,8 +241,8 @@ const dayMetrics = computed(() => {
   const m = yesterdayData.value?.metrics
   if (!m) return []
   return [
-    { name: 'Profit', value: m.profit },
-    { name: 'Investido', value: m.invested },
+    { name: 'Profit', value: m.profit, unit: 'u' },
+    { name: 'Investido', value: m.invested, unit: 'u' },
     { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })
@@ -251,8 +251,8 @@ const monthMetrics = computed(() => {
   const m = data.value?.month?.metrics
   if (!m) return []
   return [
-    { name: 'Profit', value: m.profit },
-    { name: 'Investido', value: m.invested },
+    { name: 'Profit', value: m.profit, unit: 'u' },
+    { name: 'Investido', value: m.invested, unit: 'u' },
     { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })

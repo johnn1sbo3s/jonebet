@@ -25,10 +25,10 @@
 
             <div class="shrink-0 text-right">
               <p class="text-base font-semibold" :class="profitClassFor(month)">
-                {{ formatNumber(month.profit) }}
+                {{ formatUnit(month.profit) }}
               </p>
 
-              <p class="text-xs text-zinc-500">Acumulado {{ formatNumber(month.accumulated) }}</p>
+              <p class="text-xs text-zinc-500">Acumulado {{ formatUnit(month.accumulated) }}</p>
             </div>
           </div>
         </div>

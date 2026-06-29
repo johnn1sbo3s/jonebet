@@ -26,7 +26,7 @@
           </div>
 
           <span class="shrink-0 text-base font-semibold" :class="block.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ formatNumber(block.profit) }}
+            {{ formatUnit(block.profit) }}
           </span>
         </div>
       </div>

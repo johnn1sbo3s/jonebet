@@ -19,7 +19,7 @@
           <span class="relative z-10">{{ modelNameToNaturalName(item.name) }}</span>
 
           <span class="relative z-10 font-semibold" :class="item.profit >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ formatNumber(item.profit) }}
+            {{ formatUnit(item.profit) }}
           </span>
         </NuxtLink>
       </div>
@@ -65,7 +65,7 @@
 
             <span>|</span>
 
-            <span>Investido: {{ formatNumber(item.Responsibility) }}</span>
+            <span>Investido: {{ formatUnit(item.Responsibility) }}</span>
 
             <span>|</span>
 
@@ -121,7 +121,7 @@ const sanitizedAllResultsData = computed(() => {
       Method: modelNameToNaturalName(item.Method),
       profitClass: item.Profit >= 0 ? 'text-teal-500' : 'text-red-500',
       roiClass: item.ROI >= 0 ? 'text-teal-500' : 'text-red-500',
-      Profit: formatNumber(item.Profit),
+      Profit: formatUnit(item.Profit),
       ROI: formatNumber(item.ROI),
       Num_Bets: formatNumber(item.Num_Bets, 0),
     }

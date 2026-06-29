@@ -10,7 +10,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Média P/L</p>
 
           <p class="mt-1 text-xl font-semibold" :class="mediaClass">
-            {{ formatNumber(metricsData.mean) }}
+            {{ formatUnit(metricsData.mean) }}
           </p>
         </div>
       </div>
@@ -19,20 +19,20 @@
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
-          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.stdDev) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">{{ formatUnit(metricsData.stdDev) }}</p>
         </div>
 
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Méd/Desvpad</p>
 
-          <p class="mt-0.5 text-sm font-medium text-white">{{ formatNumber(metricsData.meanStdDev) }}</p>
+          <p class="mt-0.5 text-sm font-medium text-white">{{ formatUnit(metricsData.meanStdDev) }}</p>
         </div>
 
         <div>
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Dif. valid.</p>
 
           <p class="mt-0.5 text-sm font-medium" :class="difValidClass">
-            {{ formatNumber(metricsData.diffMeanStdDev96Sqrt) }}
+            {{ formatUnit(metricsData.diffMeanStdDev96Sqrt) }}
           </p>
         </div>
 
@@ -40,8 +40,8 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Int. conf.</p>
 
           <p class="mt-0.5 text-sm font-medium text-white">
-            {{ formatNumber(metricsData.confidenceInterval?.[0]) }} →
-            {{ formatNumber(metricsData.confidenceInterval?.[1]) }}
+            {{ formatUnit(metricsData.confidenceInterval?.[0]) }} →
+            {{ formatUnit(metricsData.confidenceInterval?.[1]) }}
           </p>
         </div>
       </div>

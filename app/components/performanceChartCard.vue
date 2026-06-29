@@ -73,7 +73,7 @@
             <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Total acumulado</p>
 
             <p class="mt-0.5 text-base font-medium" :class="totalAccumulatedClass">
-              {{ formatNumber(totalAccumulated) }}
+              {{ formatUnit(totalAccumulated) }}
             </p>
           </div>
 
@@ -90,7 +90,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Drawdown</p>
 
           <p v-if="maxDrawdown != null" class="text-xs text-zinc-400">
-            Máx: <span class="font-semibold text-red-400">{{ formatNumber(maxDrawdown) }}</span>
+            Máx: <span class="font-semibold text-red-400">{{ formatUnit(maxDrawdown) }}</span>
           </p>
         </div>
 

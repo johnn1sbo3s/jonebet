@@ -10,7 +10,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Profit</p>
 
           <p class="mt-1 text-xl font-semibold" :class="profitClass">
-            {{ formatNumber(metricsData.currentMean) }}
+            {{ formatUnit(metricsData.currentMean) }}
           </p>
         </div>
       </div>
@@ -20,7 +20,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Desvpad</p>
 
           <p class="mt-0.5 text-sm font-medium text-white">
-            {{ formatNumber(metricsData.currentStdDev) }}
+            {{ formatUnit(metricsData.currentStdDev) }}
           </p>
         </div>
 

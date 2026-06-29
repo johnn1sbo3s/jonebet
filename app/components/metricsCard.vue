@@ -10,7 +10,7 @@
           <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">Profit (PLB)</p>
 
           <p class="mt-1 text-xl font-semibold" :class="profitClass">
-            {{ formatNumber(metricsData.plb) }}
+            {{ formatUnit(metricsData.plb) }}
           </p>
         </div>
 
@@ -68,11 +68,11 @@ const roiClass = computed(() => {
 const metrics = computed(() => [
   { label: 'WR', value: formatPercent(props.metricsData.wr * 100, 0) },
   { label: 'Odd média', value: formatNumber(props.metricsData.odds) },
-  { label: 'Win médio', value: formatNumber(props.metricsData.medGain) },
-  { label: 'Loss médio', value: formatNumber(props.metricsData.medLoss) },
-  { label: 'EV', value: formatNumber(props.metricsData.ev) },
+  { label: 'Win médio', value: formatUnit(props.metricsData.medGain) },
+  { label: 'Loss médio', value: formatUnit(props.metricsData.medLoss) },
+  { label: 'EV', value: formatUnit(props.metricsData.ev) },
   { label: 'Lucro efetivo', value: formatPercent(lucroEfetivo.value) },
-  { label: 'Máx DD', value: formatNumber(props.metricsData.dd) },
+  { label: 'Máx DD', value: formatUnit(props.metricsData.dd) },
   { label: 'Entradas', value: String(props.metricsData.entradas) },
 ])
 </script>

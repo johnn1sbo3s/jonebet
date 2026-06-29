@@ -10,7 +10,7 @@ Shared utility functions used across components and composables.
 - `modelsGroup.js`: Model name constants
 - `resolveModelName.js`: Model name converters
 - `formatDate.js`: Luxon-backed ISO → Brazilian date formatter (`dd/MM/yyyy` or `dd/MM/yy`)
-- `formatNumber.js`: Number/percent formatters with dot decimal, no thousands separator
+- `formatNumber.js`: Number/percent/stake-unit formatters with dot decimal, no thousands separator
 - `enums.js`: Frozen enum tables (`SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR`) — use instead of magic strings
 - `timezone.js`: `SP_TZ` constant + `yesterdayIso(tz?)` helper
 - `schemas.js`: zod schemas per API endpoint + `safeParse(endpoint, data)` helper
@@ -20,7 +20,7 @@ Shared utility functions used across components and composables.
 - No lodash dependency — all helpers are native JS implementations
 - Functions use `_` prefix for backward compatibility with lodash usage patterns
 - All utils are auto-imported by Nuxt
-- **Number formatting convention**: dot as decimal separator, no thousands separator. Use `formatNumber` / `formatPercent` for monetary values, odds, and percent fields. R² and other statistical scalars may keep raw `toFixed` since they are not currency/odds.
+- **Number formatting convention**: dot as decimal separator, no thousands separator. Use `formatNumber` / `formatPercent` for percent fields. Use `formatUnit` for any stake-unit value (profit, invested, win/loss médio, EV, max DD, accumulated, std dev, etc.). Odds stay bare (dimensionless). R² and other statistical scalars may keep raw `toFixed` since they are not currency/odds.
 
 ## Work Guidance
 
@@ -43,7 +43,8 @@ Shared utility functions used across components and composables.
 - The function is auto-imported across `app/`. Do not duplicate it per-component — delete any local `function formatDate` re-implementations and import this one instead.
 
 ### formatNumber.js
-- `formatNumber(n, decimals = 2)` and `formatPercent(n, decimals = 2)`. Both auto-imported across `app/`.
+- `formatNumber(n, decimals = 2)`, `formatPercent(n, decimals = 2)`, and `formatUnit(n, decimals = 2)`. All three auto-imported across `app/`.
+- `formatUnit(n)` returns `"<number>u"` (e.g. `12.50u`) for stake-unit values. Reach for it instead of `formatNumber` whenever the underlying data is expressed in units of stake.
 - Do not duplicate per-component — replace any local `function formatNumber`, `toLocaleString('pt-BR', ...)`, or `toFixed(2)` callsites for monetary / odds / percent values with this helper.
 - `null`/`undefined` coerce to `0`; non-finite inputs render as the string `"NaN"` (same as `Number.prototype.toFixed`).
 
