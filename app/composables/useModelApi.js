@@ -158,7 +158,7 @@ export function useDailyBets({ date, model = null } = {}) {
     }),
     default: () => ({ date: null, bets: [], total: 0 }),
     watch: [date, modelRef],
-    getCachedData: () => cacheGet(cache, cacheKey.value),
+    getCachedData: (key, nuxtApp) => cacheGet(cache, cacheKey.value) ?? nuxtApp?.payload?.data?.[key] ?? undefined,
     onResponse({ response }) {
       if (response?.ok && response._data !== undefined) {
         const parsed = safeParse('dailyBets', response._data)

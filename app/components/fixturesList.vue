@@ -113,7 +113,7 @@ const showMobileModal = ref(false)
 watch(
   () => props.fixtures,
   (value) => {
-    internalFixtures.value = value.sort((a, b) => (a.Time > b.Time ? 1 : -1))
+    internalFixtures.value = value.sort((a, b) => (a.Time > b.Time ? 1 : a.Time < b.Time ? -1 : 0))
   },
   { immediate: true },
 )
