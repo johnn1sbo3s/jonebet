@@ -158,7 +158,22 @@ export function useDailyBets({ date, model = null } = {}) {
     }),
     default: () => ({ date: null, bets: [], total: 0 }),
     watch: [date, modelRef],
-    getCachedData: (key, nuxtApp) => cacheGet(cache, cacheKey.value) ?? nuxtApp?.payload?.data?.[key] ?? undefined,
+    getCachedData: (key, nuxtApp) => {
+      const cached = cacheGet(cache, cacheKey.value)
+      if (cached) return cached
+      // SSR payload fallback is keyed by the static useFetch key, not by
+      // the date-aware cacheKey. Use it only when its resolved date still
+      // matches the current date (or `date` hasn't been set yet) — i.e.
+      // the initial hydration or the immediate `dailyBetsResponse` watch
+      // that mirrors the API date. Once the user navigates to a different
+      // date the payload is stale and must not be returned, or the
+      // refetch is skipped and the page renders the previous date's bets.
+      const payloadData = nuxtApp?.payload?.data?.[key]
+      if (payloadData && (date.value === null || date.value === payloadData.date)) {
+        return payloadData
+      }
+      return undefined
+    },
     onResponse({ response }) {
       if (response?.ok && response._data !== undefined) {
         const parsed = safeParse('dailyBets', response._data)
