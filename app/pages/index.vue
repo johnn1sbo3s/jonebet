@@ -128,7 +128,13 @@
 
     <USkeleton v-if="status === 'pending'" class="h-60 w-full rounded-2xl" />
 
-    <DataErrorCard v-else-if="!data?.month?.results?.length" message="Não foi possível carregar os resultados do mês" />
+    <DataErrorCard v-else-if="dashboardError" message="Não foi possível carregar os resultados do mês" />
+
+    <DataErrorCard
+      v-else-if="!data?.month?.results?.length"
+      icon="i-lucide-info"
+      :message="`Nenhum resultado disponível para ${currentMonthLabel} ainda`"
+    />
 
     <UCard v-else id="month-metrics" class="border border-zinc-800 bg-zinc-900">
       <template #header>
@@ -220,6 +226,14 @@ const chosenDateIso = ref(yesterday)
 const maxDateIso = yesterday
 const dayLoading = ref(false)
 const yesterdayData = ref({})
+
+// Month label for the dashboard "current month" card, in the same
+// "Mês/aa" format used by `bankrollEvolution` entries (e.g. "Julho/26").
+const currentMonthLabel = computed(() => {
+  const dt = DateTime.now().setZone(timezone).setLocale('pt-BR')
+  const month = dt.toFormat('LLLL')
+  return `${month.charAt(0).toUpperCase()}${month.slice(1)}/${dt.toFormat('yy')}`
+})
 
 const resultsByMonth = computed(() => {
   if (!data.value?.bankrollEvolution?.length) return []

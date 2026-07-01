@@ -29,7 +29,7 @@ All 23 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `blocksHistoryList.vue` | Scrollable list of 100-game blocks with profit/ROI | |
 | `currentBlockMetricsCard.vue` | Current block: profit, std dev, game count | |
 | `dailyBetCard.vue` | Single bet card: date badge + header line + split match + 3 odds | Receives `bet` prop; used by `daily-bets.vue` list |
-| `dataErrorCard.vue` | Error/empty state card with icon + message | |
+| `dataErrorCard.vue` | Error/empty state card with icon + message. Props: `message` (String), `icon` (String, default `i-lucide-triangle-alert` — override with `i-lucide-info` for info-state empties) |
 | `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
 | `fixtureCard.vue` | Individual fixture card with odds + model count | |
 | `fixtureDetailsCard.vue` | Fixture detail: odds, O/U, BTTS, allowed models | |

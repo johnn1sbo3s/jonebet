@@ -20,7 +20,7 @@ Nuxt file-based routing pages. 4 routes total.
 
 | File | Route | Description |
 |------|-------|-------------|
-| `index.vue` | `/` | Dashboard: bankroll chart, monthly/daily results, monthly metrics |
+| `index.vue` | `/` | Dashboard: bankroll chart, monthly/daily results, monthly metrics. The "Resultados do mês" section falls back to a `DataErrorCard` with `i-lucide-info` icon and message "Nenhum resultado disponível para <Mês/aa> ainda" when the current month has no results yet (e.g. day 1 of a new month); a fetch error keeps the original warning icon and "Não foi possível carregar..." copy. |
 | `fixtures.vue` | `/fixtures` | Daily games with date picker + source toggle (default: Bookie) |
 | `daily-bets.vue` | `/daily-bets` | Effective-date bet list (cards) with model filter. Uses `useDailyBets` + `useDailyBetsDates`. The model `USelectMenu` (searchable) options are the unique `Modelo` values from the current bet list. On first load, `date` is synced from the API's resolved effective date (tomorrow, fallback today); `DatePicker` lets the user navigate. `<DailyBetCard>` per bet. |
 | `performance/[[model]].vue` | `/performance` or `/performance/:model` | Model performance: chart, metrics, blocks, bets, results |
