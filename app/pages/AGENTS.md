@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Nuxt file-based routing pages. 4 routes total.
+Nuxt file-based routing pages. 5 routes total.
 
 ## Ownership
 
@@ -24,6 +24,7 @@ Nuxt file-based routing pages. 4 routes total.
 | `fixtures.vue` | `/fixtures` | Daily games with date picker + source toggle (default: Bookie) |
 | `daily-bets.vue` | `/daily-bets` | Effective-date bet list (cards) with model filter. Uses `useDailyBets` + `useDailyBetsDates`. The model `USelectMenu` (searchable) options are the unique `Modelo` values from the current bet list. On first load, `date` is synced from the API's resolved effective date (tomorrow, fallback today); `DatePicker` lets the user navigate. `<DailyBetCard>` per bet. |
 | `performance/[[model]].vue` | `/performance` or `/performance/:model` | Model performance: chart, metrics, blocks, bets, results |
+| `academy.vue` | `/academy` | Glossário de termos da plataforma: busca ao vivo, agrupado por categoria, cards expansíveis. Usa `useAcademiaGlossario` + `glossario.json`. |
 
 ## Work Guidance
 
