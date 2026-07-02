@@ -7,9 +7,9 @@
     <div class="mb-2 flex items-start justify-between gap-2">
       <h3 class="text-base font-semibold text-white">{{ term.name }}</h3>
 
-      <UBadge :color="badgeColor" variant="subtle" size="xs">
+      <span class="text-xs font-semibold" :class="textColorClass">
         {{ term.category }}
-      </UBadge>
+      </span>
     </div>
 
     <p class="text-sm leading-relaxed text-zinc-400">{{ term.short }}</p>
@@ -51,12 +51,12 @@ const borderColorClass = computed(() => {
   return map[props.term.category] || 'border-l-zinc-500'
 })
 
-const badgeColor = computed(() => {
+const textColorClass = computed(() => {
   const map = {
-    Conceito: 'teal',
-    Estratégia: 'violet',
-    Modelo: 'amber',
+    Conceito: 'text-teal-500',
+    Estratégia: 'text-violet-500',
+    Modelo: 'text-amber-500',
   }
-  return map[props.term.category] || 'neutral'
+  return map[props.term.category] || 'text-zinc-500'
 })
 </script>
