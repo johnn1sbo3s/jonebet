@@ -13,7 +13,7 @@
             {{ cat }} ({{ filteredByCategory[cat]?.length || 0 }})
           </h2>
 
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2 lg:grid-cols-3">
             <AcademyTermCard v-for="term in filteredByCategory[cat]" :key="term.name" :term="term" />
           </div>
         </div>
