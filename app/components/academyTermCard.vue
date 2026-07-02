@@ -1,6 +1,6 @@
 <template>
   <div
-    class="cursor-pointer rounded-2xl border border-l-[3px] border-zinc-800 bg-zinc-900 p-4 transition-colors hover:bg-zinc-800/60"
+    class="min-h-28 cursor-pointer rounded-2xl border border-l-[3px] border-zinc-800 bg-zinc-900 p-4 transition-colors hover:bg-zinc-800/60"
     :class="borderColorClass"
     @click="expanded = !expanded"
   >
