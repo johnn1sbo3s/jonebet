@@ -14,8 +14,8 @@
 
     <p class="line-clamp-2 text-sm leading-relaxed text-zinc-400">{{ term.short }}</p>
 
-    <template v-if="expanded">
-      <div class="mt-4 space-y-3">
+    <Transition name="expand">
+      <div v-if="expanded" class="mt-4 space-y-3 overflow-hidden">
         <div>
           <p class="mb-1 text-xs font-medium tracking-wide text-zinc-500 uppercase">Detalhe</p>
 
@@ -28,7 +28,7 @@
           <p class="text-sm leading-relaxed text-zinc-300">{{ term.example }}</p>
         </div>
       </div>
-    </template>
+    </Transition>
   </div>
 </template>
 
@@ -60,3 +60,23 @@ const textColorClass = computed(() => {
   return map[props.term.category] || 'text-zinc-500'
 })
 </script>
+
+<style scoped>
+.expand-enter-active,
+.expand-leave-active {
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
+  overflow: hidden;
+}
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.expand-enter-to,
+.expand-leave-from {
+  max-height: 500px;
+  opacity: 1;
+}
+</style>
