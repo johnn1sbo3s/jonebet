@@ -26,6 +26,11 @@ const navItems = [
       icon: 'i-lucide-bar-chart-3',
       to: '/performance',
     },
+    {
+      label: 'Academia',
+      icon: 'i-lucide-graduation-cap',
+      to: '/academy',
+    },
   ],
 ]
 </script>
