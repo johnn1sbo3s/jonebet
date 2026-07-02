@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AcademyTerm",
+  "type": "object",
+  "required": ["name", "category", "short", "long", "example"],
+  "additionalProperties": false,
+  "properties": {
+    "name":     { "type": "string", "minLength": 1, "maxLength": 40 },
+    "category": { "enum": ["Conceito", "Estratégia", "Modelo"] },
+    "short":    { "type": "string", "minLength": 10, "maxLength": 200 },
+    "long":     { "type": "string", "minLength": 30, "maxLength": 1500 },
+    "example":  { "type": "string", "minLength": 10, "maxLength": 500 }
+  }
+}
