@@ -1,0 +1,79 @@
+[
+  {
+    "name": "modelo",
+    "category": "Conceito",
+    "short": "Um \"especialista digital\" que analisou milhares de jogos antigos pra dizer o que acha que vai acontecer nos jogos de hoje.",
+    "long": "Ele olha o histórico dos times, aprendeu padrões (time que tá em boa fase, time que costuma levar gol fora de casa, etc.) e usa isso pra dar uma opinião sobre o jogo. Não é chute nem bola de cristal — é estatística. A plataforma roda vários modelos ao mesmo tempo, cada um focado num tipo de situação. Quando a opinião do modelo bate com uma odd boa da casa, nasce uma aposta.",
+    "example": "\"O modelo achou que esse jogo tem 65% de chance de ter gol no 1º tempo\" — significa que o programa, olhando os times, considera isso provável com base no histórico deles."
+  },
+  {
+    "name": "odd",
+    "category": "Conceito",
+    "short": "O número que a casa de aposta dá pra um resultado. É o \"multiplicador\" do que você ganha.",
+    "long": "A odd diz quanto você recebe se acertar a aposta. Exemplo: odd de 2.0 quer dizer que pra cada R$1 que você colocar, recebe R$2 de volta (R$1 de lucro + R$1 da sua stake). Quanto maior a odd, mais arriscado a casa considera o resultado — e maior o lucro se você acertar. A plataforma usa odd decimal, que é a mais comum no Brasil.",
+    "example": "Odd 1.50 pro favorito = vitória esperada, lucro pequeno. Odd 5.00 pro azarão = improvável, mas se der, lucro bem maior."
+  },
+  {
+    "name": "valor esperado",
+    "category": "Conceito",
+    "short": "O que diz se uma aposta é boa ou ruim a longo prazo.",
+    "long": "Pense assim: se você fizesse a mesma aposta mil vezes, ganharia dinheiro ou perderia? Se ganhar, ela tem valor. Se perder, não tem. A plataforma calcula isso pra cada jogo: cruza o que o modelo acha que vai acontecer com o quanto a casa tá pagando. Quando a casa paga mais do que deveria, nasce uma aposta de valor.",
+    "example": "O modelo diz que o time tem 60% de chance de ganhar. A casa paga odd 2.20. A aposta tem valor, porque a casa tá pagando como se a chance fosse menor. Se a casa pagasse odd 1.50, não teria valor — a chance real é maior do que o pagamento sugere."
+  },
+  {
+    "name": "stake",
+    "category": "Conceito",
+    "short": "Quanto dinheiro você coloca numa aposta. É o que você arrisca.",
+    "long": "Cada aposta tem um valor em reais — R$5, R$20, R$100. Esse valor é o stake. Se você perder a aposta, perde o stake. Se ganhar, recebe de volta o stake + o lucro, que é calculado pela odd. A plataforma usa uma stake padrão por aposta pra manter o risco controlado, mas o tamanho exato pode variar de acordo com a banca e o valor esperado da aposta.\nObs.: em apostas lay, a mecânica é diferente — vale ver o card de lay.",
+    "example": "Stake de R$20 numa odd 2.50. Ganhou: recebe R$50 no total (R$30 de lucro + R$20 da stake de volta). Perdeu: perde os R$20."
+  },
+  {
+    "name": "banca",
+    "category": "Conceito",
+    "short": "O total de dinheiro que você tem separado pra apostar. É o seu \"caixa\".",
+    "long": "É o caixa da atividade. Tudo o que você tem disponível pra colocar em apostas. A regra de ouro é nunca apostar mais do que 1–5% da banca numa aposta só — isso evita que uma sequência ruim te quebre. A plataforma ajusta a stake de cada aposta automaticamente pra manter esse percentual, então mesmo perdendo várias seguidas, a stake vai diminuindo junto com a banca.",
+    "example": "Banca de R$1.000 e stake de 2% = R$20 por jogo. Perde 5 seguidos: banca cai pra R$900, stake cai pra R$18. Ganha uma odd 2.50 na próxima: banca sobe pra R$945, stake sobe pra R$19."
+  },
+  {
+    "name": "ROI",
+    "category": "Conceito",
+    "short": "Quanto você ganhou (ou perdeu) em porcentagem do que apostou. É a régua principal pra saber se tá dando certo.",
+    "long": "ROI = lucro total ÷ total apostado, em porcentagem. Apostou R$1.000 no mês e lucrou R$80? ROI de 8%. Perdeu R$50? ROI de -5%. A plataforma calcula ROI por modelo, por período, por liga — assim você vê o que tá funcionando e o que não tá. ROI positivo no longo prazo é o que separa apostador comum de quem investe em aposta.",
+    "example": "Mês com 50 apostas, stake total R$1.000, lucro R$120 → ROI de +12%. Outro mês com 50 apostas, stake R$1.000, prejuízo R$80 → ROI de -8%."
+  },
+  {
+    "name": "aposta",
+    "category": "Conceito",
+    "short": "Uma recomendação de aposta gerada por um modelo. É o que aparece na lista do dia pra você seguir.",
+    "long": "É a \"unidade de ação\" da plataforma. Cada aposta é um conjunto de informações: o jogo, o tipo (back ou lay), a odd, e o modelo que recomendou. Você olha a lista do dia, vê o que os modelos acham que tem valor, e decide se quer seguir — aí você mesma monta a stake e coloca na casa ou exchange.",
+    "example": "\"Hoje tem 12 apostas. O modelo LTD gerou 3, o lay_away gerou 2, o lay_0x0 gerou 4. Cada uma mostra: jogo, tipo (back/lay), odd e qual modelo sugeriu.\""
+  },
+  {
+    "name": "win rate",
+    "category": "Conceito",
+    "short": "A porcentagem de apostas que você acertou. Na plataforma aparece como \"WR\".",
+    "long": "É a sua taxa de acerto. De cada 10 apostas, em quantas você ganhou? Se acertou 6, seu WR é 60%. Cuidado: WR alto não quer dizer lucro alto. Você pode acertar 80% das apostas com odds baixíssimas e ainda assim perder dinheiro. O que importa mesmo é o ROI — o WR é só um pedaço da história.",
+    "example": "100 apostas no mês, 55 ganhas → WR 55%. Outro mês: 80 apostas, 50 ganhas → WR 62,5%. Mas se as odds eram baixas no segundo mês, o ROI pode ter sido pior mesmo com mais acertos."
+  },
+  {
+    "name": "back",
+    "category": "Estratégia",
+    "short": "Aposte a favor de um resultado acontecer. É o tipo mais comum de aposta.",
+    "long": "\"Back\" é torcer pelo resultado. Você aposta que o time A vai ganhar, que vai ter mais de 2.5 gols, que o visitante vai marcar primeiro. É o jeito tradicional — funciona em qualquer casa, presencial ou online. Você paga a stake, e se acertar, recebe odd × stake. A maioria das apostas que a plataforma recomenda é back.",
+    "example": "\"Back no mandante a odd 1.80\" = você tá apostando que o time da casa vai ganhar. Se ganhar, você lucra. Se perder ou empatar, perde a stake."
+  },
+  {
+    "name": "lay",
+    "category": "Estratégia",
+    "short": "Aposte CONTRA um resultado acontecer. Você tá dizendo \"isso NÃO vai rolar\".",
+    "long": "\"Lay\" é o oposto de back. Em vez de torcer pro time ganhar, você aposta que ele NÃO vai ganhar. Funciona em exchanges (como Betfair) — não em casas tradicionais. Você tá \"vendendo\" a aposta pra outro apostador. Os modelos da plataforma usam muito lay pra dizer \"esse favoritismo é furada — o time da casa não vai ganhar\".\nComo funciona a stake: numa aposta lay, o valor que você coloca é a \"responsabilidade\" — o máximo que você paga se perder. O lucro, se ganhar, é a \"stake do backer\" (o que o outro apostador teria ganhado). É o espelho do back.",
+    "example": "\"Lay no mandante a odd 1.80, responsabilidade R$80\" = você arrisca R$80 contra o time da casa. Se ele perder ou empatar, você ganha R$100 (a stake do backer). Se ele ganhar, você perde os R$80."
+  },
+  {
+    "name": "LTD",
+    "category": "Modelo",
+    "short": "Lay The Draw. Um modelo que procura jogos onde vale a pena apostar contra o empate.",
+    "long": "LTD é um dos modelos da plataforma. A lógica: em jogos onde o time da casa é favorito claro, a odd do empate geralmente sobe (a casa precifica alto o empate). O LTD procura os casos em que essa odd do empate tá \"barata demais\" — ou seja, a chance real do empate é menor do que a odd sugere. Aí ele recomenda fazer lay no empate. Você lucra se o jogo terminar com vitória de qualquer um dos dois times.",
+    "example": "Jogo Real Madrid x Betis, odd do empate 4.20. O LTD diz: \"acho que o empate tem só 18% de chance, mas a casa tá pagando como se fosse 24%\". Aí ele recomenda lay no empate a 4.20. Jogo termina 2x0 → você ganha."
+  }
+]
