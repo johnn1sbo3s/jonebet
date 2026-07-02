@@ -12,7 +12,7 @@
       </span>
     </div>
 
-    <p class="text-sm leading-relaxed text-zinc-400">{{ term.short }}</p>
+    <p class="line-clamp-2 text-sm leading-relaxed text-zinc-400">{{ term.short }}</p>
 
     <template v-if="expanded">
       <div class="mt-4 space-y-3">
