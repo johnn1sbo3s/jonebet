@@ -55,17 +55,5 @@
       "eslint --fix"
     ],
     "*.{vue,ts}": "node scripts/check-arbitrary-values.cjs"
-  },
-  "pnpm": {
-    "overrides": {
-      "picomatch": "2.3.2",
-      "esbuild": "0.28.1"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "esbuild",
-      "unrs-resolver",
-      "vue-demi"
-    ]
   }
 }
