@@ -21,10 +21,18 @@
         {{ formatDate(row.original.date) }}
       </template>
 
+      <template #odds-cell="{ row }">
+        {{ formatNumber(row.original.odds) }}
+      </template>
+
       <template #result-cell="{ row }">
         <span :class="row.original.result?.toLowerCase() === 'green' ? 'text-teal-400' : 'text-red-400'">
           {{ row.original.result ? row.original.result[0].toUpperCase() + row.original.result.slice(1) : '—' }}
         </span>
+      </template>
+
+      <template #profit-cell="{ row }">
+        {{ formatUnit(row.original.profit) }}
       </template>
     </UTable>
 
@@ -40,7 +48,6 @@
 </template>
 
 <script setup>
-
 const props = defineProps({
   betsItems: { type: Array, required: true },
   betsTotal: { type: Number, required: true },
