@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-3">
+  <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
     <MonthlyResultsList :results="monthlyResults" />
 
     <UCard class="border border-zinc-800 bg-zinc-900">
@@ -16,11 +16,19 @@
           thead: 'sticky top-0 z-10',
           th: 'bg-zinc-950',
         }"
-        :data="dailyResults"
+        :data="reversedDailyResults"
         :columns="dailyBetsColumns"
       >
         <template #date-cell="{ row }">
           {{ formatDate(row.original.date) }}
+        </template>
+
+        <template #gain-cell="{ row }">
+          {{ formatUnit(row.original.gain) }}
+        </template>
+
+        <template #accumulated-cell="{ row }">
+          {{ formatUnit(row.original.accumulated) }}
         </template>
       </UTable>
     </UCard>
@@ -28,16 +36,17 @@
 </template>
 
 <script setup>
-
-defineProps({
+const props = defineProps({
   monthlyResults: { type: Array, required: true },
   dailyResults: { type: Array, required: true },
 })
 
+const reversedDailyResults = computed(() => [...props.dailyResults].reverse())
+
 const dailyBetsColumns = [
   { id: 'date', accessorKey: 'date', header: 'Dia' },
   { id: 'gain', accessorKey: 'gain', header: 'Lucro' },
-  { id: 'gameCount', accessorKey: 'gameCount', header: 'Jogos' },
   { id: 'accumulated', accessorKey: 'accumulated', header: 'Acumulado' },
+  { id: 'gameCount', accessorKey: 'gameCount', header: 'Jogos' },
 ]
 </script>
