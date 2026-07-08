@@ -4,6 +4,10 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
+  /* Extra small font size for compact comparison indicators */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+
   /* Colors - Canvas & Surface (zinc palette) */
   --color-canvas: #09090b;
   --color-surface-soft: #18181b;
