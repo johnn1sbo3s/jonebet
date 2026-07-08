@@ -101,8 +101,8 @@ const metrics = computed(() => [
   },
   {
     label: LABELS.roiPValue,
-    value: formatNumber(s.value.roiPValue, 3),
-    class: (s.value.roiPValue || 1) < 0.05 ? 'text-teal-400' : 'text-red-400',
+    value: pValueDisplay(s.value.roiPValue),
+    class: (s.value.roiPValue ?? 1) < 0.05 ? 'text-teal-400' : 'text-red-400',
     key: 'roiPValue',
   },
   {
@@ -125,8 +125,8 @@ const metrics = computed(() => [
   },
   {
     label: LABELS.wrPValue,
-    value: formatNumber(s.value.wrPValue, 3),
-    class: (s.value.wrPValue || 1) < 0.05 ? 'text-teal-400' : 'text-red-400',
+    value: pValueDisplay(s.value.wrPValue),
+    class: (s.value.wrPValue ?? 1) < 0.05 ? 'text-teal-400' : 'text-red-400',
     key: 'wrPValue',
   },
   {
@@ -156,6 +156,14 @@ function edgeProbClass(v) {
   if (v > 80) return 'text-teal-400'
   if (v < 50) return 'text-red-400'
   return 'text-white'
+}
+
+function pValueDisplay(v) {
+  if (v == null) return '—'
+  if (v === 0) return '<0.001'
+  const formatted = formatNumber(v, 3)
+  if (formatted === '0.000') return '<0.001'
+  return formatted
 }
 
 function sampleSizeValue(min, remaining) {
