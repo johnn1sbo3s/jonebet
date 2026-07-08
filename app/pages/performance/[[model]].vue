@@ -33,11 +33,15 @@
     <DataErrorCard v-else-if="!modelData" message="Não foi possível carregar as métricas do modelo" />
 
     <template v-else>
-      <div class="grid w-full grid-cols-1 gap-3 lg:grid-cols-10">
-        <div id="metrics-cards" class="order-2 flex flex-col gap-3 lg:order-1 lg:col-span-3">
+      <div class="grid w-full grid-cols-1 gap-3 xl:grid-cols-10">
+        <div id="metrics-cards" class="order-2 flex flex-col gap-3 xl:order-1 xl:col-span-3">
           <MetricsCard :metrics-data="modelData.metrics.val" :card-title="'Métricas de validação'" />
 
-          <MetricsCard :metrics-data="modelData.metrics.real" :card-title="'Métricas de jogos reais'" />
+          <MetricsCard
+            :metrics-data="modelData.metrics.real"
+            :compare-with="modelData.metrics.val"
+            :card-title="'Métricas de jogos reais'"
+          />
         </div>
 
         <PerformanceChartCard
@@ -47,6 +51,8 @@
           :daily-results-pending="dailyResultsPending"
         />
       </div>
+
+      <StatisticalSignificanceCard :stats="modelData.metrics.statisticalSignificance" />
 
       <BlockMetricsPanel :metrics-total="modelData.metrics.total" :blocks-history="modelData.blocksHistory" />
 
@@ -88,17 +94,11 @@ const playedOnSet = computed(() => {
 
 const chosenModel = ref(listModels.value[0] || null)
 
-if (
-  route.params.model &&
-  listModels.value.length &&
-  listModels.value.includes(route.params.model)
-) {
+if (route.params.model && listModels.value.length && listModels.value.includes(route.params.model)) {
   chosenModel.value = route.params.model
 }
 
-const chosenModelId = computed(() =>
-  chosenModel.value ? modelNameToIdName(chosenModel.value) : null,
-)
+const chosenModelId = computed(() => (chosenModel.value ? modelNameToIdName(chosenModel.value) : null))
 const chartByDay = ref(false)
 
 // --- Per-model data: each composable re-runs when chosenModelId changes ---

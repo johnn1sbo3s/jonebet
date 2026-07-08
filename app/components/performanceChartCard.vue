@@ -1,5 +1,5 @@
 <template>
-  <UCard id="model-chart" class="order-1 border border-zinc-800 bg-zinc-900 lg:order-2 lg:col-span-7">
+  <UCard id="model-chart" class="order-1 border border-zinc-800 bg-zinc-900 xl:order-2 xl:col-span-7">
     <template #header>
       <div class="flex justify-between">
         <p class="font-semibold">Gráfico de acúmulo de capital</p>
