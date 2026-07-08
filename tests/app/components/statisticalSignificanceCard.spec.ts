@@ -20,7 +20,7 @@ describe('StatisticalSignificanceCard', () => {
     const wrapper = await mountSuspended(StatisticalSignificanceCard, {
       props: { stats: baseStats },
     })
-    expect(wrapper.text()).toContain('Significância Estatística')
+    expect(wrapper.text()).toContain('Significância estatística')
   })
 
   it('renders all 8 metrics', async () => {

@@ -1,13 +1,15 @@
 <template>
   <UCard id="statistical-significance" class="border border-zinc-800 bg-zinc-900">
     <template #header>
-      <p class="font-semibold">Significância Estatística</p>
+      <p class="font-semibold">Significância estatística</p>
     </template>
 
     <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
       <div v-for="m in metrics" :key="m.label">
         <div class="flex items-center gap-1">
-          <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">{{ m.label }}</p>
+          <p class="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+            {{ m.label }}
+          </p>
 
           <UButton
             v-if="m.key"
@@ -21,13 +23,17 @@
           />
         </div>
 
-        <p class="mt-1 text-base font-semibold" :class="m.class">{{ m.value }}</p>
+        <p class="mt-1 text-base font-semibold" :class="m.class">
+          {{ m.value }}
+        </p>
       </div>
     </div>
 
     <UModal v-for="m in infoMetrics" :key="m.label" v-model:open="infoOpen[m.key]" :title="m.label">
       <template #body>
-        <p class="text-sm leading-relaxed text-zinc-300">{{ m.text }}</p>
+        <p class="text-sm leading-relaxed text-zinc-300">
+          {{ m.text }}
+        </p>
       </template>
     </UModal>
   </UCard>
@@ -168,6 +174,7 @@ function pValueDisplay(v) {
 
 function sampleSizeValue(min, remaining) {
   if (min == null) return '—'
+  if (min >= 999999) return '>100.000'
   const base = formatNumber(min, 0)
   if (remaining == null || remaining === 0) return base
   return `${base} (${formatNumber(remaining, 0)} faltam)`
