@@ -52,6 +52,8 @@
         />
       </div>
 
+      <StatisticalSignificanceCard :stats="modelData.metrics.statisticalSignificance" />
+
       <BlockMetricsPanel :metrics-total="modelData.metrics.total" :blocks-history="modelData.blocksHistory" />
 
       <ResultsTablesGrid :monthly-results="monthlyResults" :daily-results="dailyResults" />
