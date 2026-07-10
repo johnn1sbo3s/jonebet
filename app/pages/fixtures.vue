@@ -6,7 +6,13 @@
       </template>
     </PageHeader>
 
-    <FixturesList :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
+    <FixturesList
+      :fixtures="fixtures"
+      :bets="bets"
+      :loading="isLoading"
+      :initial-game-id="selectedGameId"
+      @source-change="onSourceChange"
+    />
   </div>
 </template>
 
@@ -19,6 +25,8 @@ const source = ref('bookie')
 const fixtures = ref([])
 const bets = ref([])
 const fetchError = ref(null)
+const route = useRoute()
+const selectedGameId = computed(() => route.query.game)
 
 const { data } = await useFetch(`${apiUrl}/fixtures/daily`, {
   query: { source: source.value },
