@@ -8,19 +8,8 @@
 
     <TopGamesCardSkeleton v-if="loading" />
 
-    <div v-else class="top-games-carousel relative mt-3">
-      <div
-        v-if="canScrollLeft"
-        class="pointer-events-none absolute top-0 left-0 z-10 h-full w-8 bg-linear-to-r from-zinc-950 to-transparent sm:w-12"
-      />
-
-      <div
-        v-if="canScrollRight"
-        class="pointer-events-none absolute top-0 right-0 z-10 h-full w-8 bg-linear-to-l from-zinc-950 to-transparent sm:w-12"
-      />
-
+    <div v-else>
       <UCarousel
-        ref="carouselRef"
         v-slot="{ item }"
         :items="fixtures"
         :ui="{ item: 'basis-full sm:basis-1/2 lg:basis-1/3' }"
@@ -130,38 +119,14 @@ const isNarrow = ref(false)
 const showModal = ref(false)
 const showDrawer = ref(false)
 const selectedFixture = ref(null)
-const carouselRef = ref(null)
-const canScrollLeft = ref(false)
-const canScrollRight = ref(false)
 
 function handleResize() {
   isNarrow.value = window.innerWidth < 1024
 }
 
-function checkScroll() {
-  // Use native scroll position from the viewport element
-  const viewport = carouselRef.value?.$el?.querySelector('.overflow-hidden')
-  if (!viewport) return
-
-  canScrollLeft.value = viewport.scrollLeft > 10
-  canScrollRight.value = viewport.scrollLeft < viewport.scrollWidth - viewport.clientWidth - 10
-}
-
 onMounted(() => {
   isNarrow.value = window.innerWidth < 1024
   window.addEventListener('resize', handleResize)
-
-  // Wait for carousel to render, then attach scroll listener
-  const attachListener = () => {
-    const viewport = carouselRef.value?.$el?.querySelector('.overflow-hidden')
-    if (viewport) {
-      viewport.addEventListener('scroll', checkScroll, { passive: true })
-      checkScroll()
-    } else {
-      nextTick(attachListener)
-    }
-  }
-  nextTick(attachListener)
 })
 
 onUnmounted(() => {
