@@ -139,29 +139,29 @@ function handleResize() {
 }
 
 function checkScroll() {
-  // Find the scroll container inside top-games-carousel
-  const container = document.querySelector('.top-games-carousel .overflow-hidden')
-  if (!container) return
+  const api = carouselRef.value?.emblaApi
+  if (!api) return
 
-  canScrollLeft.value = container.scrollLeft > 10
-  canScrollRight.value = container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-}
-
-function setupScrollListener() {
-  const container = document.querySelector('.top-games-carousel .overflow-hidden')
-  if (!container) return
-
-  container.addEventListener('scroll', checkScroll, { passive: true })
-  checkScroll()
+  canScrollLeft.value = api.canScrollPrev()
+  canScrollRight.value = api.canScrollNext()
 }
 
 onMounted(() => {
   isNarrow.value = window.innerWidth < 1024
   window.addEventListener('resize', handleResize)
 
-  nextTick(() => {
-    setupScrollListener()
-  })
+  // Wait for Embla API to be ready
+  const checkApi = () => {
+    const api = carouselRef.value?.emblaApi
+    if (api) {
+      api.on('scroll', checkScroll)
+      api.on('reInit', checkScroll)
+      checkScroll()
+    } else {
+      nextTick(checkApi)
+    }
+  }
+  nextTick(checkApi)
 })
 
 onUnmounted(() => {
@@ -189,14 +189,6 @@ function openDetails(fixture) {
 </script>
 
 <style scoped>
-.top-games-carousel {
-  overflow: visible;
-}
-
-.top-games-carousel :deep(.embla) {
-  overflow: visible;
-}
-
 .top-game-card {
   position: relative;
   overflow: hidden;
