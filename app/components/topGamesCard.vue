@@ -8,62 +8,81 @@
 
     <TopGamesCardSkeleton v-if="loading" />
 
-    <UCarousel v-else v-slot="{ item }" :items="fixtures" :ui="{ item: 'basis-1/3 ps-0' }" drag-free class="w-full">
+    <div v-else class="top-games-carousel relative mt-3">
       <div
-        class="top-game-card me-3 min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
-        @click="openDetails(item)"
+        v-if="canScrollLeft"
+        class="pointer-events-none absolute top-0 left-0 z-10 h-full w-8 bg-linear-to-r from-zinc-950 to-transparent sm:w-12"
+      />
+
+      <div
+        v-if="canScrollRight"
+        class="pointer-events-none absolute top-0 right-0 z-10 h-full w-8 bg-linear-to-l from-zinc-950 to-transparent sm:w-12"
+      />
+
+      <UCarousel
+        ref="carouselRef"
+        v-slot="{ item }"
+        :items="fixtures"
+        :ui="{ item: 'basis-full sm:basis-1/2 lg:basis-1/3' }"
+        drag-free
+        class="w-full"
       >
-        <div class="mb-3 flex items-center justify-between">
-          <span class="text-xs tracking-wide text-zinc-500 uppercase">
-            {{ item.League }}
-          </span>
-
-          <span class="text-sm font-semibold text-zinc-400">
-            {{ item.Time }}
-          </span>
-        </div>
-
-        <div class="mb-3 text-base font-semibold text-white">{{ item.Home }} x {{ item.Away }}</div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex gap-1.5">
-            <span
-              class="rounded-md px-2 py-1 text-xs"
-              :class="
-                item.FT_Odds_H <= item.FT_Odds_A && item.FT_Odds_H <= item.FT_Odds_D
-                  ? 'bg-teal-500/10 text-teal-500'
-                  : 'bg-zinc-800 text-zinc-300'
-              "
-            >
-              {{ formatNumber(item.FT_Odds_H) }}
+        <div
+          class="top-game-card cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
+          @click="openDetails(item)"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <span class="text-xs tracking-wide text-zinc-500 uppercase">
+              {{ item.League }}
             </span>
 
-            <span class="rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-300">
-              {{ formatNumber(item.FT_Odds_D) }}
-            </span>
-
-            <span
-              class="rounded-md px-2 py-1 text-xs"
-              :class="
-                item.FT_Odds_A <= item.FT_Odds_H && item.FT_Odds_A <= item.FT_Odds_D
-                  ? 'bg-teal-500/10 text-teal-500'
-                  : 'bg-zinc-800 text-zinc-300'
-              "
-            >
-              {{ formatNumber(item.FT_Odds_A) }}
+            <span class="text-sm font-semibold text-zinc-400">
+              {{ item.Time }}
             </span>
           </div>
 
-          <div class="flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5">
-            <span class="h-1.5 w-1.5 rounded-full bg-teal-500" />
+          <div class="mb-3 text-base font-semibold text-white">{{ item.Home }} x {{ item.Away }}</div>
 
-            <span class="text-xs font-semibold text-teal-500">
-              {{ item.models_count }} {{ item.models_count === 1 ? 'modelo' : 'modelos' }}
-            </span>
+          <div class="flex items-center justify-between">
+            <div class="flex gap-1.5">
+              <span
+                class="rounded-md px-2 py-1 text-xs"
+                :class="
+                  item.FT_Odds_H <= item.FT_Odds_A && item.FT_Odds_H <= item.FT_Odds_D
+                    ? 'bg-teal-500/10 text-teal-500'
+                    : 'bg-zinc-800 text-zinc-300'
+                "
+              >
+                {{ formatNumber(item.FT_Odds_H) }}
+              </span>
+
+              <span class="rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-300">
+                {{ formatNumber(item.FT_Odds_D) }}
+              </span>
+
+              <span
+                class="rounded-md px-2 py-1 text-xs"
+                :class="
+                  item.FT_Odds_A <= item.FT_Odds_H && item.FT_Odds_A <= item.FT_Odds_D
+                    ? 'bg-teal-500/10 text-teal-500'
+                    : 'bg-zinc-800 text-zinc-300'
+                "
+              >
+                {{ formatNumber(item.FT_Odds_A) }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-1.5 rounded-full bg-teal-500/10 px-2.5 py-0.5">
+              <span class="h-1.5 w-1.5 rounded-full bg-teal-500" />
+
+              <span class="text-xs font-semibold text-teal-500">
+                {{ item.models_count }} {{ item.models_count === 1 ? 'modelo' : 'modelos' }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-    </UCarousel>
+      </UCarousel>
+    </div>
 
     <UModal v-model:open="showModal" :ui="{ content: 'bg-zinc-900' }">
       <template #content>
@@ -111,14 +130,38 @@ const isNarrow = ref(false)
 const showModal = ref(false)
 const showDrawer = ref(false)
 const selectedFixture = ref(null)
+const carouselRef = ref(null)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
 
 function handleResize() {
   isNarrow.value = window.innerWidth < 1024
 }
 
+function checkScroll() {
+  // Find the scroll container inside top-games-carousel
+  const container = document.querySelector('.top-games-carousel .overflow-hidden')
+  if (!container) return
+
+  canScrollLeft.value = container.scrollLeft > 10
+  canScrollRight.value = container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+}
+
+function setupScrollListener() {
+  const container = document.querySelector('.top-games-carousel .overflow-hidden')
+  if (!container) return
+
+  container.addEventListener('scroll', checkScroll, { passive: true })
+  checkScroll()
+}
+
 onMounted(() => {
   isNarrow.value = window.innerWidth < 1024
   window.addEventListener('resize', handleResize)
+
+  nextTick(() => {
+    setupScrollListener()
+  })
 })
 
 onUnmounted(() => {
@@ -146,9 +189,18 @@ function openDetails(fixture) {
 </script>
 
 <style scoped>
+.top-games-carousel {
+  overflow: visible;
+}
+
+.top-games-carousel :deep(.embla) {
+  overflow: visible;
+}
+
 .top-game-card {
   position: relative;
   overflow: hidden;
+  user-select: none;
 }
 
 .top-game-card::after {
