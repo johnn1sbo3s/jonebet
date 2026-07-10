@@ -32,6 +32,7 @@ Shared composable functions for API data fetching and Chart.js configuration.
 | `useModelBets(id)` | `GET /models/{id}/bets` | Paginated bet history |
 | `useDailyBets({date, model})` | `GET /daily-bets?date=&model=` | Effective-date list: returns `{date, bets, total}`. When `date` is null, the API resolves it (tomorrow, fallback today, America/Sao_Paulo). |
 | `useDailyBetsDates()` | `GET /daily-bets/available-dates` | ISO dates that have bets |
+| `useTopGames({date, limit, source})` | `GET /fixtures/top-daily?date=&limit=&source=` | Top N fixtures ranked by models count for dashboard |
 
 - Also used by `index.vue` for dashboard and daily-results endpoints
 - Cache key pattern: `${endpoint}:${params}` (used as the internal LRU `cacheKey`).
