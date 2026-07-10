@@ -139,29 +139,29 @@ function handleResize() {
 }
 
 function checkScroll() {
-  const api = carouselRef.value?.emblaApi
-  if (!api) return
+  // Use native scroll position from the viewport element
+  const viewport = carouselRef.value?.$el?.querySelector('.overflow-hidden')
+  if (!viewport) return
 
-  canScrollLeft.value = api.canScrollPrev()
-  canScrollRight.value = api.canScrollNext()
+  canScrollLeft.value = viewport.scrollLeft > 10
+  canScrollRight.value = viewport.scrollLeft < viewport.scrollWidth - viewport.clientWidth - 10
 }
 
 onMounted(() => {
   isNarrow.value = window.innerWidth < 1024
   window.addEventListener('resize', handleResize)
 
-  // Wait for Embla API to be ready
-  const checkApi = () => {
-    const api = carouselRef.value?.emblaApi
-    if (api) {
-      api.on('scroll', checkScroll)
-      api.on('reInit', checkScroll)
+  // Wait for carousel to render, then attach scroll listener
+  const attachListener = () => {
+    const viewport = carouselRef.value?.$el?.querySelector('.overflow-hidden')
+    if (viewport) {
+      viewport.addEventListener('scroll', checkScroll, { passive: true })
       checkScroll()
     } else {
-      nextTick(checkApi)
+      nextTick(attachListener)
     }
   }
-  nextTick(checkApi)
+  nextTick(attachListener)
 })
 
 onUnmounted(() => {
