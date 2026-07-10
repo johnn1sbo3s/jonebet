@@ -8,51 +8,49 @@
 
     <TopGamesCardSkeleton v-if="loading" />
 
-    <div v-else class="flex gap-3 overflow-x-auto pb-3">
+    <UCarousel v-else v-slot="{ item }" :items="fixtures" :ui="{ item: 'basis-1/3 ps-0' }" drag-free class="w-full">
       <div
-        v-for="fixture in fixtures"
-        :key="fixture._id"
-        class="top-game-card min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
-        @click="emits('select', fixture)"
+        class="top-game-card me-3 min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
+        @click="emits('select', item)"
       >
         <div class="mb-3 flex items-center justify-between">
           <span class="text-xs tracking-wide text-zinc-500 uppercase">
-            {{ fixture.League }}
+            {{ item.League }}
           </span>
 
           <span class="text-sm font-semibold text-zinc-400">
-            {{ fixture.Time }}
+            {{ item.Time }}
           </span>
         </div>
 
-        <div class="mb-3 text-base font-semibold text-white">{{ fixture.Home }} x {{ fixture.Away }}</div>
+        <div class="mb-3 text-base font-semibold text-white">{{ item.Home }} x {{ item.Away }}</div>
 
         <div class="flex items-center justify-between">
           <div class="flex gap-1.5">
             <span
               class="rounded-md px-2 py-1 text-xs"
               :class="
-                fixture.FT_Odds_H <= fixture.FT_Odds_A && fixture.FT_Odds_H <= fixture.FT_Odds_D
+                item.FT_Odds_H <= item.FT_Odds_A && item.FT_Odds_H <= item.FT_Odds_D
                   ? 'bg-teal-500/10 text-teal-500'
                   : 'bg-zinc-800 text-zinc-300'
               "
             >
-              {{ formatNumber(fixture.FT_Odds_H) }}
+              {{ formatNumber(item.FT_Odds_H) }}
             </span>
 
             <span class="rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-300">
-              {{ formatNumber(fixture.FT_Odds_D) }}
+              {{ formatNumber(item.FT_Odds_D) }}
             </span>
 
             <span
               class="rounded-md px-2 py-1 text-xs"
               :class="
-                fixture.FT_Odds_A <= fixture.FT_Odds_H && fixture.FT_Odds_A <= fixture.FT_Odds_D
+                item.FT_Odds_A <= item.FT_Odds_H && item.FT_Odds_A <= item.FT_Odds_D
                   ? 'bg-teal-500/10 text-teal-500'
                   : 'bg-zinc-800 text-zinc-300'
               "
             >
-              {{ formatNumber(fixture.FT_Odds_A) }}
+              {{ formatNumber(item.FT_Odds_A) }}
             </span>
           </div>
 
@@ -60,12 +58,12 @@
             <span class="h-1.5 w-1.5 rounded-full bg-teal-500" />
 
             <span class="text-xs font-semibold text-teal-500">
-              {{ fixture.models_count }} {{ fixture.models_count === 1 ? 'modelo' : 'modelos' }}
+              {{ item.models_count }} {{ item.models_count === 1 ? 'modelo' : 'modelos' }}
             </span>
           </div>
         </div>
       </div>
-    </div>
+    </UCarousel>
   </div>
 </template>
 
