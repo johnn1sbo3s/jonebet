@@ -26,11 +26,11 @@
     </template>
   </UCard>
 
-  <UModal
-    v-model:open="isModalOpen"
-    :title="`Todos os modelos — ${formatDateOrMonth(sanitizedAllResultsData[0]?.Date)}`"
-    :ui="{ content: 'max-w-3xl' }"
-  >
+  <UModal v-model:open="isModalOpen" :ui="{ content: 'max-w-3xl' }">
+    <template #header>
+      <p class="font-semibold">Todos os modelos — {{ formatDateOrMonth(sanitizedAllResultsData[0]?.Date) }}</p>
+    </template>
+
     <template #body>
       <div class="hidden md:block">
         <UTable :data="sanitizedAllResultsData" :columns="columns">
@@ -73,6 +73,10 @@
           </div>
         </div>
       </div>
+    </template>
+
+    <template #footer>
+      <UButton block color="primary" variant="link" size="lg" @click="isModalOpen = false"> Fechar </UButton>
     </template>
   </UModal>
 </template>

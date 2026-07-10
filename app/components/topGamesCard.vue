@@ -30,7 +30,7 @@
             </span>
           </div>
 
-          <div class="mb-3 text-base font-semibold text-white">{{ item.Home }} x {{ item.Away }}</div>
+          <div class="mb-3 truncate text-base font-semibold text-white">{{ item.Home }} x {{ item.Away }}</div>
 
           <div class="flex items-center justify-between">
             <div class="flex gap-1.5">
