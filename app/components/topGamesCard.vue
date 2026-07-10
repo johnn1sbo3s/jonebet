@@ -11,7 +11,7 @@
     <UCarousel v-else v-slot="{ item }" :items="fixtures" :ui="{ item: 'basis-1/3 ps-0' }" drag-free class="w-full">
       <div
         class="top-game-card me-3 min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
-        @click="emits('select', item)"
+        @click="openDetails(item)"
       >
         <div class="mb-3 flex items-center justify-between">
           <span class="text-xs tracking-wide text-zinc-500 uppercase">
@@ -64,14 +64,42 @@
         </div>
       </div>
     </UCarousel>
+
+    <UModal v-model:open="showModal" :ui="{ content: 'bg-zinc-900' }">
+      <template #content>
+        <div class="flex flex-col gap-3 p-5">
+          <FixtureDetailsCard v-if="selectedFixture" :fixture="selectedFixture" :bets="selectedBets" />
+
+          <div class="mt-auto pt-4">
+            <UButton block color="primary" variant="link" size="lg" @click="showModal = false"> Fechar </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
+
+    <UDrawer v-model:open="showDrawer" :ui="{ content: 'bg-zinc-900' }">
+      <template #content>
+        <div class="flex flex-col gap-3 p-5">
+          <FixtureDetailsCard v-if="selectedFixture" :fixture="selectedFixture" :bets="selectedBets" />
+
+          <div class="mt-auto pt-4">
+            <UButton block color="primary" variant="link" size="lg" @click="showDrawer = false"> Fechar </UButton>
+          </div>
+        </div>
+      </template>
+    </UDrawer>
   </div>
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   fixtures: {
     type: Array,
     required: true,
+  },
+  bets: {
+    type: Array,
+    default: () => [],
   },
   loading: {
     type: Boolean,
@@ -79,7 +107,42 @@ defineProps({
   },
 })
 
-const emits = defineEmits(['select'])
+const isNarrow = ref(false)
+const showModal = ref(false)
+const showDrawer = ref(false)
+const selectedFixture = ref(null)
+
+function handleResize() {
+  isNarrow.value = window.innerWidth < 1024
+}
+
+onMounted(() => {
+  isNarrow.value = window.innerWidth < 1024
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+const selectedBets = computed(() => {
+  if (!selectedFixture.value) return []
+  return props.bets.filter(
+    (bet) =>
+      bet.Date === selectedFixture.value.Date &&
+      bet.Home === selectedFixture.value.Home &&
+      bet.Away === selectedFixture.value.Away,
+  )
+})
+
+function openDetails(fixture) {
+  selectedFixture.value = fixture
+  if (isNarrow.value) {
+    showDrawer.value = true
+  } else {
+    showModal.value = true
+  }
+}
 </script>
 
 <style scoped>

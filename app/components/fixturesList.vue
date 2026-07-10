@@ -95,10 +95,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  initialGameId: {
-    type: String,
-    default: null,
-  },
 })
 
 const emits = defineEmits(['source-change'])
@@ -166,23 +162,6 @@ watch(
     chosenGame.value = {}
     showMobileModal.value = false
   },
-)
-// Auto-select game from query param
-watch(
-  [() => props.initialGameId, () => internalFixtures.value],
-  ([gameId, fixturesList]) => {
-    if (gameId && fixturesList?.length) {
-      const game = fixturesList.find((f) => f._id === gameId)
-      if (game) {
-        chosenGame.value = game
-        filterBets()
-        if (isNarrow.value) {
-          showMobileModal.value = true
-        }
-      }
-    }
-  },
-  { immediate: true },
 )
 </script>
 

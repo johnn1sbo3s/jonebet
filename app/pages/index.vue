@@ -14,7 +14,7 @@
       @update:open="showAlert = false"
     />
 
-    <TopGamesCard :fixtures="topGames" :loading="topGamesLoading" @select="onGameSelect" />
+    <TopGamesCard :fixtures="topGames" :bets="topGamesBets" :loading="topGamesLoading" />
 
     <USkeleton v-if="status === 'pending'" class="mt-2 h-60 w-full rounded-2xl" />
 
@@ -303,14 +303,9 @@ watch(chosenDateIso, (newDate) => {
 // Top Games
 const today = ref(DateTime.now().setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd'))
 const { data: topGamesData, status: topGamesStatus } = await useTopGames({ date: today })
+const { data: topGamesBetsData } = await useDailyBets({ date: today })
 
 const topGames = computed(() => topGamesData.value?.fixtures || [])
+const topGamesBets = computed(() => topGamesBetsData.value?.bets || [])
 const topGamesLoading = computed(() => topGamesStatus.value === 'pending')
-
-function onGameSelect(fixture) {
-  navigateTo({
-    path: '/fixtures',
-    query: { game: fixture._id, date: fixture.Date },
-  })
-}
 </script>
