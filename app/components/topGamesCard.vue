@@ -12,7 +12,7 @@
       <div
         v-for="fixture in fixtures"
         :key="fixture._id"
-        class="min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-all duration-200 hover:border-teal-500"
+        class="top-game-card min-w-70 cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
         @click="emits('select', fixture)"
       >
         <div class="mb-3 flex items-center justify-between">
@@ -83,3 +83,23 @@ defineProps({
 
 const emits = defineEmits(['select'])
 </script>
+
+<style scoped>
+.top-game-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.top-game-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transition: transform 0.6s ease;
+}
+
+.top-game-card:hover::after {
+  transform: translateX(100%);
+}
+</style>
