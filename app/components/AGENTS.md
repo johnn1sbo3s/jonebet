@@ -2,7 +2,7 @@
 
 ## Purpose
 
-All 24 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
+All 27 Vue components for the DataPlay Bets dashboard. Flat directory structure — no subdirectories.
 
 ## Ownership
 
@@ -46,6 +46,8 @@ All 24 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `SegmentedControl.vue` | Custom segmented control (Exchange/Bookie toggle) | |
 | `yesterdayDetailsCard.vue` | Details: bets count, models count, positive models | |
 | `yesterdayMetricsCard.vue` | Metric display: profit, invested, ROI | |
+| `topGamesCard.vue` | Top games carousel with modal (desktop) / drawer (mobile) | Uses UCarousel with drag-free, UModal/UDrawer for details, shimmer hover effect |
+| `topGamesCardSkeleton.vue` | Loading skeleton for top games carousel | 5 placeholder cards with animate-pulse |
 
 ## Verification
 

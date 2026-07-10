@@ -26,11 +26,11 @@
     </template>
   </UCard>
 
-  <UModal
-    v-model:open="isModalOpen"
-    :title="`Todos os modelos — ${formatDateOrMonth(sanitizedAllResultsData[0]?.Date)}`"
-    :ui="{ content: 'max-w-3xl' }"
-  >
+  <UModal v-model:open="isModalOpen" :ui="{ content: 'max-w-3xl' }">
+    <template #header>
+      <p class="font-semibold">Todos os modelos — {{ formatDateOrMonth(sanitizedAllResultsData[0]?.Date) }}</p>
+    </template>
+
     <template #body>
       <div class="hidden md:block">
         <UTable :data="sanitizedAllResultsData" :columns="columns">
@@ -73,6 +73,10 @@
           </div>
         </div>
       </div>
+    </template>
+
+    <template #footer>
+      <UButton block color="primary" variant="link" size="lg" @click="isModalOpen = false"> Fechar </UButton>
     </template>
   </UModal>
 </template>
@@ -135,10 +139,10 @@ const sanitizedAllResultsData = computed(() => {
   inset: 0;
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  transition: transform 0.6s ease;
 }
 
 .ranking-item:hover::after {
   transform: translateX(100%);
+  transition: transform 0.6s ease;
 }
 </style>

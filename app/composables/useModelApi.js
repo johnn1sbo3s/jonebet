@@ -200,3 +200,35 @@ export function useDailyBetsDates() {
     },
   })
 }
+
+export function useTopGames({ date, limit = 5, source = 'bookie' } = {}) {
+  const cache = useCache()
+  const sourceRef = isRef(source) ? source : ref(source)
+  const cacheKey = computed(() => `top-games-${date.value ?? 'any'}-${limit}-${sourceRef.value}`)
+  return useFetch(() => `${apiUrl()}/fixtures/top-daily`, {
+    key: 'top-games',
+    query: computed(() => {
+      const q = {}
+      if (date.value) q.date = date.value
+      q.limit = limit
+      if (sourceRef.value) q.source = sourceRef.value
+      return q
+    }),
+    default: () => ({ date: null, fixtures: [] }),
+    watch: [date, sourceRef],
+    getCachedData: (key, nuxtApp) => {
+      const cached = cacheGet(cache, cacheKey.value)
+      if (cached) return cached
+      const payloadData = nuxtApp?.payload?.data?.[key]
+      if (payloadData && (date.value === null || date.value === payloadData.date)) {
+        return payloadData
+      }
+      return undefined
+    },
+    onResponse({ response }) {
+      if (response?.ok && response._data !== undefined) {
+        cacheSet(cache, cacheKey.value, response._data)
+      }
+    },
+  })
+}

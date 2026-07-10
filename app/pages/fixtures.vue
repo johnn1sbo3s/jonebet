@@ -19,7 +19,6 @@ const source = ref('bookie')
 const fixtures = ref([])
 const bets = ref([])
 const fetchError = ref(null)
-
 const { data } = await useFetch(`${apiUrl}/fixtures/daily`, {
   query: { source: source.value },
   onResponse({ response }) {
