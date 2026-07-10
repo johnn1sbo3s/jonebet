@@ -135,10 +135,10 @@ const sanitizedAllResultsData = computed(() => {
   inset: 0;
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  transition: transform 0.6s ease;
 }
 
 .ranking-item:hover::after {
   transform: translateX(100%);
+  transition: transform 0.6s ease;
 }
 </style>
