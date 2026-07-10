@@ -3,9 +3,7 @@
     <div class="flex items-center gap-2">
       <UIcon name="i-lucide-flame" class="text-teal-500" />
 
-      <h2 class="text-base font-semibold text-white">Jogos do Dia</h2>
-
-      <span class="text-xs text-zinc-500">Mais apostados pelos modelos</span>
+      <h2 class="text-base font-semibold text-white">Top jogos do dia</h2>
     </div>
 
     <TopGamesCardSkeleton v-if="loading" />
