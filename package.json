@@ -2,7 +2,6 @@
   "name": "nuxt-app",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.10.0",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -57,5 +56,17 @@
       "pnpm test:unit --run"
     ],
     "*.{vue,ts}": "node scripts/check-arbitrary-values.cjs"
-}
+  },
+  "pnpm": {
+    "overrides": {
+      "picomatch": "2.3.2",
+      "esbuild": "0.28.1"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "unrs-resolver",
+      "vue-demi"
+    ]
+  }
 }
