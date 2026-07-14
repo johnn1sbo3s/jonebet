@@ -12,11 +12,9 @@
     <UPopover v-model:open="popoverOpen" :popper="{ placement: 'bottom' }">
       <button
         type="button"
-        class="hover:bg-elevated focus-visible:ring-primary/40 flex h-8 w-28 items-center justify-center gap-1.5 border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        class="hover:bg-elevated focus-visible:ring-primary/40 flex h-8 w-28 items-center justify-center border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <span>{{ modelValue ? formatDate(modelValue) : '' }}</span>
-
-        <UIcon name="i-lucide-chevron-down" class="size-3.5 text-zinc-400" />
       </button>
 
       <template #content>

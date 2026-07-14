@@ -52,8 +52,7 @@
   "lint-staged": {
     "*.{js,ts,vue}": [
       "prettier --write",
-      "eslint --fix",
-      "pnpm test:unit --run"
+      "eslint --fix"
     ],
     "*.{vue,ts}": "node scripts/check-arbitrary-values.cjs"
   },

@@ -47,15 +47,18 @@
 <script setup>
 import { DateTime } from 'luxon'
 
-const yesterday = DateTime.now().setZone('America/Sao_Paulo').minus({ days: 1 }).toFormat('yyyy-MM-dd')
+const todayIso = DateTime.now().setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd')
 
 // date starts null: the API resolves the effective date (tomorrow, fallback today)
 // and echoes it in the response. The watch below syncs the picker once.
 const date = ref(null)
 const selectedModel = ref(null)
 
-const { data: availableDates } = await useDailyBetsDates()
-const maxDateIso = computed(() => availableDates.value?.[0] || yesterday)
+// Upper bound for the picker: the API-resolved effective date (tomorrow,
+// fallback today) captured on first load becomes the max so the next day
+// (after the latest available) stays blocked. It does not shrink as the user
+// navigates backwards. Falls back to today until the response arrives.
+const maxDateIso = ref(todayIso)
 
 const modelItems = computed(() => {
   const names = new Set()
@@ -73,12 +76,15 @@ const modelItems = computed(() => {
 const { data: dailyBetsResponse, pending, error } = await useDailyBets({ date })
 
 // Mirror the API-resolved date into the datepicker on first load only.
-// User navigation after that must not be overridden.
+// User navigation after that must not be overridden. The same resolved date
+// becomes the picker's max so the next day (after the latest available) stays
+// blocked.
 watch(
   dailyBetsResponse,
   (response) => {
     if (response?.date && date.value === null) {
       date.value = response.date
+      maxDateIso.value = response.date
     }
   },
   { immediate: true },

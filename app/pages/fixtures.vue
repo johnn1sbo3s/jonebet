@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-5">
     <PageHeader title="Jogos do dia">
       <template #right>
-        <DatePicker v-model="selectedDate" />
+        <DatePicker v-model="selectedDate" :max-value="maxDateIso" />
       </template>
     </PageHeader>
 
@@ -14,6 +14,7 @@
 const apiUrl = useRuntimeConfig().public.API_URL
 
 const selectedDate = ref('')
+const maxDateIso = ref('')
 const isLoading = ref(true)
 const source = ref('bookie')
 const fixtures = ref([])
@@ -31,6 +32,7 @@ const { data } = await useFetch(`${apiUrl}/fixtures/daily`, {
 
 if (data.value) {
   selectedDate.value = data.value.date
+  maxDateIso.value = data.value.date
   fixtures.value = data.value.fixtures
   bets.value = data.value.bets
 }
