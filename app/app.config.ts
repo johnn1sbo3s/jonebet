@@ -24,5 +24,10 @@ export default defineAppConfig({
         base: 'rounded-xl',
       },
     },
+    input: {
+      slots: {
+        base: 'rounded-xl bg-transparent border-zinc-800 text-white placeholder:text-zinc-500 focus:border-teal-500 focus:ring-teal-500/20',
+      },
+    },
   },
 })

@@ -3,21 +3,40 @@
     <FixturesListSkeleton v-if="loading" />
 
     <div v-else>
+      <UInput
+        v-model="searchQuery"
+        icon="i-lucide-search"
+        placeholder="Buscar por liga ou time..."
+        size="md"
+        class="mb-4 w-full lg:w-1/2"
+      />
+
       <div class="mb-4 flex w-full items-center justify-between gap-2 gap-3 lg:w-1/2">
-        <p class="text-sm text-zinc-400">{{ internalFixtures.length }} jogos</p>
+        <p class="text-sm text-zinc-400">{{ filteredFixtures.length }} jogos</p>
 
         <SegmentedControl v-model="selectedTab" :options="tabItems" />
       </div>
 
       <div class="flex gap-3">
         <div class="w-full lg:w-1/2">
-          <FixtureCard
-            class="w-full"
-            :fixtures="internalFixtures"
-            :bets="bets"
-            :chosen="chosenGame"
-            @click="handleGameClick"
-          />
+          <template v-if="filteredFixtures.length">
+            <FixtureCard
+              class="w-full"
+              :fixtures="filteredFixtures"
+              :bets="bets"
+              :chosen="chosenGame"
+              @click="handleGameClick"
+            />
+          </template>
+
+          <div
+            v-else
+            class="flex h-[50svh] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-10 text-center"
+          >
+            <UIcon name="i-lucide-search-x" class="text-2xl text-zinc-500" />
+
+            <p class="text-sm text-zinc-500">Nenhum jogo encontrado pra "{{ searchQuery }}"</p>
+          </div>
         </div>
 
         <div v-if="!isNarrow" class="sticky top-[calc(var(--ui-header-height)+1rem)] h-full w-1/2">
@@ -109,6 +128,20 @@ const chosenGame = ref({})
 const filteredBets = ref([])
 const selectedTab = ref('bookie')
 const showMobileModal = ref(false)
+const searchQuery = ref('')
+
+function normalize(str) {
+  return (str || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+const filteredFixtures = computed(() => {
+  const q = normalize(searchQuery.value)
+  if (!q) return internalFixtures.value
+  return internalFixtures.value.filter((f) => [f.League, f.Home, f.Away].some((field) => normalize(field).includes(q)))
+})
 
 watch(
   () => props.fixtures,

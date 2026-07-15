@@ -226,6 +226,14 @@ rounded-2xl (global)
 header: font-semibold text-white
 ```
 
+### Input (UInput)
+
+```
+rounded-xl bg-transparent border-zinc-800
+text-white placeholder:text-zinc-500
+focus: border-teal-500 ring-teal-500/20
+```
+
 ### Detail Stat Row
 
 ```

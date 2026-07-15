@@ -4,7 +4,7 @@
       v-for="item in internalFixtures"
       :key="item._id"
       class="fixture-card mb-2 flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-4 hover:border-zinc-700 sm:gap-5 sm:px-6"
-      :class="item._id === chosen._id ? 'border border-teal-400 sm:border' : ''"
+      :class="item._id === chosen._id ? 'outline outline-2 outline-teal-500' : ''"
       @click="emits('click', item)"
     >
       <div class="flex items-center gap-7">
@@ -18,7 +18,11 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-2 text-sm sm:text-base">
+        <div class="flex flex-col gap-1 text-sm sm:text-base">
+          <div class="text-2xs truncate font-semibold tracking-wide text-zinc-500 uppercase">
+            {{ item.League }}
+          </div>
+
           <div class="flex items-center gap-1.5">
             <span>{{ item.Home }} x {{ item.Away }}</span>
 

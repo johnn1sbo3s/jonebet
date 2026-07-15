@@ -32,9 +32,9 @@ All 27 Vue components for the DataPlay Bets dashboard. Flat directory structure 
 | `dailyBetCard.vue` | Single bet card: date badge + header line + split match + 3 odds | Receives `bet` prop; used by `daily-bets.vue` list |
 | `dataErrorCard.vue` | Error/empty state card with icon + message. Props: `message` (String), `icon` (String, default `i-lucide-triangle-alert` — override with `i-lucide-info` for info-state empties) |
 | `DatePicker.vue` | Date navigation: prev/next + calendar popover | UCalendar |
-| `fixtureCard.vue` | Individual fixture card with odds + model count | |
+| `fixtureCard.vue` | Individual fixture card with league label + odds + model count | League shown as `text-2xs uppercase` above teams; selected state uses `outline outline-2 outline-teal-500` |
 | `fixtureDetailsCard.vue` | Fixture detail: odds, O/U, BTTS, allowed models | |
-| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie); Bookie is the default tab | Mobile: UDrawer; resize listener cleaned up in `onUnmounted`; `chosenGame` and mobile modal are cleared on tab change and on fixtures refetch (covers tab and date change) |
+| `fixturesList.vue` | Fixtures list with source toggle (Exchange/Bookie) + client-side search (League/Home/Away, accent-insensitive); Bookie is the default tab | Mobile: UDrawer; resize listener cleaned up in `onUnmounted`; `chosenGame` and mobile modal are cleared on tab change and on fixtures refetch (covers tab and date change); empty search state uses `i-lucide-search-x` |
 | `fixturesListSkeleton.vue` | Loading skeleton for fixtures list | |
 | `metricsCard.vue` | Model metrics: PLB, ROI, WR, odds, EV, drawdown, entries | |
 | `monthlyResultsList.vue` | Scrollable monthly results with border accent | |
