@@ -300,12 +300,8 @@ watch(chosenDateIso, (newDate) => {
   if (newDate) fetchDayResults(newDate)
 })
 
-// Top Games
-const today = ref(DateTime.now().setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd'))
-const { data: topGamesData, status: topGamesStatus } = await useTopGames({ date: today })
-const { data: topGamesBetsData } = await useDailyBets({ date: today })
-
-const topGames = computed(() => topGamesData.value?.fixtures || [])
-const topGamesBets = computed(() => topGamesBetsData.value?.bets || [])
-const topGamesLoading = computed(() => topGamesStatus.value === 'pending')
+// Top Games (from dashboard response)
+const topGames = computed(() => data.value?.topGames?.fixtures || [])
+const topGamesBets = computed(() => data.value?.topGames?.bets || [])
+const topGamesLoading = computed(() => status.value === 'pending')
 </script>
