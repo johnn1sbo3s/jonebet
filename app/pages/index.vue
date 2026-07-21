@@ -14,7 +14,7 @@
       @update:open="showAlert = false"
     />
 
-    <TopGamesCard :fixtures="topGames" :bets="topGamesBets" :loading="topGamesLoading" />
+    <LazyTopGamesCard :fixtures="topGames" :bets="topGamesBets" :loading="topGamesLoading" />
 
     <USkeleton v-if="status === 'pending'" class="mt-2 h-60 w-full rounded-2xl" />
 
@@ -37,7 +37,7 @@
         </template>
 
         <div class="w-full">
-          <BankrollEvolution :bankroll-data="data?.bankrollEvolution || []" />
+          <LazyBankrollEvolution :bankroll-data="data?.bankrollEvolution || []" />
         </div>
       </UCard>
 

@@ -1,9 +1,8 @@
 <template>
-  <LineChart :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
+  <BaseLineChart :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
 </template>
 
 <script setup>
-import { LineChart } from 'vue-chart-3'
 import { useBankrollChartOptions } from '~/composables/useChartOptions'
 
 const props = defineProps({

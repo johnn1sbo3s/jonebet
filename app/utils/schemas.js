@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from 'zod/v4-mini'
 
 // Runtime contract for the DataPlay Bets API. The backend is a separate
 // Python service (api.jonebet.xyz). The schemas here are SAFETY NETS, not
@@ -14,7 +14,7 @@ import { z } from 'zod'
 // Permissive "any object" schema with a default. Accepts any object shape,
 // returns the default if the input is not an object, preserves all original
 // fields via `passthrough`.
-const FlexObject = z.object({}).passthrough()
+const FlexObject = z.looseObject({})
 
 // Permissive "any array" schema with a default.
 const FlexArray = z.array(z.unknown())
@@ -29,47 +29,47 @@ const FlexArray = z.array(z.unknown())
 /** @type {Record<string, EndpointSchema>} */
 export const endpointSchemas = {
   modelsList: {
-    schema: FlexObject.default({ items: [] }),
+    schema: z.prefault(FlexObject, { items: [] }),
     fallback: { items: [] },
   },
   modelById: {
-    schema: z.unknown().nullable(),
+    schema: z.nullable(z.unknown()),
     fallback: null,
   },
   modelChart: {
-    schema: FlexObject.default({ labels: [], data: [], annotationIndex: 0 }),
+    schema: z.prefault(FlexObject, { labels: [], data: [], annotationIndex: 0 }),
     fallback: { labels: [], data: [], annotationIndex: 0 },
   },
   modelTrend: {
-    schema: FlexObject.default({ slope: 0, intercept: 0, line: [], distance: 0 }),
+    schema: z.prefault(FlexObject, { slope: 0, intercept: 0, line: [], distance: 0 }),
     fallback: { slope: 0, intercept: 0, line: [], distance: 0 },
   },
   modelResults: {
-    schema: FlexArray.default([]),
+    schema: z.prefault(FlexArray, []),
     fallback: [],
   },
   modelBets: {
-    schema: FlexObject.default({ items: [], total: 0, page: 1, size: 25 }),
+    schema: z.prefault(FlexObject, { items: [], total: 0, page: 1, size: 25 }),
     fallback: { items: [], total: 0, page: 1, size: 25 },
   },
   dailyBets: {
-    schema: FlexObject.default({ date: null, bets: [], total: 0 }),
+    schema: z.prefault(FlexObject, { date: null, bets: [], total: 0 }),
     fallback: { date: null, bets: [], total: 0 },
   },
   dailyBetsDates: {
-    schema: FlexArray.default([]),
+    schema: z.prefault(FlexArray, []),
     fallback: [],
   },
   dashboard: {
-    schema: FlexObject.default({ bankrollEvolution: [] }),
+    schema: z.prefault(FlexObject, { bankrollEvolution: [] }),
     fallback: { bankrollEvolution: [] },
   },
   dailyResults: {
-    schema: FlexObject.default({ results: [], topModels: [], metrics: {}, positiveModels: 0 }),
+    schema: z.prefault(FlexObject, { results: [], topModels: [], metrics: {}, positiveModels: 0 }),
     fallback: { results: [], topModels: [], metrics: {}, positiveModels: 0 },
   },
   fixturesDaily: {
-    schema: FlexObject.default({ date: null, fixtures: [], bets: [] }),
+    schema: z.prefault(FlexObject, { date: null, fixtures: [], bets: [] }),
     fallback: { date: null, fixtures: [], bets: [] },
   },
 }
