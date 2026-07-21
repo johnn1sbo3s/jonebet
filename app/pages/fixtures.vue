@@ -6,7 +6,7 @@
       </template>
     </PageHeader>
 
-    <LazyFixturesList :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
+    <FixturesList :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
   </div>
 </template>
 

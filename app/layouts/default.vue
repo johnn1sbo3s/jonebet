@@ -38,17 +38,7 @@ const navItems = [
 <template>
   <UHeader class="border-b border-zinc-800/50 bg-zinc-950/60 backdrop-blur-xl" aria-label="Main navigation">
     <template #title>
-      <NuxtImg
-        src="/dataplay-icon.png"
-        alt="DataPlay"
-        width="161"
-        height="32"
-        loading="eager"
-        fetchpriority="high"
-        preload
-        format="webp"
-        class="h-8"
-      />
+      <img src="/dataplay-icon.png" alt="DataPlay" class="h-8" />
     </template>
 
     <UNavigationMenu :items="navItems" class="hidden xl:flex xl:justify-center" :ui="navUi" />

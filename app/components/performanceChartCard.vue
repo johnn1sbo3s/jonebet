@@ -27,13 +27,7 @@
         <UButton color="secondary" variant="soft" size="sm" @click="resetsZoom">Restaurar zoom</UButton>
       </div>
 
-      <BaseLineChart
-        ref="mainChartRef"
-        class="w-full"
-        :chart-data="chartData"
-        :options="chartOptions"
-        :style="chartStyle"
-      />
+      <LineChart :key="chartKey" class="w-full" :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
 
       <div class="mt-3 border-t border-zinc-800 pt-3">
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -100,7 +94,8 @@
           </p>
         </div>
 
-        <BaseLineChart
+        <LineChart
+          :key="`dd-${chartKey}`"
           class="w-full"
           :chart-data="drawdownChartData"
           :options="drawdownOptions"
@@ -238,6 +233,7 @@
 </template>
 
 <script setup>
+import { LineChart } from 'vue-chart-3'
 import { formatDate } from '~/utils/formatDate'
 import { TRADING_DAYS_PER_YEAR } from '~/utils/enums'
 import { usePerformanceChartOptions, useStaticLineOptions } from '~/composables/useChartOptions'
@@ -380,11 +376,11 @@ const streakClass = computed(() => {
 })
 
 // --- Chart (all reactive, no manual sync) ---
-const mainChartRef = ref(null)
+const chartKey = ref(0)
 const chartStyle = ref({ height: '400px', width: '100%' })
 
 function resetsZoom() {
-  mainChartRef.value?.resetZoom()
+  chartKey.value++
 }
 
 const chartData = computed(() => {
@@ -423,9 +419,10 @@ const chartOptions = computed(() =>
   usePerformanceChartOptions({ annotationIndex: chartPayload.value?.annotationIndex }),
 )
 
-// Reset zoom when model or grouping changes.
+// Remount the chart when the model or grouping changes so the
+// internal zoom/pan state is reset (and pending state shows empty).
 watch([chosenModelIdRef, groupBy], () => {
-  mainChartRef.value?.resetZoom()
+  chartKey.value++
 })
 
 // --- Info modals for the risk metrics ---

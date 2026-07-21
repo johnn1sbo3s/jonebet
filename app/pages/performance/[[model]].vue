@@ -44,7 +44,7 @@
           />
         </div>
 
-        <LazyPerformanceChartCard
+        <PerformanceChartCard
           v-model:chart-by-day="chartByDay"
           :chosen-model-id="chosenModelId"
           :daily-results="dailyResults"
@@ -56,9 +56,9 @@
 
       <BlockMetricsPanel :metrics-total="modelData.metrics.total" :blocks-history="modelData.blocksHistory" />
 
-      <LazyResultsTablesGrid :monthly-results="monthlyResults" :daily-results="dailyResults" />
+      <ResultsTablesGrid :monthly-results="monthlyResults" :daily-results="dailyResults" />
 
-      <LazyBetsTableCard
+      <BetsTableCard
         v-model:page="betsPage"
         :bets-items="betsItems"
         :bets-total="betsTotal"
