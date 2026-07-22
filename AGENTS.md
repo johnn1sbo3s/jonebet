@@ -92,6 +92,8 @@ Default section order:
 
 When the user requests a durable behavior change, record it here or in the relevant child AGENTS.md
 
+- **Commit messages must always be in English**, even though the project UI is in Portuguese
+
 ## Child DOX Index
 
 | Path | Scope |
