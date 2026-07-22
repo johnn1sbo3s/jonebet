@@ -26,4 +26,4 @@ logs
 # AI docs / specs (local only)
 docs/superpowers/
 .superpowers/
-
+.mimocode
