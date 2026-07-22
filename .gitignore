@@ -27,3 +27,4 @@ logs
 docs/superpowers/
 .superpowers/
 .mimocode
+.playwright-mcp
