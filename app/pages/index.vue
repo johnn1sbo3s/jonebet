@@ -258,7 +258,7 @@ const dayMetrics = computed(() => {
   if (!m) return []
   return [
     { name: 'Profit', value: m.profit, unit: 'u' },
-    { name: 'Investido', value: m.invested, unit: 'u' },
+    { name: 'Investido', value: m.invested, unit: 'u', decimals: 0 },
     { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })
@@ -268,7 +268,7 @@ const monthMetrics = computed(() => {
   if (!m) return []
   return [
     { name: 'Profit', value: m.profit, unit: 'u' },
-    { name: 'Investido', value: m.invested, unit: 'u' },
+    { name: 'Investido', value: m.invested, unit: 'u', decimals: 0 },
     { name: 'ROI', value: m.roi, unit: '%' },
   ]
 })

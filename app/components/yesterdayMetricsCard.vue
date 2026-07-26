@@ -13,7 +13,7 @@
           <p class="text-sm text-zinc-400">{{ item.name }}</p>
 
           <p class="text-xl font-black" :class="item.value >= 0 ? 'text-teal-500' : 'text-red-500'">
-            {{ formatNumber(item.value)
+            {{ formatNumber(item.value, item.decimals ?? 2)
             }}<span v-if="item.unit" class="ml-0.5 text-sm font-semibold">{{ item.unit }}</span>
           </p>
         </div>

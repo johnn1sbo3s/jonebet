@@ -65,7 +65,7 @@
 
             <span>|</span>
 
-            <span>Investido: {{ formatUnit(item.Responsibility) }}</span>
+            <span>Investido: {{ formatUnit(item.Responsibility, 0) }}</span>
 
             <span>|</span>
 
@@ -127,7 +127,7 @@ const sanitizedAllResultsData = computed(() => {
       roiClass: item.ROI >= 0 ? 'text-teal-500' : 'text-red-500',
       Profit: formatUnit(item.Profit),
       ROI: formatNumber(item.ROI),
-      Responsibility: formatUnit(item.Responsibility),
+      Responsibility: formatUnit(item.Responsibility, 0),
       Num_Bets: formatNumber(item.Num_Bets, 0),
     }
   })
