@@ -34,6 +34,18 @@
     <template #body>
       <div class="hidden md:block">
         <UTable :data="sanitizedAllResultsData" :columns="columns">
+          <template #Method-cell="{ row }">
+            <NuxtLink
+              :to="`/performance/${row.original.modelId}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1.5 text-zinc-100 hover:text-teal-400 hover:underline"
+            >
+              {{ row.getValue('Method') }}
+              <UIcon name="i-lucide-external-link" class="h-3 w-3" />
+            </NuxtLink>
+          </template>
+
           <template #Profit-cell="{ row }">
             <span class="font-semibold" :class="row.original.profitClass">
               {{ row.getValue('Profit') }}
@@ -53,7 +65,15 @@
           class="border-default rounded-lg border bg-zinc-950 p-3"
         >
           <div class="mb-2 flex items-center justify-between">
-            <span class="font-semibold">{{ item.Method }}</span>
+            <NuxtLink
+              :to="`/performance/${item.modelId}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1.5 font-semibold text-zinc-100 hover:text-teal-400 hover:underline"
+            >
+              {{ item.Method }}
+              <UIcon name="i-lucide-external-link" class="h-3 w-3" />
+            </NuxtLink>
 
             <span class="text-sm font-bold" :class="item.profitClass">
               {{ item.Profit }}
@@ -122,6 +142,7 @@ const sanitizedAllResultsData = computed(() => {
   return props.allResultsData.map((item) => {
     return {
       ...item,
+      modelId: modelNameToIdName(item.Method),
       Method: modelNameToNaturalName(item.Method),
       profitClass: item.Profit >= 0 ? 'text-teal-500' : 'text-red-500',
       roiClass: item.ROI >= 0 ? 'text-teal-500' : 'text-red-500',
