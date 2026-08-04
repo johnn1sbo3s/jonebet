@@ -25,18 +25,17 @@ describe('DailyBetCard', () => {
   it('renders the time and model on the header line', async () => {
     const wrapper = await mountSuspended(DailyBetCard, { props: { bet } })
     const text = wrapper.text()
-    expect(text).toContain('Horário · Modelo')
-    expect(text).toContain('16:00')
+    expect(text).toContain('16:00 ·')
     expect(text).toContain('Lay favorite home')
   })
 
-  it('renders the match with Home and Away split into two rows', async () => {
+  it('renders the match with Home and Away stacked, without Casa/Fora labels', async () => {
     const wrapper = await mountSuspended(DailyBetCard, { props: { bet } })
     const text = wrapper.text()
     expect(text).toContain('Flamengo')
     expect(text).toContain('Palmeiras')
-    expect(text).toContain('Casa')
-    expect(text).toContain('Fora')
+    expect(text).not.toContain('Casa')
+    expect(text).not.toContain('Fora')
   })
 
   it('renders the three odds cells with H/D/A labels and values', async () => {

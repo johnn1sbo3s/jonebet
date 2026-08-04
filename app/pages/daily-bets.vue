@@ -5,14 +5,14 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <p class="min-w-24 text-sm text-zinc-400">{{ qtd_games }} apostas</p>
+      <p class="w-full text-sm text-zinc-400 sm:w-auto sm:min-w-24">{{ qtd_games }} apostas</p>
 
-      <div class="flex items-center gap-2">
+      <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
         <DatePicker v-model="date" :max-value="maxDateIso" />
 
         <USelectMenu
           v-model="selectedModel"
-          class="max-w-89 min-w-60 rounded-xl border border-zinc-800 bg-zinc-900"
+          class="min-w-60 flex-1 rounded-xl border border-zinc-800 bg-zinc-900 sm:flex-none"
           searchable
           placeholder="Todos os modelos"
           :items="modelItems"
@@ -22,11 +22,11 @@
     </div>
 
     <template v-if="pending">
-      <USkeleton class="h-52 w-full rounded-2xl" />
-
-      <USkeleton class="h-52 w-full rounded-2xl" />
-
-      <USkeleton class="h-52 w-full rounded-2xl" />
+      <ul class="flex flex-col gap-3">
+        <li v-for="i in 3" :key="i">
+          <USkeleton class="h-28 w-full rounded-2xl" />
+        </li>
+      </ul>
     </template>
 
     <DataErrorCard
