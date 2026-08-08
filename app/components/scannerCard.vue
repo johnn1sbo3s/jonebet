@@ -33,7 +33,7 @@
         </div>
 
         <div class="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <span class="text-zinc-100">{{ game.home }}</span>
+          <span class="text-zinc-400">{{ game.home }}</span>
 
           <span class="text-base font-bold text-zinc-100">{{ game.score.home }} - {{ game.score.away }}</span>
 
