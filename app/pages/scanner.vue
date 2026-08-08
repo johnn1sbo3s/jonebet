@@ -62,7 +62,15 @@ async function loadSnapshot() {
   inFlight = true
   try {
     const data = await $fetch(config.public.SCANNER_SNAPSHOT_URL)
-    snapshot.value = safeParse('scannerSnapshot', data)
+    const parsed = safeParse('scannerSnapshot', data)
+    const localHistory = loadLocalHistory()
+    const games = (parsed.games || []).map((g) => {
+      const merged = mergeHistories(g.notifications, localHistory[g.id])
+      localHistory[g.id] = merged
+      return { ...g, notifications: merged }
+    })
+    saveLocalHistory(localHistory)
+    snapshot.value = { ...parsed, games }
     fetchError.value = false
     offline.value = false
   } catch {

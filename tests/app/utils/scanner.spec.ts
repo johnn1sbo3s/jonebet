@@ -1,6 +1,12 @@
 // tests/app/utils/scanner.spec.ts
 import { describe, it, expect } from 'vitest'
-import { isRecentNotification, formatUpdatedAgo } from '~/utils/scanner.js'
+import {
+  isRecentNotification,
+  formatUpdatedAgo,
+  mergeHistories,
+  loadLocalHistory,
+  saveLocalHistory,
+} from '~/utils/scanner.js'
 
 const AT = '2026-08-07T23:55:03-03:00'
 const NOW = Date.parse('2026-08-07T23:59:03-03:00')
@@ -36,5 +42,40 @@ describe('formatUpdatedAgo', () => {
   it('retorna vazio sem horário válido', () => {
     expect(formatUpdatedAgo(null, NOW)).toBe('')
     expect(formatUpdatedAgo('x', NOW)).toBe('')
+  })
+})
+
+describe('mergeHistories', () => {
+  it('deduplica por regra+horário e ordena do mais recente', () => {
+    const backend = [
+      { rule: 'a', at: AT },
+      { rule: 'b', at: '2026-08-07T23:50:03-03:00' },
+    ]
+    const local = [
+      { rule: 'a', at: AT },
+      { rule: 'c', at: '2026-08-07T23:40:03-03:00' },
+    ]
+    expect(mergeHistories(backend, local).map((n) => n.rule)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('backend vazio usa o cache local', () => {
+    const local = [{ rule: 'x', at: AT }]
+    expect(mergeHistories([], local)).toHaveLength(1)
+  })
+
+  it('limita a 10 eventos', () => {
+    const many = Array.from({ length: 15 }, (_, i) => ({
+      rule: `r${i}`,
+      at: new Date(Date.now() - i * 60_000).toISOString(),
+    }))
+    expect(mergeHistories([], many)).toHaveLength(10)
+  })
+})
+
+describe('histórico local', () => {
+  it('salva e carrega por jogo no localStorage', () => {
+    const byGame = { m1: [{ rule: 'a', at: AT }] }
+    saveLocalHistory(byGame)
+    expect(loadLocalHistory()).toEqual(byGame)
   })
 })

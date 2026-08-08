@@ -21,3 +21,37 @@ export function formatUpdatedAgo(generatedAt, now = Date.now()) {
   const minutes = Math.floor(seconds / 60)
   return `há ${minutes}m ${seconds % 60}s`
 }
+
+const HISTORY_KEY = 'scanner.notifications.v1'
+
+// Une o histórico do backend (autoritativo) com o cache local (sobrevive a
+// restart do scanner): dedupe por regra+horário, mais recente primeiro, máx 10.
+export function mergeHistories(backend = [], local = []) {
+  const seen = new Set()
+  const merged = []
+  for (const n of [...backend, ...local]) {
+    const key = `${n.rule}|${n.at}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      merged.push(n)
+    }
+  }
+  return merged.sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 10)
+}
+
+export function loadLocalHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+export function saveLocalHistory(byGame) {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(byGame))
+  } catch {
+    // storage indisponível — segue sem cache local
+  }
+}
