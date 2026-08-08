@@ -26,11 +26,11 @@
         v-for="(g, i) in goals"
         :key="i"
         :cx="(g.minute - 1) * (640 / 96) + 2.5"
-        :cy="g.team === 'home' ? CENTER - 9 : CENTER + 9"
-        r="3"
+        :cy="g.team === 'home' ? 9 : 115"
+        r="5"
         fill="#f4f4f5"
         :stroke="g.team === 'home' ? '#2dd4bf' : '#3b82f6'"
-        stroke-width="1.5"
+        stroke-width="2"
       >
         <title>{{ g.player || 'Gol' }} ({{ g.minute }}')</title>
       </circle>
