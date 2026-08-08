@@ -1,11 +1,11 @@
 <template>
-  <div class="cursor-pointer [perspective:1200px]" @click="flipped = !flipped">
+  <div class="h-full cursor-pointer [perspective:1200px]" @click="flipped = !flipped">
     <div
-      class="relative transition-transform duration-500 [transform-style:preserve-3d]"
+      class="relative h-full transition-transform duration-500 [transform-style:preserve-3d]"
       :class="{ '[transform:rotateY(180deg)]': flipped }"
     >
       <div
-        class="flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
+        class="flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
         :class="{ 'glow-card': isRecent }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
@@ -100,7 +100,7 @@
           </div>
         </div>
 
-        <p v-else class="mt-auto py-4 text-center text-xs text-zinc-600">Sem notificações neste jogo ainda</p>
+        <p v-else class="m-auto text-center text-xs text-zinc-600">Sem notificações neste jogo ainda</p>
       </div>
     </div>
   </div>
