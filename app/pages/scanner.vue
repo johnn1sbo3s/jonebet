@@ -13,7 +13,7 @@
 
           <span class="text-zinc-600">·</span>
 
-          <span>{{ games.length }} jogos</span>
+          <span>{{ games.length }} {{ games.length === 1 ? 'jogo' : 'jogos' }}</span>
 
           <span v-if="offline" class="text-zinc-600">· sem conexão</span>
         </div>
@@ -31,7 +31,7 @@
 
     <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
 
-    <div v-else class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-3">
+    <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
       <ScannerCard v-for="game in games" :key="game.id" :game="game" />
     </div>
   </div>
