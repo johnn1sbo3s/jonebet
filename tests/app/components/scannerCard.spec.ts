@@ -90,7 +90,7 @@ describe('ScannerCard', () => {
     expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(0)
   })
 
-  it('sem secundários mantém labels 1X2 e pula O2.5/BTTS', async () => {
+  it('sem secundários mostra O2.5/BTTS com "-" nas colunas fixas', async () => {
     const wrapper = await mountSuspended(ScannerCard, {
       props: {
         game: {
@@ -105,8 +105,11 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Casa')
     expect(wrapper.text()).toContain('Empate')
     expect(wrapper.text()).toContain('Fora')
-    expect(wrapper.text()).not.toContain('O2.5')
-    expect(wrapper.text()).not.toContain('BTTS')
-    expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(3)
+    expect(wrapper.text()).toContain('O2.5')
+    expect(wrapper.text()).toContain('BTTS')
+    const badges = wrapper.findAllComponents({ name: 'UBadge' })
+    expect(badges).toHaveLength(5)
+    expect(badges[3].text()).toBe('-')
+    expect(badges[4].text()).toBe('-')
   })
 })

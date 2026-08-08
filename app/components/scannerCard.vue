@@ -53,41 +53,13 @@
         </div>
 
         <div v-if="hasOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-x-1 gap-y-0.5">
-          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Casa</span>
+          <div v-for="col in oddsColumns" :key="col.label" class="flex flex-col gap-0.5">
+            <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">{{
+              col.label
+            }}</span>
 
-          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Empate</span>
-
-          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Fora</span>
-
-          <span
-            v-if="prematch.over25 != null"
-            class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
-            >O2.5</span
-          >
-
-          <span
-            v-if="prematch.btts != null"
-            class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
-            >BTTS</span
-          >
-
-          <UBadge
-            v-for="(o, i) in majorOdds(prematch)"
-            :key="'pm' + i"
-            color="secondary"
-            variant="soft"
-            size="sm"
-            class="justify-center"
-            >{{ o }}</UBadge
-          >
-
-          <UBadge v-if="prematch.over25 != null" color="secondary" variant="soft" size="sm" class="justify-center">{{
-            prematch.over25
-          }}</UBadge>
-
-          <UBadge v-if="prematch.btts != null" color="secondary" variant="soft" size="sm" class="justify-center">{{
-            prematch.btts
-          }}</UBadge>
+            <UBadge color="secondary" variant="soft" size="sm" class="justify-center">{{ col.value ?? '-' }}</UBadge>
+          </div>
         </div>
 
         <MomentumChart :bars="game.momentum" :goals="game.goals" class="mb-3" />
@@ -194,9 +166,15 @@ const prematch = computed(() => odds.value.prematch || {})
 const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
 const hasOdds = computed(() => hasAnyOdds(prematch.value))
 
-function majorOdds(o) {
-  return [o.home, o.draw, o.away].filter((v) => v != null)
-}
+// Colunas de odds sempre presentes (label + valor empilhados na mesma célula);
+// valor ausente vira "-" — assim o grid nunca desalinha por auto-placement.
+const oddsColumns = computed(() => [
+  { label: 'Casa', value: prematch.value.home },
+  { label: 'Empate', value: prematch.value.draw },
+  { label: 'Fora', value: prematch.value.away },
+  { label: 'O2.5', value: prematch.value.over25 },
+  { label: 'BTTS', value: prematch.value.btts },
+])
 
 function formatTime(at) {
   return new Date(at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
