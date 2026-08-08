@@ -66,10 +66,9 @@ async function loadSnapshot() {
     const localHistory = loadLocalHistory()
     const games = (parsed.games || []).map((g) => {
       const merged = mergeHistories(g.notifications, localHistory[g.id])
-      localHistory[g.id] = merged
       return { ...g, notifications: merged }
     })
-    saveLocalHistory(localHistory)
+    saveLocalHistory(pruneLocalHistory(games))
     snapshot.value = { ...parsed, games }
     fetchError.value = false
     offline.value = false

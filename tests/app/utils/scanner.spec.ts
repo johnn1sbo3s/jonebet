@@ -6,6 +6,7 @@ import {
   mergeHistories,
   loadLocalHistory,
   saveLocalHistory,
+  pruneLocalHistory,
 } from '~/utils/scanner.js'
 
 const AT = '2026-08-07T23:55:03-03:00'
@@ -69,6 +70,23 @@ describe('mergeHistories', () => {
       at: new Date(Date.now() - i * 60_000).toISOString(),
     }))
     expect(mergeHistories([], many)).toHaveLength(10)
+  })
+})
+
+describe('pruneLocalHistory', () => {
+  it('mantém só os jogos visíveis no snapshot atual', () => {
+    const games = [
+      { id: 'm1', notifications: [{ rule: 'a', at: AT }] },
+      { id: 'm2', notifications: [] },
+    ]
+    expect(pruneLocalHistory(games)).toEqual({
+      m1: [{ rule: 'a', at: AT }],
+      m2: [],
+    })
+  })
+
+  it('sem jogos zera o cache', () => {
+    expect(pruneLocalHistory([])).toEqual({})
   })
 })
 

@@ -55,3 +55,12 @@ export function saveLocalHistory(byGame) {
     // storage indisponível — segue sem cache local
   }
 }
+
+// Poda do cache local: só jogos visíveis agora (ao vivo + janela "Encerrado").
+// O histórico de um jogo só é exibido enquanto o card existe na tela; ids de
+// jogo não reaparecem — o resto seria dado invisível acumulando sem limite.
+export function pruneLocalHistory(games = []) {
+  const visible = {}
+  for (const g of games) visible[g.id] = g.notifications || []
+  return visible
+}
