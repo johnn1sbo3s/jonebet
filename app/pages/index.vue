@@ -4,16 +4,6 @@
       <PageHeader title="Bem-vindo(a) ao DataPlay!" />
     </div>
 
-    <UAlert
-      v-if="showAlert"
-      color="warning"
-      variant="soft"
-      title="Atenção"
-      close
-      description="Apostas são para maiores de 18 anos e envolvem riscos financeiros. Aposte com responsabilidade e nunca arrisque mais do que pode perder."
-      @update:open="showAlert = false"
-    />
-
     <TopGamesCard :fixtures="topGames" :bets="topGamesBets" :loading="topGamesLoading" />
 
     <USkeleton v-if="status === 'pending'" class="mt-2 h-60 w-full rounded-2xl" />
@@ -173,7 +163,6 @@ import { DateTime } from 'luxon'
 
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
-const showAlert = ref(true)
 
 const {
   data: rawData,
