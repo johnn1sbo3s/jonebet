@@ -34,7 +34,7 @@ describe('ScannerCard', () => {
     const wrapper = await mountSuspended(ScannerCard, { props: { game: game() } })
     expect(wrapper.text()).toContain('Palmeiras')
     expect(wrapper.text()).toContain('Flamengo')
-    expect(wrapper.text()).toContain('2 - 1')
+    expect(wrapper.text()).toContain('2 x 1')
     expect(wrapper.text()).toContain("65'")
     expect(wrapper.text()).toContain('POSSE')
   })

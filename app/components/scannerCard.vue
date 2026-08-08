@@ -34,21 +34,23 @@
         </div>
 
         <div class="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <span class="text-zinc-400">{{ game.home }}</span>
+          <span class="min-w-0 text-zinc-400">{{ game.home }}</span>
 
-          <span class="text-base font-bold text-zinc-100">{{ game.score.home }} - {{ game.score.away }}</span>
+          <span class="shrink-0 text-base font-bold whitespace-nowrap text-zinc-100"
+            >{{ game.score.home }} x {{ game.score.away }}</span
+          >
 
-          <span class="text-zinc-400">{{ game.away }}</span>
+          <span class="min-w-0 text-zinc-400">{{ game.away }}</span>
 
           <span
             v-if="game.finished"
-            class="ml-auto rounded-full border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-xs font-bold text-zinc-400"
+            class="ml-auto shrink-0 rounded-full border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-xs font-bold whitespace-nowrap text-zinc-400"
             >Encerrado</span
           >
 
           <span
             v-else
-            class="ml-auto rounded-full border border-teal-500/25 bg-teal-500/10 px-1.5 py-0.5 text-xs font-bold text-teal-400"
+            class="ml-auto shrink-0 rounded-full border border-teal-500/25 bg-teal-500/10 px-1.5 py-0.5 text-xs font-bold whitespace-nowrap text-teal-400"
             >{{ game.minute }}'</span
           >
         </div>
