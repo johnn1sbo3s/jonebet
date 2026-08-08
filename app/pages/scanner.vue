@@ -91,7 +91,7 @@ function tick() {
 
 onMounted(() => {
   loadSnapshot()
-  pollTimer = setInterval(loadSnapshot, 60_000)
+  pollTimer = setInterval(loadSnapshot, 40_000)
   tickTimer = setInterval(tick, 1000)
 })
 
