@@ -52,54 +52,52 @@
           >
         </div>
 
-        <div v-if="hasOdds" class="mb-2.5 flex flex-col gap-1">
-          <div v-if="hasPrematch" class="flex items-center gap-1">
-            <UBadge
-              v-for="(o, i) in majorOdds(prematch)"
-              :key="'pm' + i"
-              color="secondary"
-              variant="soft"
-              size="sm"
-              class="flex-1 justify-center"
-              >{{ o }}</UBadge
-            >
+        <div v-if="hasOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-1">
+          <span v-if="hasSecondary" class="text-transparent">·</span>
 
-            <span v-if="minorOdds(prematch).length" class="text-xs text-zinc-600">·</span>
+          <span v-if="hasSecondary" class="text-transparent">·</span>
 
-            <UBadge
-              v-for="(o, i) in minorOdds(prematch)"
-              :key="'pm-min' + i"
-              color="secondary"
-              variant="soft"
-              size="sm"
-              class="flex-[0.72] justify-center"
-              >{{ o }}</UBadge
-            >
-          </div>
+          <span v-if="hasSecondary" class="text-transparent">·</span>
 
-          <div v-if="hasLive" class="flex items-center gap-1">
-            <UBadge
-              v-for="(o, i) in majorOdds(live)"
-              :key="'lv' + i"
-              color="success"
-              variant="soft"
-              size="sm"
-              class="flex-1 justify-center"
-              >{{ o }}</UBadge
-            >
+          <span
+            v-if="hasSecondary && prematch.over25 != null"
+            class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
+            >O2.5</span
+          >
 
-            <span v-if="minorOdds(live).length" class="text-xs text-zinc-600">·</span>
+          <span
+            v-if="hasSecondary && prematch.btts != null"
+            class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
+            >BTTS</span
+          >
 
-            <UBadge
-              v-for="(o, i) in minorOdds(live)"
-              :key="'lv-min' + i"
-              color="success"
-              variant="soft"
-              size="sm"
-              class="flex-[0.72] justify-center"
-              >{{ o }}</UBadge
-            >
-          </div>
+          <UBadge
+            v-for="(o, i) in majorOdds(prematch)"
+            :key="'pm' + i"
+            color="secondary"
+            variant="soft"
+            size="sm"
+            class="justify-center"
+            >{{ o }}</UBadge
+          >
+
+          <UBadge v-if="prematch.over25 != null" color="secondary" variant="soft" size="sm" class="justify-center">{{
+            prematch.over25
+          }}</UBadge>
+
+          <UBadge v-if="prematch.btts != null" color="secondary" variant="soft" size="sm" class="justify-center">{{
+            prematch.btts
+          }}</UBadge>
+
+          <UBadge
+            v-for="(o, i) in majorOdds(live)"
+            :key="'lv' + i"
+            color="success"
+            variant="soft"
+            size="sm"
+            class="justify-center"
+            >{{ o }}</UBadge
+          >
         </div>
 
         <MomentumChart :bars="game.momentum" :goals="game.goals" class="mb-3" />
@@ -206,18 +204,10 @@ const live = computed(() => odds.value.live || {})
 
 const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
 const hasOdds = computed(() => hasAnyOdds(prematch.value) || hasAnyOdds(live.value))
-const hasPrematch = computed(() => hasAnyOdds(prematch.value))
-const hasLive = computed(() => hasAnyOdds(live.value))
+const hasSecondary = computed(() => prematch.value.over25 != null || prematch.value.btts != null)
 
 function majorOdds(o) {
   return [o.home, o.draw, o.away].filter((v) => v != null)
-}
-
-function minorOdds(o) {
-  const cells = []
-  if (o.over25 != null) cells.push('O ' + o.over25)
-  if (o.btts != null) cells.push('BTTS ' + o.btts)
-  return cells
 }
 
 function formatTime(at) {
