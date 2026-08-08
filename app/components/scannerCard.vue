@@ -5,19 +5,20 @@
       :class="{ '[transform:rotateY(180deg)]': flipped }"
     >
       <div
+        ref="frontEl"
         class="flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
         :class="{ 'glow-card': isRecent, 'opacity-75': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
-          <div class="flex items-center gap-1.5">
+          <div class="print-hide flex items-center gap-1.5">
             <button
               class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-              :title="copied ? 'Copiado!' : 'Copiar link'"
-              @click.stop="copyLink"
+              title="Tirar print do card"
+              @click.stop="captureCard"
             >
-              <UIcon :name="copied ? 'i-lucide-check' : 'i-lucide-copy'" class="h-3.5 w-3.5" />
+              <UIcon name="i-lucide-camera" class="h-3.5 w-3.5" />
             </button>
 
             <a
@@ -124,8 +125,9 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
+import { toBlob } from 'html-to-image'
 
 const props = defineProps({
   game: { type: Object, required: true },
@@ -140,8 +142,6 @@ const STAT_LABELS = [
 ]
 
 const flipped = ref(false)
-const copied = ref(false)
-let copyTimer
 
 const isRecent = computed(() => isRecentNotification(props.game.notifications))
 
@@ -180,18 +180,46 @@ function formatTime(at) {
   return new Date(at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 }
 
-async function copyLink() {
+const frontEl = ref(null)
+const toast = useToast()
+
+async function captureCard() {
+  const node = frontEl.value
+  if (!node) return
+  // Print sem o glow: remove a classe só durante a captura (o glow é animado
+  // via box-shadow e "vaza" para fora do card na imagem). O front face é o
+  // alvo — o verso (flip) é irmão no DOM e não entra no subtree.
+  const hadGlow = node.classList.contains('glow-card')
+  if (hadGlow) node.classList.remove('glow-card')
   try {
-    await navigator.clipboard.writeText(props.game.flashscore_url)
-    copied.value = true
-    clearTimeout(copyTimer)
-    copyTimer = setTimeout(() => (copied.value = false), 2000)
+    const blob = await toBlob(node, {
+      pixelRatio: window.devicePixelRatio || 1,
+      // Botões de ação (print/Flashscore) não entram no print — o hover do
+      // clique ficaria congelado na imagem.
+      filter: (n) => !(n instanceof HTMLElement && n.classList.contains('print-hide')),
+    })
+    if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+        toast.add({ title: 'Print copiado!', color: 'success' })
+        return
+      } catch {
+        // clipboard negada — cai no download abaixo
+      }
+    }
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `scanner-${props.game.id}.png`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.add({ title: 'Clipboard indisponível — print baixado', color: 'warning' })
   } catch {
-    // clipboard indisponível — mantém o estado atual
+    toast.add({ title: 'Não foi possível gerar o print', color: 'error' })
+  } finally {
+    if (hadGlow) node.classList.add('glow-card')
   }
 }
-
-onUnmounted(() => clearTimeout(copyTimer))
 </script>
 
 <style scoped>
