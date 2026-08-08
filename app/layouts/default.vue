@@ -17,14 +17,14 @@ const navItems = [
       to: '/fixtures',
     },
     {
-      label: 'Scanner',
-      icon: 'i-lucide-activity',
-      to: '/scanner',
-    },
-    {
       label: 'Apostas do Dia',
       icon: 'i-lucide-clipboard-list',
       to: '/daily-bets',
+    },
+    {
+      label: 'Scanner',
+      icon: 'i-lucide-activity',
+      to: '/scanner',
     },
     {
       label: 'Performance',
