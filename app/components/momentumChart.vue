@@ -38,7 +38,7 @@
       <template v-for="t in TICKS" :key="t">
         <line :x1="(t - 1) * (640 / 96)" y1="51" :x2="(t - 1) * (640 / 96)" y2="59" stroke="#3f3f46" />
 
-        <text :x="(t - 1) * (640 / 96)" y="153" font-size="9" fill="#52525b" text-anchor="middle">{{ t }}'</text>
+        <text :x="(t - 1) * (640 / 96)" y="153" font-size="20" fill="#52525b" text-anchor="middle">{{ t }}'</text>
       </template>
     </svg>
 
