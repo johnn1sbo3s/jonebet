@@ -88,16 +88,6 @@
           <UBadge v-if="prematch.btts != null" color="secondary" variant="soft" size="sm" class="justify-center">{{
             prematch.btts
           }}</UBadge>
-
-          <UBadge
-            v-for="(o, i) in majorOdds(live)"
-            :key="'lv' + i"
-            color="success"
-            variant="soft"
-            size="sm"
-            class="justify-center"
-            >{{ o }}</UBadge
-          >
         </div>
 
         <MomentumChart :bars="game.momentum" :goals="game.goals" class="mb-3" />
@@ -200,10 +190,9 @@ const statRows = computed(() =>
 
 const odds = computed(() => props.game.odds || {})
 const prematch = computed(() => odds.value.prematch || {})
-const live = computed(() => odds.value.live || {})
 
 const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
-const hasOdds = computed(() => hasAnyOdds(prematch.value) || hasAnyOdds(live.value))
+const hasOdds = computed(() => hasAnyOdds(prematch.value))
 const hasSecondary = computed(() => prematch.value.over25 != null || prematch.value.btts != null)
 
 function majorOdds(o) {

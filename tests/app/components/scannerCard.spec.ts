@@ -61,31 +61,24 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Sem notificações neste jogo ainda')
   })
 
-  it('renderiza odds pré-live (com O2.5/BTTS) e live só 1X2', async () => {
+  it('renderiza odds pré-live (1X2 + O2.5/BTTS com labels)', async () => {
     const wrapper = await mountSuspended(ScannerCard, {
       props: {
         game: {
           ...game(),
           odds: {
             prematch: { home: 1.67, draw: 4.4, away: 5.5, over25: 2.18, btts: 1.83 },
-            live: { home: 1.7, draw: 3.75, away: 5.6, over25: null, btts: null },
           },
         },
       },
     })
-    // pré-live: 1X2 + O2.5 + BTTS, com labels em cima
     expect(wrapper.text()).toContain('1.67')
     expect(wrapper.text()).toContain('2.18')
     expect(wrapper.text()).toContain('1.83')
     expect(wrapper.text()).toContain('O2.5')
     expect(wrapper.text()).toContain('BTTS')
-    // live: só 1X2 (sem valores O2.5/BTTS da linha live)
-    expect(wrapper.text()).toContain('3.75')
     const badges = wrapper.findAllComponents({ name: 'UBadge' })
-    expect(badges).toHaveLength(8)
-    expect(badges[5].text()).toBe('1.7')
-    expect(badges[6].text()).toBe('3.75')
-    expect(badges[7].text()).toBe('5.6')
+    expect(badges).toHaveLength(5)
   })
 
   it('sem odds não renderiza a seção', async () => {
@@ -101,7 +94,6 @@ describe('ScannerCard', () => {
           ...game(),
           odds: {
             prematch: { home: 1.67, draw: 4.4, away: 5.5, over25: null, btts: null },
-            live: { home: 1.7, draw: 3.75, away: 5.6, over25: null, btts: null },
           },
         },
       },
@@ -109,6 +101,6 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('1.67')
     expect(wrapper.text()).not.toContain('O2.5')
     expect(wrapper.text()).not.toContain('BTTS')
-    expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(6)
+    expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(3)
   })
 })
