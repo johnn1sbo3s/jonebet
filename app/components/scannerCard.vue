@@ -52,6 +52,56 @@
           >
         </div>
 
+        <div v-if="hasOdds" class="mb-2.5 flex flex-col gap-1">
+          <div v-if="hasPrematch" class="flex items-center gap-1">
+            <UBadge
+              v-for="(o, i) in majorOdds(prematch)"
+              :key="'pm' + i"
+              color="secondary"
+              variant="soft"
+              size="sm"
+              class="flex-1 justify-center"
+              >{{ o }}</UBadge
+            >
+
+            <span v-if="minorOdds(prematch).length" class="text-xs text-zinc-600">·</span>
+
+            <UBadge
+              v-for="(o, i) in minorOdds(prematch)"
+              :key="'pm-min' + i"
+              color="secondary"
+              variant="soft"
+              size="sm"
+              class="flex-[0.72] justify-center"
+              >{{ o }}</UBadge
+            >
+          </div>
+
+          <div v-if="hasLive" class="flex items-center gap-1">
+            <UBadge
+              v-for="(o, i) in majorOdds(live)"
+              :key="'lv' + i"
+              color="success"
+              variant="soft"
+              size="sm"
+              class="flex-1 justify-center"
+              >{{ o }}</UBadge
+            >
+
+            <span v-if="minorOdds(live).length" class="text-xs text-zinc-600">·</span>
+
+            <UBadge
+              v-for="(o, i) in minorOdds(live)"
+              :key="'lv-min' + i"
+              color="success"
+              variant="soft"
+              size="sm"
+              class="flex-[0.72] justify-center"
+              >{{ o }}</UBadge
+            >
+          </div>
+        </div>
+
         <MomentumChart :bars="game.momentum" :goals="game.goals" class="mb-3" />
 
         <div class="mt-auto flex flex-col gap-2">
@@ -149,6 +199,26 @@ const statRows = computed(() =>
     }
   }),
 )
+
+const odds = computed(() => props.game.odds || {})
+const prematch = computed(() => odds.value.prematch || {})
+const live = computed(() => odds.value.live || {})
+
+const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
+const hasOdds = computed(() => hasAnyOdds(prematch.value) || hasAnyOdds(live.value))
+const hasPrematch = computed(() => hasAnyOdds(prematch.value))
+const hasLive = computed(() => hasAnyOdds(live.value))
+
+function majorOdds(o) {
+  return [o.home, o.draw, o.away].filter((v) => v != null)
+}
+
+function minorOdds(o) {
+  const cells = []
+  if (o.over25 != null) cells.push('O ' + o.over25)
+  if (o.btts != null) cells.push('BTTS ' + o.btts)
+  return cells
+}
 
 function formatTime(at) {
   return new Date(at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
