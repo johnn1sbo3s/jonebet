@@ -52,21 +52,21 @@
           >
         </div>
 
-        <div v-if="hasOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-1">
-          <span v-if="hasSecondary" class="text-transparent">·</span>
+        <div v-if="hasOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-x-1 gap-y-0.5">
+          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Casa</span>
 
-          <span v-if="hasSecondary" class="text-transparent">·</span>
+          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Empate</span>
 
-          <span v-if="hasSecondary" class="text-transparent">·</span>
+          <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">Fora</span>
 
           <span
-            v-if="hasSecondary && prematch.over25 != null"
+            v-if="prematch.over25 != null"
             class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
             >O2.5</span
           >
 
           <span
-            v-if="hasSecondary && prematch.btts != null"
+            v-if="prematch.btts != null"
             class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase"
             >BTTS</span
           >
@@ -193,7 +193,6 @@ const prematch = computed(() => odds.value.prematch || {})
 
 const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
 const hasOdds = computed(() => hasAnyOdds(prematch.value))
-const hasSecondary = computed(() => prematch.value.over25 != null || prematch.value.btts != null)
 
 function majorOdds(o) {
   return [o.home, o.draw, o.away].filter((v) => v != null)
