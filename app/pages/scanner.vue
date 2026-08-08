@@ -18,7 +18,11 @@
             <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
           </span>
 
-          <span>atualizado {{ updatedAgo }}</span>
+          <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
+
+          <span v-else-if="updatedAgo">atualizado {{ updatedAgo }}</span>
+
+          <span v-else class="text-zinc-600">sem dados</span>
 
           <span v-if="offline" class="text-zinc-600">· sem conexão</span>
         </div>
