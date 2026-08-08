@@ -22,6 +22,19 @@
         opacity="0.85"
       />
 
+      <circle
+        v-for="(g, i) in goals"
+        :key="i"
+        :cx="(g.minute - 1) * (640 / 96) + 2.5"
+        :cy="g.team === 'home' ? CENTER - 9 : CENTER + 9"
+        r="3"
+        fill="#f4f4f5"
+        :stroke="g.team === 'home' ? '#2dd4bf' : '#3b82f6'"
+        stroke-width="1.5"
+      >
+        <title>{{ g.player || 'Gol' }} ({{ g.minute }}')</title>
+      </circle>
+
       <template v-for="t in TICKS" :key="t">
         <line :x1="(t - 1) * (640 / 96)" y1="58" :x2="(t - 1) * (640 / 96)" y2="66" stroke="#3f3f46" />
 
@@ -36,6 +49,7 @@
 <script setup>
 defineProps({
   bars: { type: Array, default: () => [] },
+  goals: { type: Array, default: () => [] },
 })
 
 const TICKS = [15, 30, 45, 60, 75, 90]

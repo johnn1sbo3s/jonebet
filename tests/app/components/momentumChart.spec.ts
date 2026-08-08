@@ -23,4 +23,24 @@ describe('MomentumChart', () => {
     expect(wrapper.text()).toContain('aguardando dados do gráfico')
     expect(wrapper.find('svg').exists()).toBe(false)
   })
+
+  it('renderiza marcadores de gol', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        bars: [{ minute: 1, home: 0.5, away: 0 }],
+        goals: [
+          { minute: 23, stoppage_time: 0, team: 'home', player: 'Rony' },
+          { minute: 45, stoppage_time: 2, team: 'away', player: 'Suárez' },
+        ],
+      },
+    })
+    expect(wrapper.findAll('circle')).toHaveLength(2)
+  })
+
+  it('sem gols, sem marcadores', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: { bars: [{ minute: 1, home: 0.5, away: 0 }] },
+    })
+    expect(wrapper.findAll('circle')).toHaveLength(0)
+  })
 })

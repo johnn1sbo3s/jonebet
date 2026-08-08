@@ -45,7 +45,7 @@
           >
         </div>
 
-        <MomentumChart :bars="game.momentum" class="mb-3" />
+        <MomentumChart :bars="game.momentum" :goals="game.goals" class="mb-3" />
 
         <div class="mt-auto flex flex-col gap-2">
           <div v-for="row in statRows" :key="row.label" class="flex flex-col gap-0.5">
