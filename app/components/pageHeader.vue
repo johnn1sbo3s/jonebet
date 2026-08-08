@@ -2,7 +2,9 @@
   <div class="flex gap-5">
     <div class="flex items-center gap-3">
       <div class="flex flex-col gap-1">
-        <h1 class="align-middle text-xl font-semibold sm:text-2xl">{{ title }}</h1>
+        <h1 class="align-middle text-xl font-semibold sm:text-2xl">
+          <slot name="title">{{ title }}</slot>
+        </h1>
 
         <div v-if="description" class="text-sm text-slate-500">
           {{ description }}

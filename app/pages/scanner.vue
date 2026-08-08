@@ -1,6 +1,15 @@
 <template>
   <div class="flex flex-col gap-5">
     <PageHeader title="Scanner ao vivo">
+      <template #title>
+        Scanner ao vivo
+        <span
+          class="ml-2 rounded-full border border-zinc-800 bg-zinc-900 px-2.5 py-0.5 align-middle text-xs font-semibold text-zinc-400"
+        >
+          {{ games.length }} {{ games.length === 1 ? 'jogo' : 'jogos' }}
+        </span>
+      </template>
+
       <template #right>
         <div class="ml-auto flex items-center gap-2 text-xs text-zinc-400">
           <span class="relative flex h-2 w-2">
@@ -10,10 +19,6 @@
           </span>
 
           <span>atualizado {{ updatedAgo }}</span>
-
-          <span class="text-zinc-600">·</span>
-
-          <span>{{ games.length }} {{ games.length === 1 ? 'jogo' : 'jogos' }}</span>
 
           <span v-if="offline" class="text-zinc-600">· sem conexão</span>
         </div>
