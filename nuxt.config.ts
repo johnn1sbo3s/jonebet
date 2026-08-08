@@ -6,6 +6,12 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxt/ui', '@nuxt/fonts', '@pinia/nuxt', '@nuxtjs/device', '@nuxt/eslint'],
 
+  icon: {
+    clientBundle: {
+      scan: true,
+    },
+  },
+
   css: ['@/assets/css/main.css'],
 
   devtools: { enabled: false },
