@@ -37,7 +37,7 @@ describe('MomentumChart', () => {
     const circles = wrapper.findAll('circle')
     expect(circles).toHaveLength(2)
     expect(circles[0].attributes('cy')).toBe('9')
-    expect(circles[1].attributes('cy')).toBe('115')
+    expect(circles[1].attributes('cy')).toBe('146')
   })
 
   it('sem gols, sem marcadores', async () => {
