@@ -80,14 +80,16 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Fora')
     expect(wrapper.text()).toContain('O2.5')
     expect(wrapper.text()).toContain('BTTS')
+    // 6 = 5 colunas de odds + badge de minuto (também UBadge)
     const badges = wrapper.findAllComponents({ name: 'UBadge' })
-    expect(badges).toHaveLength(5)
+    expect(badges).toHaveLength(6)
   })
 
   it('sem odds não renderiza a seção', async () => {
     const wrapper = await mountSuspended(ScannerCard, { props: { game: game() } })
     expect(wrapper.find('.grid.grid-cols-\\[1fr_1fr_1fr_0\\.85fr_0\\.85fr\\]').exists()).toBe(false)
-    expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(0)
+    // só a badge de minuto — as de odds não existem sem dados
+    expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(1)
   })
 
   it('sem secundários mostra O2.5/BTTS com "-" nas colunas fixas', async () => {
@@ -107,9 +109,10 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Fora')
     expect(wrapper.text()).toContain('O2.5')
     expect(wrapper.text()).toContain('BTTS')
+    // 6 = 5 colunas de odds + badge de minuto; O2.5/BTTS são as 2 últimas
     const badges = wrapper.findAllComponents({ name: 'UBadge' })
-    expect(badges).toHaveLength(5)
-    expect(badges[3].text()).toBe('-')
+    expect(badges).toHaveLength(6)
     expect(badges[4].text()).toBe('-')
+    expect(badges[5].text()).toBe('-')
   })
 })

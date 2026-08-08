@@ -55,16 +55,22 @@
 
           <span class="min-w-0 text-zinc-400">{{ game.away }}</span>
 
-          <span
+          <UBadge
             v-if="game.finished"
-            class="ml-auto shrink-0 rounded-full border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-xs font-bold whitespace-nowrap text-zinc-400"
-            >Encerrado</span
+            color="neutral"
+            variant="outline"
+            size="md"
+            class="ml-auto shrink-0 rounded-full font-bold whitespace-nowrap"
+            >Encerrado</UBadge
           >
 
-          <span
+          <UBadge
             v-else
-            class="ml-auto shrink-0 rounded-full border border-teal-500/25 bg-teal-500/10 px-1.5 py-0.5 text-xs font-bold whitespace-nowrap text-teal-400"
-            >{{ game.minute }}'</span
+            color="primary"
+            variant="subtle"
+            size="md"
+            class="ml-auto shrink-0 rounded-full font-bold whitespace-nowrap"
+            >{{ game.minute }}'</UBadge
           >
         </div>
 
