@@ -72,6 +72,10 @@ export const endpointSchemas = {
     schema: FlexObject.default({ date: null, fixtures: [], bets: [] }),
     fallback: { date: null, fixtures: [], bets: [] },
   },
+  scannerSnapshot: {
+    schema: FlexObject.default({ generated_at: null, games: [] }),
+    fallback: { generated_at: null, games: [] },
+  },
 }
 
 /**

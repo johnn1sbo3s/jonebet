@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_URL: 'https://api.jonebet.xyz',
+      SCANNER_SNAPSHOT_URL: 'https://scanner.jonebet.xyz/live.json',
     },
   },
 

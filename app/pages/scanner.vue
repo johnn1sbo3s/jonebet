@@ -1,0 +1,86 @@
+<template>
+  <div class="flex flex-col gap-5">
+    <PageHeader title="Scanner ao vivo">
+      <template #right>
+        <div class="ml-auto flex items-center gap-2 text-xs text-zinc-400">
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
+
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
+          </span>
+
+          <span>atualizado {{ updatedAgo }}</span>
+
+          <span class="text-zinc-600">·</span>
+
+          <span>{{ games.length }} jogos</span>
+
+          <span v-if="offline" class="text-zinc-600">· sem conexão</span>
+        </div>
+      </template>
+    </PageHeader>
+
+    <ScannerSkeleton v-if="loading && !snapshot" />
+
+    <div
+      v-else-if="fetchError && !snapshot"
+      class="rounded-2xl border border-zinc-800 bg-zinc-900 py-16 text-center text-sm text-zinc-500"
+    >
+      Não foi possível carregar os jogos ao vivo. Tente novamente em instantes.
+    </div>
+
+    <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
+
+    <div v-else class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-3">
+      <ScannerCard v-for="game in games" :key="game.id" :game="game" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+const config = useRuntimeConfig()
+
+const snapshot = ref(null)
+const loading = ref(true)
+const fetchError = ref(false)
+const offline = ref(false)
+const updatedAgo = ref('')
+
+let inFlight = false
+let pollTimer
+let tickTimer
+
+const games = computed(() => snapshot.value?.games || [])
+
+async function loadSnapshot() {
+  if (inFlight) return
+  inFlight = true
+  try {
+    const data = await $fetch(config.public.SCANNER_SNAPSHOT_URL)
+    snapshot.value = safeParse('scannerSnapshot', data)
+    fetchError.value = false
+    offline.value = false
+  } catch {
+    fetchError.value = true
+    offline.value = true
+  } finally {
+    inFlight = false
+    loading.value = false
+  }
+}
+
+function tick() {
+  updatedAgo.value = formatUpdatedAgo(snapshot.value?.generated_at)
+}
+
+onMounted(() => {
+  loadSnapshot()
+  pollTimer = setInterval(loadSnapshot, 60_000)
+  tickTimer = setInterval(tick, 1000)
+})
+
+onUnmounted(() => {
+  clearInterval(pollTimer)
+  clearInterval(tickTimer)
+})
+</script>
