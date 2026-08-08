@@ -14,7 +14,7 @@
           v-for="item in items"
           :key="item.id"
           :to="`/performance/${modelNameToIdName(item.name)}`"
-          class="ranking-item relative flex cursor-pointer items-center justify-between overflow-hidden rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm"
+          class="card-shine flex cursor-pointer items-center justify-between rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm"
         >
           <span class="relative z-10">{{ modelNameToNaturalName(item.name) }}</span>
 
@@ -154,17 +154,3 @@ const sanitizedAllResultsData = computed(() => {
   })
 })
 </script>
-<style scoped>
-.ranking-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-}
-
-.ranking-item:hover::after {
-  transform: translateX(100%);
-  transition: transform 0.6s ease;
-}
-</style>

@@ -17,7 +17,7 @@
         class="w-full"
       >
         <div
-          class="top-game-card cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4"
+          class="card-shine cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900 p-4 select-none"
           @click="openDetails(item)"
         >
           <div class="mb-3 flex items-center justify-between">
@@ -152,24 +152,3 @@ function openDetails(fixture) {
   }
 }
 </script>
-
-<style scoped>
-.top-game-card {
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-}
-
-.top-game-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-}
-
-.top-game-card:hover::after {
-  transform: translateX(100%);
-  transition: transform 0.6s ease;
-}
-</style>

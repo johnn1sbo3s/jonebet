@@ -6,13 +6,25 @@
     >
       <div
         ref="frontEl"
-        class="flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
+        class="card-shine flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
         :class="{ 'glow-card': isRecent, 'opacity-75': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
           <div class="print-hide flex items-center gap-1.5">
+            <UBadge
+              v-if="game.notifications?.length"
+              color="neutral"
+              variant="outline"
+              size="md"
+              class="gap-1 px-2.5"
+              title="Notificações recebidas pelo jogo"
+            >
+              <UIcon name="i-lucide-bell" class="h-3.5 w-3.5" />
+              {{ game.notifications.length }}
+            </UBadge>
+
             <button
               class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
               title="Tirar print do card"
@@ -22,13 +34,14 @@
             </button>
 
             <a
-              class="flex items-center gap-1 rounded-lg border border-zinc-800 px-2 py-1.5 text-xs font-semibold text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+              class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
               :href="game.flashscore_url"
               target="_blank"
               rel="noopener"
+              title="Abrir no Flashscore"
               @click.stop
             >
-              Flashscore <UIcon name="i-lucide-arrow-up-right" class="h-3 w-3" />
+              <UIcon name="i-lucide-arrow-up-right" class="h-3.5 w-3.5" />
             </a>
           </div>
         </div>
