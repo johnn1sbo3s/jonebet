@@ -48,6 +48,13 @@ describe('ScannerCard', () => {
     expect(wrapper.find('.glow-card').exists()).toBe(true)
   })
 
+  it('mostra badge Encerrado para jogo finalizado', async () => {
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: { game: { ...game(), finished: true } },
+    })
+    expect(wrapper.text()).toContain('Encerrado')
+  })
+
   it('sem glow e com verso vazio quando não há notificações', async () => {
     const wrapper = await mountSuspended(ScannerCard, { props: { game: game([]) } })
     expect(wrapper.find('.glow-card').exists()).toBe(false)

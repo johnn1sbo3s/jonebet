@@ -6,7 +6,7 @@
     >
       <div
         class="flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
-        :class="{ 'glow-card': isRecent }"
+        :class="{ 'glow-card': isRecent, 'opacity-75': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
@@ -40,6 +40,13 @@
           <span class="text-zinc-400">{{ game.away }}</span>
 
           <span
+            v-if="game.finished"
+            class="ml-auto rounded-full border border-zinc-700 bg-zinc-800 px-1.5 py-0.5 text-xs font-bold text-zinc-400"
+            >Encerrado</span
+          >
+
+          <span
+            v-else
             class="ml-auto rounded-full border border-teal-500/25 bg-teal-500/10 px-1.5 py-0.5 text-xs font-bold text-teal-400"
             >{{ game.minute }}'</span
           >
