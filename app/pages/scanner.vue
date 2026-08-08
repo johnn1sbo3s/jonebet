@@ -20,7 +20,7 @@
 
           <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
 
-          <span v-else-if="updatedAgo">atualizado {{ updatedAgo }}</span>
+          <span v-else-if="updatedAgo" class="w-36 whitespace-nowrap">Atualizado {{ updatedAgo }}</span>
 
           <span v-else class="text-zinc-600">sem dados</span>
 

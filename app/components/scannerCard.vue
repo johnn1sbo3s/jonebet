@@ -7,7 +7,7 @@
       <div
         ref="frontEl"
         class="card-shine flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
-        :class="{ 'glow-card': isRecent, 'opacity-75': game.finished }"
+        :class="{ 'glow-card': isRecent, 'opacity-60': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
