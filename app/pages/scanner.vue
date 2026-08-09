@@ -18,6 +18,15 @@
             <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
           </span>
 
+          <a
+            href="/relatorio"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 text-xs font-semibold text-teal-400 transition hover:border-teal-400 hover:text-teal-300"
+          >
+            📋 Relatório do dia
+          </a>
+
           <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
 
           <span v-else-if="updatedAgo">atualizado {{ updatedAgo }}</span>
