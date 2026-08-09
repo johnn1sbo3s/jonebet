@@ -1,12 +1,12 @@
 <template>
-  <div class="h-full cursor-pointer [perspective:1200px]" @click="flipped = !flipped">
+  <div class="h-full cursor-pointer perspective-distant" @click="flipped = !flipped">
     <div
-      class="relative h-full transition-transform duration-500 [transform-style:preserve-3d]"
-      :class="{ '[transform:rotateY(180deg)]': flipped }"
+      class="relative h-full transition-transform duration-500 transform-3d"
+      :class="{ 'transform-[rotateY(180deg)]': flipped }"
     >
       <div
         ref="frontEl"
-        class="card-shine flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
+        class="card-shine flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 backface-hidden"
         :class="{ 'glow-card': isRecent, 'opacity-60': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
@@ -106,7 +106,7 @@
       </div>
 
       <div
-        class="absolute inset-0 flex [transform:rotateY(180deg)] flex-col overflow-auto rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 [backface-visibility:hidden]"
+        class="absolute inset-0 flex transform-[rotateY(180deg)] flex-col overflow-auto rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 backface-hidden"
       >
         <div class="mb-2.5 flex items-center justify-between">
           <span class="flex items-center gap-1.5 text-sm font-bold">
