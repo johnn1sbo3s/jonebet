@@ -55,6 +55,38 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Encerrado')
   })
 
+  it.each(['HALF TIME', 'Half time', 'HT', 'Halftime', 'Intervalo', ' half-time '])(
+    'mostra badge Intervalo em vez do minuto no halftime (status=%s)',
+    async (status) => {
+      const wrapper = await mountSuspended(ScannerCard, {
+        props: { game: { ...game(), status } },
+      })
+      expect(wrapper.text()).toContain('Intervalo')
+      expect(wrapper.text()).not.toContain("65'")
+    },
+  )
+
+  it.each(['1ST HALF', '2nd Half', '2ND HALF'])('mantém o minuto em %s (não é intervalo)', async (status) => {
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: { game: { ...game(), status } },
+    })
+    expect(wrapper.text()).toContain("65'")
+    expect(wrapper.text()).not.toContain('Intervalo')
+  })
+
+  it('precedência: Encerrado ganha do Intervalo; status vazio mostra o minuto', async () => {
+    const finished = await mountSuspended(ScannerCard, {
+      props: { game: { ...game(), finished: true, status: 'Half time' } },
+    })
+    expect(finished.text()).toContain('Encerrado')
+    expect(finished.text()).not.toContain('Intervalo')
+
+    const noStatus = await mountSuspended(ScannerCard, {
+      props: { game: { ...game(), status: undefined } },
+    })
+    expect(noStatus.text()).toContain("65'")
+  })
+
   it('sem glow e com verso vazio quando não há notificações', async () => {
     const wrapper = await mountSuspended(ScannerCard, { props: { game: game([]) } })
     expect(wrapper.find('.glow-card').exists()).toBe(false)

@@ -65,6 +65,15 @@
           >
 
           <UBadge
+            v-else-if="isHalftime"
+            color="primary"
+            variant="subtle"
+            size="md"
+            class="ml-auto shrink-0 rounded-full font-bold whitespace-nowrap"
+            >Intervalo</UBadge
+          >
+
+          <UBadge
             v-else
             color="primary"
             variant="subtle"
@@ -165,6 +174,11 @@ const STAT_LABELS = [
 const flipped = ref(false)
 
 const isRecent = computed(() => isRecentNotification(props.game.notifications))
+
+// Intervalo: Flashscore entrega "Half time"/"HALF TIME"/"Halftime"/"HT"/
+// "Interval(o)" conforme locale — o backend fixa o minuto em 45, e aqui o
+// badge troca o minuto por "Intervalo" (não confundir com "1ST HALF"/"2nd Half").
+const isHalftime = computed(() => /^(ht|halftime)$|interval|half[\s-]*time/i.test((props.game.status || '').trim()))
 
 const statRows = computed(() =>
   STAT_LABELS.map(([key, label]) => {
