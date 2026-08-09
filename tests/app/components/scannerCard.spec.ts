@@ -1,6 +1,6 @@
 // tests/app/components/scannerCard.spec.ts
 // @vitest-environment nuxt
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ScannerCard from '~/components/scannerCard.vue'
 
@@ -146,5 +146,43 @@ describe('ScannerCard', () => {
     expect(badges).toHaveLength(6)
     expect(badges[4].text()).toBe('-')
     expect(badges[5].text()).toBe('-')
+  })
+})
+
+// Mock do composable com estado REATIVO (objeto plano não invalida computed).
+vi.mock('~/composables/useAiEvaluation', async () => {
+  const { reactive } = await import('vue')
+  const state = reactive({ status: 'idle', response: null, fetchedAt: 0, error: null })
+  return {
+    useAiEvaluation: () => ({
+      get: () => state,
+      evaluate: vi.fn(async () => {
+        state.status = 'done'
+        state.response = {
+          jogo_id: 'abc123',
+          leitura_geral: 'O Palmeiras pressiona.',
+          estrategias: [{ estrategia: 'gol_20min', recomendacao: 'entrar', confianca: 60, analise: 'ação alta' }],
+        }
+        return state.response
+      }),
+    }),
+  }
+})
+
+describe('ScannerCard avaliação com IA', () => {
+  it('mostra botão Avaliar apenas em jogos ao vivo', async () => {
+    const live = await mountSuspended(ScannerCard, { props: { game: game() } })
+    expect(live.text()).toContain('Avaliar com IA')
+    const fin = await mountSuspended(ScannerCard, { props: { game: { ...game(), finished: true } } })
+    expect(fin.text()).not.toContain('Avaliar com IA')
+  })
+
+  it('abre o popover com a resposta ao clicar', async () => {
+    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Avaliar com IA'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('O Palmeiras pressiona.')
+    expect(w.text()).toContain('gol_20min')
   })
 })

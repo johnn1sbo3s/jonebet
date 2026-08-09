@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full cursor-pointer perspective-distant" @click="flipped = !flipped">
+  <div class="relative h-full cursor-pointer perspective-distant" @click="flipped = !flipped">
     <div
       class="relative h-full transition-transform duration-500 transform-3d"
       :class="{ 'transform-[rotateY(180deg)]': flipped }"
@@ -111,6 +111,16 @@
               <div v-if="row.pctHome !== null" class="bg-blue-500" :style="{ width: 100 - row.pctHome + '%' }"></div>
             </div>
           </div>
+
+          <button
+            v-if="!game.finished"
+            class="mt-1 w-full rounded-lg border border-teal-500/30 bg-teal-500/10 py-1.5 text-xs font-semibold text-teal-400 transition hover:border-teal-400 hover:text-teal-300"
+            :disabled="aiLoading"
+            title="Avaliar o momento do jogo com IA"
+            @click.stop="openAiEvaluation"
+          >
+            ✨ Avaliar com IA
+          </button>
         </div>
       </div>
 
@@ -151,6 +161,64 @@
         <p v-else class="m-auto text-center text-xs text-zinc-600">Sem notificações neste jogo ainda</p>
       </div>
     </div>
+
+    <div
+      v-if="aiOpen"
+      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
+      @click.stop
+    >
+      <div class="w-full rounded-xl border border-zinc-700 bg-zinc-900 p-3">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Análise da IA</span>
+
+          <button
+            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+            @click.stop="aiOpen = false"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div v-if="aiLoading" class="flex flex-col items-center gap-2 py-4">
+          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
+
+          <span class="text-xs text-zinc-400">Analisando o jogo...</span>
+        </div>
+
+        <div v-else-if="aiState.error" class="flex flex-col items-center gap-2 py-2 text-center">
+          <p class="text-xs text-zinc-400">Não foi possível avaliar agora.</p>
+
+          <button
+            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
+            @click.stop="retryAi"
+          >
+            Tentar de novo
+          </button>
+        </div>
+
+        <template v-else-if="aiResponse">
+          <p class="text-xs leading-relaxed text-zinc-200">{{ aiResponse.leitura_geral }}</p>
+
+          <div class="mt-2 flex flex-col gap-1.5">
+            <div
+              v-for="e in aiResponse.estrategias"
+              :key="e.estrategia"
+              class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
+            >
+              <span class="text-xs font-bold text-zinc-100">{{ e.estrategia }}</span>
+
+              <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
+                {{ e.recomendacao }} · {{ e.confianca }}%
+              </span>
+            </div>
+
+            <p v-for="e in aiResponse.estrategias" :key="e.estrategia + '-an'" class="text-2xs text-zinc-500">
+              {{ e.analise }}
+            </p>
+          </div>
+        </template>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -158,10 +226,30 @@
 import { computed, ref } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
 import { toBlob } from 'html-to-image'
+import { useAiEvaluation } from '~/composables/useAiEvaluation'
 
 const props = defineProps({
   game: { type: Object, required: true },
 })
+
+const { get: getAiState, evaluate: evaluateAi } = useAiEvaluation()
+const aiOpen = ref(false)
+const aiState = computed(() => getAiState(props.game.id))
+const aiLoading = computed(() => aiState.value.status === 'loading')
+const aiResponse = computed(() => aiState.value.response)
+
+async function openAiEvaluation() {
+  aiOpen.value = true
+  try {
+    await evaluateAi(props.game.id)
+  } catch {
+    // erro fica no estado (aiState.error) e o popover mostra retry
+  }
+}
+
+function retryAi() {
+  evaluateAi(props.game.id).catch(() => {})
+}
 
 const STAT_LABELS = [
   ['xg', 'XG'],
