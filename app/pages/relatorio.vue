@@ -19,13 +19,39 @@
       </template>
     </PageHeader>
 
-    <div v-if="state.status === 'loading'" class="flex flex-col gap-3">
-      <div v-for="i in 4" :key="i" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-        <USkeleton class="mb-3 h-4 w-40" />
+    <div v-if="state.status === 'loading'" class="flex flex-col gap-4">
+      <div v-for="i in 2" :key="i" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+        <div class="mb-3 flex items-center justify-between gap-2">
+          <USkeleton class="h-4 w-40" />
 
-        <USkeleton class="h-3 w-full" />
+          <USkeleton class="h-4 w-16 rounded-full" />
+        </div>
 
-        <USkeleton class="mt-2 h-3 w-2/3" />
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div v-for="j in 4" :key="j" class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3">
+            <div class="flex items-center gap-2">
+              <USkeleton class="h-3 w-8" />
+
+              <USkeleton class="h-3 w-32" />
+
+              <USkeleton class="ml-auto h-3 w-16" />
+            </div>
+
+            <USkeleton class="h-3 w-full" />
+
+            <USkeleton class="h-3 w-2/3" />
+
+            <div class="flex flex-wrap gap-1.5">
+              <USkeleton class="h-6 w-20 rounded-full" />
+
+              <USkeleton class="h-6 w-24 rounded-full" />
+            </div>
+
+            <USkeleton class="h-3 w-5/6" />
+
+            <USkeleton class="h-3 w-3/4" />
+          </div>
+        </div>
       </div>
     </div>
 
