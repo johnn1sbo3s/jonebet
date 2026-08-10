@@ -9,7 +9,10 @@
       </template>
 
       <template #right>
-        <span v-if="state.response?.jogos.length > 0" class="text-xs text-zinc-400">
+        <span
+          v-if="state.response?.jogos.length > 0"
+          class="w-full text-xs whitespace-nowrap text-zinc-400 sm:ml-auto sm:w-auto"
+        >
           {{ reportDateLabel }}
           · {{ state.response.jogos.length }}
           {{ state.response.jogos.length === 1 ? 'jogo analisado' : 'jogos analisados' }}

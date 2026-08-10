@@ -4,14 +4,16 @@
       <template #title>
         Scanner ao vivo
         <span
-          class="ml-2 rounded-full border border-zinc-800 bg-zinc-900 px-2.5 py-0.5 align-middle text-xs font-semibold text-zinc-400"
+          class="ml-2 inline-block rounded-full border border-zinc-800 bg-zinc-900 px-2.5 py-0.5 align-middle text-xs font-semibold whitespace-nowrap text-zinc-400"
         >
           {{ games.length }} {{ games.length === 1 ? 'jogo' : 'jogos' }}
         </span>
       </template>
 
       <template #right>
-        <div class="ml-auto flex items-center gap-3 text-xs text-zinc-400">
+        <div
+          class="flex w-full items-center justify-between gap-3 text-xs text-zinc-400 sm:ml-auto sm:w-auto sm:justify-end"
+        >
           <UButton to="/relatorio" target="_blank" color="primary" variant="soft" size="xs"> Relatório do dia </UButton>
 
           <span class="flex items-center gap-2">
