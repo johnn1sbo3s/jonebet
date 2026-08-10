@@ -116,6 +116,18 @@
             v-if="!game.finished"
             block
             class="mt-1"
+            color="neutral"
+            variant="outline"
+            size="sm"
+            title="Ver a análise pré-jogo do jogo (relatório do dia)"
+            @click.stop="openPreGame"
+          >
+            📋 Análise pré-jogo
+          </UButton>
+
+          <UButton
+            v-if="!game.finished"
+            block
             color="primary"
             variant="soft"
             size="sm"
@@ -223,6 +235,70 @@
         </template>
       </div>
     </div>
+
+    <div
+      v-if="preGameOpen"
+      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
+      @click.stop
+    >
+      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">
+            {{ preGameResponse?.time ? `Análise pré-jogo · ${preGameResponse.time}` : 'Análise pré-jogo' }}
+          </span>
+
+          <button
+            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+            @click.stop="preGameOpen = false"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div v-if="preGameLoading" class="flex flex-col items-center gap-2 py-4">
+          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
+
+          <span class="text-xs text-zinc-400">Buscando análise pré-jogo...</span>
+        </div>
+
+        <div v-else-if="preGameState.error" class="flex flex-col items-center gap-2 py-2 text-center">
+          <p class="text-xs text-zinc-400">Não foi possível carregar a análise pré-jogo.</p>
+
+          <button
+            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
+            @click.stop="retryPreGame"
+          >
+            Tentar de novo
+          </button>
+        </div>
+
+        <template v-else-if="preGameResponse">
+          <p class="text-xs leading-relaxed text-zinc-200">{{ preGameResponse.leitura_geral }}</p>
+
+          <div class="mt-2 flex flex-col gap-1.5">
+            <div
+              v-for="e in preGameResponse.estrategias"
+              :key="e.estrategia"
+              class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
+            >
+              <span class="text-xs font-bold text-zinc-100">{{ modelNameToNaturalName(e.estrategia) }}</span>
+
+              <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
+                {{ e.recomendacao }} · {{ e.confianca }}%
+              </span>
+            </div>
+
+            <p v-for="e in preGameResponse.estrategias" :key="e.estrategia + '-an'" class="text-2xs text-zinc-500">
+              {{ e.analise }}
+            </p>
+          </div>
+        </template>
+
+        <div v-else class="flex flex-col items-center gap-1 py-4 text-center">
+          <p class="text-xs text-zinc-400">Sem análise pré-jogo para este jogo.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -232,6 +308,7 @@ import { isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
+import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 
 const props = defineProps({
   game: { type: Object, required: true },
@@ -254,6 +331,25 @@ async function openAiEvaluation() {
 
 function retryAi() {
   evaluateAi(props.game.id).catch(() => {})
+}
+
+const { get: getPreGame, load: loadPreGame } = usePreGameAnalysis()
+const preGameOpen = ref(false)
+const preGameState = computed(() => getPreGame(props.game.id))
+const preGameLoading = computed(() => preGameState.value.status === 'loading')
+const preGameResponse = computed(() => preGameState.value.response)
+
+async function openPreGame() {
+  preGameOpen.value = true
+  try {
+    await loadPreGame(props.game.id)
+  } catch {
+    // erro fica no estado (preGameState.error) e o modal mostra retry
+  }
+}
+
+function retryPreGame() {
+  loadPreGame(props.game.id).catch(() => {})
 }
 
 const STAT_LABELS = [

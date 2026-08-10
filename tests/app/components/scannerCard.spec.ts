@@ -183,6 +183,98 @@ describe('ScannerCard avaliação com IA', () => {
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
     expect(w.text()).toContain('O Palmeiras pressiona.')
-    expect(w.text()).toContain('gol_20min')
+    expect(w.text()).toContain('Gol 20min')
+  })
+})
+
+// Cenário mutável para o mock do composable de pré-jogo (vi.mock é hoisted —
+// não pode referenciar variáveis do escopo; vi.hoisted resolve isso).
+const preGameScenario = vi.hoisted(() => ({ response: null, error: null }))
+
+vi.mock('~/composables/usePreGameAnalysis', async () => {
+  const { reactive } = await import('vue')
+  return {
+    usePreGameAnalysis: () => {
+      const state = reactive({ status: 'idle', response: null, fetchedAt: 0, error: null })
+      return {
+        get: () => state,
+        load: vi.fn(async () => {
+          state.error = null
+          if (preGameScenario.error) {
+            state.status = 'error'
+            state.error = new Error(preGameScenario.error)
+            throw state.error
+          }
+          state.status = 'done'
+          state.response = preGameScenario.response
+          return state.response
+        }),
+      }
+    },
+  }
+})
+
+describe('ScannerCard análise pré-jogo', () => {
+  it('mostra o botão Análise pré-jogo apenas em jogos ao vivo', async () => {
+    const live = await mountSuspended(ScannerCard, { props: { game: game() } })
+    expect(live.text()).toContain('Análise pré-jogo')
+    const fin = await mountSuspended(ScannerCard, { props: { game: { ...game(), finished: true } } })
+    expect(fin.text()).not.toContain('Análise pré-jogo')
+  })
+
+  it('abre o modal com a análise pré-jogo ao clicar', async () => {
+    preGameScenario.response = {
+      time: '16:30',
+      leitura_geral: 'Jogo equilibrado, poucos gols esperados.',
+      estrategias: [
+        { estrategia: 'lay_1x0', recomendacao: 'entrar', confianca: 78, analise: '1-0 é raridade no histórico' },
+      ],
+    }
+    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Análise pré-jogo · 16:30')
+    expect(w.text()).toContain('Jogo equilibrado, poucos gols esperados.')
+    expect(w.text()).toContain('Lay 1x0')
+    expect(w.text()).toContain('entrar · 78%')
+  })
+
+  it('fecha o modal pelo botão ✕', async () => {
+    preGameScenario.response = { time: '16:30', leitura_geral: 'Conteúdo X', estrategias: [] }
+    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Conteúdo X')
+    const close = w.findAll('button').find((b) => b.text() === '✕')!
+    await close.trigger('click')
+    expect(w.text()).not.toContain('Conteúdo X')
+  })
+
+  it('mostra estado vazio quando o jogo não tem análise pré-jogo', async () => {
+    preGameScenario.response = null
+    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Sem análise pré-jogo para este jogo.')
+  })
+
+  it('mostra erro com Tentar de novo; retry carrega a análise', async () => {
+    preGameScenario.response = null
+    preGameScenario.error = 'offline'
+    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Não foi possível carregar a análise pré-jogo.')
+
+    preGameScenario.error = null
+    preGameScenario.response = { time: '16:30', leitura_geral: 'Recuperou', estrategias: [] }
+    const retry = w.findAll('button').find((b) => b.text().includes('Tentar de novo'))!
+    await retry.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Recuperou')
   })
 })
