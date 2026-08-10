@@ -122,7 +122,7 @@
             title="Ver a análise pré-jogo do jogo (relatório do dia)"
             @click.stop="openPreGame"
           >
-            📋 Análise pré-jogo
+            Análise pré-jogo
           </UButton>
 
           <UButton
