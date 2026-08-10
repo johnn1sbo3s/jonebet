@@ -77,9 +77,11 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <section v-for="group in byLeague" :key="group.league" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+      <SegmentedControl v-model="visualizacao" :options="viewOptions" />
+
+      <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
         <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 class="text-sm font-bold text-zinc-100">{{ group.league }}</h2>
+          <h2 class="text-sm font-bold text-zinc-100">{{ group.label }}</h2>
 
           <span
             class="text-2xs rounded-full border border-zinc-800 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
@@ -138,7 +140,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { DateTime } from 'luxon'
 import { useDailyReport } from '~/composables/useDailyReport'
 import { formatDate } from '~/utils/formatDate'
@@ -164,11 +166,55 @@ const byLeague = computed(() => {
   }
   return [...map.entries()]
     .map(([league, items]) => ({
-      league,
+      key: league,
+      label: league,
       jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
     }))
-    .sort((a, b) => a.league.localeCompare(b.league))
+    .sort((a, b) => a.label.localeCompare(b.label))
 })
+
+// Visualização escolhida pelo usuário: 'por_liga' | 'por_horario'. Persistida
+// em localStorage; guarda de import.meta.client porque o setup roda em SSR.
+const visualizacao = ref('por_liga')
+
+if (import.meta.client) {
+  visualizacao.value = localStorage.getItem('relatorio.visualizacao') || 'por_liga'
+}
+
+watch(visualizacao, (v) => {
+  if (import.meta.client) localStorage.setItem('relatorio.visualizacao', v)
+})
+
+const viewOptions = [
+  { value: 'por_liga', label: 'Por liga' },
+  { value: 'por_horario', label: 'Por horário' },
+]
+
+// Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
+// Jogo sem horário parseável cai no grupo "Outros", no final.
+const byHour = computed(() => {
+  const jogos = state.response?.jogos || []
+  const map = new Map()
+  for (const j of jogos) {
+    const match = /^(\d{1,2}):/.exec(j.time || '')
+    const key = match ? match[1] : 'Outros'
+    if (!map.has(key)) map.set(key, [])
+    map.get(key).push(j)
+  }
+  return [...map.entries()]
+    .map(([hour, items]) => ({
+      key: hour,
+      label: hour === 'Outros' ? 'Outros' : `${hour}h`,
+      jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
+    }))
+    .sort((a, b) => {
+      if (a.key === 'Outros') return 1
+      if (b.key === 'Outros') return -1
+      return a.key.localeCompare(b.key)
+    })
+})
+
+const groups = computed(() => (visualizacao.value === 'por_horario' ? byHour.value : byLeague.value))
 
 function goBack() {
   // Abriu em nova aba — sem histórico de origem; navegação determinística.
