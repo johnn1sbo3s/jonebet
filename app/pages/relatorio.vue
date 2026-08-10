@@ -77,7 +77,7 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <SegmentedControl v-model="visualizacao" :options="viewOptions" />
+      <SegmentedControl v-model="visualizacao" :options="viewOptions" class="self-start" />
 
       <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
         <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
