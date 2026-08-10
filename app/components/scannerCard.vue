@@ -115,7 +115,9 @@
           <UButton
             v-if="!game.finished"
             block
-            class="mt-1 bg-white text-zinc-900 hover:bg-zinc-200"
+            class="mt-1"
+            color="primary"
+            variant="soft"
             size="sm"
             title="Ver a análise pré-jogo do jogo (relatório do dia)"
             @click.stop="openPreGame"
@@ -127,7 +129,7 @@
             v-if="!game.finished"
             block
             color="primary"
-            variant="soft"
+            variant="solid"
             size="sm"
             :disabled="aiLoading"
             title="Avaliar o momento do jogo com IA"
