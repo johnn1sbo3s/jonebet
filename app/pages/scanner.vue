@@ -11,29 +11,24 @@
       </template>
 
       <template #right>
-        <div class="ml-auto flex items-center gap-2 text-xs text-zinc-400">
-          <span class="relative flex h-2 w-2">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
+        <div class="ml-auto flex items-center gap-3 text-xs text-zinc-400">
+          <UButton to="/relatorio" target="_blank" color="primary" variant="soft" size="xs"> Relatório do dia </UButton>
 
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
+          <span class="flex items-center gap-2">
+            <span class="relative flex h-2 w-2">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
+
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
+            </span>
+
+            <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
+
+            <span v-else-if="updatedAgo">Atualizado {{ updatedAgo }}</span>
+
+            <span v-else class="text-zinc-600">sem dados</span>
+
+            <span v-if="offline" class="text-zinc-600">· sem conexão</span>
           </span>
-
-          <a
-            href="/relatorio"
-            target="_blank"
-            rel="noopener"
-            class="rounded-lg border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 text-xs font-semibold text-teal-400 transition hover:border-teal-400 hover:text-teal-300"
-          >
-            📋 Relatório do dia
-          </a>
-
-          <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
-
-          <span v-else-if="updatedAgo">atualizado {{ updatedAgo }}</span>
-
-          <span v-else class="text-zinc-600">sem dados</span>
-
-          <span v-if="offline" class="text-zinc-600">· sem conexão</span>
         </div>
       </template>
     </PageHeader>

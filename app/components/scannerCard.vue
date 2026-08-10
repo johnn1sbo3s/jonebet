@@ -112,15 +112,19 @@
             </div>
           </div>
 
-          <button
+          <UButton
             v-if="!game.finished"
-            class="mt-1 w-full rounded-lg border border-teal-500/30 bg-teal-500/10 py-1.5 text-xs font-semibold text-teal-400 transition hover:border-teal-400 hover:text-teal-300"
+            block
+            class="mt-1"
+            color="primary"
+            variant="soft"
+            size="sm"
             :disabled="aiLoading"
             title="Avaliar o momento do jogo com IA"
             @click.stop="openAiEvaluation"
           >
             ✨ Avaliar com IA
-          </button>
+          </UButton>
         </div>
       </div>
 

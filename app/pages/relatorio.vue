@@ -2,12 +2,9 @@
   <div class="flex flex-col gap-5">
     <PageHeader :title="`Relatório do dia — ${reportDateLabel}`">
       <template #title>
-        <button
-          class="mr-3 inline-flex items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-300 hover:border-teal-400 hover:text-teal-400"
-          @click="goBack"
-        >
-          ← Voltar
-        </button>
+        <UButton icon="i-lucide-arrow-left" color="neutral" variant="outline" size="xs" class="mr-3" @click="goBack">
+          Voltar
+        </UButton>
         Relatório do dia — {{ reportDateLabel }}
       </template>
 
@@ -48,7 +45,7 @@
       v-else-if="state.response?.jogos.length === 0"
       class="rounded-2xl border border-zinc-800 bg-zinc-900 py-14 text-center text-sm text-zinc-500"
     >
-      Relatório ainda não disponível para hoje.
+      Relatório ainda não disponível para a data.
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
