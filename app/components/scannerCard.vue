@@ -209,7 +209,7 @@
               :key="e.estrategia"
               class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
             >
-              <span class="text-xs font-bold text-zinc-100">{{ e.estrategia }}</span>
+              <span class="text-xs font-bold text-zinc-100">{{ modelNameToNaturalName(e.estrategia) }}</span>
 
               <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
                 {{ e.recomendacao }} · {{ e.confianca }}%
@@ -229,6 +229,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
+import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
 
