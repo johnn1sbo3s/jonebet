@@ -115,9 +115,7 @@
           <UButton
             v-if="!game.finished"
             block
-            class="mt-1"
-            color="neutral"
-            variant="soft"
+            class="mt-1 bg-white text-zinc-900 hover:bg-zinc-200"
             size="sm"
             title="Ver a análise pré-jogo do jogo (relatório do dia)"
             @click.stop="openPreGame"
