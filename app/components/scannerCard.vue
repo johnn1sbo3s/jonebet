@@ -117,7 +117,7 @@
             block
             class="mt-1"
             color="neutral"
-            variant="outline"
+            variant="soft"
             size="sm"
             title="Ver a análise pré-jogo do jogo (relatório do dia)"
             @click.stop="openPreGame"
@@ -135,7 +135,7 @@
             title="Avaliar o momento do jogo com IA"
             @click.stop="openAiEvaluation"
           >
-            ✨ Avaliar com IA
+            Avaliar com IA
           </UButton>
         </div>
       </div>
