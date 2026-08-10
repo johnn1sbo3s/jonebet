@@ -13,8 +13,7 @@
           v-if="state.response?.jogos.length > 0"
           class="w-full text-xs whitespace-nowrap text-zinc-400 sm:ml-auto sm:w-auto"
         >
-          {{ reportDateLabel }}
-          · {{ state.response.jogos.length }}
+          {{ state.response.jogos.length }}
           {{ state.response.jogos.length === 1 ? 'jogo analisado' : 'jogos analisados' }}
         </span>
       </template>
@@ -52,40 +51,61 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <section v-for="group in byLeague" :key="group.league" class="flex flex-col gap-2">
-        <h2 class="text-2xs font-bold tracking-wide text-zinc-500 uppercase">{{ group.league }}</h2>
+      <section v-for="group in byLeague" :key="group.league" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+        <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-sm font-bold text-zinc-100">{{ group.league }}</h2>
 
-        <article v-for="j in group.jogos" :key="j.jogo_id" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-          <header class="mb-2 flex flex-wrap items-center gap-2">
-            <span class="text-2xs font-bold text-zinc-500">{{ j.time }}</span>
+          <span
+            class="text-2xs rounded-full border border-zinc-800 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+          >
+            {{ group.jogos.length }} {{ group.jogos.length === 1 ? 'jogo' : 'jogos' }}
+          </span>
+        </header>
 
-            <h3 class="text-sm font-bold text-zinc-100">{{ j.home }} x {{ j.away }}</h3>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <article
+            v-for="j in group.jogos"
+            :key="j.jogo_id"
+            class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3"
+          >
+            <header class="flex flex-wrap items-center gap-2">
+              <span class="text-2xs font-bold text-zinc-500">{{ j.time }}</span>
 
-            <span v-if="j.odds?.h" class="text-2xs ml-auto text-zinc-500">
-              {{ j.odds.h }} / {{ j.odds.d }} / {{ j.odds.a }}
-            </span>
-          </header>
+              <h3 class="text-sm font-bold text-zinc-100">{{ j.home }} x {{ j.away }}</h3>
 
-          <p class="mb-3 text-xs leading-relaxed text-zinc-300">{{ j.leitura_geral }}</p>
+              <span v-if="j.odds?.h" class="text-2xs ml-auto whitespace-nowrap text-zinc-500">
+                {{ j.odds.h }} / {{ j.odds.d }} / {{ j.odds.a }}
+              </span>
+            </header>
 
-          <div class="flex flex-col gap-1.5">
-            <div
-              v-for="e in j.estrategias"
-              :key="e.estrategia"
-              class="flex flex-wrap items-center justify-between gap-1 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1.5"
-            >
-              <span class="text-xs font-bold text-zinc-100">{{ e.estrategia }}</span>
+            <p class="text-xs leading-relaxed text-zinc-300">{{ j.leitura_geral }}</p>
 
-              <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
-                {{ e.recomendacao }} · {{ e.confianca }}%
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                v-for="e in j.estrategias"
+                :key="e.estrategia"
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-2.5 py-1 text-xs font-bold whitespace-nowrap text-zinc-100"
+              >
+                <span
+                  class="h-1.5 w-1.5 rounded-full"
+                  :class="e.recomendacao === 'entrar' ? 'bg-teal-400' : 'bg-amber-400'"
+                ></span>
+
+                {{ modelNameToNaturalName(e.estrategia) }}
+
+                <span class="font-semibold text-zinc-400">· {{ e.recomendacao }} {{ e.confianca }}%</span>
               </span>
             </div>
 
-            <p v-for="e in j.estrategias" :key="e.estrategia + '-an'" class="text-2xs text-zinc-500">
+            <p
+              v-for="e in j.estrategias"
+              :key="e.estrategia + '-an'"
+              class="border-l-2 border-zinc-700 pl-2 text-xs leading-relaxed text-zinc-400"
+            >
               {{ e.analise }}
             </p>
-          </div>
-        </article>
+          </article>
+        </div>
       </section>
     </div>
   </div>
@@ -96,6 +116,7 @@ import { computed } from 'vue'
 import { DateTime } from 'luxon'
 import { useDailyReport } from '~/composables/useDailyReport'
 import { formatDate } from '~/utils/formatDate'
+import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { SP_TZ } from '~/utils/timezone'
 
 const { state, load } = useDailyReport()
