@@ -9,6 +9,7 @@ export function normalizeSearchText(text) {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .trim()
 }
 
 export function filterReportGames(jogos = [], { query = '', selected = [] } = {}) {

@@ -23,7 +23,9 @@ describe('SegmentedControl', () => {
       props: { modelValue: 'by_league', options, fullWidth: true },
     })
     expect(wrapper.find('div').classes()).toContain('w-full')
+    expect(wrapper.find('div').classes()).toContain('md:w-auto')
     expect(wrapper.findAll('button')[0].classes()).toContain('flex-1')
+    expect(wrapper.findAll('button')[0].classes()).toContain('md:flex-none')
   })
 
   it('não aplica largura total por padrão', async () => {

@@ -54,6 +54,14 @@ describe('filterReportGames', () => {
     expect(filterReportGames(games, { query: 'flamengo' })).toHaveLength(0)
   })
 
+  it('busca só com espaços não filtra', () => {
+    expect(filterReportGames(games, { query: '   ' })).toHaveLength(4)
+  })
+
+  it('busca com espaço à esquerda casa normalmente', () => {
+    expect(filterReportGames(games, { query: ' sao' }).map((g) => g.jogo_id)).toEqual(['1'])
+  })
+
   it('estratégia única filtra pelos jogos daquela estratégia', () => {
     expect(filterReportGames(games, { selected: ['gol_1t'] }).map((g) => g.jogo_id)).toEqual(['1'])
   })
