@@ -50,6 +50,10 @@ describe('filterReportGames', () => {
     expect(filterReportGames(games, { query: 'série' }).map((g) => g.jogo_id)).toEqual(['1', '3'])
   })
 
+  it('busca casa com o time visitante', () => {
+    expect(filterReportGames(games, { query: 'lanus' }).map((g) => g.jogo_id)).toEqual(['2'])
+  })
+
   it('busca sem correspondência devolve vazio', () => {
     expect(filterReportGames(games, { query: 'flamengo' })).toHaveLength(0)
   })
