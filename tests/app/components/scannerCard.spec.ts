@@ -49,6 +49,17 @@ describe('ScannerCard', () => {
     expect(wrapper.find('.alert-tag').text()).toBe('Alerta')
   })
 
+  it('esconde o selo Alerta ao virar o card (verso)', async () => {
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: {
+        game: game([{ rule: 'regra_jogo_quente', label: 'Jogo quente', minute: 62, at: RECENT }]),
+      },
+    })
+    expect(wrapper.find('.alert-tag').exists()).toBe(true)
+    await wrapper.find('.perspective-distant').trigger('click')
+    expect(wrapper.find('.alert-tag').exists()).toBe(false)
+  })
+
   it('aplica luz viajante (hl-travel) quando highlighted (clique do Telegram)', async () => {
     const wrapper = await mountSuspended(ScannerCard, {
       props: { game: game([]), highlighted: true },

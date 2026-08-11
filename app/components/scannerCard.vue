@@ -182,7 +182,7 @@
       </div>
     </div>
 
-    <span v-if="isRecent" class="alert-tag">Alerta</span>
+    <span v-if="isRecent && !flipped" class="alert-tag">Alerta</span>
 
     <div
       v-if="aiOpen"
