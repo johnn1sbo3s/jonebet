@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative h-full cursor-pointer perspective-distant"
+    class="relative h-full min-h-125 cursor-pointer perspective-distant"
     :class="{ 'hl-travel': highlighted }"
     @click="flipped = !flipped"
   >
