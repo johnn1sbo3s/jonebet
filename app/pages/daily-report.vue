@@ -259,7 +259,7 @@ const byHour = computed(() => {
   return [...map.entries()]
     .map(([hour, items]) => ({
       key: hour,
-      label: hour === 'Outros' ? 'Outros' : `${hour}h`,
+      label: hour,
       jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
     }))
     .sort((a, b) => {
