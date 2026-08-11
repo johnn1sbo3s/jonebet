@@ -12,7 +12,7 @@
 
         <USelectMenu
           v-model="selectedModel"
-          class="min-w-60 flex-1 rounded-xl border border-zinc-800 bg-zinc-900 sm:flex-none"
+          class="min-w-60 flex-1 sm:flex-none"
           searchable
           placeholder="Todos os modelos"
           :items="modelItems"

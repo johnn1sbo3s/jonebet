@@ -23,6 +23,11 @@ export default defineAppConfig({
       slots: {
         base: 'rounded-xl',
       },
+      variants: {
+        variant: {
+          outline: 'text-highlighted bg-zinc-900 border border-zinc-800 hover:bg-zinc-800/60 disabled:bg-zinc-900',
+        },
+      },
     },
     input: {
       slots: {
