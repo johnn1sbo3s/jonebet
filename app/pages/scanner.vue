@@ -47,19 +47,33 @@
     <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
 
     <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-      <ScannerCard v-for="game in games" :key="game.id" :game="game" />
+      <ScannerCard
+        v-for="game in games"
+        :id="`game-${game.id}`"
+        :key="game.id"
+        :game="game"
+        :highlighted="game.id === activeHighlight"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
 
 const snapshot = ref(null)
 const loading = ref(true)
 const fetchError = ref(false)
 const offline = ref(false)
 const updatedAgo = ref('')
+
+// Destaque vindo do Telegram (?game=<id>): id ainda não encontrado no
+// snapshot (highlightId) vs. id atualmente destacado (activeHighlight).
+const highlightId = ref(route.query.game ? String(route.query.game) : null)
+const activeHighlight = ref(null)
+let highlightTimer
 
 let inFlight = false
 let pollTimer
@@ -82,6 +96,7 @@ async function loadSnapshot() {
     snapshot.value = { ...parsed, games }
     fetchError.value = false
     offline.value = false
+    maybeHighlight(games)
   } catch {
     fetchError.value = true
     offline.value = true
@@ -91,11 +106,33 @@ async function loadSnapshot() {
   }
 }
 
+// Se o jogo do Telegram está na lista E ainda ao vivo: rola até ele e acende
+// o destaque por 12s. Se não está (não é mais transmitido) ou já encerrou
+// (fica 15 min no snapshot com finished=true), descarta sem scrollar —
+// highlight só dispara para jogo ao vivo presente num snapshot.
+function maybeHighlight(list) {
+  if (!highlightId.value) return
+  const target = highlightId.value
+  highlightId.value = null
+  const game = list.find((g) => String(g.id) === target)
+  if (!game || game.finished) return
+  activeHighlight.value = target
+  nextTick(() => {
+    document.getElementById(`game-${target}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
+  clearTimeout(highlightTimer)
+  highlightTimer = setTimeout(() => {
+    activeHighlight.value = null
+  }, 12_000)
+}
+
 function tick() {
   updatedAgo.value = formatUpdatedAgo(snapshot.value?.generated_at)
 }
 
 onMounted(() => {
+  // URL limpa depois de ler o parâmetro: refresh não re-dispara o destaque.
+  if (route.query.game) router.replace({ query: {} })
   loadSnapshot()
   pollTimer = setInterval(loadSnapshot, 40_000)
   tickTimer = setInterval(tick, 1000)
@@ -104,5 +141,6 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(pollTimer)
   clearInterval(tickTimer)
+  clearTimeout(highlightTimer)
 })
 </script>

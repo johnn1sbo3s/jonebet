@@ -1,5 +1,9 @@
 <template>
-  <div class="relative h-full cursor-pointer perspective-distant" @click="flipped = !flipped">
+  <div
+    class="relative h-full cursor-pointer perspective-distant"
+    :class="{ 'hl-travel': highlighted }"
+    @click="flipped = !flipped"
+  >
     <div
       class="relative h-full transition-transform duration-500 transform-3d"
       :class="{ 'transform-[rotateY(180deg)]': flipped }"
@@ -7,7 +11,7 @@
       <div
         ref="frontEl"
         class="card-shine flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900 p-3.5 backface-hidden"
-        :class="{ 'glow-card': isRecent, 'opacity-60': game.finished }"
+        :class="{ 'alert-recent': isRecent, 'opacity-60': game.finished }"
       >
         <div class="mb-2 flex items-center justify-between gap-2">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
@@ -178,6 +182,8 @@
       </div>
     </div>
 
+    <span v-if="isRecent" class="alert-tag">Alerta</span>
+
     <div
       v-if="aiOpen"
       class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
@@ -312,6 +318,8 @@ import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 
 const props = defineProps({
   game: { type: Object, required: true },
+  // Destaque vindo do Telegram (?game=<id>): luz viajante na borda por ~12s.
+  highlighted: { type: Boolean, default: false },
 })
 
 const { get: getAiState, evaluate: evaluateAi } = useAiEvaluation()
@@ -413,8 +421,8 @@ async function captureCard() {
   // Print sem o glow: remove a classe só durante a captura (o glow é animado
   // via box-shadow e "vaza" para fora do card na imagem). O front face é o
   // alvo — o verso (flip) é irmão no DOM e não entra no subtree.
-  const hadGlow = node.classList.contains('glow-card')
-  if (hadGlow) node.classList.remove('glow-card')
+  const hadGlow = node.classList.contains('alert-recent')
+  if (hadGlow) node.classList.remove('alert-recent')
   try {
     const blob = await toBlob(node, {
       pixelRatio: window.devicePixelRatio || 1,
@@ -441,29 +449,93 @@ async function captureCard() {
   } catch {
     toast.add({ title: 'Não foi possível gerar o print', color: 'error' })
   } finally {
-    if (hadGlow) node.classList.add('glow-card')
+    if (hadGlow) node.classList.add('alert-recent')
   }
 }
 </script>
 
 <style scoped>
-.glow-card {
-  border-color: rgba(45, 212, 191, 0.75);
-  animation: glow-breathe 2.6s ease-in-out infinite;
+/* Notificação recente (≤5 min): contorno âmbar respirando + selo "Alerta".
+   Âmbar de propósito: o teal já é a cor primária do site (estado "em
+   chamas"/glow antigo), âmbar diferencia "notificou agora" por cor. */
+.alert-recent {
+  border-color: rgba(251, 191, 36, 0.85);
+  animation: amber-breathe 1.8s ease-in-out infinite;
 }
 
-@keyframes glow-breathe {
+@keyframes amber-breathe {
   0%,
   100% {
     box-shadow:
-      0 0 8px rgba(45, 212, 191, 0.14),
-      0 0 2px rgba(45, 212, 191, 0.2);
+      0 0 10px rgba(251, 191, 36, 0.25),
+      0 0 0 2px rgba(251, 191, 36, 0.6);
   }
 
   50% {
     box-shadow:
-      0 0 26px rgba(45, 212, 191, 0.38),
-      0 0 6px rgba(45, 212, 191, 0.3);
+      0 0 26px rgba(251, 191, 36, 0.5),
+      0 0 0 2px rgba(251, 191, 36, 0.9);
+  }
+}
+
+.alert-tag {
+  position: absolute;
+  top: -11px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  background: #fbbf24;
+  color: #1c1917;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(251, 191, 36, 0.35);
+  pointer-events: none;
+}
+
+/* Destaque de clique vindo do Telegram (highlighted): cometa teal girando
+   na borda. Fica no root (sem overflow hidden — a face tem card-shine com
+   overflow:hidden e cortaria o anel). */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.hl-travel {
+  border-color: transparent !important;
+}
+
+.hl-travel::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  padding: 2.5px;
+  z-index: 2;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 0deg,
+    transparent 300deg,
+    #2dd4bf 340deg,
+    #f4f4f5 355deg,
+    #2dd4bf 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-angle 2.4s linear infinite;
+}
+
+@keyframes spin-angle {
+  to {
+    --angle: 360deg;
   }
 }
 </style>

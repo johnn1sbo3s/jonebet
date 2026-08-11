@@ -39,13 +39,28 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('POSSE')
   })
 
-  it('aplica glow quando a notificação mais recente está na janela', async () => {
+  it('aplica contorno âmbar + selo Alerta quando a notificação é recente', async () => {
     const wrapper = await mountSuspended(ScannerCard, {
       props: {
         game: game([{ rule: 'regra_jogo_quente', label: 'Jogo quente', minute: 62, at: RECENT }]),
       },
     })
-    expect(wrapper.find('.glow-card').exists()).toBe(true)
+    expect(wrapper.find('.alert-recent').exists()).toBe(true)
+    expect(wrapper.find('.alert-tag').text()).toBe('Alerta')
+  })
+
+  it('aplica luz viajante (hl-travel) quando highlighted (clique do Telegram)', async () => {
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: { game: game([]), highlighted: true },
+    })
+    expect(wrapper.find('.hl-travel').exists()).toBe(true)
+  })
+
+  it('sem hl-travel quando highlighted é false', async () => {
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: { game: game([]), highlighted: false },
+    })
+    expect(wrapper.find('.hl-travel').exists()).toBe(false)
   })
 
   it('mostra badge Encerrado para jogo finalizado', async () => {
@@ -87,9 +102,10 @@ describe('ScannerCard', () => {
     expect(noStatus.text()).toContain("65'")
   })
 
-  it('sem glow e com verso vazio quando não há notificações', async () => {
+  it('sem alerta e com verso vazio quando não há notificações', async () => {
     const wrapper = await mountSuspended(ScannerCard, { props: { game: game([]) } })
-    expect(wrapper.find('.glow-card').exists()).toBe(false)
+    expect(wrapper.find('.alert-recent').exists()).toBe(false)
+    expect(wrapper.find('.alert-tag').exists()).toBe(false)
     expect(wrapper.text()).toContain('Sem notificações neste jogo ainda')
   })
 
