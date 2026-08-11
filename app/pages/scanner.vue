@@ -49,6 +49,22 @@
     <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
 
     <div v-else class="flex flex-col gap-4">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+
+        <div class="flex items-center justify-end gap-2">
+          <USwitch
+            v-model="onlyNotified"
+            size="md"
+            checked-icon="i-lucide-check"
+            unchecked-icon="i-lucide-x"
+            title="jogos com notificação nos últimos 5 min"
+          />
+
+          <span class="text-xs font-medium whitespace-nowrap text-zinc-400">Só notificados</span>
+        </div>
+      </div>
+
       <template v-if="favoriteGames.length">
         <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
           <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -87,6 +103,13 @@
           :highlighted="game.id === activeHighlight"
         />
       </div>
+
+      <div
+        v-else-if="filtersActive"
+        class="rounded-2xl border border-zinc-800 bg-zinc-900 py-14 text-center text-sm text-zinc-500"
+      >
+        Nenhum jogo corresponde ao filtro.
+      </div>
     </div>
   </div>
 </template>
@@ -104,6 +127,12 @@ const fetchError = ref(false)
 const offline = ref(false)
 const updatedAgo = ref('')
 
+// Filtros client-side (busca + só notificados) — estado transitório de
+// exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
+const query = ref('')
+const onlyNotified = ref(false)
+const filtersActive = computed(() => onlyNotified.value || normalizeSearchText(query.value) !== '')
+
 // Destaque vindo do Telegram (?game=<id>): id ainda não encontrado no
 // snapshot (highlightId) vs. id atualmente destacado (activeHighlight).
 const highlightId = ref(route.query.game ? String(route.query.game) : null)
@@ -120,7 +149,12 @@ const games = computed(() => snapshot.value?.games || [])
 // grid normal até sair do snapshot). O resto segue no grid principal.
 const { isFavorite } = useFavorites()
 const favoriteGames = computed(() => games.value.filter((g) => !g.finished && isFavorite(g.id)))
-const otherGames = computed(() => games.value.filter((g) => !(!g.finished && isFavorite(g.id))))
+const otherGames = computed(() =>
+  filterScannerGames(
+    games.value.filter((g) => !(!g.finished && isFavorite(g.id))),
+    { query: query.value, onlyNotified: onlyNotified.value },
+  ),
+)
 
 async function loadSnapshot() {
   if (inFlight) return
