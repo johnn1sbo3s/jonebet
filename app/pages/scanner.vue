@@ -58,10 +58,13 @@
             size="md"
             checked-icon="i-lucide-check"
             unchecked-icon="i-lucide-x"
+            aria-labelledby="only-notified-label"
             title="jogos com notificação nos últimos 5 min"
           />
 
-          <span class="text-xs font-medium whitespace-nowrap text-zinc-400">Só notificados</span>
+          <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
+            >Só notificados</span
+          >
         </div>
       </div>
 

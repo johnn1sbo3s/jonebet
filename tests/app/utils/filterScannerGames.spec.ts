@@ -44,7 +44,7 @@ describe('filterScannerGames', () => {
     expect(filterScannerGames(games, { query: 'SAO PAULO' }).map((g) => g.id)).toEqual(['g1'])
   })
 
-  it('busca casa com a liga', () => {
+  it('busca pela liga', () => {
     expect(filterScannerGames(games, { query: 'série' }).map((g) => g.id)).toEqual(['g1', 'g3'])
   })
 
