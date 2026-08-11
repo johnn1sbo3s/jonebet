@@ -73,7 +73,38 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <SegmentedControl v-model="viewMode" :options="viewOptions" class="self-start" />
+      <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
+
+        <div class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-center">
+          <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+
+          <USelectMenu
+            v-model="selected"
+            :items="strategyOptions"
+            multiple
+            clear
+            value-key="value"
+            class="w-full md:w-64"
+          >
+            <template #default>
+              <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
+            </template>
+          </USelectMenu>
+
+          <UButton
+            v-if="hasActiveFilter"
+            color="neutral"
+            variant="ghost"
+            size="sm"
+            icon="i-lucide-x"
+            class="shrink-0 self-start"
+            @click="clearFilters"
+          >
+            Limpar
+          </UButton>
+        </div>
+      </div>
 
       <template v-if="favoriteGames.length">
         <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
@@ -98,21 +129,29 @@
         <USeparator />
       </template>
 
-      <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-        <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 class="text-sm font-bold text-zinc-100">{{ group.label }}</h2>
-
-          <span
-            class="text-2xs rounded-full border border-zinc-800 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
-          >
-            {{ group.jogos.length }} {{ group.jogos.length === 1 ? 'jogo' : 'jogos' }}
-          </span>
-        </header>
-
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" />
+      <template v-if="filteredJogos.length === 0">
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900 py-14 text-center text-sm text-zinc-500">
+          Nenhum jogo corresponde ao filtro.
         </div>
-      </section>
+      </template>
+
+      <template v-else>
+        <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 class="text-sm font-bold text-zinc-100">{{ group.label }}</h2>
+
+            <span
+              class="text-2xs rounded-full border border-zinc-800 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+            >
+              {{ group.jogos.length }} {{ group.jogos.length === 1 ? 'jogo' : 'jogos' }}
+            </span>
+          </header>
+
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" />
+          </div>
+        </section>
+      </template>
     </div>
   </div>
 </template>
@@ -124,6 +163,8 @@ import { useDailyReport } from '~/composables/useDailyReport'
 import { useFavorites } from '~/composables/useFavorites'
 import { formatDate } from '~/utils/formatDate'
 import { SP_TZ } from '~/utils/timezone'
+import { ANY_STRATEGY, filterReportGames } from '~/utils/filterReportGames'
+import { modelNameToNaturalName } from '~/utils/resolveModelName'
 
 const { state, load } = useDailyReport()
 const { favoritesOf } = useFavorites()
@@ -142,9 +183,9 @@ const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 const reportDateLabel = computed(() => formatDate(state.response?.date || todayIso, { style: 'long' }))
 
 const byLeague = computed(() => {
-  // Todos os jogos entram nos grupos — favoritos também (ficam duplicados na
-  // seção de cima, de propósito).
-  const jogos = state.response?.jogos || []
+  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // seção de cima, de propósito (usam a lista completa, não a filtrada).
+  const jogos = filteredJogos.value
   const map = new Map()
   for (const j of jogos) {
     const key = j.league || 'Outras'
@@ -177,12 +218,55 @@ const viewOptions = [
   { value: 'by_hour', label: 'Por horário' },
 ]
 
+// --- Filtros client-side (busca + estratégias) ---
+// Estado transitório de exploração — NÃO persiste entre visitas (diferente do
+// viewMode, que é preferência de visualização). Reseta naturalmente no
+// re-mount da página.
+const query = ref('')
+const selected = ref([])
+
+// Opções do multiselect: "Com recomendação" + as estratégias distintas do
+// relatório do dia, em ordem alfabética do nome natural (nunca lista fixa).
+const strategyOptions = computed(() => {
+  const keys = [
+    ...new Set((state.response?.jogos || []).flatMap((j) => (j.estrategias || []).map((e) => e.estrategia))),
+  ]
+  const rest = keys
+    .map((key) => ({ value: key, label: modelNameToNaturalName(key) }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+  return [{ value: ANY_STRATEGY, label: 'Com recomendação' }, ...rest]
+})
+
+const strategyLabel = (value) => (value === ANY_STRATEGY ? 'Com recomendação' : modelNameToNaturalName(value))
+
+// Gatilho compacto do multiselect: evita o label padrão do USelectMenu
+// (labels unidos por vírgula), que transborda no mobile com 3+ selecionadas.
+const triggerLabel = computed(() => {
+  const n = selected.value.length
+  if (n === 0) return 'Estratégias'
+  if (n === 1) return strategyLabel(selected.value[0])
+  return `${n} estratégias`
+})
+
+const hasActiveFilter = computed(() => query.value.trim() !== '' || selected.value.length > 0)
+
+function clearFilters() {
+  query.value = ''
+  selected.value = []
+}
+
+// Jogos que passam busca + estratégias; alimenta os dois agrupamentos
+// (liga/horário). Favoritos continuam na lista completa — seção fixa no topo.
+const filteredJogos = computed(() =>
+  filterReportGames(state.response?.jogos || [], { query: query.value, selected: selected.value }),
+)
+
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
 // Jogo sem horário parseável cai no grupo "Outros", no final.
 const byHour = computed(() => {
-  // Todos os jogos entram nos grupos — favoritos também (ficam duplicados na
-  // seção de cima, de propósito).
-  const jogos = state.response?.jogos || []
+  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // seção de cima, de propósito (usam a lista completa, não a filtrada).
+  const jogos = filteredJogos.value
   const map = new Map()
   for (const j of jogos) {
     const match = /^(\d{1,2}):/.exec(j.time || '')
