@@ -1,4 +1,4 @@
-// Estado da página /relatorio (relatório pré-live com IA). Sem cache: o
+// Estado da página /daily-report (relatório pré-live com IA). Sem cache: o
 // endpoint do scanner já cacheia; cada abertura busca o relatório do dia.
 import { reactive } from 'vue'
 

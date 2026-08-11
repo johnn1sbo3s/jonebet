@@ -77,7 +77,7 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <SegmentedControl v-model="visualizacao" :options="viewOptions" class="self-start" />
+      <SegmentedControl v-model="viewMode" :options="viewOptions" class="self-start" />
 
       <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
         <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -173,21 +173,21 @@ const byLeague = computed(() => {
     .sort((a, b) => a.label.localeCompare(b.label))
 })
 
-// Visualização escolhida pelo usuário: 'por_liga' | 'por_horario'. Persistida
-// em localStorage; guarda de import.meta.client porque o setup roda em SSR.
-const visualizacao = ref('por_liga')
+// View mode escolhido pelo usuário: 'by_league' | 'by_hour'. Persistido em
+// localStorage; guarda de import.meta.client porque o setup roda em SSR.
+const viewMode = ref('by_league')
 
 if (import.meta.client) {
-  visualizacao.value = localStorage.getItem('relatorio.visualizacao') || 'por_liga'
+  viewMode.value = localStorage.getItem('dailyReport.viewMode') || 'by_league'
 }
 
-watch(visualizacao, (v) => {
-  if (import.meta.client) localStorage.setItem('relatorio.visualizacao', v)
+watch(viewMode, (v) => {
+  if (import.meta.client) localStorage.setItem('dailyReport.viewMode', v)
 })
 
 const viewOptions = [
-  { value: 'por_liga', label: 'Por liga' },
-  { value: 'por_horario', label: 'Por horário' },
+  { value: 'by_league', label: 'Por liga' },
+  { value: 'by_hour', label: 'Por horário' },
 ]
 
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
@@ -214,7 +214,7 @@ const byHour = computed(() => {
     })
 })
 
-const groups = computed(() => (visualizacao.value === 'por_horario' ? byHour.value : byLeague.value))
+const groups = computed(() => (viewMode.value === 'by_hour' ? byHour.value : byLeague.value))
 
 function goBack() {
   // Abriu em nova aba — sem histórico de origem; navegação determinística.

@@ -14,7 +14,9 @@
         <div
           class="flex w-full items-center justify-between gap-3 text-xs text-zinc-400 sm:ml-auto sm:w-auto sm:justify-end"
         >
-          <UButton to="/relatorio" target="_blank" color="primary" variant="soft" size="xs"> Relatório do dia </UButton>
+          <UButton to="/daily-report" target="_blank" color="primary" variant="soft" size="xs">
+            Relatório do dia
+          </UButton>
 
           <span class="flex items-center gap-2">
             <span class="relative flex h-2 w-2">

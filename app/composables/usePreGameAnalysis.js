@@ -15,7 +15,7 @@ function reportUrl() {
 }
 
 function dateIso(daysAgo = 0) {
-  // Mesma lógica do /relatorio: data de hoje em America/Sao_Paulo (o
+  // Mesma lógica do /daily-report: data de hoje em America/Sao_Paulo (o
   // relatório do dia é gerado na noite anterior pelo pipeline).
   return DateTime.now().setZone(SP_TZ).minus({ days: daysAgo }).toFormat('yyyy-MM-dd')
 }

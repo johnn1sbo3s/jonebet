@@ -34,7 +34,7 @@ Chart.js (client-only plugin registration)
 
 | Path | Purpose |
 |------|---------|
-| `app/pages/` | 5 routes: dashboard (`index.vue`), fixtures, daily-bets, performance (`[[model]].vue` catch-all), academy |
+| `app/pages/` | 7 routes: dashboard (`index.vue`), fixtures, daily-bets, performance (`[[model]].vue` catch-all), academy, scanner, daily-report |
 | `app/components/` | 27 Vue components — flat directory, no subdirectories |
 | `app/composables/` | `useModelApi.js` (API + cache), `useChartOptions.js` (Chart.js factories), `useAcademiaGlossario.js` (glossary loader) |
 | `app/utils/` | 9 files: lodash replacements, number/date formatters, enums, timezone, zod schemas, model name resolvers |
