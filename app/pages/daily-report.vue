@@ -91,18 +91,6 @@
               <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
             </template>
           </USelectMenu>
-
-          <UButton
-            v-if="hasActiveFilter"
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            icon="i-lucide-x"
-            class="shrink-0 self-start"
-            @click="clearFilters"
-          >
-            Limpar
-          </UButton>
         </div>
       </div>
 
@@ -241,19 +229,13 @@ const strategyLabel = (value) => (value === ANY_STRATEGY ? 'Com recomendação' 
 
 // Gatilho compacto do multiselect: evita o label padrão do USelectMenu
 // (labels unidos por vírgula), que transborda no mobile com 3+ selecionadas.
+// A limpeza das estratégias fica no X embutido do próprio select (clear).
 const triggerLabel = computed(() => {
   const n = selected.value.length
   if (n === 0) return 'Estratégias'
   if (n === 1) return strategyLabel(selected.value[0])
   return `${n} estratégias`
 })
-
-const hasActiveFilter = computed(() => query.value.trim() !== '' || selected.value.length > 0)
-
-function clearFilters() {
-  query.value = ''
-  selected.value = []
-}
 
 // Jogos que passam busca + estratégias; alimenta os dois agrupamentos
 // (liga/horário). Favoritos continuam na lista completa — seção fixa no topo.
