@@ -69,6 +69,29 @@
   animation: fade-in 300ms ease-out;
 }
 
+/* Estrela de favorito filled: o ícone lucide tem fill="none" no path
+   (atributo de apresentação vence o fill herdado) — preenche via CSS. Regra
+   global: usada no card do scanner, card do relatório e nas duas seções
+   "Jogos favoritos" (evita a mesma regra scoped copiada em 4 arquivos). */
+.star-fill svg path {
+  fill: currentColor;
+}
+
+/* Favoritos — entrada/saída animada dos cards na seção de favoritos (fade +
+   leve encolhimento; o item sai do grid depois da transição). */
+.fav-enter-active,
+.fav-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.fav-enter-from,
+.fav-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
 /* Card shine — varredura de luz no hover (dashboard, scanner, fixtures,
    ranking de modelos). pointer-events: none evita interceptar cliques em
    elementos internos (botões, links). */

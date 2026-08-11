@@ -3,6 +3,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ScannerCard from '~/components/scannerCard.vue'
+import { useFavorites } from '~/composables/useFavorites'
 
 // Relativo ao relógio real: sempre "recente" (1 min atrás) em qualquer horário.
 const RECENT = new Date(Date.now() - 60_000).toISOString()
@@ -79,6 +80,16 @@ describe('ScannerCard', () => {
       props: { game: { ...game(), finished: true } },
     })
     expect(wrapper.text()).toContain('Encerrado')
+  })
+
+  it('mantém a estrela visível em jogo encerrado que foi favoritado (pra poder desfavoritar)', async () => {
+    const { toggleFavorite } = useFavorites()
+    toggleFavorite('abc123')
+    const wrapper = await mountSuspended(ScannerCard, {
+      props: { game: { ...game(), finished: true } },
+    })
+    expect(wrapper.find('button[aria-label="Remover dos favoritos"]').exists()).toBe(true)
+    toggleFavorite('abc123') // limpa: não vaza pro resto do arquivo
   })
 
   it.each(['HALF TIME', 'Half time', 'HT', 'Halftime', 'Intervalo', ' half-time '])(

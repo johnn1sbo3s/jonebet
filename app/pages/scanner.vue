@@ -48,19 +48,52 @@
 
     <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
 
-    <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-      <ScannerCard
-        v-for="game in games"
-        :id="`game-${game.id}`"
-        :key="game.id"
-        :game="game"
-        :highlighted="game.id === activeHighlight"
-      />
+    <div v-else class="flex flex-col gap-4">
+      <template v-if="favoriteGames.length">
+        <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
+          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
+              <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
+              Jogos favoritos
+            </h2>
+
+            <span
+              class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+            >
+              {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
+            </span>
+          </header>
+
+          <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <ScannerCard
+              v-for="game in favoriteGames"
+              :id="`game-${game.id}`"
+              :key="game.id"
+              :game="game"
+              :highlighted="game.id === activeHighlight"
+            />
+          </TransitionGroup>
+        </section>
+
+        <USeparator />
+      </template>
+
+      <div v-if="otherGames.length" class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <ScannerCard
+          v-for="game in otherGames"
+          :id="`game-${game.id}`"
+          :key="game.id"
+          :game="game"
+          :highlighted="game.id === activeHighlight"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useFavorites } from '~/composables/useFavorites'
+
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
@@ -82,6 +115,12 @@ let pollTimer
 let tickTimer
 
 const games = computed(() => snapshot.value?.games || [])
+
+// Favoritos no topo (só ao vivo — jogo finalizado sai da seção e volta pro
+// grid normal até sair do snapshot). O resto segue no grid principal.
+const { isFavorite } = useFavorites()
+const favoriteGames = computed(() => games.value.filter((g) => !g.finished && isFavorite(g.id)))
+const otherGames = computed(() => games.value.filter((g) => !(!g.finished && isFavorite(g.id))))
 
 async function loadSnapshot() {
   if (inFlight) return

@@ -28,28 +28,24 @@
         </div>
 
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div v-for="j in 4" :key="j" class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3">
+          <div v-for="j in 2" :key="j" class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3">
             <div class="flex items-center gap-2">
               <USkeleton class="h-3 w-8" />
 
               <USkeleton class="h-3 w-32" />
 
-              <USkeleton class="ml-auto h-3 w-16" />
+              <USkeleton class="ml-auto h-3 w-14" />
             </div>
 
             <USkeleton class="h-3 w-full" />
 
             <USkeleton class="h-3 w-2/3" />
 
-            <div class="flex flex-wrap gap-1.5">
+            <div class="flex gap-1.5">
               <USkeleton class="h-6 w-20 rounded-full" />
 
               <USkeleton class="h-6 w-24 rounded-full" />
             </div>
-
-            <USkeleton class="h-3 w-5/6" />
-
-            <USkeleton class="h-3 w-3/4" />
           </div>
         </div>
       </div>
@@ -79,6 +75,29 @@
     <div v-else-if="state.response" class="flex flex-col gap-4">
       <SegmentedControl v-model="viewMode" :options="viewOptions" class="self-start" />
 
+      <template v-if="favoriteGames.length">
+        <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
+          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
+              <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
+              Jogos favoritos
+            </h2>
+
+            <span
+              class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+            >
+              {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
+            </span>
+          </header>
+
+          <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" />
+          </TransitionGroup>
+        </section>
+
+        <USeparator />
+      </template>
+
       <section v-for="group in groups" :key="group.key" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
         <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 class="text-sm font-bold text-zinc-100">{{ group.label }}</h2>
@@ -91,48 +110,7 @@
         </header>
 
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <article
-            v-for="j in group.jogos"
-            :key="j.jogo_id"
-            class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3"
-          >
-            <header class="flex flex-wrap items-center gap-2">
-              <span class="text-2xs font-bold text-zinc-500">{{ j.time }}</span>
-
-              <h3 class="text-sm font-bold text-zinc-100">{{ j.home }} x {{ j.away }}</h3>
-
-              <span v-if="j.odds?.h" class="text-2xs ml-auto whitespace-nowrap text-zinc-500">
-                {{ j.odds.h }} / {{ j.odds.d }} / {{ j.odds.a }}
-              </span>
-            </header>
-
-            <p class="text-xs leading-relaxed text-zinc-300">{{ j.leitura_geral }}</p>
-
-            <div class="flex flex-wrap gap-1.5">
-              <span
-                v-for="e in j.estrategias"
-                :key="e.estrategia"
-                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900 px-2.5 py-1 text-xs font-bold whitespace-nowrap text-zinc-100"
-              >
-                <span
-                  class="h-1.5 w-1.5 rounded-full"
-                  :class="e.recomendacao === 'entrar' ? 'bg-teal-400' : 'bg-amber-400'"
-                ></span>
-
-                {{ modelNameToNaturalName(e.estrategia) }}
-
-                <span class="font-semibold text-zinc-400">· {{ e.recomendacao }} {{ e.confianca }}%</span>
-              </span>
-            </div>
-
-            <p
-              v-for="e in j.estrategias"
-              :key="e.estrategia + '-an'"
-              class="border-l-2 border-zinc-700 pl-2 text-xs leading-relaxed text-zinc-400"
-            >
-              {{ e.analise }}
-            </p>
-          </article>
+          <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" />
         </div>
       </section>
     </div>
@@ -143,11 +121,18 @@
 import { computed, ref, watch } from 'vue'
 import { DateTime } from 'luxon'
 import { useDailyReport } from '~/composables/useDailyReport'
+import { useFavorites } from '~/composables/useFavorites'
 import { formatDate } from '~/utils/formatDate'
-import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { SP_TZ } from '~/utils/timezone'
 
 const { state, load } = useDailyReport()
+const { favoritesOf } = useFavorites()
+
+// Favoritos do dia, ordenados por horário do jogo (como os grupos de liga).
+// Seção fixa no topo, independente da visualização por liga/horário.
+const favoriteGames = computed(() =>
+  favoritesOf(state.response?.jogos || []).sort((a, b) => (a.time || '').localeCompare(b.time || '')),
+)
 
 // Data de hoje em America/Sao_Paulo (o relatório de hoje foi gerado ontem à
 // noite pelo pipeline). NUNCA usar new Date().toISOString() aqui: é UTC e
@@ -157,6 +142,8 @@ const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 const reportDateLabel = computed(() => formatDate(state.response?.date || todayIso, { style: 'long' }))
 
 const byLeague = computed(() => {
+  // Todos os jogos entram nos grupos — favoritos também (ficam duplicados na
+  // seção de cima, de propósito).
   const jogos = state.response?.jogos || []
   const map = new Map()
   for (const j of jogos) {
@@ -193,11 +180,13 @@ const viewOptions = [
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
 // Jogo sem horário parseável cai no grupo "Outros", no final.
 const byHour = computed(() => {
+  // Todos os jogos entram nos grupos — favoritos também (ficam duplicados na
+  // seção de cima, de propósito).
   const jogos = state.response?.jogos || []
   const map = new Map()
   for (const j of jogos) {
     const match = /^(\d{1,2}):/.exec(j.time || '')
-    const key = match ? match[1] : 'Outros'
+    const key = match ? `${match[1]}h` : 'Outros'
     if (!map.has(key)) map.set(key, [])
     map.get(key).push(j)
   }

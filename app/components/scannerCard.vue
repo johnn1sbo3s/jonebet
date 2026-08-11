@@ -30,6 +30,17 @@
             </UBadge>
 
             <button
+              v-if="!game.finished || isFavorite(game.id)"
+              class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-amber-400 hover:text-amber-400"
+              :class="{ 'star-fill border-amber-400/60 bg-amber-400/10 text-amber-400': isFavorite(game.id) }"
+              :title="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
+              :aria-label="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
+              @click.stop="toggleFavorite(game.id)"
+            >
+              <UIcon name="i-lucide-star" mode="svg" class="h-3.5 w-3.5" />
+            </button>
+
+            <button
               class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
               title="Tirar print do card"
               @click.stop="captureCard"
@@ -314,6 +325,7 @@ import { isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
+import { useFavorites } from '~/composables/useFavorites'
 import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 
 const props = defineProps({
@@ -321,6 +333,8 @@ const props = defineProps({
   // Destaque vindo do Telegram (?game=<id>): luz viajante na borda por ~12s.
   highlighted: { type: Boolean, default: false },
 })
+
+const { isFavorite, toggleFavorite } = useFavorites()
 
 const { get: getAiState, evaluate: evaluateAi } = useAiEvaluation()
 const aiOpen = ref(false)
