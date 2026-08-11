@@ -164,13 +164,13 @@ const byLeague = computed(() => {
     if (!map.has(key)) map.set(key, [])
     map.get(key).push(j)
   }
-  return [...map.entries()]
-    .map(([league, items]) => ({
-      key: league,
-      label: league,
-      jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+  // Ordem dos grupos = ordem de chegada da API: o backend já ordena por tier
+  // (T1 primeiro) e liga — reordenar alfabeticamente aqui quebraria isso.
+  return [...map.entries()].map(([league, items]) => ({
+    key: league,
+    label: league,
+    jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
+  }))
 })
 
 // View mode escolhido pelo usuário: 'by_league' | 'by_hour'. Persistido em
