@@ -37,7 +37,19 @@ export function useBankrollChartOptions() {
       zoom: { animation: { duration: 1000, easing: 'easeOutCubic' } },
     },
     scales: {
-      x: { ticks: { color: ZINC_TICK }, grid: { color: ZINC_GRID } },
+      // Eixo X com meses (ex.: "Janeiro/24"): limitar os ticks pra não poluir
+      // com 30+ meses — autoSkip pega a cada N meses com espaçamento uniforme.
+      x: {
+        ticks: {
+          color: ZINC_TICK,
+          autoSkip: true,
+          maxTicksLimit: 8,
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkipPadding: 16,
+        },
+        grid: { color: ZINC_GRID },
+      },
       y: { ticks: { color: ZINC_TICK }, grid: { color: ZINC_GRID } },
     },
     plugins: {
