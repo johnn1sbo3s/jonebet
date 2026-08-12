@@ -63,15 +63,17 @@
 
         <div class="mb-2.5 flex items-center gap-2 text-sm font-semibold">
           <span class="flex min-w-0 items-center gap-1">
-            <span class="min-w-0 truncate text-zinc-400" :title="game.home">{{ game.home }}</span>
+            <UTooltip :text="game.home">
+              <span class="min-w-0 truncate text-zinc-400">{{ game.home }}</span>
+            </UTooltip>
 
-            <UIcon
-              v-if="trends.home"
-              :name="trends.home === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
-              :class="trends.home === 'up' ? 'text-teal-400' : 'text-zinc-500'"
-              class="h-3.5 w-3.5 shrink-0"
-              :title="trendTitle('home')"
-            />
+            <UTooltip v-if="trends.home" :text="trendTitle('home')">
+              <UIcon
+                :name="trends.home === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+                :class="trends.home === 'up' ? 'text-teal-400' : 'text-zinc-500'"
+                class="h-3.5 w-3.5 shrink-0"
+              />
+            </UTooltip>
           </span>
 
           <span class="shrink-0 text-base font-bold whitespace-nowrap text-zinc-100"
@@ -79,15 +81,17 @@
           >
 
           <span class="flex min-w-0 items-center gap-1">
-            <span class="min-w-0 truncate text-zinc-400" :title="game.away">{{ game.away }}</span>
+            <UTooltip :text="game.away">
+              <span class="min-w-0 truncate text-zinc-400">{{ game.away }}</span>
+            </UTooltip>
 
-            <UIcon
-              v-if="trends.away"
-              :name="trends.away === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
-              :class="trends.away === 'up' ? 'text-teal-400' : 'text-zinc-500'"
-              class="h-3.5 w-3.5 shrink-0"
-              :title="trendTitle('away')"
-            />
+            <UTooltip v-if="trends.away" :text="trendTitle('away')">
+              <UIcon
+                :name="trends.away === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+                :class="trends.away === 'up' ? 'text-teal-400' : 'text-zinc-500'"
+                class="h-3.5 w-3.5 shrink-0"
+              />
+            </UTooltip>
           </span>
 
           <UBadge
