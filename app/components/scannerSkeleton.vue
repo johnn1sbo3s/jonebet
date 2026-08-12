@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-    <USkeleton v-for="i in 6" :key="i" class="h-112 rounded-2xl" />
+    <USkeleton v-for="i in 6" :key="i" class="h-160 rounded-2xl" />
   </div>
 </template>
 

@@ -138,13 +138,17 @@
               <span class="flex items-center gap-0.5">
                 <span class="text-2xs tracking-wide text-zinc-500 uppercase">{{ row.label }}</span>
 
-                <UTooltip v-if="row.hint" :text="row.hint">
+                <UPopover v-if="row.hint">
                   <UIcon
                     name="i-lucide-circle-help"
                     class="h-3 w-3 cursor-help text-zinc-600 transition-colors hover:text-zinc-300"
                     @click.stop
                   />
-                </UTooltip>
+
+                  <template #content>
+                    <div class="max-w-56 p-3 text-xs leading-relaxed text-zinc-200">{{ row.hint }}</div>
+                  </template>
+                </UPopover>
               </span>
 
               <span class="font-bold text-zinc-200">{{ row.away }}</span>
@@ -353,7 +357,7 @@
 import { computed, ref } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
-import { formatPercent } from '~/utils/formatNumber'
+import { formatNumber, formatPercent } from '~/utils/formatNumber'
 import { computePressure, computeControl } from '~/utils/scannerPressure'
 import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
@@ -417,6 +421,8 @@ const STAT_LABELS = [
 const CONTROL_HINT =
   'Controle do jogo: % dos minutos com barra em que o time pressionou mais que o adversário no gráfico de momentum.'
 const C10_HINT = 'C10 = controle dos últimos 10 minutos: o mesmo cálculo, considerando só as últimas 10 barras.'
+const PICO_HINT =
+  "PICO 10' = maior barra de pressão do time nos últimos 10 minutos. O valor vai de 0 a 1 (máximo = 1). A barra de progresso mostra a disputa entre os times."
 const TREND_THRESHOLD = 0.05
 
 const flipped = ref(false)
@@ -441,6 +447,10 @@ const sharePct = (pair) => {
 
 const fmtPct = (v) => (v == null ? '—' : formatPercent(v * 100, 0))
 
+// Pico é exibido como valor bruto 0..1 (o "i" explica que o máximo é 1) —
+// percentual confundiria com share (49% + 13% ≠ 100%).
+const fmtRaw = (v) => (v == null ? '—' : formatNumber(v, 2))
+
 const derivedRows = computed(() => {
   const p = pressure.value
   const c = control.value
@@ -462,10 +472,10 @@ const derivedRows = computed(() => {
     },
     {
       label: "PICO 10'",
-      home: fmtPct(p.max10.home),
-      away: fmtPct(p.max10.away),
+      home: fmtRaw(p.max10.home),
+      away: fmtRaw(p.max10.away),
       pctHome: sharePct(p.max10),
-      hint: null,
+      hint: PICO_HINT,
     },
     { label: 'CONTROLE', home: fmtPct(c.home), away: fmtPct(c.away), pctHome: sharePct(c), hint: CONTROL_HINT },
     { label: 'C10', home: fmtPct(c10.home), away: fmtPct(c10.away), pctHome: sharePct(c10), hint: C10_HINT },
