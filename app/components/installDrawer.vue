@@ -1,5 +1,14 @@
 <template>
-  <USlideover v-model:open="state.open" side="bottom" :ui="{ content: 'bg-zinc-900 border-t border-zinc-800' }">
+  <USlideover
+    :open="state.open"
+    side="bottom"
+    :ui="{ content: 'bg-zinc-900 border-t border-zinc-800' }"
+    @update:open="
+      (v) => {
+        if (!v) closeDrawer()
+      }
+    "
+  >
     <template #content>
       <div class="flex flex-col gap-4 p-5">
         <div class="flex items-center justify-between">

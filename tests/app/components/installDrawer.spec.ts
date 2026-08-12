@@ -67,6 +67,27 @@ describe('InstallDrawer', () => {
     expect(usePwaInstall().state.open).toBe(false)
   })
 
+  it('fechar por backdrop/Esc (update:open false) reseta a view para home', async () => {
+    const { default: InstallDrawer } = await import('~/components/installDrawer.vue')
+    const { usePwaInstall } = await import('~/composables/usePwaInstall')
+    const wrapper = await mountSuspended(InstallDrawer)
+    usePwaInstall().openDrawer()
+    await wrapper.vm.$nextTick()
+    // vai para as instruções iOS (visual C)
+    const cta = [...document.body.querySelectorAll('button')].find((b) => b.textContent?.includes('Instalar agora'))
+    expect(cta).toBeTruthy()
+    cta.click()
+    await wrapper.vm.$nextTick()
+    expect(usePwaInstall().state.view).toBe('ios')
+    // fechamento por backdrop/Esc: o USlideover emite update:open(false) no v-model
+    const slideover = wrapper.findComponent({ name: 'USlideover' })
+    expect(slideover.exists()).toBe(true)
+    slideover.vm.$emit('update:open', false)
+    await wrapper.vm.$nextTick()
+    expect(usePwaInstall().state.open).toBe(false)
+    expect(usePwaInstall().state.view).toBe('home')
+  })
+
   it('auto-abertura: não abre com age-gate pendente; abre após dispensar + delay', async () => {
     vi.useFakeTimers()
     const { default: InstallDrawer } = await import('~/components/installDrawer.vue')
