@@ -53,6 +53,26 @@ describe('usePwaInstall', () => {
     expect(prompt).toHaveBeenCalledTimes(1)
   })
 
+  it('promptInstall: rejeição do prompt nativo não quebra o one-shot', async () => {
+    const { usePwaInstall } = await import('~/composables/usePwaInstall')
+    const { state, promptInstall } = usePwaInstall()
+    const prompt = vi.fn().mockRejectedValue(new Error('boom'))
+    const userChoice = Promise.resolve({ outcome: 'dismissed' })
+    window.dispatchEvent(
+      Object.assign(new Event('beforeinstallprompt'), { prompt, userChoice, preventDefault: () => {} }),
+    )
+    await Promise.resolve()
+    expect(state.canPrompt).toBe(true)
+    // (a) a rejeição NÃO propaga para o caller
+    await expect(promptInstall()).resolves.toBeUndefined()
+    // (b) one-shot zerado mesmo no caminho de erro
+    expect(state.canPrompt).toBe(false)
+    // (c) segunda chamada não re-invoca o prompt e cai no fallback de instruções
+    await promptInstall()
+    expect(prompt).toHaveBeenCalledTimes(1)
+    expect(state.view).toBe('ios')
+  })
+
   it('appinstalled marca standalone e fecha o drawer', async () => {
     const { usePwaInstall } = await import('~/composables/usePwaInstall')
     const { state, openDrawer } = usePwaInstall()

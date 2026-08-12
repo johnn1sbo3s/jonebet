@@ -67,12 +67,20 @@ export function usePwaInstall() {
       return
     }
     const prompt = deferredPrompt
-    await prompt.prompt()
-    const { outcome } = await prompt.userChoice
-    deferredPrompt = null
-    state.canPrompt = false
-    if (outcome !== 'accepted') showInstructions()
-    // accepted → appinstalled fecha/limpa
+    try {
+      await prompt.prompt()
+      const { outcome } = await prompt.userChoice
+      if (outcome !== 'accepted') showInstructions()
+      // accepted → appinstalled fecha/limpa
+    } catch {
+      // Chrome rejeita prompt() quando o prompt já foi usado/não é permitido —
+      // vira fallback de instruções, sem propagar para o caller.
+      showInstructions()
+    } finally {
+      // One-shot garantido em TODOS os caminhos (sucesso, dismiss, rejeição).
+      deferredPrompt = null
+      state.canPrompt = false
+    }
   }
 
   // Auto-abertura do drawer: espera o age-gate 18+ ser dispensado (poll), depois
