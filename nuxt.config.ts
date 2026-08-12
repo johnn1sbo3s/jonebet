@@ -2,9 +2,36 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Dataplay Bets',
+      meta: [
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+        { name: 'apple-mobile-web-app-title', content: 'DataPlay' },
+      ],
+      link: [{ rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }],
     },
   },
-  modules: ['@nuxt/ui', '@nuxt/fonts', '@pinia/nuxt', '@nuxtjs/device', '@nuxt/eslint'],
+  modules: ['@nuxt/ui', '@nuxt/fonts', '@pinia/nuxt', '@nuxtjs/device', '@nuxt/eslint', '@vite-pwa/nuxt'],
+
+  pwa: {
+    registerType: 'autoUpdate',
+    devOptions: { enabled: true },
+    workbox: { navigateFallback: null },
+    manifest: {
+      name: 'Dataplay Bets',
+      short_name: 'DataPlay',
+      description: 'Desempenho de apostas esportivas em tempo real',
+      lang: 'pt-BR',
+      start_url: '/',
+      scope: '/',
+      display: 'standalone',
+      theme_color: '#09090b',
+      background_color: '#09090b',
+      icons: [
+        { src: '/pwa-icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/pwa-icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+      ],
+    },
+  },
 
   icon: {
     clientBundle: {
