@@ -14,7 +14,11 @@ export default defineNuxtConfig({
 
   pwa: {
     registerType: 'autoUpdate',
-    devOptions: { enabled: true },
+    // suppressWarnings: em dev o @vite-pwa/nuxt injeta `_nuxt/builds/**/*.json`
+    // (app manifest) no globPatterns, mas esse arquivo só existe no build de
+    // produção — o workbox avisa "glob pattern doesn't match" a cada rebuild.
+    // A flag troca o glob por um arquivo dummy (suppress-warnings.js) só no dev.
+    devOptions: { enabled: true, suppressWarnings: true },
     workbox: { navigateFallback: null },
     manifest: {
       name: 'Dataplay Bets',

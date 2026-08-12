@@ -239,6 +239,23 @@ describe('ScannerCard', () => {
     expect(wrapper.findAll('.i-lucide\\:trending-up').length).toBeGreaterThan(0)
   })
 
+  it('tooltip de tendência mostra pressão no formato bruto 0..1 (não %) como nas métricas', async () => {
+    const momentum = Array.from({ length: 15 }, (_, i) => ({
+      minute: i + 1,
+      home: i < 10 ? 0.1 : 0.9, // casa esquentou no fim
+      away: 0,
+    }))
+    const wrapper = await mountCard(ScannerCard, { props: { game: { ...game(), momentum } } })
+    const trendTooltip = wrapper
+      .findAllComponents({ name: 'UTooltip' })
+      .find((t) => t.props('text').startsWith('Pressão'))
+    expect(trendTooltip).toBeTruthy()
+    // mean5.home 0.90 / meanTotal.home 0.37 — mesmo formato das linhas PRESSÃO
+    expect(trendTooltip.props('text')).toContain("últimos 5' (0.90)")
+    expect(trendTooltip.props('text')).toContain('média do jogo (0.37)')
+    expect(trendTooltip.props('text')).not.toContain('%')
+  })
+
   it('nome longo fica em 1 linha (truncate) com nome completo no tooltip', async () => {
     const wrapper = await mountCard(ScannerCard, {
       props: { game: { ...game(), home: 'Estudiantes (ARG)', away: 'Universidad Católica (CHI)' } },

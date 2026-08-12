@@ -451,8 +451,9 @@ const sharePct = (pair) => {
 
 const fmtPct = (v) => (v == null ? '—' : formatPercent(v * 100, 0))
 
-// Pressão (média 5'/10' e pico) é exibida como valor bruto 0..1 — o usuário
-// aprende que pressão vai de 0 a 1; percentual confundiria com share das barras.
+// Pressão (média 5'/10', pico e tooltip de tendência) é exibida como valor
+// bruto 0..1 — o usuário aprende que pressão vai de 0 a 1; percentual
+// confundiria com share das barras (CONTROLE/C10 são share e ficam em %).
 const fmtRaw = (v) => (v == null ? '—' : formatNumber(v, 2))
 
 const derivedRows = computed(() => {
@@ -504,7 +505,9 @@ const trendTitle = (side) => {
       ? { recent: p.mean5.home, total: p.meanTotal.home }
       : { recent: p.mean5.away, total: p.meanTotal.away }
   if (pair.recent == null || pair.total == null) return ''
-  return `Pressão ${trends.value[side] === 'up' ? 'subindo' : 'caindo'}: últimos 5' (${fmtPct(pair.recent)}) vs média do jogo (${fmtPct(pair.total)})`
+  // Mesmo formato das métricas de pressão do card (0..1), não % — consistência
+  // com o que o usuário já aprendeu nas linhas PRESSÃO/PICO.
+  return `Pressão ${trends.value[side] === 'up' ? 'subindo' : 'caindo'}: últimos 5' (${fmtRaw(pair.recent)}) vs média do jogo (${fmtRaw(pair.total)})`
 }
 
 const statRows = computed(() => [
