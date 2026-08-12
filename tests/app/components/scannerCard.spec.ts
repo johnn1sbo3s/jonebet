@@ -5,6 +5,23 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ScannerCard from '~/components/scannerCard.vue'
 import { useFavorites } from '~/composables/useFavorites'
 
+// O UTooltip (Nuxt UI v4) depende do TooltipProvider do reka-ui, que no app
+// real vem do UApp (app.vue) — ausente no mountSuspended isolado (o reka-ui
+// é externalizado e não pode ser interceptado por vi.mock). Stubamos o
+// UTooltip com um pass-through: o slot renderiza o UIcon de ajuda real, que
+// é o que os testes verificam.
+const mountCard = (component, options) =>
+  mountSuspended(component, {
+    ...options,
+    global: {
+      ...options?.global,
+      stubs: {
+        ...options?.global?.stubs,
+        UTooltip: { name: 'UTooltip', props: ['text'], template: '<span><slot /></span>' },
+      },
+    },
+  })
+
 // Relativo ao relógio real: sempre "recente" (1 min atrás) em qualquer horário.
 const RECENT = new Date(Date.now() - 60_000).toISOString()
 
@@ -32,7 +49,7 @@ function game(notifications = [], momentum = [{ minute: 1, home: 0.5, away: 0 }]
 
 describe('ScannerCard', () => {
   it('renderiza times, placar, minuto e stats', async () => {
-    const wrapper = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const wrapper = await mountCard(ScannerCard, { props: { game: game() } })
     expect(wrapper.text()).toContain('Palmeiras')
     expect(wrapper.text()).toContain('Flamengo')
     expect(wrapper.text()).toContain('2 x 1')
@@ -41,7 +58,7 @@ describe('ScannerCard', () => {
   })
 
   it('aplica contorno âmbar + selo Alerta quando a notificação é recente', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: {
         game: game([{ rule: 'regra_jogo_quente', label: 'Jogo quente', minute: 62, at: RECENT }]),
       },
@@ -51,7 +68,7 @@ describe('ScannerCard', () => {
   })
 
   it('esconde o selo Alerta ao virar o card (verso)', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: {
         game: game([{ rule: 'regra_jogo_quente', label: 'Jogo quente', minute: 62, at: RECENT }]),
       },
@@ -62,21 +79,21 @@ describe('ScannerCard', () => {
   })
 
   it('aplica luz viajante (hl-travel) quando highlighted (clique do Telegram)', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: { game: game([]), highlighted: true },
     })
     expect(wrapper.find('.hl-travel').exists()).toBe(true)
   })
 
   it('sem hl-travel quando highlighted é false', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: { game: game([]), highlighted: false },
     })
     expect(wrapper.find('.hl-travel').exists()).toBe(false)
   })
 
   it('mostra badge Encerrado para jogo finalizado', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: { game: { ...game(), finished: true } },
     })
     expect(wrapper.text()).toContain('Encerrado')
@@ -85,7 +102,7 @@ describe('ScannerCard', () => {
   it('mantém a estrela visível em jogo encerrado que foi favoritado (pra poder desfavoritar)', async () => {
     const { toggleFavorite } = useFavorites()
     toggleFavorite('abc123')
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: { game: { ...game(), finished: true } },
     })
     expect(wrapper.find('button[aria-label="Remover dos favoritos"]').exists()).toBe(true)
@@ -95,7 +112,7 @@ describe('ScannerCard', () => {
   it.each(['HALF TIME', 'Half time', 'HT', 'Halftime', 'Intervalo', ' half-time '])(
     'mostra badge Intervalo em vez do minuto no halftime (status=%s)',
     async (status) => {
-      const wrapper = await mountSuspended(ScannerCard, {
+      const wrapper = await mountCard(ScannerCard, {
         props: { game: { ...game(), status } },
       })
       expect(wrapper.text()).toContain('Intervalo')
@@ -104,7 +121,7 @@ describe('ScannerCard', () => {
   )
 
   it.each(['1ST HALF', '2nd Half', '2ND HALF'])('mantém o minuto em %s (não é intervalo)', async (status) => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: { game: { ...game(), status } },
     })
     expect(wrapper.text()).toContain("65'")
@@ -112,27 +129,27 @@ describe('ScannerCard', () => {
   })
 
   it('precedência: Encerrado ganha do Intervalo; status vazio mostra o minuto', async () => {
-    const finished = await mountSuspended(ScannerCard, {
+    const finished = await mountCard(ScannerCard, {
       props: { game: { ...game(), finished: true, status: 'Half time' } },
     })
     expect(finished.text()).toContain('Encerrado')
     expect(finished.text()).not.toContain('Intervalo')
 
-    const noStatus = await mountSuspended(ScannerCard, {
+    const noStatus = await mountCard(ScannerCard, {
       props: { game: { ...game(), status: undefined } },
     })
     expect(noStatus.text()).toContain("65'")
   })
 
   it('sem alerta e com verso vazio quando não há notificações', async () => {
-    const wrapper = await mountSuspended(ScannerCard, { props: { game: game([]) } })
+    const wrapper = await mountCard(ScannerCard, { props: { game: game([]) } })
     expect(wrapper.find('.alert-recent').exists()).toBe(false)
     expect(wrapper.find('.alert-tag').exists()).toBe(false)
     expect(wrapper.text()).toContain('Sem notificações neste jogo ainda')
   })
 
   it('renderiza odds pré-live com labels em todas as colunas', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: {
         game: {
           ...game(),
@@ -156,14 +173,14 @@ describe('ScannerCard', () => {
   })
 
   it('sem odds não renderiza a seção', async () => {
-    const wrapper = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const wrapper = await mountCard(ScannerCard, { props: { game: game() } })
     expect(wrapper.find('.grid.grid-cols-\\[1fr_1fr_1fr_0\\.85fr_0\\.85fr\\]').exists()).toBe(false)
     // só a badge de minuto — as de odds não existem sem dados
     expect(wrapper.findAllComponents({ name: 'UBadge' })).toHaveLength(1)
   })
 
   it('sem secundários mostra O2.5/BTTS com "-" nas colunas fixas', async () => {
-    const wrapper = await mountSuspended(ScannerCard, {
+    const wrapper = await mountCard(ScannerCard, {
       props: {
         game: {
           ...game(),
@@ -184,6 +201,50 @@ describe('ScannerCard', () => {
     expect(badges).toHaveLength(6)
     expect(badges[4].text()).toBe('-')
     expect(badges[5].text()).toBe('-')
+  })
+
+  it('renderiza as novas métricas de momentum (pressão, pico, controle, C10)', async () => {
+    const wrapper = await mountCard(ScannerCard, { props: { game: game() } })
+    expect(wrapper.text()).toContain("PRESSÃO 5'")
+    expect(wrapper.text()).toContain("PRESSÃO 10'")
+    expect(wrapper.text()).toContain("PICO 10'")
+    expect(wrapper.text()).toContain('CONTROLE')
+    expect(wrapper.text()).toContain('C10')
+    // 1 barra, casa vence: controle 100% x 0%
+    expect(wrapper.text()).toContain('100%')
+  })
+
+  it('mostra "—" e sem barra quando não há momentum', async () => {
+    const wrapper = await mountCard(ScannerCard, { props: { game: { ...game(), momentum: [] } } })
+    expect(wrapper.text()).toContain("PRESSÃO 5'")
+    // valores ausentes: "—" (e nenhuma barra preenchida)
+    expect(wrapper.text()).toContain('—')
+  })
+
+  it('tem ícone de ajuda (?) nas linhas CONTROLE e C10', async () => {
+    const wrapper = await mountCard(ScannerCard, { props: { game: game() } })
+    // classe real do @nuxt/icon em modo CSS: i-lucide:circle-help (dois-pontos)
+    expect(wrapper.findAll('.i-lucide\\:circle-help').length).toBe(2)
+  })
+
+  it("mostra chip de tendência ▲ quando os últimos 5' superam a média do jogo", async () => {
+    const momentum = Array.from({ length: 15 }, (_, i) => ({
+      minute: i + 1,
+      home: i < 10 ? 0.1 : 0.9, // casa esquentou no fim
+      away: 0,
+    }))
+    const wrapper = await mountCard(ScannerCard, { props: { game: { ...game(), momentum } } })
+    // mean5.home 0.9 >> meanTotal.home 0.3667 → trending-up visível
+    // (classe real do @nuxt/icon em modo CSS: i-lucide:trending-up)
+    expect(wrapper.findAll('.i-lucide\\:trending-up').length).toBeGreaterThan(0)
+  })
+
+  it('nome longo fica em 1 linha (truncate) com nome completo no title', async () => {
+    const wrapper = await mountCard(ScannerCard, {
+      props: { game: { ...game(), home: 'Estudiantes (ARG)', away: 'Universidad Católica (CHI)' } },
+    })
+    const awayName = wrapper.findAll('span').find((s) => s.attributes('title') === 'Universidad Católica (CHI)')
+    expect(awayName?.classes()).toContain('truncate')
   })
 })
 
@@ -209,14 +270,14 @@ vi.mock('~/composables/useAiEvaluation', async () => {
 
 describe('ScannerCard avaliação com IA', () => {
   it('mostra botão Avaliar apenas em jogos ao vivo', async () => {
-    const live = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const live = await mountCard(ScannerCard, { props: { game: game() } })
     expect(live.text()).toContain('Avaliar com IA')
-    const fin = await mountSuspended(ScannerCard, { props: { game: { ...game(), finished: true } } })
+    const fin = await mountCard(ScannerCard, { props: { game: { ...game(), finished: true } } })
     expect(fin.text()).not.toContain('Avaliar com IA')
   })
 
   it('abre o popover com a resposta ao clicar', async () => {
-    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Avaliar com IA'))!
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
@@ -254,9 +315,9 @@ vi.mock('~/composables/usePreGameAnalysis', async () => {
 
 describe('ScannerCard análise pré-jogo', () => {
   it('mostra o botão Análise pré-jogo apenas em jogos ao vivo', async () => {
-    const live = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const live = await mountCard(ScannerCard, { props: { game: game() } })
     expect(live.text()).toContain('Análise pré-jogo')
-    const fin = await mountSuspended(ScannerCard, { props: { game: { ...game(), finished: true } } })
+    const fin = await mountCard(ScannerCard, { props: { game: { ...game(), finished: true } } })
     expect(fin.text()).not.toContain('Análise pré-jogo')
   })
 
@@ -268,7 +329,7 @@ describe('ScannerCard análise pré-jogo', () => {
         { estrategia: 'lay_1x0', recomendacao: 'entrar', confianca: 78, analise: '1-0 é raridade no histórico' },
       ],
     }
-    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
@@ -280,7 +341,7 @@ describe('ScannerCard análise pré-jogo', () => {
 
   it('fecha o modal pelo botão ✕', async () => {
     preGameScenario.response = { time: '16:30', leitura_geral: 'Conteúdo X', estrategias: [] }
-    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
@@ -292,7 +353,7 @@ describe('ScannerCard análise pré-jogo', () => {
 
   it('mostra estado vazio quando o jogo não tem análise pré-jogo', async () => {
     preGameScenario.response = null
-    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
@@ -302,7 +363,7 @@ describe('ScannerCard análise pré-jogo', () => {
   it('mostra erro com Tentar de novo; retry carrega a análise', async () => {
     preGameScenario.response = null
     preGameScenario.error = 'offline'
-    const w = await mountSuspended(ScannerCard, { props: { game: game() } })
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
     await btn.trigger('click')
     await new Promise((r) => setTimeout(r, 0))

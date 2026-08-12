@@ -62,13 +62,33 @@
         </div>
 
         <div class="mb-2.5 flex items-center gap-2 text-sm font-semibold">
-          <span class="min-w-0 text-zinc-400">{{ game.home }}</span>
+          <span class="flex min-w-0 items-center gap-1">
+            <span class="min-w-0 truncate text-zinc-400" :title="game.home">{{ game.home }}</span>
+
+            <UIcon
+              v-if="trends.home"
+              :name="trends.home === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+              :class="trends.home === 'up' ? 'text-teal-400' : 'text-zinc-500'"
+              class="h-3.5 w-3.5 shrink-0"
+              :title="trendTitle('home')"
+            />
+          </span>
 
           <span class="shrink-0 text-base font-bold whitespace-nowrap text-zinc-100"
             >{{ game.score.home }} x {{ game.score.away }}</span
           >
 
-          <span class="min-w-0 text-zinc-400">{{ game.away }}</span>
+          <span class="flex min-w-0 items-center gap-1">
+            <span class="min-w-0 truncate text-zinc-400" :title="game.away">{{ game.away }}</span>
+
+            <UIcon
+              v-if="trends.away"
+              :name="trends.away === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+              :class="trends.away === 'up' ? 'text-teal-400' : 'text-zinc-500'"
+              class="h-3.5 w-3.5 shrink-0"
+              :title="trendTitle('away')"
+            />
+          </span>
 
           <UBadge
             v-if="game.finished"
@@ -115,7 +135,17 @@
             <div class="flex items-baseline justify-between text-xs">
               <span class="font-bold text-zinc-200">{{ row.home }}</span>
 
-              <span class="text-2xs tracking-wide text-zinc-500 uppercase">{{ row.label }}</span>
+              <span class="flex items-center gap-0.5">
+                <span class="text-2xs tracking-wide text-zinc-500 uppercase">{{ row.label }}</span>
+
+                <UTooltip v-if="row.hint" :text="row.hint">
+                  <UIcon
+                    name="i-lucide-circle-help"
+                    class="h-3 w-3 cursor-help text-zinc-600 transition-colors hover:text-zinc-300"
+                    @click.stop
+                  />
+                </UTooltip>
+              </span>
 
               <span class="font-bold text-zinc-200">{{ row.away }}</span>
             </div>
@@ -323,6 +353,8 @@
 import { computed, ref } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
+import { formatPercent } from '~/utils/formatNumber'
+import { computePressure, computeControl } from '~/utils/scannerPressure'
 import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
 import { useFavorites } from '~/composables/useFavorites'
@@ -382,6 +414,11 @@ const STAT_LABELS = [
   ['box_touches', 'TOQUES NA ÁREA'],
 ]
 
+const CONTROL_HINT =
+  'Controle do jogo: % dos minutos com barra em que o time pressionou mais que o adversário no gráfico de momentum.'
+const C10_HINT = 'C10 = controle dos últimos 10 minutos: o mesmo cálculo, considerando só as últimas 10 barras.'
+const TREND_THRESHOLD = 0.05
+
 const flipped = ref(false)
 
 const isRecent = computed(() => isRecentNotification(props.game.notifications))
@@ -391,8 +428,74 @@ const isRecent = computed(() => isRecentNotification(props.game.notifications))
 // badge troca o minuto por "Intervalo" (não confundir com "1ST HALF"/"2nd Half").
 const isHalftime = computed(() => /^(ht|halftime)$|interval|half[\s-]*time/i.test((props.game.status || '').trim()))
 
-const statRows = computed(() =>
-  STAT_LABELS.map(([key, label]) => {
+const pressure = computed(() => computePressure(props.game.momentum))
+const control = computed(() => computeControl(props.game.momentum))
+const control10 = computed(() => computeControl((props.game.momentum || []).slice(-10)))
+
+const sharePct = (pair) => {
+  const h = Number(pair?.home)
+  const a = Number(pair?.away)
+  if (!Number.isFinite(h) || !Number.isFinite(a) || h + a <= 0) return null
+  return (h / (h + a)) * 100
+}
+
+const fmtPct = (v) => (v == null ? '—' : formatPercent(v * 100, 0))
+
+const derivedRows = computed(() => {
+  const p = pressure.value
+  const c = control.value
+  const c10 = control10.value
+  return [
+    {
+      label: "PRESSÃO 5'",
+      home: fmtPct(p.mean5.home),
+      away: fmtPct(p.mean5.away),
+      pctHome: sharePct(p.mean5),
+      hint: null,
+    },
+    {
+      label: "PRESSÃO 10'",
+      home: fmtPct(p.mean10.home),
+      away: fmtPct(p.mean10.away),
+      pctHome: sharePct(p.mean10),
+      hint: null,
+    },
+    {
+      label: "PICO 10'",
+      home: fmtPct(p.max10.home),
+      away: fmtPct(p.max10.away),
+      pctHome: sharePct(p.max10),
+      hint: null,
+    },
+    { label: 'CONTROLE', home: fmtPct(c.home), away: fmtPct(c.away), pctHome: sharePct(c), hint: CONTROL_HINT },
+    { label: 'C10', home: fmtPct(c10.home), away: fmtPct(c10.away), pctHome: sharePct(c10), hint: C10_HINT },
+  ]
+})
+
+const trends = computed(() => {
+  const { mean5, meanTotal } = pressure.value
+  const dir = (recent, total) => {
+    if (recent == null || total == null) return null
+    if (recent > total + TREND_THRESHOLD) return 'up'
+    if (recent < total - TREND_THRESHOLD) return 'down'
+    return null
+  }
+  return { home: dir(mean5.home, meanTotal.home), away: dir(mean5.away, meanTotal.away) }
+})
+
+const trendTitle = (side) => {
+  const p = pressure.value
+  const pair =
+    side === 'home'
+      ? { recent: p.mean5.home, total: p.meanTotal.home }
+      : { recent: p.mean5.away, total: p.meanTotal.away }
+  if (pair.recent == null || pair.total == null) return ''
+  return `Pressão ${trends.value[side] === 'up' ? 'subindo' : 'caindo'}: últimos 5' (${fmtPct(pair.recent)}) vs média do jogo (${fmtPct(pair.total)})`
+}
+
+const statRows = computed(() => [
+  ...derivedRows.value,
+  ...STAT_LABELS.map(([key, label]) => {
     const pair = props.game.stats?.[key] || {}
     const home = pair.home
     const away = pair.away
@@ -402,9 +505,10 @@ const statRows = computed(() =>
       home: home ?? '—',
       away: away ?? '—',
       pctHome: total > 0 ? ((Number(home) || 0) / total) * 100 : null,
+      hint: null,
     }
   }),
-)
+])
 
 const odds = computed(() => props.game.odds || {})
 const prematch = computed(() => odds.value.prematch || {})
