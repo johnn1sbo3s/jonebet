@@ -447,8 +447,8 @@ const sharePct = (pair) => {
 
 const fmtPct = (v) => (v == null ? '—' : formatPercent(v * 100, 0))
 
-// Pico é exibido como valor bruto 0..1 (o "i" explica que o máximo é 1) —
-// percentual confundiria com share (49% + 13% ≠ 100%).
+// Pressão (média 5'/10' e pico) é exibida como valor bruto 0..1 — o usuário
+// aprende que pressão vai de 0 a 1; percentual confundiria com share das barras.
 const fmtRaw = (v) => (v == null ? '—' : formatNumber(v, 2))
 
 const derivedRows = computed(() => {
@@ -458,15 +458,15 @@ const derivedRows = computed(() => {
   return [
     {
       label: "PRESSÃO 5'",
-      home: fmtPct(p.mean5.home),
-      away: fmtPct(p.mean5.away),
+      home: fmtRaw(p.mean5.home),
+      away: fmtRaw(p.mean5.away),
       pctHome: sharePct(p.mean5),
       hint: null,
     },
     {
       label: "PRESSÃO 10'",
-      home: fmtPct(p.mean10.home),
-      away: fmtPct(p.mean10.away),
+      home: fmtRaw(p.mean10.home),
+      away: fmtRaw(p.mean10.away),
       pctHome: sharePct(p.mean10),
       hint: null,
     },
