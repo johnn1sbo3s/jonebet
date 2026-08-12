@@ -62,7 +62,11 @@ const navItems = [
     <UNavigationMenu :items="navItems" class="hidden xl:flex xl:justify-center" :ui="navUi" />
 
     <template #right>
-      <UNavigationMenu :items="navItems" class="hidden lg:flex xl:hidden" :ui="navUi" />
+      <div class="flex items-center gap-1.5">
+        <UNavigationMenu :items="navItems" class="hidden lg:flex xl:hidden" :ui="navUi" />
+
+        <InstallButton />
+      </div>
     </template>
 
     <template #body>
@@ -94,4 +98,6 @@ const navItems = [
       <NuxtPage />
     </UContainer>
   </UMain>
+
+  <InstallDrawer />
 </template>
