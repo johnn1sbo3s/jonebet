@@ -70,12 +70,16 @@ export function usePwaInstall() {
     try {
       await prompt.prompt()
       const { outcome } = await prompt.userChoice
-      if (outcome !== 'accepted') showInstructions()
+      if (outcome !== 'accepted') {
+        showInstructions()
+        openDrawer() // dismiss do prompt nativo → drawer aberto na 1ª interação
+      }
       // accepted → appinstalled fecha/limpa
     } catch {
       // Chrome rejeita prompt() quando o prompt já foi usado/não é permitido —
       // vira fallback de instruções, sem propagar para o caller.
       showInstructions()
+      openDrawer() // rejeição → drawer aberto na 1ª interação (CTA não fica morto)
     } finally {
       // One-shot garantido em TODOS os caminhos (sucesso, dismiss, rejeição).
       deferredPrompt = null

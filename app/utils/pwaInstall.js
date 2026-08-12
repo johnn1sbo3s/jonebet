@@ -6,7 +6,7 @@ export const AGE_GATE_KEY = 'jonebet:gambling-alert-dismissed'
 // Client-only: modo standalone (app instalado) — display-mode ou iOS.
 export function isStandalone() {
   if (typeof window === 'undefined') return false
-  if (window.matchMedia?.('(display-mode: standalone)').matches) return true
+  if (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches) return true
   return navigator.standalone === true
 }
 

@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   INSTALL_DISMISS_KEY,
   AGE_GATE_KEY,
+  isStandalone,
   isAgeGateDismissed,
   wasDismissed,
   dismissInstall,
@@ -59,6 +60,24 @@ describe('pwaInstall utils', () => {
       },
     }
     expect(isAgeGateDismissed(broken)).toBe(true)
+  })
+
+  it('isStandalone não lança sem matchMedia (WebView antigo) e retorna false', () => {
+    const mm = window.matchMedia
+    // matchMedia ausente
+    window.matchMedia = undefined
+    try {
+      expect(isStandalone()).toBe(false)
+    } finally {
+      window.matchMedia = mm
+    }
+    // matchMedia presente mas não-callable (stub de WebView antigo)
+    window.matchMedia = {}
+    try {
+      expect(isStandalone()).toBe(false)
+    } finally {
+      window.matchMedia = mm
+    }
   })
 
   it('shouldShowDrawer: exige mobile + não instalado + não dispensado + age-gate ok', () => {

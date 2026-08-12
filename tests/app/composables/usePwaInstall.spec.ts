@@ -65,9 +65,12 @@ describe('usePwaInstall', () => {
     expect(state.canPrompt).toBe(true)
     // (a) a rejeição NÃO propaga para o caller
     await expect(promptInstall()).resolves.toBeUndefined()
-    // (b) one-shot zerado mesmo no caminho de erro
+    // (b) o fallback abre o drawer com as instruções (CTA não fica morto no 1º clique)
+    expect(state.open).toBe(true)
+    expect(state.view).toBe('ios')
+    // (c) one-shot zerado mesmo no caminho de erro
     expect(state.canPrompt).toBe(false)
-    // (c) segunda chamada não re-invoca o prompt e cai no fallback de instruções
+    // (d) segunda chamada não re-invoca o prompt e cai no fallback de instruções
     await promptInstall()
     expect(prompt).toHaveBeenCalledTimes(1)
     expect(state.view).toBe('ios')
