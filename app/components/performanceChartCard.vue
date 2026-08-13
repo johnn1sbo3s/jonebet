@@ -233,10 +233,12 @@
 </template>
 
 <script setup>
-import { LineChart } from 'vue-chart-3'
+import { lineChartComponent } from '~/utils/chartSetup'
 import { formatDate } from '~/utils/formatDate'
 import { TRADING_DAYS_PER_YEAR } from '~/utils/enums'
 import { usePerformanceChartOptions, useStaticLineOptions } from '~/composables/useChartOptions'
+
+const LineChart = lineChartComponent()
 
 const props = defineProps({
   chosenModelId: { type: String, required: true },

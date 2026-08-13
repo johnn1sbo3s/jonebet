@@ -1,5 +1,5 @@
-// Chart.js options factory. The Chart.js plugins (zoom, annotation, registerables)
-// are registered once in plugins/chartjs.client.js — do NOT re-register here.
+// Chart.js options factory. The Chart.js stack (zoom, annotation, registerables)
+// is registered once in utils/chartSetup.js (ensureChartSetup) — do NOT re-register here.
 
 const TEAL = 'rgb(20 184 166)'
 const TEAL_BG = 'rgba(20, 184, 166, 0.15)'

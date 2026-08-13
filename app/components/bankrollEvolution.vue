@@ -1,10 +1,12 @@
 <template>
-  <LineChart :chart-data="chartData" :options="chartOptions" css-classes="h-64 w-full lg:h-96" />
+  <LineChart class="h-64 w-full lg:h-96" :chart-data="chartData" :options="chartOptions" />
 </template>
 
 <script setup>
-import { LineChart } from 'vue-chart-3'
+import { lineChartComponent } from '~/utils/chartSetup'
 import { useBankrollChartOptions } from '~/composables/useChartOptions'
+
+const LineChart = lineChartComponent()
 
 const props = defineProps({
   bankrollData: {

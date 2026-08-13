@@ -26,7 +26,7 @@ Chart.js (client-only plugin registration)
 **Key patterns:**
 - All data fetching lives in `app/composables/useModelApi.js` — 10 composable functions with shared LRU cache (200 entries, `useState`)
 - Zod schemas in `app/utils/schemas.js` validate every API response; mismatch returns fallback + `console.warn`, never throws
-- Chart.js plugins (zoom, annotation, registerables) registered once in `app/plugins/chartjs.client.js` — never re-register in components
+- Chart.js stack (chart.js, zoom, annotation, registerables) is lazy-loaded and registered once via `app/utils/chartSetup.js` (`ensureChartSetup`) when the first chart mounts — never re-register in components
 - No lodash — native replacements in `app/utils/lodashHelpers.js` with `_` prefix
 - `app/error.vue` is the top-level error boundary; pages let errors bubble or surface via composable `error` refs
 
@@ -40,7 +40,7 @@ Chart.js (client-only plugin registration)
 | `app/utils/` | 9 files: lodash replacements, number/date formatters, enums, timezone, zod schemas, model name resolvers |
 | `app/stores/` | Empty — Pinia installed via `@pinia/nuxt` but no stores yet |
 | `app/layouts/` | `default.vue` — responsive header with 5-item nav |
-| `app/plugins/` | `chartjs.client.js` — client-only Chart.js registration |
+| `app/plugins/` | Empty — Chart.js registration moved to `app/utils/chartSetup.js` (lazy, on first chart mount) |
 | `app/assets/css/` | `main.css` — Tailwind v4 theme tokens, animations, scrollbar styling |
 | `tests/` | Vitest specs under `tests/app/components/` |
 | `eslint-rules/` | 2 custom ESLint rules (sibling-separator, no-html-comments) |
@@ -120,7 +120,7 @@ Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`,
 | `app/composables/useModelApi.js` | Central API layer — 10 composables, LRU cache, Zod validation |
 | `app/utils/schemas.js` | Zod schemas for 11 API endpoints + `safeParse()` |
 | `app/utils/formatNumber.js` | `formatNumber`, `formatPercent`, `formatUnit` |
-| `app/plugins/chartjs.client.js` | Client-only Chart.js plugin registration |
+| `app/utils/chartSetup.js` | Lazy singleton Chart.js registration (`ensureChartSetup`) |
 | `app/assets/css/main.css` | Tailwind v4 theme tokens, animations, dark overrides |
 | `vitest.config.ts` | Test config: happy-dom, setup file, include pattern |
 | `app/test.setup.ts` | Global test mocks (chart.js, composables, Nuxt globals) |

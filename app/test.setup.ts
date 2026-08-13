@@ -3,8 +3,8 @@ import { vi } from 'vitest'
 // Stub the chart stack globally so tests don't try to render real charts.
 // `chart.js` is CJS-only and vitest can't always interop its named
 // exports (`registerables`, `Element`, etc.), so we replace the whole
-// module with harmless stubs. The plugins also import internals from
-// `chart.js`, so they're stubbed too. `LineChart` from `vue-chart-3`
+// module with harmless stubs. `utils/chartSetup.js` imports internals from
+// `chart.js` dynamically, so they're stubbed too. `LineChart` from `vue-chart-3`
 // instantiates a real `Chart` on mount, which is also stubbed. None of
 // this affects chart logic — these stubs just let the test renderer run.
 vi.mock('chart.js', () => ({
