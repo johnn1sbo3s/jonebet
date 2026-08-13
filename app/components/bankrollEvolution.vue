@@ -1,5 +1,5 @@
 <template>
-  <LineChart :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
+  <LineChart :chart-data="chartData" :options="chartOptions" css-classes="h-64 w-full lg:h-96" />
 </template>
 
 <script setup>
@@ -15,11 +15,6 @@ const props = defineProps({
 })
 
 const chartOptions = computed(() => useBankrollChartOptions())
-
-const chartStyle = ref({
-  height: '400px',
-  width: '100%',
-})
 
 const chartData = computed(() => {
   if (!props.bankrollData?.length) {

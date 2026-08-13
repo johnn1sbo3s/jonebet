@@ -4,19 +4,17 @@
       <PageHeader title="Bem-vindo(a) ao DataPlay!" />
     </div>
 
-    <TopGamesCard :fixtures="topGames" :bets="topGamesBets" :loading="topGamesLoading" />
+    <USkeleton v-if="status === 'pending'" class="h-112.5 w-full rounded-2xl" />
 
-    <USkeleton v-if="status === 'pending'" class="mt-2 h-60 w-full rounded-2xl" />
+    <DataErrorCard v-else-if="dashboardError" message="Não foi possível carregar o dashboard" />
 
     <DataErrorCard
       v-else-if="!data?.bankrollEvolution?.length"
-      class="mt-2"
-      message="Não foi possível carregar a evolução da banca"
+      icon="i-lucide-info"
+      message="Nenhum resultado disponível ainda"
     />
 
-    <DataErrorCard v-else-if="dashboardError" class="mt-2" message="Não foi possível carregar o dashboard" />
-
-    <div v-else class="mt-2 flex flex-col gap-3 lg:flex-row">
+    <div v-else class="flex flex-col gap-3 lg:flex-row">
       <UCard class="w-full border border-zinc-800 bg-zinc-900 lg:w-[70%]">
         <template #header>
           <div>
@@ -73,9 +71,9 @@
       </UCard>
     </div>
 
-    <USkeleton v-if="status === 'pending'" class="h-60 w-full rounded-2xl" />
+    <USkeleton v-if="status === 'pending'" class="h-112.5 w-full rounded-2xl lg:h-44" />
 
-    <UCard v-else id="yesterday-metrics" class="border border-zinc-800 bg-zinc-900">
+    <UCard v-else-if="!dashboardError" id="yesterday-metrics" class="border border-zinc-800 bg-zinc-900">
       <template #header>
         <div class="flex items-center justify-between">
           <p class="font-semibold text-white">Resultados de {{ formatDate(chosenDateIso) }}</p>
@@ -87,12 +85,18 @@
       </template>
 
       <DataErrorCard
-        v-if="!yesterdayData?.results?.length && !dayLoading"
+        v-if="yesterdayData === null && !dayLoading"
         :message="`Não foi possível carregar os resultados de ${formatDate(chosenDateIso)}`"
       />
 
+      <DataErrorCard
+        v-else-if="!yesterdayData?.results?.length && !dayLoading"
+        icon="i-lucide-info"
+        :message="`Nenhum resultado disponível para ${formatDate(chosenDateIso)}`"
+      />
+
       <template v-else>
-        <USkeleton v-if="dayLoading" class="h-60 w-full rounded-2xl" />
+        <USkeleton v-if="dayLoading" class="h-112.5 w-full rounded-2xl lg:h-44" />
 
         <div v-else class="flex w-full flex-col items-stretch gap-2 lg:flex-row">
           <div class="min-w-0 flex-1">
@@ -118,17 +122,15 @@
       </template>
     </UCard>
 
-    <USkeleton v-if="status === 'pending'" class="h-60 w-full rounded-2xl" />
-
-    <DataErrorCard v-else-if="dashboardError" message="Não foi possível carregar os resultados do mês" />
+    <USkeleton v-if="status === 'pending'" class="h-112.5 w-full rounded-2xl lg:h-44" />
 
     <DataErrorCard
-      v-else-if="!data?.month?.results?.length"
+      v-else-if="!dashboardError && !data?.month?.results?.length"
       icon="i-lucide-info"
       :message="`Nenhum resultado disponível para ${currentMonthLabel} ainda`"
     />
 
-    <UCard v-else id="month-metrics" class="border border-zinc-800 bg-zinc-900">
+    <UCard v-else-if="!dashboardError" id="month-metrics" class="border border-zinc-800 bg-zinc-900">
       <template #header>
         <p class="font-semibold text-white">Resultados do mês</p>
       </template>
@@ -288,9 +290,4 @@ if (data.value?.yesterday?.results?.length) {
 watch(chosenDateIso, (newDate) => {
   if (newDate) fetchDayResults(newDate)
 })
-
-// Top Games (from dashboard response)
-const topGames = computed(() => data.value?.topGames?.fixtures || [])
-const topGamesBets = computed(() => data.value?.topGames?.bets || [])
-const topGamesLoading = computed(() => status.value === 'pending')
 </script>

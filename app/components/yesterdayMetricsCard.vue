@@ -21,7 +21,7 @@
     </template>
 
     <template #footer>
-      <p class="text-xs text-zinc-500">Considerando stake = 1% da banca</p>
+      <p class="text-xs text-zinc-400">Considerando stake = 1% da banca</p>
     </template>
   </UCard>
 </template>

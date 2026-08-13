@@ -2,11 +2,11 @@
   <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
     <div class="flex items-center gap-3">
       <div class="flex flex-col gap-1">
-        <h1 class="align-middle text-xl font-semibold sm:text-2xl">
+        <h1 class="align-middle text-xl font-semibold text-white sm:text-2xl">
           <slot name="title">{{ title }}</slot>
         </h1>
 
-        <div v-if="description" class="text-sm text-slate-500">
+        <div v-if="description" class="text-sm text-zinc-400">
           {{ description }}
         </div>
       </div>
