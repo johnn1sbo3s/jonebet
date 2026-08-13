@@ -33,9 +33,6 @@ export function useBankrollChartOptions() {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    transitions: {
-      zoom: { animation: { duration: 1000, easing: 'easeOutCubic' } },
-    },
     scales: {
       // Eixo X com meses (ex.: "Janeiro/24"): limitar os ticks pra não poluir
       // com 30+ meses — autoSkip pega a cada N meses com espaçamento uniforme.
@@ -54,15 +51,6 @@ export function useBankrollChartOptions() {
     },
     plugins: {
       legend: { position: 'top', display: true, labels: { color: ZINC_LABEL } },
-      zoom: {
-        zoom: {
-          wheel: { enabled: true },
-          pinch: { enabled: true },
-          mode: 'x',
-          drag: { enabled: true, borderColor: TEAL, borderWidth: 1, backgroundColor: TEAL_BG },
-        },
-        pan: { enabled: true, mode: 'x', modifierKey: 'ctrl' },
-      },
       annotation: {
         annotations: {
           line1: { type: 'line', xMin: -100, xMax: -100, borderColor: TEAL, borderWidth: 2 },
