@@ -60,6 +60,14 @@ export default defineNuxtConfig({
     },
   },
 
+  // Home (dashboard) is public and its data changes by day, not by second.
+  // Cache the SSR HTML at the CDN edge for 60s (stale-while-revalidate): the
+  // first hit renders server-side, everyone else in the window gets the edge
+  // copy (~50ms) with no SSR run and no API call.
+  routeRules: {
+    '/': { swr: 60 },
+  },
+
   vite: {
     optimizeDeps: {
       include: ['chart.js', 'chartjs-plugin-annotation', 'chartjs-plugin-zoom', 'luxon', 'pinia', 'vue-chart-3', 'zod'],
