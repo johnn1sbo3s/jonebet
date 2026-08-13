@@ -61,11 +61,16 @@ export default defineNuxtConfig({
   },
 
   // Home (dashboard) is public and its data changes by day, not by second.
-  // Cache the SSR HTML at the CDN edge for 60s (stale-while-revalidate): the
-  // first hit renders server-side, everyone else in the window gets the edge
-  // copy (~50ms) with no SSR run and no API call.
+  // Cache the SSR HTML at the CDN edge for 60s, then serve stale for up to
+  // 60s more while revalidating in background. max-age=0 keeps browsers from
+  // caching it themselves. (swr:60 mapped to a bare stale-while-revalidate
+  // that Vercel served indefinitely — explicit header bounds staleness.)
   routeRules: {
-    '/': { swr: 60 },
+    '/': {
+      headers: {
+        'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=60',
+      },
+    },
   },
 
   vite: {
