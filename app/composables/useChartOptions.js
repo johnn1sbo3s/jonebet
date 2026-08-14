@@ -47,7 +47,7 @@ export function useBankrollChartOptions() {
         },
         grid: { color: ZINC_GRID },
       },
-      y: { ticks: { color: ZINC_TICK }, grid: { color: ZINC_GRID } },
+      y: { beginAtZero: true, ticks: { color: ZINC_TICK }, grid: { color: ZINC_GRID } },
     },
     plugins: {
       legend: { position: 'top', display: true, labels: { color: ZINC_LABEL } },

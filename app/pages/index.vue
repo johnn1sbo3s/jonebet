@@ -241,8 +241,8 @@ const resultsByMonth = computed(() => {
 const totalProfit = computed(() => {
   const b = data.value?.bankrollEvolution
   if (!b?.length) return 0
-  const sum = b.reduce((acc, item) => acc + item.profit, 0)
-  return Math.round(sum * 100) / 100
+  // A API serve a série acumulada — o total é o último valor (lucro total)
+  return b.at(-1).bankroll
 })
 
 const dayMetrics = computed(() => {
