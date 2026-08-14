@@ -22,14 +22,23 @@ const chartData = computed(() => {
   if (!props.bankrollData?.length) {
     return { labels: [], datasets: [] }
   }
-  const labels = props.bankrollData.map((item) => item.month)
-  const data = props.bankrollData.map((item) => item.bankroll)
+  // Série de lucro acumulado: começa em 0 e soma os profits mês a mês.
+  // O campo `bankroll` da API inclui 100u de capital inicial — não usar aqui
+  // para o acumulado bater com a soma dos resultados mensais do dashboard.
+  let accumulated = 0
+  const labels = ['']
+  const data = [0]
+  for (const item of props.bankrollData) {
+    accumulated = Math.round((accumulated + item.profit) * 100) / 100
+    labels.push(item.month)
+    data.push(accumulated)
+  }
 
   return {
     labels: labels,
     datasets: [
       {
-        label: 'Acúmulo de capital',
+        label: 'Lucro acumulado',
         data: data,
         borderColor: '#14B8A6',
         backgroundColor: 'rgba(20, 184, 166, 0.1)',

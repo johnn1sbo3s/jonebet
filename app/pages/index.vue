@@ -18,9 +18,9 @@
       <UCard class="w-full border border-zinc-800 bg-zinc-900 lg:w-[70%]">
         <template #header>
           <div>
-            <p class="font-semibold text-white">Evolução da banca</p>
+            <p class="font-semibold text-white">Lucro acumulado</p>
 
-            <p class="text-xs text-zinc-400">Crescimento da banca mês a mês desde Janeiro de 2024</p>
+            <p class="text-xs text-zinc-400">Acúmulo de lucro mês a mês desde Janeiro de 2024</p>
           </div>
         </template>
 
@@ -240,8 +240,9 @@ const resultsByMonth = computed(() => {
 
 const totalProfit = computed(() => {
   const b = data.value?.bankrollEvolution
-  if (!b?.length || b.length < 2) return 0
-  return b.at(-1).bankroll - b.at(0).bankroll
+  if (!b?.length) return 0
+  const sum = b.reduce((acc, item) => acc + item.profit, 0)
+  return Math.round(sum * 100) / 100
 })
 
 const dayMetrics = computed(() => {
