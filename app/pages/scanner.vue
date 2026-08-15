@@ -74,28 +74,50 @@
 
       <template v-if="favoriteGames.length">
         <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
-          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <header
+            role="button"
+            tabindex="0"
+            class="mb-3 flex cursor-pointer flex-wrap items-center justify-between gap-2 select-none"
+            :aria-expanded="!favoritesCollapsed"
+            aria-controls="favorites-collapse"
+            @click="toggleFavoritesCollapsed"
+            @keydown.enter.prevent="toggleFavoritesCollapsed"
+            @keydown.space.prevent="toggleFavoritesCollapsed"
+          >
             <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
               <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
               Jogos favoritos
             </h2>
 
-            <span
-              class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
-            >
-              {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
+            <span class="flex items-center gap-2">
+              <span
+                class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+              >
+                {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
+              </span>
+
+              <UIcon
+                name="i-lucide-chevron-down"
+                mode="svg"
+                class="size-4 text-zinc-500 transition-transform duration-250 ease-in-out"
+                :class="{ 'rotate-180': favoritesCollapsed }"
+              />
             </span>
           </header>
 
-          <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            <ScannerCard
-              v-for="game in favoriteGames"
-              :id="`game-${game.id}`"
-              :key="game.id"
-              :game="game"
-              :highlighted="game.id === activeHighlight"
-            />
-          </TransitionGroup>
+          <Transition :duration="250" @enter="onCollapseEnter" @leave="onCollapseLeave">
+            <div v-show="!favoritesCollapsed" id="favorites-collapse">
+              <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+                <ScannerCard
+                  v-for="game in favoriteGames"
+                  :id="`game-${game.id}`"
+                  :key="game.id"
+                  :game="game"
+                  :highlighted="game.id === activeHighlight"
+                />
+              </TransitionGroup>
+            </div>
+          </Transition>
         </section>
 
         <USeparator />
@@ -144,6 +166,21 @@ const oddsPresetOptions = ODDS_PRESET_OPTIONS
 const filtersActive = computed(
   () => onlyNotified.value || oddsPreset.value !== 'todos' || normalizeSearchText(query.value) !== '',
 )
+
+// Favoritos colapsados — preferência de view persistida. Default expandido.
+const favoritesCollapsed = ref(false)
+let favoritesCollapsedReady = false // evita persistir o valor default antes da leitura do storage
+
+onMounted(() => {
+  favoritesCollapsed.value = localStorage.getItem('dataPlay.scanner.favoritesCollapsed') === '1'
+  favoritesCollapsedReady = true
+})
+
+function toggleFavoritesCollapsed() {
+  favoritesCollapsed.value = !favoritesCollapsed.value
+  if (!favoritesCollapsedReady) return // nunca acontece via clique (pós-mount), só guard
+  localStorage.setItem('dataPlay.scanner.favoritesCollapsed', favoritesCollapsed.value ? '1' : '0')
+}
 
 // Destaque vindo do Telegram (?game=<id>): id ainda não encontrado no
 // snapshot (highlightId) vs. id atualmente destacado (activeHighlight).
@@ -283,4 +320,32 @@ onUnmounted(() => {
   clearTimeout(highlightTimer)
   document.removeEventListener('visibilitychange', onVisibilityChange)
 })
+
+// Accordion suave: anima 0 ↔ altura real do conteúdo (grid responsivo 1–3 colunas).
+function onCollapseEnter(el, done) {
+  el.style.height = '0'
+  el.style.overflow = 'hidden'
+  el.offsetHeight // força reflow para a transição partir de 0
+  el.style.height = `${el.scrollHeight}px`
+  el.style.transition = 'height 250ms ease-in-out'
+  el.addEventListener(
+    'transitionend',
+    () => {
+      el.style.height = ''
+      el.style.overflow = ''
+      el.style.transition = ''
+      done()
+    },
+    { once: true },
+  )
+}
+
+function onCollapseLeave(el, done) {
+  el.style.height = `${el.scrollHeight}px`
+  el.offsetHeight // força reflow para partir da altura atual
+  el.style.height = '0'
+  el.style.overflow = 'hidden'
+  el.style.transition = 'height 250ms ease-in-out'
+  el.addEventListener('transitionend', done, { once: true })
+}
 </script>
