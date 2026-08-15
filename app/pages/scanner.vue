@@ -53,7 +53,7 @@
         <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-52" />
 
         <div class="flex w-full flex-wrap items-center justify-end gap-2 md:w-auto">
-          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" size="sm" full-width />
+          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
 
           <USwitch
             v-model="onlyNotified"

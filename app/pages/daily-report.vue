@@ -73,26 +73,34 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
+      <div class="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+        <div class="flex flex-col gap-1.5">
+          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Visualização</span>
 
-        <div class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-          <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+          <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
+        </div>
 
-          <USelectMenu
-            v-model="selected"
-            :items="strategyOptions"
-            multiple
-            clear
-            value-key="value"
-            class="w-full md:w-64"
-          >
-            <template #default>
-              <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
-            </template>
-          </USelectMenu>
+        <div class="flex flex-col gap-1.5">
+          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Filtros</span>
 
-          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" size="sm" full-width />
+          <div class="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+            <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+
+            <USelectMenu
+              v-model="selected"
+              :items="strategyOptions"
+              multiple
+              clear
+              value-key="value"
+              class="w-full md:w-64"
+            >
+              <template #default>
+                <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
+              </template>
+            </USelectMenu>
+
+            <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
+          </div>
         </div>
       </div>
 
