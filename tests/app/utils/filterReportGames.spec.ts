@@ -86,3 +86,71 @@ describe('filterReportGames', () => {
     expect(filterReportGames(games, { selected: [] })).toHaveLength(4)
   })
 })
+
+describe('filterReportGames — preset de odds', () => {
+  const oddsGames = [
+    {
+      jogo_id: '5',
+      home: 'São Paulo',
+      away: 'Botafogo',
+      league: 'Brasileirão',
+      estrategias: [],
+      odds: { h: 1.35, a: 4.0 },
+    },
+    {
+      jogo_id: '6',
+      home: 'Corinthians',
+      away: 'Flamengo',
+      league: 'Brasileirão',
+      estrategias: [],
+      odds: { h: 2.3, a: 1.9 },
+    },
+    { jogo_id: '7', home: 'Avaí', away: 'CRB', league: 'Série B', estrategias: [], odds: { h: 2.1, a: 2.2 } },
+    {
+      jogo_id: '8',
+      home: 'Ponte Preta',
+      away: 'Guarani',
+      league: 'Série B',
+      estrategias: [],
+      odds: { h: null, a: null },
+    },
+  ]
+
+  it('super filtra pela menor odd ≤ 1.40', () => {
+    expect(filterReportGames(oddsGames, { oddsPreset: 'super' }).map((g) => g.jogo_id)).toEqual(['5'])
+  })
+
+  it('favoritos pega o lado fora (min 1.41–2.05)', () => {
+    expect(filterReportGames(oddsGames, { oddsPreset: 'favoritos' }).map((g) => g.jogo_id)).toEqual(['6'])
+  })
+
+  it('fav_por_odd pega jogos com os dois lados acima de 2.05', () => {
+    expect(filterReportGames(oddsGames, { oddsPreset: 'fav_por_odd' }).map((g) => g.jogo_id)).toEqual(['7'])
+  })
+
+  it('odds nulas nos dois lados saem com preset ativo', () => {
+    expect(filterReportGames(oddsGames, { oddsPreset: 'super' }).some((g) => g.jogo_id === '8')).toBe(false)
+  })
+
+  it('todos (default) mantém jogos sem odds', () => {
+    expect(filterReportGames(oddsGames, {})).toHaveLength(4)
+  })
+
+  it('combina com busca e estratégias (interseção)', () => {
+    expect(filterReportGames(oddsGames, { query: 'avai', oddsPreset: 'fav_por_odd' }).map((g) => g.jogo_id)).toEqual([
+      '7',
+    ])
+    const withStrategy = [
+      {
+        jogo_id: '9',
+        home: 'A',
+        away: 'B',
+        league: 'L',
+        estrategias: [{ estrategia: 'gol_1t' }],
+        odds: { h: 1.8, a: 2.2 },
+      },
+    ]
+    expect(filterReportGames(withStrategy, { selected: ['gol_1t'], oddsPreset: 'favoritos' })).toHaveLength(1)
+    expect(filterReportGames(withStrategy, { selected: ['lay_zebra'], oddsPreset: 'favoritos' })).toHaveLength(0)
+  })
+})

@@ -91,3 +91,74 @@ describe('filterScannerGames', () => {
     expect(filterScannerGames(games, { query: 'avai', onlyNotified: true, now: NOW })).toHaveLength(0)
   })
 })
+
+describe('filterScannerGames — preset de odds', () => {
+  const oddsGames = [
+    {
+      id: 'o1',
+      home: 'São Paulo',
+      away: 'Botafogo',
+      league: 'Brasileirão',
+      notifications: [],
+      odds: { prematch: { home: 1.3, away: 4.2 } },
+    },
+    {
+      id: 'o2',
+      home: 'Corinthians',
+      away: 'Flamengo',
+      league: 'Brasileirão',
+      notifications: [],
+      odds: { prematch: { home: 2.4, away: 1.6 } },
+    },
+    {
+      id: 'o3',
+      home: 'Avaí',
+      away: 'CRB',
+      league: 'Série B',
+      notifications: [],
+      odds: { prematch: { home: 2.2, away: 2.4 } },
+    },
+    { id: 'o4', home: 'Ponte Preta', away: 'Guarani', league: 'Série B', notifications: [], odds: {} },
+  ]
+
+  it('super filtra pela menor odd ≤ 1.40', () => {
+    expect(filterScannerGames(oddsGames, { oddsPreset: 'super' }).map((g) => g.id)).toEqual(['o1'])
+  })
+
+  it('favoritos pega o lado fora (min 1.41–2.05)', () => {
+    expect(filterScannerGames(oddsGames, { oddsPreset: 'favoritos' }).map((g) => g.id)).toEqual(['o2'])
+  })
+
+  it('fav_por_odd pega jogos com os dois lados acima de 2.05', () => {
+    expect(filterScannerGames(oddsGames, { oddsPreset: 'fav_por_odd' }).map((g) => g.id)).toEqual(['o3'])
+  })
+
+  it('jogo sem prematch sai com preset ativo', () => {
+    expect(filterScannerGames(oddsGames, { oddsPreset: 'super' }).some((g) => g.id === 'o4')).toBe(false)
+  })
+
+  it('todos (default) mantém jogos sem odds', () => {
+    expect(filterScannerGames(oddsGames, {})).toHaveLength(4)
+  })
+
+  it('combina com busca (interseção)', () => {
+    expect(filterScannerGames(oddsGames, { query: 'avai', oddsPreset: 'fav_por_odd' }).map((g) => g.id)).toEqual(['o3'])
+    expect(filterScannerGames(oddsGames, { query: 'flamengo', oddsPreset: 'fav_por_odd' })).toHaveLength(0)
+  })
+
+  it('combina com só notificados (interseção)', () => {
+    const recent = [{ rule: 'r', label: 'l', minute: 1, at: '2026-08-11T19:59:00-03:00' }]
+    const g = [
+      {
+        id: 'o5',
+        home: 'A',
+        away: 'B',
+        league: 'L',
+        notifications: recent,
+        odds: { prematch: { home: 1.3, away: 4 } },
+      },
+    ]
+    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'super', now: NOW })).toHaveLength(1)
+    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'favoritos', now: NOW })).toHaveLength(0)
+  })
+})
