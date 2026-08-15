@@ -210,6 +210,8 @@ else:
 # graphify-relabel-start
 # Auto LLM re-labeling: se o rebuild renomeou comunidades por hub (sem LLM),
 # roda `graphify label --backend openai` em background; commit não bloqueia.
+# Saídas do watcher: rebuild terminou ("updated in"), sem código ("skipping
+# rebuild") ou sem mudança topológica ("outputs left untouched").
 (
   _REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
   cd "$_REPO" || exit 0
@@ -221,6 +223,7 @@ else:
     _SEC=$(tail -c +$((_POS + 1)) "$_LOG" 2>/dev/null)
     echo "$_SEC" | grep -q "updated in $_REPO/graphify-out" && break
     echo "$_SEC" | grep -q "skipping rebuild" && exit 0
+    echo "$_SEC" | grep -q "outputs left untouched" && exit 0
     sleep 1
   done
   _NEW=$(tail -c +$((_POS + 1)) "$_LOG" 2>/dev/null)
@@ -229,5 +232,5 @@ else:
     eval "$(grep -E '^export OPENAI_' "$HOME/.zprofile" 2>/dev/null)"
     "$GRAPHIFY_PYTHON" -m graphify label . --backend openai >> "$_LOG" 2>&1
   fi
-) &
+) >/dev/null 2>&1 &
 # graphify-relabel-end
