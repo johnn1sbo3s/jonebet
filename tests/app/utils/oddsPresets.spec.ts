@@ -56,6 +56,7 @@ describe('matchesOddsPreset', () => {
 
   it('preset desconhecido → false', () => {
     expect(matchesOddsPreset('inexistente', { home: 1.5, away: 2 })).toBe(false)
+    expect(matchesOddsPreset('toString', { home: 1.5, away: 2 })).toBe(false)
   })
 })
 

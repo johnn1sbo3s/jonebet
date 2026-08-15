@@ -45,7 +45,7 @@ export function matchesOddsPreset(preset, odds) {
   if (preset === 'todos') return true
   const min = minTeamOdd(odds)
   if (min === null) return false
-  const band = ODDS_PRESETS[preset]
+  const band = Object.hasOwn(ODDS_PRESETS, preset) ? ODDS_PRESETS[preset] : null
   if (!band) return false
   if (band.min != null && min < band.min) return false
   if (band.max != null && min > band.max) return false
