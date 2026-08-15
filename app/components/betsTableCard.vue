@@ -1,43 +1,52 @@
 <template>
   <UCard class="border border-zinc-800 bg-zinc-900">
     <template #header>
-      <p class="font-semibold">Jogos reais</p>
+      <h2 class="font-semibold">Jogos reais</h2>
     </template>
 
     <p class="mb-3 text-sm">{{ betsTotal }} jogos</p>
 
-    <UTable
-      ref="tableRef"
-      class="h-96"
-      :ui="{
-        wrapper: 'relative overflow-x-auto overflow-y-auto border border-muted rounded-lg',
-        thead: 'sticky top-0 z-10',
-        th: 'bg-zinc-950',
-      }"
-      :data="betsItems"
-      :columns="allBetsDataFilteredColumns"
-    >
-      <template #date-cell="{ row }">
-        {{ formatDate(row.original.date) }}
-      </template>
+    <div class="hidden md:block">
+      <UTable
+        ref="tableRef"
+        class="h-96"
+        :ui="{
+          wrapper: 'relative overflow-x-auto overflow-y-auto border border-muted rounded-lg',
+          thead: 'sticky top-0 z-10',
+          th: 'bg-zinc-950',
+        }"
+        :data="betsItems"
+        :columns="allBetsDataFilteredColumns"
+      >
+        <template #date-cell="{ row }">
+          {{ formatDate(row.original.date) }}
+        </template>
 
-      <template #odds-cell="{ row }">
-        {{ formatNumber(row.original.odds) }}
-      </template>
+        <template #odds-cell="{ row }">
+          {{ formatNumber(row.original.odds) }}
+        </template>
 
-      <template #result-cell="{ row }">
-        <span :class="row.original.result?.toLowerCase() === 'green' ? 'text-teal-400' : 'text-red-400'">
-          {{ row.original.result ? row.original.result[0].toUpperCase() + row.original.result.slice(1) : '—' }}
-        </span>
-      </template>
+        <template #result-cell="{ row }">
+          <span :class="row.original.result?.toLowerCase() === 'green' ? 'text-teal-400' : 'text-red-400'">
+            {{ row.original.result ? row.original.result[0].toUpperCase() + row.original.result.slice(1) : '—' }}
+          </span>
+        </template>
 
-      <template #profit-cell="{ row }">
-        {{ formatUnit(row.original.profit) }}
-      </template>
-    </UTable>
+        <template #profit-cell="{ row }">
+          {{ formatUnit(row.original.profit) }}
+        </template>
+      </UTable>
+    </div>
+
+    <ul class="flex flex-col gap-3 md:hidden">
+      <li v-for="bet in betsItems" :key="`${bet.date}-${bet.home}-${bet.away}-${bet.odds}`">
+        <BetsListCard :bet="bet" />
+      </li>
+    </ul>
 
     <div class="flex justify-center pt-3">
       <UPagination
+        class="max-md:[&_button]:h-10 max-md:[&_button]:min-w-10"
         :page="page"
         :items-per-page="betsSize"
         :total="betsTotal"

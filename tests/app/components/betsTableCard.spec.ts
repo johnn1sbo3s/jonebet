@@ -37,4 +37,16 @@ describe('BetsTableCard', () => {
     await next.trigger('click')
     expect(wrapper.emitted('update:page')?.[0]).toEqual([2])
   })
+
+  it('renders the card list for mobile with the real bet fields', async () => {
+    const realBets = [
+      { date: '2026-08-14', home: 'Palmeiras', away: 'Internacional', odds: 1.85, profit: 2.15, result: 'green' },
+    ]
+    const wrapper = await mountSuspended(BetsTableCard, {
+      props: { betsItems: realBets, betsTotal: 250, page: 1, betsTotalPages: 3, betsSize: 100 },
+    })
+    const cards = wrapper.findAllComponents({ name: 'BetsListCard' })
+    expect(cards).toHaveLength(1)
+    expect(cards[0].text()).toContain('Palmeiras')
+  })
 })
