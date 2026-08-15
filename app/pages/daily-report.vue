@@ -76,7 +76,7 @@
       <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
 
-        <div class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-center">
+        <div class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
           <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
 
           <USelectMenu
@@ -91,6 +91,8 @@
               <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
             </template>
           </USelectMenu>
+
+          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" size="sm" full-width />
         </div>
       </div>
 
@@ -153,6 +155,7 @@ import { formatDate } from '~/utils/formatDate'
 import { SP_TZ } from '~/utils/timezone'
 import { ANY_STRATEGY, filterReportGames } from '~/utils/filterReportGames'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
+import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 
 const { state, load } = useDailyReport()
 const { favoritesOf } = useFavorites()
@@ -212,6 +215,8 @@ const viewOptions = [
 // re-mount da página.
 const query = ref('')
 const selected = ref([])
+const oddsPreset = ref('todos')
+const oddsPresetOptions = ODDS_PRESET_OPTIONS
 
 // Opções do multiselect: "Com recomendação" + as estratégias distintas do
 // relatório do dia, em ordem alfabética do nome natural (nunca lista fixa).
@@ -240,7 +245,11 @@ const triggerLabel = computed(() => {
 // Jogos que passam busca + estratégias; alimenta os dois agrupamentos
 // (liga/horário). Favoritos continuam na lista completa — seção fixa no topo.
 const filteredJogos = computed(() =>
-  filterReportGames(state.response?.jogos || [], { query: query.value, selected: selected.value }),
+  filterReportGames(state.response?.jogos || [], {
+    query: query.value,
+    selected: selected.value,
+    oddsPreset: oddsPreset.value,
+  }),
 )
 
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
