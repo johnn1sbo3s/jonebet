@@ -13,7 +13,7 @@ export const ODDS_PRESETS = {
 
 export const ODDS_PRESET_LABELS = {
   todos: 'Todos',
-  super: 'Super',
+  super: 'Super fav.',
   favoritos: 'Favoritos',
   fav_por_odd: 'Fav. por odd',
 }
