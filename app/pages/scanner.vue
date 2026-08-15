@@ -77,7 +77,7 @@
           <header
             role="button"
             tabindex="0"
-            class="mb-3 flex cursor-pointer flex-wrap items-center justify-between gap-2 select-none"
+            class="flex cursor-pointer flex-wrap items-center justify-between gap-2 select-none"
             :aria-expanded="!favoritesCollapsed"
             aria-controls="favorites-collapse"
             @click="toggleFavoritesCollapsed"
@@ -106,7 +106,7 @@
           </header>
 
           <Transition :duration="250" @enter="onCollapseEnter" @leave="onCollapseLeave">
-            <div v-show="!favoritesCollapsed" id="favorites-collapse">
+            <div v-show="!favoritesCollapsed" id="favorites-collapse" class="mt-3">
               <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                 <ScannerCard
                   v-for="game in favoriteGames"
