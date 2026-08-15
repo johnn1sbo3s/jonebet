@@ -27,7 +27,13 @@
         <UButton color="secondary" variant="soft" size="sm" @click="resetsZoom">Restaurar zoom</UButton>
       </div>
 
-      <LineChart :key="chartKey" class="w-full" :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
+      <ClientOnly>
+        <LineChart :key="chartKey" class="w-full" :chart-data="chartData" :options="chartOptions" :style="chartStyle" />
+
+        <template #fallback>
+          <div class="w-full" :style="chartStyle" />
+        </template>
+      </ClientOnly>
 
       <div class="mt-3 border-t border-zinc-800 pt-3">
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -94,13 +100,19 @@
           </p>
         </div>
 
-        <LineChart
-          :key="`dd-${chartKey}`"
-          class="w-full"
-          :chart-data="drawdownChartData"
-          :options="drawdownOptions"
-          :style="{ height: '72px' }"
-        />
+        <ClientOnly>
+          <LineChart
+            :key="`dd-${chartKey}`"
+            class="w-full"
+            :chart-data="drawdownChartData"
+            :options="drawdownOptions"
+            :style="{ height: '72px' }"
+          />
+
+          <template #fallback>
+            <div class="w-full" :style="{ height: '72px' }" />
+          </template>
+        </ClientOnly>
       </div>
 
       <div v-if="dailyStats" class="mt-3 grid grid-cols-2 gap-3 border-t border-zinc-800 pt-3 sm:grid-cols-3">

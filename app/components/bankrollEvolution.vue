@@ -1,5 +1,11 @@
 <template>
-  <LineChart class="h-64 w-full lg:h-96" :chart-data="chartData" :options="chartOptions" />
+  <ClientOnly>
+    <LineChart class="h-64 w-full lg:h-96" :chart-data="chartData" :options="chartOptions" />
+
+    <template #fallback>
+      <div class="h-64 w-full lg:h-96" />
+    </template>
+  </ClientOnly>
 </template>
 
 <script setup>
