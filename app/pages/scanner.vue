@@ -142,9 +142,10 @@ const highlightId = ref(route.query.game ? String(route.query.game) : null)
 const activeHighlight = ref(null)
 let highlightTimer
 
-let inFlight = false
-let pollTimer
 let tickTimer
+let pollActive = true
+let pollController = null
+let lastVersion = null
 
 const games = computed(() => snapshot.value?.games || [])
 
@@ -159,28 +160,71 @@ const otherGames = computed(() =>
   ),
 )
 
-async function loadSnapshot() {
-  if (inFlight) return
-  inFlight = true
-  try {
-    const data = await $fetch(config.public.SCANNER_SNAPSHOT_URL)
-    const parsed = safeParse('scannerSnapshot', data)
-    const localHistory = loadLocalHistory()
-    const games = (parsed.games || []).map((g) => {
-      const merged = mergeHistories(g.notifications, localHistory[g.id])
-      return { ...g, notifications: merged }
-    })
-    saveLocalHistory(pruneLocalHistory(games))
-    snapshot.value = { ...parsed, games }
-    fetchError.value = false
-    offline.value = false
-    maybeHighlight(games)
-  } catch {
-    fetchError.value = true
-    offline.value = true
-  } finally {
-    inFlight = false
-    loading.value = false
+// Aplica um snapshot já validado pelo safeParse no estado da página.
+function applySnapshot(parsed) {
+  const localHistory = loadLocalHistory()
+  const games = (parsed.games || []).map((g) => {
+    const merged = mergeHistories(g.notifications, localHistory[g.id])
+    return { ...g, notifications: merged }
+  })
+  saveLocalHistory(pruneLocalHistory(games))
+  snapshot.value = { ...parsed, games }
+  loading.value = false
+  maybeHighlight(games)
+}
+
+// Sleep abortável: o kick (volta à aba) interrompe backoff/fallback na hora.
+function sleep(ms, signal) {
+  return new Promise((resolve) => {
+    if (signal?.aborted) return resolve()
+    const t = setTimeout(resolve, ms)
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(t)
+        resolve()
+      },
+      { once: true },
+    )
+  })
+}
+
+// Loop de long polling: sempre há um request no ar; resposta com a mesma
+// versão (hold expirou sem mudança) → re-pede na hora.
+async function pollLoop() {
+  while (pollActive) {
+    const controller = new AbortController()
+    pollController = controller
+    try {
+      const base = config.public.SCANNER_SNAPSHOT_URL
+      const url = lastVersion == null ? base : `${base}?v=${lastVersion}`
+      const signal =
+        typeof AbortSignal.any === 'function'
+          ? AbortSignal.any([controller.signal, AbortSignal.timeout(35_000)])
+          : controller.signal // browsers sem AbortSignal.any (Safari <17.4, Chrome <116): só o abort manual
+      const data = await $fetch(url, { signal })
+      if (!pollActive) return
+      const parsed = safeParse('scannerSnapshot', data)
+      fetchError.value = false
+      offline.value = false // todo sucesso limpa os flags, inclusive no caso de mesma versão
+      if (parsed?.version == null) {
+        // Backend antigo (sem version): fallback polling de 10s.
+        applySnapshot(parsed)
+        await sleep(10_000, controller.signal)
+        continue
+      }
+      if (parsed.version === lastVersion) continue // hold expirou sem mudança: re-pede já
+      lastVersion = parsed.version
+      applySnapshot(parsed)
+    } catch {
+      if (!pollActive) return
+      if (controller.signal.aborted) continue // abort intencional (kick/unmount): re-pede já
+      // Timeout de 35s (request preso) cai aqui: tratado como erro de rede.
+      fetchError.value = true
+      offline.value = true
+      loading.value = false // primeiro erro sai do skeleton e mostra o painel de erro
+      await sleep(5_000, controller.signal)
+    }
   }
 }
 
@@ -208,17 +252,26 @@ function tick() {
   updatedAgo.value = formatUpdatedAgo(snapshot.value?.generated_at)
 }
 
+// Browser pausa timers em aba em background: ao voltar pro foco, aborta o
+// hold em voo — o loop acorda (catch com controller.signal.aborted → continue,
+// ou sleep abortável resolvendo cedo) e re-pede na hora. Sem fetch concorrente.
+function onVisibilityChange() {
+  if (document.visibilityState === 'visible') pollController?.abort()
+}
+
 onMounted(() => {
   // URL limpa depois de ler o parâmetro: refresh não re-dispara o destaque.
   if (route.query.game) router.replace({ query: {} })
-  loadSnapshot()
-  pollTimer = setInterval(loadSnapshot, 40_000)
+  pollLoop()
   tickTimer = setInterval(tick, 1000)
+  document.addEventListener('visibilitychange', onVisibilityChange)
 })
 
 onUnmounted(() => {
-  clearInterval(pollTimer)
+  pollActive = false
+  pollController?.abort()
   clearInterval(tickTimer)
   clearTimeout(highlightTimer)
+  document.removeEventListener('visibilitychange', onVisibilityChange)
 })
 </script>
