@@ -49,29 +49,27 @@
     <div v-else-if="games.length === 0" class="py-16 text-center text-sm text-zinc-500">Nenhum jogo ao vivo agora</div>
 
     <div v-else class="flex flex-col gap-4">
-      <div class="flex flex-col items-stretch gap-1.5 md:items-end">
-        <div class="flex w-full flex-col gap-1.5 md:w-auto">
-          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Filtros</span>
+      <div class="flex flex-col gap-1.5">
+        <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Filtros</span>
 
-          <div class="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
-            <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+        <div class="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+          <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
 
-            <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
+          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
 
-            <div class="flex items-center justify-end gap-2">
-              <USwitch
-                v-model="onlyNotified"
-                size="md"
-                checked-icon="i-lucide-check"
-                unchecked-icon="i-lucide-x"
-                aria-labelledby="only-notified-label"
-                title="jogos com notificação nos últimos 5 min"
-              />
+          <div class="flex items-center justify-end gap-2">
+            <USwitch
+              v-model="onlyNotified"
+              size="md"
+              checked-icon="i-lucide-check"
+              unchecked-icon="i-lucide-x"
+              aria-labelledby="only-notified-label"
+              title="jogos com notificação nos últimos 5 min"
+            />
 
-              <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
-                >Só notificados</span
-              >
-            </div>
+            <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
+              >Só notificados</span
+            >
           </div>
         </div>
       </div>
