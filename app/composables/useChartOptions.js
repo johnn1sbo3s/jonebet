@@ -64,14 +64,33 @@ export function useBankrollChartOptions() {
  * Options for the performance chart. The annotation x-position is supplied
  * per-render via `annotationIndex` (typically `chartPayload.annotationIndex`).
  *
- * @param {{ annotationIndex?: number }} [opts]
+ * @param {{ annotationIndex?: number, xAxisTitle?: string|null }} [opts]
  */
-export function usePerformanceChartOptions({ annotationIndex = -100 } = {}) {
+export function usePerformanceChartOptions({ annotationIndex = -100, xAxisTitle = null } = {}) {
   return {
     responsive: true,
     maintainAspectRatio: false,
     transitions: { zoom: { animation: { duration: 1000, easing: 'easeOutCubic' } } },
-    scales: { y: { beginAtZero: false }, x: { beginAtZero: false } },
+    scales: {
+      x: {
+        beginAtZero: false,
+        title: { display: Boolean(xAxisTitle), text: xAxisTitle, color: ZINC_LABEL },
+        ticks: {
+          color: ZINC_TICK,
+          autoSkip: true,
+          maxTicksLimit: 8,
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkipPadding: 16,
+        },
+        grid: { color: ZINC_GRID },
+      },
+      y: {
+        beginAtZero: false,
+        ticks: { color: ZINC_TICK },
+        grid: { color: ZINC_GRID },
+      },
+    },
     plugins: {
       legend: { position: 'top', display: true },
       zoom: {
@@ -91,6 +110,14 @@ export function usePerformanceChartOptions({ annotationIndex = -100 } = {}) {
             xMax: annotationIndex,
             borderColor: TEAL,
             borderWidth: 2,
+            label: {
+              display: true,
+              content: 'Início dos jogos reais',
+              position: 'start',
+              color: ZINC_LABEL,
+              font: { size: 10 },
+              xAdjust: 6,
+            },
           },
         },
       },

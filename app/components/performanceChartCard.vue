@@ -414,11 +414,17 @@ const chartData = computed(() => {
       tension: 0.2,
     })
   }
-  return { labels: payload.labels || [], datasets }
+  const labels = chartByDay.value
+    ? (payload.labels || []).map((d) => formatDate(d, { style: 'short' }))
+    : payload.labels || []
+  return { labels, datasets }
 })
 
 const chartOptions = computed(() =>
-  usePerformanceChartOptions({ annotationIndex: chartPayload.value?.annotationIndex }),
+  usePerformanceChartOptions({
+    annotationIndex: chartPayload.value?.annotationIndex,
+    xAxisTitle: chartPayload.value?.labels?.length ? (chartByDay.value ? 'Data' : 'Nº da aposta') : null,
+  }),
 )
 
 // Remount the chart when the model or grouping changes so the
