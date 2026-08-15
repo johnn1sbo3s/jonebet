@@ -73,24 +73,34 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
+      <div class="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+        <div class="flex flex-col gap-1.5 md:self-start">
+          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Visualização</span>
 
-        <div class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-center">
-          <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+          <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
+        </div>
 
-          <USelectMenu
-            v-model="selected"
-            :items="strategyOptions"
-            multiple
-            clear
-            value-key="value"
-            class="w-full md:w-64"
-          >
-            <template #default>
-              <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
-            </template>
-          </USelectMenu>
+        <div class="flex flex-col gap-1.5">
+          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Filtros</span>
+
+          <div class="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+            <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+
+            <USelectMenu
+              v-model="selected"
+              :items="strategyOptions"
+              multiple
+              clear
+              value-key="value"
+              class="w-full md:w-64"
+            >
+              <template #default>
+                <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
+              </template>
+            </USelectMenu>
+
+            <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
+          </div>
         </div>
       </div>
 
@@ -153,6 +163,7 @@ import { formatDate } from '~/utils/formatDate'
 import { SP_TZ } from '~/utils/timezone'
 import { ANY_STRATEGY, filterReportGames } from '~/utils/filterReportGames'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
+import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 
 const { state, load } = useDailyReport()
 const { favoritesOf } = useFavorites()
@@ -171,7 +182,7 @@ const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 const reportDateLabel = computed(() => formatDate(state.response?.date || todayIso, { style: 'long' }))
 
 const byLeague = computed(() => {
-  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()
@@ -206,12 +217,14 @@ const viewOptions = [
   { value: 'by_hour', label: 'Por horário' },
 ]
 
-// --- Filtros client-side (busca + estratégias) ---
+// --- Filtros client-side (busca + estratégias + odds) ---
 // Estado transitório de exploração — NÃO persiste entre visitas (diferente do
 // viewMode, que é preferência de visualização). Reseta naturalmente no
 // re-mount da página.
 const query = ref('')
 const selected = ref([])
+const oddsPreset = ref('todos')
+const oddsPresetOptions = ODDS_PRESET_OPTIONS
 
 // Opções do multiselect: "Com recomendação" + as estratégias distintas do
 // relatório do dia, em ordem alfabética do nome natural (nunca lista fixa).
@@ -237,16 +250,21 @@ const triggerLabel = computed(() => {
   return `${n} estratégias`
 })
 
-// Jogos que passam busca + estratégias; alimenta os dois agrupamentos
-// (liga/horário). Favoritos continuam na lista completa — seção fixa no topo.
+// Jogos que passam busca + estratégias + preset de odds; alimenta os dois
+// agrupamentos (liga/horário). Favoritos continuam na lista completa — seção
+// fixa no topo.
 const filteredJogos = computed(() =>
-  filterReportGames(state.response?.jogos || [], { query: query.value, selected: selected.value }),
+  filterReportGames(state.response?.jogos || [], {
+    query: query.value,
+    selected: selected.value,
+    oddsPreset: oddsPreset.value,
+  }),
 )
 
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
 // Jogo sem horário parseável cai no grupo "Outros", no final.
 const byHour = computed(() => {
-  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()

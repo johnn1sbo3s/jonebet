@@ -25,13 +25,13 @@ export default defineAppConfig({
       },
       variants: {
         variant: {
-          outline: 'text-highlighted bg-zinc-900 border border-zinc-800 hover:bg-zinc-800/60 disabled:bg-zinc-900',
+          outline: 'text-highlighted bg-zinc-900 border border-zinc-800 h-8 hover:bg-zinc-800/60 disabled:bg-zinc-900',
         },
       },
     },
     input: {
       slots: {
-        base: 'rounded-xl bg-transparent border-zinc-800 text-white placeholder:text-zinc-500 focus:border-teal-500 focus:ring-teal-500/20',
+        base: 'rounded-xl bg-transparent border-zinc-800 text-white text-sm! placeholder:text-zinc-500 focus:border-teal-500 focus:ring-teal-500/20',
       },
     },
   },

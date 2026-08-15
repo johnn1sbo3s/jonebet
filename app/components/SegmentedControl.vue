@@ -1,13 +1,14 @@
 <template>
   <div
-    class="inline-flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900 p-1"
+    class="inline-flex h-8 items-stretch gap-1 rounded-lg border border-zinc-800 bg-zinc-900 px-1"
     :class="fullWidth && 'w-full md:w-auto'"
   >
     <button
       v-for="opt in options"
       :key="opt.value"
       type="button"
-      class="rounded-md px-3 py-1 text-sm transition"
+      :title="opt.title"
+      class="flex items-center justify-center rounded-md px-1.5 text-xs whitespace-nowrap transition md:px-3 md:text-sm"
       :class="[
         opt.value === modelValue
           ? 'bg-teal-500 font-semibold text-zinc-950'
