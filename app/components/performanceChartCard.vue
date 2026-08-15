@@ -2,7 +2,7 @@
   <UCard id="model-chart" class="order-1 border border-zinc-800 bg-zinc-900 xl:order-2 xl:col-span-7">
     <template #header>
       <div class="flex justify-between">
-        <p class="font-semibold">Gráfico de acúmulo de capital</p>
+        <h2 class="font-semibold">Gráfico de acúmulo de capital</h2>
 
         <div class="hidden items-center gap-4 sm:flex">
           <div class="flex items-center gap-2">
