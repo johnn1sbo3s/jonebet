@@ -4,7 +4,7 @@
 
     <UCard class="border border-zinc-800 bg-zinc-900">
       <template #header>
-        <p class="font-semibold">Resultados por dia</p>
+        <h2 class="font-semibold">Resultados por dia</h2>
       </template>
 
       <p class="mb-3 text-sm">{{ dailyResults.length }} dias</p>

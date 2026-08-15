@@ -1,7 +1,7 @@
 <template>
   <UCard class="border border-zinc-800 bg-zinc-900">
     <template #header>
-      <p class="font-semibold">Resultados por mês</p>
+      <h2 class="font-semibold">Resultados por mês</h2>
     </template>
 
     <p class="mb-3 text-sm">{{ sortedResults.length }} meses</p>

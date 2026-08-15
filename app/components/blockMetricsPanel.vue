@@ -1,7 +1,7 @@
 <template>
   <UCard id="block-metrics" class="border border-zinc-800 bg-zinc-900">
     <template #header>
-      <p class="font-semibold">Resultados por blocos de 100 jogos</p>
+      <h2 class="font-semibold">Resultados por blocos de 100 jogos</h2>
     </template>
 
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_3fr]">

@@ -1,7 +1,7 @@
 <template>
   <UCard id="statistical-significance" class="border border-zinc-800 bg-zinc-900">
     <template #header>
-      <p class="font-semibold">Significância estatística</p>
+      <h2 class="font-semibold">Significância estatística</h2>
     </template>
 
     <div class="grid grid-cols-2 gap-4 md:grid-cols-4">

@@ -1,7 +1,7 @@
 <template>
   <UCard class="border border-zinc-800 bg-zinc-950/80">
     <template #header>
-      <p class="font-semibold">{{ cardTitle }}</p>
+      <h3 class="font-semibold">{{ cardTitle }}</h3>
     </template>
 
     <div class="flex flex-col gap-4">

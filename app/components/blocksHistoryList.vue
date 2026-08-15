@@ -4,7 +4,7 @@
     :ui="{ body: 'flex-1 min-h-0 overflow-hidden' }"
   >
     <template #header>
-      <p class="font-semibold">Histórico</p>
+      <h3 class="font-semibold">Histórico</h3>
     </template>
 
     <div class="relative h-full">
