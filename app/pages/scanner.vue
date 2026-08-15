@@ -50,9 +50,11 @@
 
     <div v-else class="flex flex-col gap-4">
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
+        <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-52" />
 
-        <div class="flex items-center justify-end gap-2">
+        <div class="flex w-full flex-wrap items-center justify-end gap-2 md:w-auto">
+          <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" size="sm" full-width />
+
           <USwitch
             v-model="onlyNotified"
             size="md"
@@ -119,6 +121,7 @@
 
 <script setup>
 import { useFavorites } from '~/composables/useFavorites'
+import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 
 const config = useRuntimeConfig()
 const route = useRoute()
@@ -134,7 +137,11 @@ const updatedAgo = ref('')
 // exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
 const query = ref('')
 const onlyNotified = ref(false)
-const filtersActive = computed(() => onlyNotified.value || normalizeSearchText(query.value) !== '')
+const oddsPreset = ref('todos')
+const oddsPresetOptions = ODDS_PRESET_OPTIONS
+const filtersActive = computed(
+  () => onlyNotified.value || oddsPreset.value !== 'todos' || normalizeSearchText(query.value) !== '',
+)
 
 // Destaque vindo do Telegram (?game=<id>): id ainda não encontrado no
 // snapshot (highlightId) vs. id atualmente destacado (activeHighlight).
@@ -155,7 +162,7 @@ const favoriteGames = computed(() => games.value.filter((g) => !g.finished && is
 const otherGames = computed(() =>
   filterScannerGames(
     games.value.filter((g) => !(!g.finished && isFavorite(g.id))),
-    { query: query.value, onlyNotified: onlyNotified.value },
+    { query: query.value, onlyNotified: onlyNotified.value, oddsPreset: oddsPreset.value },
   ),
 )
 
