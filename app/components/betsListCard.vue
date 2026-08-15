@@ -32,10 +32,10 @@
         <span :title="bet.away" class="truncate text-sm font-semibold text-zinc-100">{{ bet.away }}</span>
       </div>
 
-      <span class="shrink-0 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1 text-center">
-        <span class="text-2xs block font-medium tracking-wide text-zinc-500 uppercase">Odd</span>
-
-        <span class="block text-sm font-semibold text-white">{{ formatNumber(bet.odds) }}</span>
+      <span
+        class="shrink-0 rounded-lg border border-zinc-700 bg-zinc-800/70 px-2 py-1 text-sm font-semibold text-white"
+      >
+        {{ formatNumber(bet.odds) }}
       </span>
     </div>
   </div>
