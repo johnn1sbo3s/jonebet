@@ -35,9 +35,11 @@ describe('isRecentNotification', () => {
 })
 
 describe('formatUpdatedAgo', () => {
-  it('formata segundos e minutos', () => {
-    expect(formatUpdatedAgo(AT, NOW)).toBe('há 4m 0s')
-    expect(formatUpdatedAgo(AT, NOW - 12_000)).toBe('há 3m 48s')
+  it('formata mm:ss sempre com segundos à direita', () => {
+    expect(formatUpdatedAgo(AT, NOW)).toBe('há 4:00')
+    expect(formatUpdatedAgo(AT, NOW - 12_000)).toBe('há 3:48')
+    expect(formatUpdatedAgo(AT, Date.parse(AT) + 12_000)).toBe('há 0:12')
+    expect(formatUpdatedAgo(AT, Date.parse(AT) + 65_000)).toBe('há 1:05')
   })
 
   it('retorna vazio sem horário válido', () => {

@@ -11,15 +11,15 @@ export function isRecentNotification(notifications, now = Date.now(), windowMin 
   return now - at <= windowMin * 60_000
 }
 
-// "atualizado há 12s" / "há 1m 20s" a partir de generated_at (ISO).
+// "atualizado há 0:12" / "há 1:20" a partir de generated_at (ISO), no
+// formato mm:ss — leitura imediata de quanto tempo passou desde o snapshot.
 export function formatUpdatedAgo(generatedAt, now = Date.now()) {
   if (!generatedAt) return ''
   const at = Date.parse(generatedAt)
   if (Number.isNaN(at)) return ''
   const seconds = Math.max(0, Math.floor((now - at) / 1000))
-  if (seconds < 60) return `há ${seconds}s`
   const minutes = Math.floor(seconds / 60)
-  return `há ${minutes}m ${seconds % 60}s`
+  return `há ${minutes}:${String(seconds % 60).padStart(2, '0')}`
 }
 
 const HISTORY_KEY = 'scanner.notifications.v1'

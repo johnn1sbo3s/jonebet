@@ -29,8 +29,6 @@
 
             <span v-else-if="updatedAgo">Atualizado {{ updatedAgo }}</span>
 
-            <span v-else class="text-zinc-600">sem dados</span>
-
             <span v-if="offline" class="text-zinc-600">· sem conexão</span>
           </span>
         </div>
