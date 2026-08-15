@@ -284,10 +284,21 @@ function maybeHighlight(list) {
   highlightId.value = null
   const game = list.find((g) => String(g.id) === target)
   if (!game || game.finished) return
+  // Deep link de jogo favorito com a seção colapsada: expande só nesta visita
+  // (sem persistir — a preferência do usuário volta no próximo load).
+  const autoExpanded = favoritesCollapsed.value && isFavorite(game.id)
+  if (autoExpanded) favoritesCollapsed.value = false
   activeHighlight.value = target
-  nextTick(() => {
-    document.getElementById(`game-${target}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  })
+  if (autoExpanded) {
+    // A expansão anima a altura 0→real por 250ms: espera terminar antes do scroll.
+    setTimeout(() => {
+      document.getElementById(`game-${target}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 300)
+  } else {
+    nextTick(() => {
+      document.getElementById(`game-${target}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+  }
   clearTimeout(highlightTimer)
   highlightTimer = setTimeout(() => {
     activeHighlight.value = null
@@ -328,16 +339,15 @@ function onCollapseEnter(el, done) {
   el.offsetHeight // força reflow para a transição partir de 0
   el.style.height = `${el.scrollHeight}px`
   el.style.transition = 'height 250ms ease-in-out'
-  el.addEventListener(
-    'transitionend',
-    () => {
-      el.style.height = ''
-      el.style.overflow = ''
-      el.style.transition = ''
-      done()
-    },
-    { once: true },
-  )
+  function handleEnd(e) {
+    if (e.target !== el) return // transitionend de filho (cards) borbulhou: ignora
+    el.removeEventListener('transitionend', handleEnd)
+    el.style.height = ''
+    el.style.overflow = ''
+    el.style.transition = ''
+    done()
+  }
+  el.addEventListener('transitionend', handleEnd)
 }
 
 function onCollapseLeave(el, done) {
@@ -346,6 +356,11 @@ function onCollapseLeave(el, done) {
   el.style.height = '0'
   el.style.overflow = 'hidden'
   el.style.transition = 'height 250ms ease-in-out'
-  el.addEventListener('transitionend', done, { once: true })
+  function handleEnd(e) {
+    if (e.target !== el) return // transitionend de filho (cards) borbulhou: ignora
+    el.removeEventListener('transitionend', handleEnd)
+    done()
+  }
+  el.addEventListener('transitionend', handleEnd)
 }
 </script>
