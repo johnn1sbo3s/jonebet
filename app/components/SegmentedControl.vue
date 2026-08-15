@@ -7,8 +7,10 @@
       v-for="opt in options"
       :key="opt.value"
       type="button"
-      class="rounded-md px-3 py-1 text-sm transition"
+      :title="opt.title"
+      class="rounded-md transition"
       :class="[
+        size === 'sm' ? 'px-1.5 py-0.5 text-xs whitespace-nowrap' : 'px-3 py-1 text-sm',
         opt.value === modelValue
           ? 'bg-teal-500 font-semibold text-zinc-950'
           : 'font-medium text-zinc-400 hover:text-white',
@@ -26,6 +28,7 @@ defineProps({
   modelValue: { type: String, required: true },
   options: { type: Array, required: true },
   fullWidth: { type: Boolean, default: false },
+  size: { type: String, default: 'md' }, // 'md' (padrão) | 'sm' (compacto, usado pelo filtro de odds)
 })
 
 const emit = defineEmits(['update:modelValue'])

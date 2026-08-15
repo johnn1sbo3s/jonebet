@@ -35,4 +35,39 @@ describe('SegmentedControl', () => {
     expect(wrapper.find('div').classes()).not.toContain('w-full')
     expect(wrapper.findAll('button')[0].classes()).not.toContain('flex-1')
   })
+
+  it('aplica o tamanho compacto (size sm) nos botões', async () => {
+    const wrapper = await mountSuspended(SegmentedControl, {
+      props: { modelValue: 'by_league', options, size: 'sm' },
+    })
+    const button = wrapper.findAll('button')[0]
+    expect(button.classes()).toContain('text-xs')
+    expect(button.classes()).toContain('px-1.5')
+    expect(button.classes()).toContain('whitespace-nowrap')
+    expect(button.classes()).not.toContain('text-sm')
+  })
+
+  it('mantém text-sm px-3 no tamanho padrão', async () => {
+    const wrapper = await mountSuspended(SegmentedControl, {
+      props: { modelValue: 'by_league', options },
+    })
+    const button = wrapper.findAll('button')[0]
+    expect(button.classes()).toContain('text-sm')
+    expect(button.classes()).toContain('px-3')
+  })
+
+  it('aplica title do option no botão', async () => {
+    const withTitle = [{ value: 'favoritos', label: 'Favoritos', title: 'favorito claro' }]
+    const wrapper = await mountSuspended(SegmentedControl, {
+      props: { modelValue: 'favoritos', options: withTitle },
+    })
+    expect(wrapper.find('button').attributes('title')).toBe('favorito claro')
+  })
+
+  it('sem title no option, botão não tem atributo title', async () => {
+    const wrapper = await mountSuspended(SegmentedControl, {
+      props: { modelValue: 'by_league', options },
+    })
+    expect(wrapper.find('button').attributes('title')).toBeUndefined()
+  })
 })
