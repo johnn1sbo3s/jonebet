@@ -71,6 +71,7 @@
 
 <script setup>
 import { DateTime } from 'luxon'
+import { useDevice } from '../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice'
 
 const route = useRoute()
 
@@ -107,8 +108,11 @@ const { data: dailyResults, pending: dailyResultsPending } = useModelResults(cho
 const { data: monthlyResults } = useModelResults(chosenModelId, ref('monthly'))
 
 // --- Bets pagination ---
+// No mobile a lista é longa (100 cards por página = rolagem infinita); reduzir
+// para 20 itens abaixo de 768px (mesmo limite do breakpoint md da lista).
+const device = useDevice()
 const betsPage = ref(1)
-const betsSize = ref(100)
+const betsSize = ref(device.isMobileOrTablet ? 20 : 100)
 const betsSort = ref('Date')
 const betsOrder = ref('desc')
 

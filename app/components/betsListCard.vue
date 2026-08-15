@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-3">
+  <div class="flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-950/80 p-3">
     <div class="flex items-center justify-between gap-3">
       <span class="text-xs text-zinc-500">{{ formatDate(bet.date, { style: 'short' }) }}</span>
 

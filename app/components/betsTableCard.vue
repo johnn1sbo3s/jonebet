@@ -38,7 +38,7 @@
       </UTable>
     </div>
 
-    <ul class="flex flex-col gap-3 md:hidden">
+    <ul class="flex flex-col gap-2 md:hidden">
       <li v-for="bet in betsItems" :key="`${bet.date}-${bet.home}-${bet.away}-${bet.odds}`">
         <BetsListCard :bet="bet" />
       </li>
@@ -46,7 +46,6 @@
 
     <div class="flex justify-center pt-3">
       <UPagination
-        class="max-md:[&_button]:h-10 max-md:[&_button]:min-w-10"
         :page="page"
         :items-per-page="betsSize"
         :total="betsTotal"
