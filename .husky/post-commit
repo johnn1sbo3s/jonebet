@@ -207,4 +207,27 @@ if os.name == 'nt':
 else:
     subprocess.Popen(_cmd, start_new_session=True, **_kw)
 "
-# graphify-hook-end
+# graphify-relabel-start
+# Auto LLM re-labeling: se o rebuild renomeou comunidades por hub (sem LLM),
+# roda `graphify label --backend openai` em background; commit não bloqueia.
+(
+  _REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+  cd "$_REPO" || exit 0
+  _LOG="$HOME/.cache/graphify-rebuild.log"
+  _POS=$(wc -c < "$_LOG" 2>/dev/null || echo 0)
+  _i=0
+  while [ "$_i" -lt 900 ]; do
+    _i=$((_i + 1))
+    _SEC=$(tail -c +$((_POS + 1)) "$_LOG" 2>/dev/null)
+    echo "$_SEC" | grep -q "updated in $_REPO/graphify-out" && break
+    echo "$_SEC" | grep -q "skipping rebuild" && exit 0
+    sleep 1
+  done
+  _NEW=$(tail -c +$((_POS + 1)) "$_LOG" 2>/dev/null)
+  if echo "$_NEW" | grep -q "renamed .* by their hub"; then
+    export PATH="$HOME/.local/bin:$PATH"
+    eval "$(grep -E '^export OPENAI_' "$HOME/.zprofile" 2>/dev/null)"
+    "$GRAPHIFY_PYTHON" -m graphify label . --backend openai >> "$_LOG" 2>&1
+  fi
+) &
+# graphify-relabel-end
