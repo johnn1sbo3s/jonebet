@@ -36,7 +36,7 @@ describe('SegmentedControl', () => {
     expect(wrapper.findAll('button')[0].classes()).not.toContain('flex-1')
   })
 
-  it('usa classes de tamanho responsivas (text-xs no mobile, md:text-sm no desktop)', async () => {
+  it('usa classes de tamanho responsivas e altura fixa (h-8)', async () => {
     const wrapper = await mountSuspended(SegmentedControl, {
       props: { modelValue: 'by_league', options },
     })
@@ -46,6 +46,7 @@ describe('SegmentedControl', () => {
     expect(button.classes()).toContain('px-1.5')
     expect(button.classes()).toContain('md:px-3')
     expect(button.classes()).toContain('whitespace-nowrap')
+    expect(wrapper.find('div').classes()).toContain('h-8')
   })
 
   it('aplica title do option no botão', async () => {

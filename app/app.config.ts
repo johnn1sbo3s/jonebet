@@ -25,7 +25,7 @@ export default defineAppConfig({
       },
       variants: {
         variant: {
-          outline: 'text-highlighted bg-zinc-900 border border-zinc-800 hover:bg-zinc-800/60 disabled:bg-zinc-900',
+          outline: 'text-highlighted bg-zinc-900 border border-zinc-800 h-8 hover:bg-zinc-800/60 disabled:bg-zinc-900',
         },
       },
     },

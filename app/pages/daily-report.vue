@@ -74,7 +74,7 @@
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
       <div class="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-        <div class="flex flex-col gap-1.5">
+        <div class="flex flex-col gap-1.5 md:self-start">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Visualização</span>
 
           <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
