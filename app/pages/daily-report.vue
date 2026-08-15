@@ -174,7 +174,7 @@ const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 const reportDateLabel = computed(() => formatDate(state.response?.date || todayIso, { style: 'long' }))
 
 const byLeague = computed(() => {
-  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()
@@ -209,7 +209,7 @@ const viewOptions = [
   { value: 'by_hour', label: 'Por horário' },
 ]
 
-// --- Filtros client-side (busca + estratégias) ---
+// --- Filtros client-side (busca + estratégias + odds) ---
 // Estado transitório de exploração — NÃO persiste entre visitas (diferente do
 // viewMode, que é preferência de visualização). Reseta naturalmente no
 // re-mount da página.
@@ -242,8 +242,9 @@ const triggerLabel = computed(() => {
   return `${n} estratégias`
 })
 
-// Jogos que passam busca + estratégias; alimenta os dois agrupamentos
-// (liga/horário). Favoritos continuam na lista completa — seção fixa no topo.
+// Jogos que passam busca + estratégias + preset de odds; alimenta os dois
+// agrupamentos (liga/horário). Favoritos continuam na lista completa — seção
+// fixa no topo.
 const filteredJogos = computed(() =>
   filterReportGames(state.response?.jogos || [], {
     query: query.value,
@@ -255,7 +256,7 @@ const filteredJogos = computed(() =>
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
 // Jogo sem horário parseável cai no grupo "Outros", no final.
 const byHour = computed(() => {
-  // Jogos filtrados (busca + estratégias); favoritos continuam duplicados na
+  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()

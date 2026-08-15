@@ -133,7 +133,7 @@ const fetchError = ref(false)
 const offline = ref(false)
 const updatedAgo = ref('')
 
-// Filtros client-side (busca + só notificados) — estado transitório de
+// Filtros client-side (busca + só notificados + preset de odds) — estado transitório de
 // exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
 const query = ref('')
 const onlyNotified = ref(false)

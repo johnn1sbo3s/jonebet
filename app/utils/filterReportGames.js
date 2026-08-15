@@ -1,7 +1,8 @@
 // Filtro client-side dos jogos do relatório: busca textual (time da casa,
 // visitante e liga — sem diferenciar caixa nem acentos) + seleção de
 // estratégias (união OR; a sentinela ANY_STRATEGY representa "qualquer jogo
-// com pelo menos 1 estratégia"). Função pura, testada em tests/app/utils/.
+// com pelo menos 1 estratégia") + preset de odds (menor odd casa/fora,
+// faixas em oddsPresets.js). Função pura, testada em tests/app/utils/.
 import { matchesOddsPreset } from '~/utils/oddsPresets'
 
 export const ANY_STRATEGY = '__any__'
