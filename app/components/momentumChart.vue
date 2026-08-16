@@ -10,6 +10,8 @@
     >
       <line x1="0" y1="55" x2="640" y2="55" stroke="#3f3f46" stroke-width="1" />
 
+      <line x1="320" y1="0" x2="320" y2="158" stroke="#71717a" stroke-width="1" stroke-dasharray="4 4" opacity="0.7" />
+
       <rect
         v-for="b in bars"
         :key="b.minute"
