@@ -128,7 +128,9 @@
               col.label
             }}</span>
 
-            <UBadge color="secondary" variant="soft" size="sm" class="justify-center">{{ col.value ?? '-' }}</UBadge>
+            <UBadge color="secondary" variant="soft" size="sm" class="justify-center">{{
+              col.value != null ? formatNumber(col.value) : '-'
+            }}</UBadge>
           </div>
         </div>
 
