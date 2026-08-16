@@ -122,13 +122,21 @@
           >
         </div>
 
-        <div v-if="hasOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-x-1 gap-y-0.5">
+        <div v-if="hasOdds" class="mb-1 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-x-1 gap-y-0.5">
           <div v-for="col in oddsColumns" :key="col.label" class="flex flex-col gap-0.5">
             <span class="text-2xs text-center font-semibold tracking-wide text-zinc-600 uppercase">{{
               col.label
             }}</span>
 
             <UBadge color="secondary" variant="soft" size="sm" class="justify-center">{{
+              col.value != null ? formatNumber(col.value) : '-'
+            }}</UBadge>
+          </div>
+        </div>
+
+        <div v-if="hasLiveOdds" class="mb-2.5 grid grid-cols-[1fr_1fr_1fr_0.85fr_0.85fr] gap-x-1 gap-y-0.5">
+          <div v-for="col in liveOddsColumns" :key="col.label" class="flex flex-col gap-0.5">
+            <UBadge color="success" variant="soft" size="sm" class="justify-center">{{
               col.value != null ? formatNumber(col.value) : '-'
             }}</UBadge>
           </div>
@@ -531,9 +539,13 @@ const statRows = computed(() => [
 
 const odds = computed(() => props.game.odds || {})
 const prematch = computed(() => odds.value.prematch || {})
+const live = computed(() => odds.value.live || {})
 
 const hasAnyOdds = (o) => [o.home, o.draw, o.away, o.over25, o.btts].some((v) => v != null)
 const hasOdds = computed(() => hasAnyOdds(prematch.value))
+const hasLiveOdds = computed(() =>
+  [live.value.home, live.value.draw, live.value.away, live.value.over25, live.value.btts_yes].some((v) => v != null),
+)
 
 // Colunas de odds sempre presentes (label + valor empilhados na mesma célula);
 // valor ausente vira "-" — assim o grid nunca desalinha por auto-placement.
@@ -543,6 +555,15 @@ const oddsColumns = computed(() => [
   { label: 'Fora', value: prematch.value.away },
   { label: 'O2.5', value: prematch.value.over25 },
   { label: 'BTTS', value: prematch.value.btts },
+])
+
+// Odds LIVE (API oce, 1xBet): mesma grade do prematch, badges verdes.
+const liveOddsColumns = computed(() => [
+  { label: 'Casa', value: live.value.home },
+  { label: 'Empate', value: live.value.draw },
+  { label: 'Fora', value: live.value.away },
+  { label: 'O2.5', value: live.value.over25 },
+  { label: 'BTTS', value: live.value.btts_yes },
 ])
 
 function formatTime(at) {
