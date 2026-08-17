@@ -4,6 +4,10 @@ import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import MomentumChart from '~/components/momentumChart.vue'
 
+// Geometria: viewBox 640, GAP=8 entre painéis, STEP=(640-8)/(h1Len+h2Len).
+// Caso simétrico 45+45: STEP=632/90≈7.0222, W1=316, P2=324.
+const P2_SYMMETRIC = 45 * (632 / 90) + 8 // ≈ 324
+
 describe('MomentumChart', () => {
   it('renderiza uma barra por minuto com dados', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
@@ -47,7 +51,7 @@ describe('MomentumChart', () => {
     expect(wrapper.findAll('circle')).toHaveLength(0)
   })
 
-  it('posiciona barras do 2º tempo no painel direito', async () => {
+  it('posiciona barras do 2º tempo no painel direito (após o gap)', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: {
         bars: [
@@ -58,7 +62,7 @@ describe('MomentumChart', () => {
     })
     const rects = wrapper.findAll('rect.momentum-bar')
     expect(rects[0].attributes('x')).toBe('0') // 1ºT minuto 1
-    expect(rects[1].attributes('x')).toBe('320') // 2ºT 46' -> rel 1, divisor em 320 (45+45)
+    expect(Number(rects[1].attributes('x'))).toBeCloseTo(P2_SYMMETRIC, 1) // 2ºT 46' -> rel 1, após W1+gap
   })
 
   it('gol do 2º tempo posiciona no painel direito', async () => {
@@ -68,7 +72,7 @@ describe('MomentumChart', () => {
         goals: [{ minute: 46, half: 2, stoppage_time: 0, team: 'home', player: 'X' }],
       },
     })
-    expect(wrapper.find('circle').attributes('cx')).toBe('322.5') // 320 + 0 + 2.5
+    expect(Number(wrapper.find('circle').attributes('cx'))).toBeCloseTo(P2_SYMMETRIC + 2.5, 1)
   })
 
   it("clampa gol além do painel (90+6')", async () => {
@@ -78,18 +82,18 @@ describe('MomentumChart', () => {
         goals: [{ minute: 96, half: 2, stoppage_time: 0, team: 'home', player: 'X' }],
       },
     })
-    // h1Len=45, h2Len=50, STEP=640/95≈6.7368, W1≈303.16; rel clampado em 50
+    // h1Len=45, h2Len=50, STEP=632/95≈6.6526, W1≈299.37, P2≈307.37; rel clampado em 50
     const cx = Number(wrapper.find('circle').attributes('cx'))
-    expect(cx).toBeCloseTo(635.76, 1) // W1 + 49*STEP + 2.5
+    expect(cx).toBeCloseTo(45 * (632 / 95) + 8 + 49 * (632 / 95) + 2.5, 1) // P2 + 49*STEP + 2.5
   })
 
   it('barra sem half cai no mapeamento legado', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: { bars: [{ minute: 60, home: 0.5, away: 0 }] },
     })
-    // legado: h1Len=50 (clamp), h2Len=45, STEP=640/95≈6.7368
+    // legado: h1Len=50 (clamp), h2Len=45, STEP=632/95≈6.6526
     const x = Number(wrapper.find('rect.momentum-bar').attributes('x'))
-    expect(x).toBeCloseTo(397.47, 1) // (60-1)*STEP
+    expect(x).toBeCloseTo(59 * (632 / 95), 1) // (60-1)*STEP
   })
 
   it('ticks 15/30/45 no 1ºT e 50/75/90 no 2ºT', async () => {
@@ -100,7 +104,7 @@ describe('MomentumChart', () => {
     expect(labels).toEqual(["15'", "30'", "45'", "50'", "75'", "90'"])
   })
 
-  it('fundo tintado: 1ºT zinc-950 e 2ºT zinc-800 na largura dos painéis', async () => {
+  it('fundo zinc-800 nos dois painéis, separados pelo gap', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: {
         bars: [
@@ -111,17 +115,16 @@ describe('MomentumChart', () => {
     })
     const rects = wrapper.findAll('rect')
     // 0 e 1 são os fundos; barras têm class momentum-bar
-    expect(rects[0].attributes('fill')).toBe('#09090b')
+    expect(rects[0].attributes('fill')).toBe('#27272a')
     expect(rects[0].attributes('x')).toBe('0')
-    expect(rects[0].attributes('width')).toBe('320')
+    expect(Number(rects[0].attributes('width'))).toBeCloseTo(45 * (632 / 90), 1) // W1
     expect(rects[1].attributes('fill')).toBe('#27272a')
-    expect(rects[1].attributes('x')).toBe('320')
-    expect(rects[1].attributes('width')).toBe('320')
-    // guard da decisão visual central: a linha de 1ºT/2ºT não pode voltar tracejada
+    expect(Number(rects[1].attributes('x'))).toBeCloseTo(P2_SYMMETRIC, 1) // após o gap
+    expect(Number(rects[1].attributes('width'))).toBeCloseTo(45 * (632 / 90), 1) // W2
     expect(wrapper.html()).not.toContain('stroke-dasharray')
   })
 
-  it('painéis flexíveis: 1ºT 47 e 2ºT 50 desloca divisor para ~310', async () => {
+  it('painéis flexíveis: 1ºT 47 e 2ºT 50 desloca o gap para ~314', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: {
         bars: [
@@ -131,19 +134,19 @@ describe('MomentumChart', () => {
       },
     })
     const rects = wrapper.findAll('rect')
-    // h1Len=47, h2Len=50, STEP=640/97≈6.5979, W1≈310.10
-    const divisor = Number(rects[1].attributes('x'))
-    expect(divisor).toBeCloseTo((640 * 47) / 97, 1)
-    expect(Number(rects[1].attributes('width'))).toBeCloseTo(640 - (640 * 47) / 97, 1)
+    // h1Len=47, h2Len=50, STEP=632/97≈6.5155, W1≈306.23, P2≈314.23
+    const p2 = Number(rects[1].attributes('x'))
+    expect(p2).toBeCloseTo(47 * (632 / 97) + 8, 1)
+    expect(Number(rects[1].attributes('width'))).toBeCloseTo(50 * (632 / 97), 1) // W2
   })
 
-  it('jogo ao vivo no 1ºT (minuto 30): divisor fica em 320 (mínimo 45)', async () => {
+  it('jogo ao vivo no 1ºT (minuto 30): gap fica no meio (mínimo 45)', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: {
         bars: [{ minute: 30, half: 1, home: 0.5, away: 0 }],
       },
     })
     const rects = wrapper.findAll('rect')
-    expect(rects[1].attributes('x')).toBe('320') // h1Len=45, h2Len=45
+    expect(Number(rects[1].attributes('x'))).toBeCloseTo(P2_SYMMETRIC, 1) // h1Len=45, h2Len=45
   })
 })

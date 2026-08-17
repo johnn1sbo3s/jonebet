@@ -8,9 +8,9 @@
       aria-label="Gráfico de momentum"
       class="w-full"
     >
-      <rect x="0" y="0" :width="W1" height="158" fill="#09090b" />
+      <rect x="0" y="0" :width="W1" height="158" fill="#27272a" />
 
-      <rect :x="W1" :width="W2" height="158" fill="#27272a" />
+      <rect :x="P2" :width="W2" height="158" fill="#27272a" />
 
       <line x1="0" y1="55" x2="640" y2="55" stroke="#3f3f46" stroke-width="1" />
 
@@ -78,6 +78,9 @@ const TICKS = [
 // nas props (bars + goals), com mínimo 45 (jogo ao vivo — divisor estável)
 // e clamp em 50 (backend clampado). Sem `half` (snapshot antigo na janela de
 // deploy) mantém o mapeamento legado contínuo no painel 1, h2Len = 45.
+// GAP: vão vazio entre os tempos (estilo Flashscore) — os dois painéis têm o
+// mesmo fundo zinc-800 e a separação vem do espaço vazio, não de linha/cor.
+const GAP = 8
 function halfOf(item) {
   return Number(item.half) === 2 ? 2 : 1
 }
@@ -94,9 +97,11 @@ const h1Len = computed(() => Math.min(50, Math.max(45, halfMaxMinute(1, props.ba
 const h2Len = computed(() =>
   Math.min(50, Math.max(45, halfMaxMinute(2, props.bars) - 45, halfMaxMinute(2, props.goals) - 45)),
 )
-const STEP = computed(() => 640 / (h1Len.value + h2Len.value))
+const STEP = computed(() => (640 - GAP) / (h1Len.value + h2Len.value))
 const W1 = computed(() => h1Len.value * STEP.value)
 const W2 = computed(() => h2Len.value * STEP.value)
+// Start do 2º painel: após o painel 1 + o gap.
+const P2 = computed(() => W1.value + GAP)
 
 // Minuto relativo ao painel: o 2º tempo recomeça em 1 (46' -> 1). Sem `half`
 // mantém o mapeamento legado contínuo. Clamp só no relativo do 2º painel:
@@ -108,12 +113,12 @@ function panelMinute(item) {
 }
 
 function barX(item) {
-  return (halfOf(item) === 2 ? W1.value : 0) + (panelMinute(item) - 1) * STEP.value
+  return (halfOf(item) === 2 ? P2.value : 0) + (panelMinute(item) - 1) * STEP.value
 }
 
 function tickX(t) {
   const rel = t.half === 2 ? t.minute - 45 : t.minute
-  return (t.half === 2 ? W1.value : 0) + (rel - 1) * STEP.value
+  return (t.half === 2 ? P2.value : 0) + (rel - 1) * STEP.value
 }
 
 function barHeight(b) {
