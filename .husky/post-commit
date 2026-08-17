@@ -230,6 +230,9 @@ else:
   if echo "$_NEW" | grep -q "renamed .* by their hub"; then
     export PATH="$HOME/.local/bin:$PATH"
     eval "$(grep -E '^export OPENAI_' "$HOME/.zprofile" 2>/dev/null)"
+    # Modelo reasoning (deepseek-v4-flash) volta vazio com budget default;
+    # sem isso a rotulação falha e as comunidades ficam como "Community N".
+    export GRAPHIFY_MAX_OUTPUT_TOKENS=8000
     "$GRAPHIFY_PYTHON" -m graphify label . --backend openai >> "$_LOG" 2>&1
   fi
 ) >/dev/null 2>&1 &
