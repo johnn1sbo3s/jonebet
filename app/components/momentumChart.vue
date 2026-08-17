@@ -8,13 +8,16 @@
       aria-label="Gráfico de momentum"
       class="w-full"
     >
-      <line x1="0" y1="55" x2="640" y2="55" stroke="#3f3f46" stroke-width="1" />
+      <rect x="0" y="0" :width="W1" height="158" fill="#09090b" />
 
-      <line x1="320" y1="0" x2="320" y2="158" stroke="#71717a" stroke-width="1" stroke-dasharray="4 4" opacity="0.7" />
+      <rect :x="W1" :width="W2" height="158" fill="#27272a" />
+
+      <line x1="0" y1="55" x2="640" y2="55" stroke="#3f3f46" stroke-width="1" />
 
       <rect
         v-for="b in bars"
         :key="`${halfOf(b)}-${b.minute}`"
+        class="momentum-bar"
         :x="barX(b)"
         :y="barY(b)"
         width="5"
@@ -49,14 +52,16 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   bars: { type: Array, default: () => [] },
   goals: { type: Array, default: () => [] },
 })
 
-// Dois painéis de 320px (metade do viewBox 640), 50 slots de minuto cada.
-const PANEL_W = 320
-const STEP = PANEL_W / 50
+// Geometria do gráfico do Flashscore (viewBox 640x158, centro em 55):
+// mesma moldura — barra de valor 1.0 encosta no topo, como lá.
+const CENTER = 55
+
+// Ticks fixos por tempo (posição relativa ao painel).
 const TICKS = [
   { half: 1, minute: 15 },
   { half: 1, minute: 30 },
@@ -65,20 +70,35 @@ const TICKS = [
   { half: 2, minute: 75 },
   { half: 2, minute: 90 },
 ]
-// Geometria do gráfico do Flashscore (viewBox 640x158, centro em 55):
-// mesma moldura — barra de valor 1.0 encosta no topo, como lá.
-const CENTER = 55
 
+// Painéis flexíveis: largura proporcional à duração real de cada tempo
+// (45' + acréscimo). h1Len/h2Len derivam do maior minuto observado por half
+// nas props (bars + goals), com mínimo 45 (jogo ao vivo — divisor estável)
+// e clamp em 50 (backend clampado). Sem `half` (snapshot antigo na janela de
+// deploy) mantém o mapeamento legado contínuo no painel 1, h2Len = 45.
 function halfOf(item) {
   return Number(item.half) === 2 ? 2 : 1
 }
 
+function halfMaxMinute(half, items) {
+  return items.reduce((max, it) => {
+    if (halfOf(it) !== half) return max
+    const m = (Number(it.minute) || 0) + (Number(it.stoppage_time) || 0)
+    return Math.max(max, m)
+  }, 0)
+}
+
+const h1Len = computed(() => Math.min(50, Math.max(45, halfMaxMinute(1, props.bars), halfMaxMinute(1, props.goals))))
+const h2Len = computed(() =>
+  Math.min(50, Math.max(45, halfMaxMinute(2, props.bars) - 45, halfMaxMinute(2, props.goals) - 45)),
+)
+const STEP = computed(() => 640 / (h1Len.value + h2Len.value))
+const W1 = computed(() => h1Len.value * STEP.value)
+const W2 = computed(() => h2Len.value * STEP.value)
+
 // Minuto relativo ao painel: o 2º tempo recomeça em 1 (46' -> 1). Sem `half`
-// (snapshot antigo na janela de deploy) mantém o mapeamento legado contínuo.
-// Clamp só no relativo do 2º painel: gol de acréscimo longo (90+6' -> rel
-// 51) estoura o viewBox (cx 642.5 > 640). 1ºT nunca passa de 50 (barra do
-// backend clampada em 50; gol do 1ºT tem minute <= 45); o legado é contínuo
-// de propósito.
+// mantém o mapeamento legado contínuo. Clamp só no relativo do 2º painel:
+// gol de acréscimo longo (90+6' -> rel 51) estoura o viewBox.
 function panelMinute(item) {
   const m = Number(item.minute) || 0
   if (halfOf(item) !== 2) return m
@@ -86,12 +106,12 @@ function panelMinute(item) {
 }
 
 function barX(item) {
-  return (halfOf(item) === 2 ? PANEL_W : 0) + (panelMinute(item) - 1) * STEP
+  return (halfOf(item) === 2 ? W1.value : 0) + (panelMinute(item) - 1) * STEP.value
 }
 
 function tickX(t) {
   const rel = t.half === 2 ? t.minute - 45 : t.minute
-  return (t.half === 2 ? PANEL_W : 0) + (rel - 1) * STEP
+  return (t.half === 2 ? W1.value : 0) + (rel - 1) * STEP.value
 }
 
 function barHeight(b) {
