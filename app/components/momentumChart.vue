@@ -43,7 +43,9 @@
       <template v-for="t in TICKS" :key="`${t.half}-${t.minute}`">
         <line :x1="tickX(t)" y1="51" :x2="tickX(t)" y2="59" stroke="#3f3f46" />
 
-        <text :x="tickX(t)" y="153" font-size="20" fill="#52525b" text-anchor="middle">{{ t.minute }}'</text>
+        <text :x="Math.min(tickX(t), 620)" y="153" font-size="20" fill="#52525b" text-anchor="middle">
+          {{ t.minute }}'
+        </text>
       </template>
     </svg>
 

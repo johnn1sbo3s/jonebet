@@ -117,6 +117,8 @@ describe('MomentumChart', () => {
     expect(rects[1].attributes('fill')).toBe('#27272a')
     expect(rects[1].attributes('x')).toBe('320')
     expect(rects[1].attributes('width')).toBe('320')
+    // guard da decisão visual central: a linha de 1ºT/2ºT não pode voltar tracejada
+    expect(wrapper.html()).not.toContain('stroke-dasharray')
   })
 
   it('painéis flexíveis: 1ºT 47 e 2ºT 50 desloca divisor para ~310', async () => {
