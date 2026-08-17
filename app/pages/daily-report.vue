@@ -73,6 +73,29 @@
     </div>
 
     <div v-else-if="state.response" class="flex flex-col gap-4">
+      <template v-if="favoriteGames.length">
+        <section class="rounded-2xl bg-amber-400/10 p-4">
+          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
+              <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
+              Jogos favoritos
+
+              <span
+                class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
+              >
+                {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
+              </span>
+            </h2>
+          </header>
+
+          <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" />
+          </TransitionGroup>
+        </section>
+
+        <USeparator />
+      </template>
+
       <div class="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
         <div class="flex flex-col gap-1.5">
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Filtros</span>
@@ -103,29 +126,6 @@
           <SegmentedControl v-model="viewMode" :options="viewOptions" full-width />
         </div>
       </div>
-
-      <template v-if="favoriteGames.length">
-        <section class="rounded-2xl border border-teal-500/30 bg-zinc-900 p-4">
-          <header class="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
-              <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
-              Jogos favoritos
-            </h2>
-
-            <span
-              class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
-            >
-              {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
-            </span>
-          </header>
-
-          <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" />
-          </TransitionGroup>
-        </section>
-
-        <USeparator />
-      </template>
 
       <template v-if="filteredJogos.length === 0">
         <div class="rounded-2xl border border-zinc-800 bg-zinc-900 py-14 text-center text-sm text-zinc-500">
