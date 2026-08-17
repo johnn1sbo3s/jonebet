@@ -8,9 +8,9 @@
       aria-label="Gráfico de momentum"
       class="w-full"
     >
-      <rect x="0" y="0" :width="W1" height="158" fill="#27272a" />
+      <rect x="0" y="0" :width="W1" height="110" fill="#27272a" />
 
-      <rect :x="P2" :width="W2" height="158" fill="#27272a" />
+      <rect :x="P2" y="0" :width="W2" height="110" fill="#27272a" />
 
       <line x1="0" y1="55" x2="640" y2="55" stroke="#3f3f46" stroke-width="1" />
 
