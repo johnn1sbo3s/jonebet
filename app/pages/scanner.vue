@@ -61,16 +61,16 @@
           >
             <h2 class="flex items-center gap-1.5 text-sm font-bold text-zinc-100">
               <UIcon name="i-lucide-star" mode="svg" class="star-fill size-4 text-amber-400" />
-              Jogos favoritos
-            </h2>
 
-            <span class="flex items-center gap-2">
+              Jogos favoritos
               <span
                 class="text-2xs rounded-full border border-teal-500/30 bg-zinc-950 px-2.5 py-0.5 font-semibold whitespace-nowrap text-zinc-400"
               >
                 {{ favoriteGames.length }} {{ favoriteGames.length === 1 ? 'jogo' : 'jogos' }}
               </span>
+            </h2>
 
+            <span class="flex items-center gap-2">
               <UIcon
                 name="i-lucide-chevron-down"
                 mode="svg"
