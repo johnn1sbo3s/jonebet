@@ -71,6 +71,16 @@ describe('MomentumChart', () => {
     expect(wrapper.find('circle').attributes('cx')).toBe('322.5') // 320 + 0 + 2.5
   })
 
+  it("clampa gol além do painel (90+6')", async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        bars: [{ minute: 96, half: 2, home: 0.5, away: 0 }],
+        goals: [{ minute: 96, half: 2, stoppage_time: 0, team: 'home', player: 'X' }],
+      },
+    })
+    expect(wrapper.find('circle').attributes('cx')).toBe('636.1') // rel clampado em 50
+  })
+
   it('barra sem half cai no mapeamento legado', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: { bars: [{ minute: 60, home: 0.5, away: 0 }] },

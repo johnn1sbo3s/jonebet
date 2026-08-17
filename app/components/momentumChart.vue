@@ -75,9 +75,14 @@ function halfOf(item) {
 
 // Minuto relativo ao painel: o 2º tempo recomeça em 1 (46' -> 1). Sem `half`
 // (snapshot antigo na janela de deploy) mantém o mapeamento legado contínuo.
+// Clamp só no relativo do 2º painel: gol de acréscimo longo (90+6' -> rel
+// 51) estoura o viewBox (cx 642.5 > 640). 1ºT nunca passa de 50 (barra do
+// backend clampada em 50; gol do 1ºT tem minute <= 45); o legado é contínuo
+// de propósito.
 function panelMinute(item) {
   const m = Number(item.minute) || 0
-  return halfOf(item) === 2 ? m - 45 : m
+  if (halfOf(item) !== 2) return m
+  return Math.min(m - 45, 50)
 }
 
 function barX(item) {
