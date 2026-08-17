@@ -14,8 +14,8 @@
 
       <rect
         v-for="b in bars"
-        :key="b.minute"
-        :x="(b.minute - 1) * (640 / 96)"
+        :key="`${halfOf(b)}-${b.minute}`"
+        :x="barX(b)"
         :y="barY(b)"
         width="5"
         :height="barHeight(b)"
@@ -27,7 +27,7 @@
       <circle
         v-for="(g, i) in goals"
         :key="i"
-        :cx="(g.minute - 1) * (640 / 96) + 2.5"
+        :cx="barX(g) + 2.5"
         :cy="g.team === 'home' ? 9 : 146"
         r="5"
         fill="#f4f4f5"
@@ -37,10 +37,10 @@
         <title>{{ g.player || 'Gol' }} ({{ g.minute }}')</title>
       </circle>
 
-      <template v-for="t in TICKS" :key="t">
-        <line :x1="(t - 1) * (640 / 96)" y1="51" :x2="(t - 1) * (640 / 96)" y2="59" stroke="#3f3f46" />
+      <template v-for="t in TICKS" :key="`${t.half}-${t.minute}`">
+        <line :x1="tickX(t)" y1="51" :x2="tickX(t)" y2="59" stroke="#3f3f46" />
 
-        <text :x="(t - 1) * (640 / 96)" y="153" font-size="20" fill="#52525b" text-anchor="middle">{{ t }}'</text>
+        <text :x="tickX(t)" y="153" font-size="20" fill="#52525b" text-anchor="middle">{{ t.minute }}'</text>
       </template>
     </svg>
 
@@ -54,10 +54,40 @@ defineProps({
   goals: { type: Array, default: () => [] },
 })
 
-const TICKS = [15, 30, 45, 60, 75, 90]
+// Dois painéis de 320px (metade do viewBox 640), 50 slots de minuto cada.
+const PANEL_W = 320
+const STEP = PANEL_W / 50
+const TICKS = [
+  { half: 1, minute: 15 },
+  { half: 1, minute: 30 },
+  { half: 1, minute: 45 },
+  { half: 2, minute: 50 },
+  { half: 2, minute: 75 },
+  { half: 2, minute: 90 },
+]
 // Geometria do gráfico do Flashscore (viewBox 640x158, centro em 55):
 // mesma moldura — barra de valor 1.0 encosta no topo, como lá.
 const CENTER = 55
+
+function halfOf(item) {
+  return Number(item.half) === 2 ? 2 : 1
+}
+
+// Minuto relativo ao painel: o 2º tempo recomeça em 1 (46' -> 1). Sem `half`
+// (snapshot antigo na janela de deploy) mantém o mapeamento legado contínuo.
+function panelMinute(item) {
+  const m = Number(item.minute) || 0
+  return halfOf(item) === 2 ? m - 45 : m
+}
+
+function barX(item) {
+  return (halfOf(item) === 2 ? PANEL_W : 0) + (panelMinute(item) - 1) * STEP
+}
+
+function tickX(t) {
+  const rel = t.half === 2 ? t.minute - 45 : t.minute
+  return (t.half === 2 ? PANEL_W : 0) + (rel - 1) * STEP
+}
 
 function barHeight(b) {
   return Math.max(Number(b.home) || 0, Number(b.away) || 0) * 55

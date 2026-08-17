@@ -46,4 +46,43 @@ describe('MomentumChart', () => {
     })
     expect(wrapper.findAll('circle')).toHaveLength(0)
   })
+
+  it('posiciona barras do 2º tempo no painel direito', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        bars: [
+          { minute: 1, half: 1, home: 0.5, away: 0 },
+          { minute: 46, half: 2, home: 0, away: 0.8 },
+        ],
+      },
+    })
+    const rects = wrapper.findAll('rect')
+    expect(rects[0].attributes('x')).toBe('0') // 1ºT minuto 1
+    expect(rects[1].attributes('x')).toBe('320') // 2ºT 46' -> rel 1
+  })
+
+  it('gol do 2º tempo posiciona no painel direito', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        bars: [{ minute: 46, half: 2, home: 0.5, away: 0 }],
+        goals: [{ minute: 46, half: 2, stoppage_time: 0, team: 'home', player: 'X' }],
+      },
+    })
+    expect(wrapper.find('circle').attributes('cx')).toBe('322.5') // 320 + 0 + 2.5
+  })
+
+  it('barra sem half cai no mapeamento legado', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: { bars: [{ minute: 60, home: 0.5, away: 0 }] },
+    })
+    expect(wrapper.find('rect').attributes('x')).toBe('377.6') // (60-1)*6.4
+  })
+
+  it('ticks 15/30/45 no 1ºT e 50/75/90 no 2ºT', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: { bars: [{ minute: 1, half: 1, home: 0.5, away: 0 }] },
+    })
+    const labels = wrapper.findAll('text').map((t) => t.text())
+    expect(labels).toEqual(["15'", "30'", "45'", "50'", "75'", "90'"])
+  })
 })
