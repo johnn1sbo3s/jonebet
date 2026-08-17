@@ -30,3 +30,6 @@ docs/superpowers/
 .playwright-mcp
 .worktrees/
 
+# CodeGraph index (local only, auto-synced by file watcher)
+.codegraph/
+
