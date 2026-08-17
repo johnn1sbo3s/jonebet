@@ -31,7 +31,7 @@
         v-for="(g, i) in goals"
         :key="i"
         :cx="barX(g) + 2.5"
-        :cy="g.team === 'home' ? 9 : 146"
+        :cy="g.team === 'home' ? 9 : 101"
         r="5"
         fill="#f4f4f5"
         :stroke="g.team === 'home' ? '#2dd4bf' : '#3b82f6'"
