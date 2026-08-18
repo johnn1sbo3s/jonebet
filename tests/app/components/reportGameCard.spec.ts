@@ -20,9 +20,10 @@ function game(overrides = {}) {
 describe('ReportGameCard', () => {
   beforeEach(() => localStorage.clear())
 
-  it('renderiza horário, times, odds e análise', async () => {
+  it('renderiza horário, liga, times, odds e análise', async () => {
     const w = await mountSuspended(ReportGameCard, { props: { game: game() } })
     expect(w.text()).toContain('21:30')
+    expect(w.text()).toContain('Brasileirão')
     expect(w.text()).toContain('Flamengo x Palmeiras')
     expect(w.text()).toContain('1.8 / 3.6 / 4.5')
     expect(w.text()).toContain('Jogo equilibrado')

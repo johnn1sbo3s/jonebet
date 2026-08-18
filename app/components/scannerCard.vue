@@ -37,7 +37,12 @@
               :aria-label="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
               @click.stop="toggleFavorite(game.id)"
             >
-              <UIcon name="i-lucide-star" mode="svg" class="h-3.5 w-3.5" />
+              <UIcon
+                name="i-lucide-star"
+                mode="svg"
+                class="h-3.5 w-3.5"
+                :class="isFavorite(game.id) ? 'text-amber-400' : ''"
+              />
             </button>
 
             <button
