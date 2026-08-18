@@ -10,10 +10,6 @@
       </div>
 
       <span class="flex items-center gap-1.5">
-        <span v-if="game.odds?.h" class="text-xs font-semibold whitespace-nowrap text-zinc-400">
-          {{ game.odds.h }} / {{ game.odds.d }} / {{ game.odds.a }}
-        </span>
-
         <button
           type="button"
           class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-amber-400 hover:text-amber-400"
@@ -43,7 +39,13 @@
       </span>
     </header>
 
-    <h3 class="text-sm font-bold text-zinc-100">{{ game.home }} x {{ game.away }}</h3>
+    <h3 class="text-sm font-bold text-zinc-100">
+      {{ game.home }} x {{ game.away }}
+
+      <span v-if="game.odds?.h" class="ml-2 text-xs font-semibold text-zinc-400">
+        {{ game.odds.h }} / {{ game.odds.d }} / {{ game.odds.a }}
+      </span>
+    </h3>
 
     <p class="text-sm leading-snug text-zinc-200">{{ game.leitura_geral }}</p>
 
