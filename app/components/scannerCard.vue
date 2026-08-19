@@ -423,7 +423,6 @@ function retryPreGame() {
 
 const STAT_LABELS = [
   ['xg', 'XG', 2, ''],
-  ['possession', 'POSSE', 0, '%'],
   ['shots', 'FINALIZAÇÕES', 0, ''],
   ['big_chances', 'CHANCES CLARAS', 0, ''],
   ['box_touches', 'TOQUES NA ÁREA', 0, ''],
@@ -467,13 +466,23 @@ const derivedRows = computed(() => {
   const p = pressure.value
   const c = control.value
   const c10 = control10.value
+  const pos = props.game.stats?.possession || {}
   return [
     {
-      label: "PRESSÃO 5'",
-      home: fmtRaw(p.mean5.home),
-      away: fmtRaw(p.mean5.away),
-      pctHome: sharePct(p.mean5),
+      label: 'POSSE',
+      home: pos.home != null ? `${formatNumber(pos.home, 0)}%` : '—',
+      away: pos.away != null ? `${formatNumber(pos.away, 0)}%` : '—',
+      pctHome: sharePct(pos),
       hint: null,
+    },
+    { label: 'CONTROLE', home: fmtPct(c.home), away: fmtPct(c.away), pctHome: sharePct(c), hint: CONTROL_HINT },
+    { label: 'C10', home: fmtPct(c10.home), away: fmtPct(c10.away), pctHome: sharePct(c10), hint: C10_HINT },
+    {
+      label: "PICO 10'",
+      home: fmtRaw(p.max10.home),
+      away: fmtRaw(p.max10.away),
+      pctHome: sharePct(p.max10),
+      hint: PICO_HINT,
     },
     {
       label: "PRESSÃO 10'",
@@ -483,14 +492,12 @@ const derivedRows = computed(() => {
       hint: null,
     },
     {
-      label: "PICO 10'",
-      home: fmtRaw(p.max10.home),
-      away: fmtRaw(p.max10.away),
-      pctHome: sharePct(p.max10),
-      hint: PICO_HINT,
+      label: "PRESSÃO 5'",
+      home: fmtRaw(p.mean5.home),
+      away: fmtRaw(p.mean5.away),
+      pctHome: sharePct(p.mean5),
+      hint: null,
     },
-    { label: 'CONTROLE', home: fmtPct(c.home), away: fmtPct(c.away), pctHome: sharePct(c), hint: CONTROL_HINT },
-    { label: 'C10', home: fmtPct(c10.home), away: fmtPct(c10.away), pctHome: sharePct(c10), hint: C10_HINT },
   ]
 })
 
