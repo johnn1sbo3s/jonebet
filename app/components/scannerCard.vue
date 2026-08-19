@@ -422,11 +422,11 @@ function retryPreGame() {
 }
 
 const STAT_LABELS = [
-  ['xg', 'XG'],
-  ['possession', 'POSSE'],
-  ['shots', 'FINALIZAÇÕES'],
-  ['big_chances', 'CHANCES CLARAS'],
-  ['box_touches', 'TOQUES NA ÁREA'],
+  ['xg', 'XG', 2, ''],
+  ['possession', 'POSSE', 0, '%'],
+  ['shots', 'FINALIZAÇÕES', 0, ''],
+  ['big_chances', 'CHANCES CLARAS', 0, ''],
+  ['box_touches', 'TOQUES NA ÁREA', 0, ''],
 ]
 
 const CONTROL_HINT =
@@ -519,15 +519,15 @@ const trendTitle = (side) => {
 
 const statRows = computed(() => [
   ...derivedRows.value,
-  ...STAT_LABELS.map(([key, label]) => {
+  ...STAT_LABELS.map(([key, label, dec, suffix]) => {
     const pair = props.game.stats?.[key] || {}
     const home = pair.home
     const away = pair.away
     const total = (Number(home) || 0) + (Number(away) || 0)
     return {
       label,
-      home: home ?? '—',
-      away: away ?? '—',
+      home: home != null ? `${formatNumber(home, dec)}${suffix}` : '—',
+      away: away != null ? `${formatNumber(away, dec)}${suffix}` : '—',
       pctHome: total > 0 ? ((Number(home) || 0) / total) * 100 : null,
       hint: null,
     }
