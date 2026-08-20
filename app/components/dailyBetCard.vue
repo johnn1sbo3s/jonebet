@@ -32,19 +32,19 @@
         </div>
 
         <div class="flex shrink-0 gap-1 sm:gap-1.5">
-          <div class="rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
+          <div class="w-16 rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
             <div class="text-2xs font-medium tracking-wide text-zinc-500 uppercase">H</div>
 
             <div class="text-xs font-semibold text-zinc-100 sm:text-sm">{{ bet.FT_Odds_H }}</div>
           </div>
 
-          <div class="rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
+          <div class="w-16 rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
             <div class="text-2xs font-medium tracking-wide text-zinc-500 uppercase">D</div>
 
             <div class="text-xs font-semibold text-zinc-100 sm:text-sm">{{ bet.FT_Odds_D }}</div>
           </div>
 
-          <div class="rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
+          <div class="w-16 rounded-lg border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-center sm:px-2.5">
             <div class="text-2xs font-medium tracking-wide text-zinc-500 uppercase">A</div>
 
             <div class="text-xs font-semibold text-zinc-100 sm:text-sm">{{ bet.FT_Odds_A }}</div>
