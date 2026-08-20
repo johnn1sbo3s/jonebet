@@ -12,6 +12,7 @@
 
         <USelectMenu
           v-model="selectedModel"
+          variant="outline"
           class="min-w-60 flex-1 sm:flex-none"
           searchable
           placeholder="Todos os modelos"
@@ -32,7 +33,11 @@
     <DataErrorCard
       v-else-if="error || !bets.length"
       :message="
-        error ? 'Não foi possível carregar as apostas' : 'Nenhuma aposta encontrada para os filtros selecionados'
+        error
+          ? 'Não foi possível carregar as apostas'
+          : selectedModel
+            ? `Nenhuma aposta do modelo ${modelNameToNaturalName(selectedModel)} para esta data`
+            : 'Nenhuma aposta encontrada para esta data'
       "
     />
 
@@ -60,16 +65,18 @@ const selectedModel = ref(null)
 // navigates backwards. Falls back to today until the response arrives.
 const maxDateIso = ref(todayIso)
 
+// Full model catalog from the API — independent of the selected date, so the
+// selector always lists every model. The bets filter below surfaces an empty
+// state for models with no bets on the chosen date.
+const { data: modelsPayload } = await useModelsList()
+
 const modelItems = computed(() => {
-  const names = new Set()
-  for (const bet of dailyBetsResponse.value?.bets || []) {
-    if (bet.Modelo) names.add(bet.Modelo)
-  }
+  const names = (modelsPayload.value?.items || [])
+    .map((m) => m.id)
+    .sort((a, b) => modelNameToNaturalName(a).localeCompare(modelNameToNaturalName(b)))
   return [
     { value: null, label: 'Todos os modelos' },
-    ...[...names]
-      .map((name) => ({ value: name, label: modelNameToNaturalName(name) }))
-      .sort((a, b) => a.label.localeCompare(b.label)),
+    ...names.map((name) => ({ value: name, label: modelNameToNaturalName(name) })),
   ]
 })
 
@@ -104,8 +111,4 @@ const bets = computed(() => {
 })
 
 const qtd_games = computed(() => bets.value.length)
-
-watch(date, () => {
-  selectedModel.value = null
-})
 </script>

@@ -1,8 +1,10 @@
 <template>
-  <div class="inline-flex items-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
+  <div
+    class="inline-flex h-8 items-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 ring-1 ring-zinc-800 ring-inset"
+  >
     <button
       type="button"
-      class="hover:bg-elevated flex h-8 items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      class="hover:bg-elevated flex h-full items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
       aria-label="Data anterior"
       @click="goPrev"
     >
@@ -12,7 +14,7 @@
     <UPopover v-model:open="popoverOpen" :popper="{ placement: 'bottom' }">
       <button
         type="button"
-        class="hover:bg-elevated focus-visible:ring-primary/40 flex h-8 w-28 items-center justify-center border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
+        class="hover:bg-elevated focus-visible:ring-primary/40 flex h-full w-28 items-center justify-center border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <span>{{ modelValue ? formatDate(modelValue) : '' }}</span>
       </button>
@@ -24,7 +26,7 @@
 
     <button
       type="button"
-      class="hover:bg-elevated flex h-8 items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+      class="hover:bg-elevated flex h-full items-center justify-center px-2.5 text-zinc-400 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
       aria-label="Próxima data"
       :disabled="isAtMax"
       @click="goNext"
