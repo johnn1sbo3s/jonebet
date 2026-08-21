@@ -108,7 +108,7 @@ const bets = computed(() => {
     FT_Odds_D: formatNumber(item.FT_Odds_D),
     FT_Odds_A: formatNumber(item.FT_Odds_A),
     Odd: item.Odd != null ? formatNumber(item.Odd) : null,
-    Market: item.Market ?? null,
+    Market: MARKET_LABELS[item.Market] ?? item.Market ?? null,
   }))
 })
 
