@@ -49,6 +49,15 @@
 
             <div class="text-xs font-semibold text-zinc-100 sm:text-sm">{{ bet.FT_Odds_A }}</div>
           </div>
+
+          <div
+            v-if="bet.Odd != null"
+            class="w-16 rounded-lg border border-teal-800/60 bg-teal-950/40 px-1.5 py-1 text-center sm:px-2.5"
+          >
+            <div class="text-2xs font-medium tracking-wide text-teal-500 uppercase">{{ bet.Market }}</div>
+
+            <div class="text-xs font-semibold text-teal-300 sm:text-sm">{{ bet.Odd }}</div>
+          </div>
         </div>
       </div>
     </div>

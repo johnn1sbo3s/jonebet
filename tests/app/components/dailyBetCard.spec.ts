@@ -57,4 +57,34 @@ describe('DailyBetCard', () => {
     expect(root.className).toContain('border-zinc-800')
     expect(root.className).toContain('bg-zinc-900')
   })
+
+  describe('model market odd box', () => {
+    const betWithOdd = {
+      Date: '2026-06-21',
+      Time: '16:00',
+      Home: 'Flamengo',
+      Away: 'Palmeiras',
+      FT_Odds_H: '2.10',
+      FT_Odds_D: '3.40',
+      FT_Odds_A: '3.25',
+      Modelo: 'Lay favorite home',
+      Odd: '12',
+      Market: '2x0',
+    }
+
+    it('renders the model market odd (Market label + value) when Odd is present', async () => {
+      const wrapper = await mountSuspended(DailyBetCard, { props: { bet: betWithOdd } })
+      const text = wrapper.text()
+      expect(text).toContain('2x0')
+      expect(text).toContain('12')
+    })
+
+    it('does not render the model market odd box when Odd is null', async () => {
+      const wrapper = await mountSuspended(DailyBetCard, {
+        props: { bet: { ...betWithOdd, Odd: null, Market: null } },
+      })
+      const text = wrapper.text()
+      expect(text).not.toContain('2x0')
+    })
+  })
 })
