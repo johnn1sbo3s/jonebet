@@ -1,25 +1,21 @@
 <template>
   <div class="flex flex-col gap-5">
-    <div class="flex justify-between">
-      <PageHeader title="Apostas do dia" description="Histórico de apostas filtrado por data e modelo" />
-    </div>
+    <PageHeader title="Apostas do dia" description="Histórico de apostas filtrado por data e modelo" />
 
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <p class="w-full text-sm text-zinc-400 sm:w-auto sm:min-w-24">{{ qtd_games }} apostas</p>
+    <div class="flex items-center justify-between gap-2">
+      <DatePicker v-model="date" :max-value="maxDateIso" />
 
-      <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-        <DatePicker v-model="date" :max-value="maxDateIso" />
+      <USelectMenu
+        v-model="selectedModel"
+        variant="outline"
+        class="min-w-0 flex-1 sm:flex-none"
+        searchable
+        placeholder="Todos os modelos"
+        :items="modelItems"
+        value-key="value"
+      />
 
-        <USelectMenu
-          v-model="selectedModel"
-          variant="outline"
-          class="min-w-60 flex-1 sm:flex-none"
-          searchable
-          placeholder="Todos os modelos"
-          :items="modelItems"
-          value-key="value"
-        />
-      </div>
+      <p class="shrink-0 text-sm whitespace-nowrap text-zinc-400 tabular-nums">{{ qtd_games }} apostas</p>
     </div>
 
     <template v-if="pending">
@@ -41,11 +37,24 @@
       "
     />
 
-    <ul v-else class="flex flex-col gap-3">
-      <li v-for="bet in bets" :key="bet._id || `${bet.Date}-${bet.Time}-${bet.Home}`">
-        <DailyBetCard :bet="bet" />
-      </li>
-    </ul>
+    <template v-else>
+      <section v-for="group in groupedBets" :key="group.time" class="flex flex-col gap-3">
+        <div
+          class="sticky top-16 z-10 -mx-1 w-fit rounded-xl border border-zinc-800 bg-zinc-950/90 px-2.5 py-1.5 backdrop-blur-sm"
+        >
+          <span class="inline-flex items-center gap-2">
+            <span class="text-sm font-bold text-teal-400">{{ group.time }}</span>
+            <span class="text-xs text-zinc-500">{{ group.items.length }} apostas</span>
+          </span>
+        </div>
+
+        <ul class="flex flex-col gap-3">
+          <li v-for="bet in group.items" :key="bet._id || `${bet.Date}-${bet.Time}-${bet.Home}`">
+            <DailyBetCard :bet="bet" />
+          </li>
+        </ul>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -113,4 +122,13 @@ const bets = computed(() => {
 })
 
 const qtd_games = computed(() => bets.value.length)
+
+const groupedBets = computed(() => {
+  const groups = new Map()
+  for (const bet of bets.value) {
+    if (!groups.has(bet.Time)) groups.set(bet.Time, [])
+    groups.get(bet.Time).push(bet)
+  }
+  return [...groups.entries()].map(([time, items]) => ({ time, items }))
+})
 </script>
