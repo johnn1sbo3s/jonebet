@@ -2,8 +2,10 @@
   <button
     type="button"
     aria-label="Voltar ao topo"
-    class="fixed right-6 bottom-6 z-40 flex size-11 cursor-pointer items-center justify-center rounded-full border border-zinc-700 bg-zinc-800 text-zinc-300 transition-transform duration-200 active:scale-[0.97] hover:border-zinc-600 hover:text-white"
-    :class="visible ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+    :aria-hidden="!visible"
+    :tabindex="visible ? 0 : -1"
+    class="fixed right-6 bottom-6 z-40 flex size-11 cursor-pointer items-center justify-center rounded-full border border-zinc-700 bg-zinc-800 text-zinc-300 transition duration-200 ease-out active:scale-[0.97] hover:border-zinc-600 hover:text-white"
+    :class="visible ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'"
     @click="scrollTop"
   >
     <UIcon name="i-lucide-arrow-up" class="size-5" />
@@ -18,6 +20,7 @@ function onScroll() {
 }
 
 function scrollTop() {
+  if (!visible.value) return
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
