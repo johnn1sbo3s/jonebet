@@ -90,7 +90,7 @@ Dot decimal, no thousands separator. Use helpers from `app/utils/formatNumber.js
 - Do **not** use `toLocaleString('pt-BR')` or `toFixed(2)` for these
 
 ### Enums
-Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR` (252). Never inline magic strings.
+Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`, `TRADING_DAYS_PER_YEAR` (252), `MARKET_LABELS` (API market name → display label, e.g. `'Goleada Casa' → 'Goleada H'`). Never inline magic strings.
 
 ### Date/Time
 - Luxon with `America/Sao_Paulo` timezone
