@@ -42,7 +42,7 @@
         <div
           class="sticky top-16 z-10 -mx-1 w-fit rounded-xl border border-zinc-800 bg-zinc-950/90 px-2.5 py-1.5 backdrop-blur-sm"
         >
-          <span class="inline-flex items-center gap-2">
+          <span class="inline-flex items-end gap-2">
             <span class="text-sm font-bold text-teal-400">{{ group.time }}</span>
             <span class="text-xs text-zinc-500">{{ group.items.length }} apostas</span>
           </span>
