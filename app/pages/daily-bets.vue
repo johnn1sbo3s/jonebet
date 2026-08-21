@@ -55,6 +55,8 @@
         </ul>
       </section>
     </template>
+
+    <BackToTop />
   </div>
 </template>
 
