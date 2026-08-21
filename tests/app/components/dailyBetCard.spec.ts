@@ -15,11 +15,9 @@ describe('DailyBetCard', () => {
     Modelo: 'Lay favorite home',
   }
 
-  it('renders the date badge with abbreviated month and day', async () => {
+  it('does not render a date badge', async () => {
     const wrapper = await mountSuspended(DailyBetCard, { props: { bet } })
-    const text = wrapper.text()
-    expect(text).toContain('Jun')
-    expect(text).toContain('21')
+    expect(wrapper.text()).not.toContain('Jun')
   })
 
   it('renders the time and model on the header line', async () => {
