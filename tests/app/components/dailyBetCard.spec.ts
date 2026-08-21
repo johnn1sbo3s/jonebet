@@ -20,10 +20,10 @@ describe('DailyBetCard', () => {
     expect(wrapper.text()).not.toContain('Jun')
   })
 
-  it('renders the time and model on the header line', async () => {
+  it('renders the model on the header line, without the time prefix', async () => {
     const wrapper = await mountSuspended(DailyBetCard, { props: { bet } })
     const text = wrapper.text()
-    expect(text).toContain('16:00 ·')
+    expect(text).not.toContain('16:00')
     expect(text).toContain('Lay favorite home')
   })
 

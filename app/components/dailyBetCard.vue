@@ -1,9 +1,7 @@
 <template>
   <div class="flex flex-col gap-1.5 rounded-2xl border border-zinc-800 bg-zinc-900 p-3">
     <div class="flex items-center justify-between gap-3">
-      <span class="truncate text-sm text-zinc-200"
-        >{{ bet.Time }} · <span class="font-semibold text-teal-400">{{ bet.Modelo }}</span></span
-      >
+      <span class="truncate text-sm font-semibold text-teal-400">{{ bet.Modelo }}</span>
 
       <a
         v-if="bet.Fixture_ID"
