@@ -56,7 +56,7 @@
                 <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
 
                 <span class="font-semibold whitespace-nowrap text-teal-400">
-                  {{ bet.Market }} · {{ formatNumber(bet.Odd, 2) }}
+                  {{ formatNumber(bet.Odd, 2) }}
                 </span>
               </div>
             </div>

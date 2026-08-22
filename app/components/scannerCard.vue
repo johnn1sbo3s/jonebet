@@ -29,18 +29,30 @@
               {{ game.notifications.length }}
             </UBadge>
 
-            <UBadge
-              v-if="preLiveBets.length > 0"
-              color="primary"
-              variant="outline"
-              size="md"
-              class="cursor-pointer gap-1 px-2.5"
-              title="Modelos com apostas pré-live"
-              @click.stop="preLiveOpen = true"
-            >
-              <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
-              {{ preLiveBets.length }} {{ preLiveBets.length === 1 ? 'modelo' : 'modelos' }}
-            </UBadge>
+            <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
+              <button
+                type="button"
+                class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
+                title="Modelos com apostas pré-live"
+                @click.stop
+              >
+                <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
+
+                <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
+              </button>
+
+              <template #content>
+                <div class="flex min-w-40 flex-col gap-1">
+                  <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
+                    <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
+
+                    <span class="font-semibold whitespace-nowrap text-teal-400">
+                      {{ formatNumber(bet.Odd, 2) }}
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </UPopover>
 
             <button
               v-if="!game.finished || isFavorite(game.id)"
@@ -374,39 +386,6 @@
         </div>
       </div>
     </div>
-
-    <div
-      v-if="preLiveOpen"
-      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
-      @click.stop
-    >
-      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
-        <div class="mb-2 flex items-center justify-between">
-          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase"> Modelos com apostas pré-live </span>
-
-          <button
-            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-            @click.stop="preLiveOpen = false"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div v-if="preLiveBets.length" class="flex flex-col gap-1.5">
-          <div
-            v-for="(bet, i) in preLiveBets"
-            :key="i"
-            class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
-          >
-            <span class="text-xs font-bold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
-
-            <span class="text-xs font-semibold text-teal-400"> {{ bet.Market }} · {{ formatNumber(bet.Odd, 2) }} </span>
-          </div>
-        </div>
-
-        <p v-else class="text-center text-xs text-zinc-500">Nenhuma aposta pré-live para este jogo.</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -451,7 +430,7 @@ function retryAi() {
 
 const { get: getPreGame, load: loadPreGame } = usePreGameAnalysis()
 const preGameOpen = ref(false)
-const preLiveOpen = ref(false)
+
 const preGameState = computed(() => getPreGame(props.game.id))
 const preGameLoading = computed(() => preGameState.value.status === 'loading')
 const preGameResponse = computed(() => preGameState.value.response)
