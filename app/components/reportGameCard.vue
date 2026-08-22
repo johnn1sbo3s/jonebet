@@ -10,6 +10,32 @@
       </div>
 
       <span class="flex items-center gap-1.5">
+        <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
+          <button
+            type="button"
+            class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
+            title="Modelos com apostas pré-live"
+          >
+            <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
+
+            <span class="text-2xs font-semibold"
+              >{{ preLiveBets.length }} {{ preLiveBets.length === 1 ? 'modelo' : 'modelos' }}</span
+            >
+          </button>
+
+          <template #content>
+            <div class="flex min-w-40 flex-col gap-1">
+              <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
+                <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
+
+                <span class="font-semibold whitespace-nowrap text-teal-400">
+                  {{ formatNumber(bet.Odd, 2) }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </UPopover>
+
         <button
           type="button"
           class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-amber-400 hover:text-amber-400"
@@ -36,32 +62,6 @@
         >
           <UIcon name="i-lucide-arrow-up-right" class="h-3.5 w-3.5" />
         </a>
-
-        <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
-          <button
-            type="button"
-            class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
-            title="Modelos com apostas pré-live"
-          >
-            <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
-
-            <span class="text-2xs font-semibold"
-              >{{ preLiveBets.length }} {{ preLiveBets.length === 1 ? 'modelo' : 'modelos' }}</span
-            >
-          </button>
-
-          <template #content>
-            <div class="flex min-w-40 flex-col gap-1">
-              <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
-                <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
-
-                <span class="font-semibold whitespace-nowrap text-teal-400">
-                  {{ formatNumber(bet.Odd, 2) }}
-                </span>
-              </div>
-            </div>
-          </template>
-        </UPopover>
       </span>
     </header>
 
