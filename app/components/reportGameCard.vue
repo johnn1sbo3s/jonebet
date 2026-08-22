@@ -16,7 +16,7 @@
           :class="{ 'star-fill border-amber-400/60 bg-amber-400/10 text-amber-400': isFavorite(game.jogo_id) }"
           :title="isFavorite(game.jogo_id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
           :aria-label="isFavorite(game.jogo_id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
-          @click="toggleFavorite(game.jogo_id)"
+          @click="toggleFavorite(game.jogo_id, reportDate)"
         >
           <UIcon
             name="i-lucide-star"
@@ -82,6 +82,10 @@ import { flashscoreUrl } from '~/utils/flashscore'
 
 defineProps({
   game: { type: Object, required: true },
+  // Data do relatório (yyyy-MM-dd) — usada para gravar o favorito com a
+  // data correta do jogo, não "hoje". Assim favoritos de relatórios de
+  // amanhã (vistos à noite) sobrevivem à purga da meia-noite.
+  reportDate: { type: String, default: '' },
 })
 
 const { isFavorite, toggleFavorite } = useFavorites()

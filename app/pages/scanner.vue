@@ -18,6 +18,17 @@
             Relatório do dia
           </UButton>
 
+          <UButton
+            v-if="hasTomorrowReport"
+            :to="`/daily-report?date=${tomorrowIso}`"
+            target="_blank"
+            color="primary"
+            variant="outline"
+            size="xs"
+          >
+            Relatório de amanhã
+          </UButton>
+
           <span class="flex items-center gap-2">
             <span class="relative flex h-2 w-2">
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
@@ -144,12 +155,19 @@
 </template>
 
 <script setup>
+import { DateTime } from 'luxon'
 import { useFavorites } from '~/composables/useFavorites'
 import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
+import { SP_TZ } from '~/utils/timezone'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
+
+// Relatório de amanhã: disponível depois das 23h (scanner já gerou os dados).
+const now = DateTime.now().setZone(SP_TZ)
+const hasTomorrowReport = now.hour >= 23
+const tomorrowIso = now.plus({ days: 1 }).toFormat('yyyy-MM-dd')
 
 const snapshot = ref(null)
 const loading = ref(true)

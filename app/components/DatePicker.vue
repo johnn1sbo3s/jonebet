@@ -16,7 +16,7 @@
         type="button"
         class="hover:bg-elevated focus-visible:ring-primary/40 flex h-full w-28 items-center justify-center border-x border-zinc-800 px-2.5 text-sm font-medium text-white transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <span>{{ modelValue ? formatDate(modelValue) : '' }}</span>
+        <span>{{ calendarValue ? formatDate(calendarDateToIso(calendarValue)) : '' }}</span>
       </button>
 
       <template #content>
@@ -84,7 +84,7 @@ function goPrev() {
   const d = new Date(cur.year, cur.month - 1, cur.day - 1)
   const newCal = new CalendarDate(d.getFullYear(), d.getMonth() + 1, d.getDate())
   calendarValue.value = newCal
-  emit('update:modelValue', calendarDateToIso(newCal))
+  debouncedEmit(newCal)
 }
 
 function goNext() {
@@ -94,7 +94,16 @@ function goNext() {
   const d = new Date(cur.year, cur.month - 1, cur.day + 1)
   const newCal = new CalendarDate(d.getFullYear(), d.getMonth() + 1, d.getDate())
   calendarValue.value = newCal
-  emit('update:modelValue', calendarDateToIso(newCal))
+  debouncedEmit(newCal)
+}
+
+// debounce nas setas: previne múltiplas requisições quando o usuário clica
+// rápido. A seleção no calendário (onCalendarSelect) não tem debounce — é
+// uma ação pontual.
+let emitTimer = null
+function debouncedEmit(cal) {
+  clearTimeout(emitTimer)
+  emitTimer = setTimeout(() => emit('update:modelValue', calendarDateToIso(cal)), 700)
 }
 
 watch(

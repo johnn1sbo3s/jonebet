@@ -67,11 +67,15 @@ export function useFavorites() {
 
   return {
     isFavorite: (id) => Boolean(favorites[id]),
-    toggleFavorite: (id) => {
+    // reportDate: data do relatório sendo exibido (yyyy-MM-dd). Quando o
+    // usuário visualiza o relatório de amanhã (à noite), o favorito deve
+    // armazenar a data de amanhã — caso contrário, à meia-noite a limpeza
+    // purgaria o favorito porque "data < hoje". Quando omitted, usa todayIso().
+    toggleFavorite: (id, reportDate) => {
       if (favorites[id]) {
         delete favorites[id]
       } else {
-        favorites[id] = todayIso()
+        favorites[id] = reportDate || todayIso()
       }
       if (import.meta.client) {
         if (Object.keys(favorites).length === 0) localStorage.removeItem(STORAGE_KEY)

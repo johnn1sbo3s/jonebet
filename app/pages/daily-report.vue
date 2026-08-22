@@ -2,10 +2,15 @@
   <div class="flex flex-col gap-5">
     <PageHeader :title="`Relatório do dia — ${reportDateLabel}`">
       <template #title>
-        <UButton icon="i-lucide-arrow-left" color="neutral" variant="outline" size="xs" class="mr-3" @click="goBack">
-          Voltar
-        </UButton>
-        Relatório do dia — {{ reportDateLabel }}
+        <div class="flex flex-wrap items-center gap-2">
+          <UButton icon="i-lucide-arrow-left" color="neutral" variant="outline" size="xs" @click="goBack">
+            Voltar
+          </UButton>
+
+          <span class="text-sm text-zinc-500">·</span>
+
+          <DatePicker v-model="selectedDate" :max-value="maxDate" />
+        </div>
       </template>
 
       <template #right>
@@ -20,32 +25,36 @@
     </PageHeader>
 
     <div v-if="state.status === 'loading'" class="flex flex-col gap-4">
-      <div v-for="i in 2" :key="i" class="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-        <div class="mb-3 flex items-center justify-between gap-2">
-          <USkeleton class="h-4 w-40" />
+      <div class="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
+        <USkeleton class="h-9 w-full md:w-72" />
 
-          <USkeleton class="h-4 w-16 rounded-full" />
-        </div>
+        <USkeleton class="h-9 w-full md:w-64" />
 
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div v-for="j in 2" :key="j" class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3">
-            <div class="flex items-center gap-2">
-              <USkeleton class="h-3 w-8" />
+        <USkeleton class="h-9 w-full md:w-80" />
+      </div>
 
-              <USkeleton class="h-3 w-32" />
-
-              <USkeleton class="ml-auto h-3 w-14" />
-            </div>
-
-            <USkeleton class="h-3 w-full" />
-
-            <USkeleton class="h-3 w-2/3" />
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div v-for="i in 4" :key="i" class="flex flex-col gap-2 rounded-xl border border-zinc-700 bg-zinc-950 p-3">
+          <div class="flex items-center justify-between">
+            <USkeleton class="h-3 w-16" />
 
             <div class="flex gap-1.5">
-              <USkeleton class="h-6 w-20 rounded-full" />
+              <USkeleton class="size-7 rounded-lg" />
 
-              <USkeleton class="h-6 w-24 rounded-full" />
+              <USkeleton class="size-7 rounded-lg" />
             </div>
+          </div>
+
+          <USkeleton class="h-4 w-48" />
+
+          <USkeleton class="h-3.5 w-full" />
+
+          <USkeleton class="h-3.5 w-3/4" />
+
+          <div class="flex gap-1.5">
+            <USkeleton class="h-6 w-24 rounded-full" />
+
+            <USkeleton class="h-6 w-20 rounded-full" />
           </div>
         </div>
       </div>
@@ -59,7 +68,7 @@
 
       <button
         class="rounded-lg border border-teal-500/30 px-4 py-1.5 text-xs font-semibold text-teal-400"
-        @click="loadReport"
+        @click="() => loadReport()"
       >
         Tentar de novo
       </button>
@@ -89,7 +98,7 @@
           </header>
 
           <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" />
+            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" :report-date="selectedDate" />
           </TransitionGroup>
         </section>
 
@@ -146,7 +155,7 @@
           </header>
 
           <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" />
+            <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" :report-date="selectedDate" />
           </div>
         </section>
       </template>
@@ -168,18 +177,36 @@ import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 const { state, load } = useDailyReport()
 const { favoritesOf } = useFavorites()
 
+const route = useRoute()
+const router = useRouter()
+
+// --- Navegação de data ---
+// Suporta ?date=yyyy-MM-dd na URL. Depois das 23h, se não houver ?date=,
+// defaulta para amanhã (quando o scanner já gerou os dados).
+function defaultDate() {
+  const now = DateTime.now().setZone(SP_TZ)
+  if (route.query.date) return route.query.date
+  // Depois das 23h: amanhã (dados do scanner já disponíveis)
+  if (now.hour >= 23) return now.plus({ days: 1 }).toFormat('yyyy-MM-dd')
+  return now.toFormat('yyyy-MM-dd')
+}
+
+const selectedDate = ref(defaultDate())
+const reportDateLabel = computed(() => formatDate(selectedDate.value, { style: 'long' }))
+
+// Max date para o DatePicker: amanhã só depois das 23h (scanner já gerou os
+// dados); antes disso, max = hoje (não adianta navegar para amanhã sem dados).
+const maxDate = computed(() => {
+  const now = DateTime.now().setZone(SP_TZ)
+  const max = now.hour >= 23 ? now.plus({ days: 1 }) : now
+  return max.toFormat('yyyy-MM-dd')
+})
+
 // Favoritos do dia, ordenados por horário do jogo (como os grupos de liga).
 // Seção fixa no topo, independente da visualização por liga/horário.
 const favoriteGames = computed(() =>
   favoritesOf(state.response?.jogos || []).sort((a, b) => (a.time || '').localeCompare(b.time || '')),
 )
-
-// Data de hoje em America/Sao_Paulo (o relatório de hoje foi gerado ontem à
-// noite pelo pipeline). NUNCA usar new Date().toISOString() aqui: é UTC e
-// entre 21h-23h59 BRT o relatório pedido seria o de amanhã, ainda inexistente.
-const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
-
-const reportDateLabel = computed(() => formatDate(state.response?.date || todayIso, { style: 'long' }))
 
 const byLeague = computed(() => {
   // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
@@ -294,13 +321,22 @@ function goBack() {
   navigateTo('/scanner')
 }
 
-async function loadReport() {
+// Sincroniza a data selecionada com a URL (deep-linkável, sem recarregar).
+watch(selectedDate, (v) => {
+  router.replace({ query: { ...route.query, date: v } })
+})
+
+// Recarrega o relatório sempre que a data muda.
+async function loadReport(date) {
+  const dateIso = date || selectedDate.value
   try {
-    await load(todayIso)
+    await load(dateIso)
   } catch {
     // erro fica no estado (state.error) e a página mostra retry
   }
 }
 
-onMounted(loadReport)
+// Carrega ao montar e re-observa mudanças na data.
+onMounted(() => loadReport())
+watch(selectedDate, (v) => loadReport(v))
 </script>
