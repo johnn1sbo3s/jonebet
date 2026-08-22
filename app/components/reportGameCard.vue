@@ -24,7 +24,9 @@
           </button>
 
           <template #content>
-            <div class="flex min-w-40 flex-col gap-1">
+            <div class="flex min-w-40 flex-col gap-1.5">
+              <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
+
               <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
                 <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
 
