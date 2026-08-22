@@ -45,7 +45,9 @@
           >
             <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
 
-            <span class="text-2xs font-semibold">{{ preLiveBets.length }} modelos</span>
+            <span class="text-2xs font-semibold"
+              >{{ preLiveBets.length }} {{ preLiveBets.length === 1 ? 'modelo' : 'modelos' }}</span
+            >
           </button>
 
           <template #content>

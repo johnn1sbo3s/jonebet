@@ -10,7 +10,7 @@ describe('filterBetsForGame', () => {
   ]
 
   it('returns bets matching Home and Away', () => {
-    const game = { Home: 'Flamengo', Away: 'Palmeiras' }
+    const game = { home: 'Flamengo', away: 'Palmeiras' }
     const result = filterBetsForGame(bets, game)
     expect(result).toHaveLength(2)
     expect(result[0].Modelo).toBe('lay_away_v1')
@@ -18,18 +18,18 @@ describe('filterBetsForGame', () => {
   })
 
   it('returns empty array when no match', () => {
-    const game = { Home: 'Botafogo', Away: 'Vasco' }
+    const game = { home: 'Botafogo', away: 'Vasco' }
     const result = filterBetsForGame(bets, game)
     expect(result).toHaveLength(0)
   })
 
   it('returns empty array for empty bets', () => {
-    const game = { Home: 'Flamengo', Away: 'Palmeiras' }
+    const game = { home: 'Flamengo', away: 'Palmeiras' }
     expect(filterBetsForGame([], game)).toHaveLength(0)
   })
 
   it('returns empty array when bets is null/undefined', () => {
-    const game = { Home: 'Flamengo', Away: 'Palmeiras' }
+    const game = { home: 'Flamengo', away: 'Palmeiras' }
     expect(filterBetsForGame(null, game)).toHaveLength(0)
     expect(filterBetsForGame(undefined, game)).toHaveLength(0)
   })
