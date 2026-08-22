@@ -2,20 +2,22 @@
   <div class="flex flex-col gap-5">
     <PageHeader title="Apostas do dia" description="Histórico de apostas filtrado por data e modelo" />
 
-    <div class="flex items-center justify-between gap-2">
-      <DatePicker v-model="date" :max-value="maxDateIso" />
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap items-center gap-2">
+        <DatePicker v-model="date" :max-value="maxDateIso" />
 
-      <USelectMenu
-        v-model="selectedModel"
-        variant="outline"
-        class="min-w-0 flex-1 sm:flex-none"
-        searchable
-        placeholder="Todos os modelos"
-        :items="modelItems"
-        value-key="value"
-      />
+        <USelectMenu
+          v-model="selectedModel"
+          variant="outline"
+          class="min-w-0 flex-1 sm:min-w-60 sm:flex-none"
+          searchable
+          placeholder="Todos os modelos"
+          :items="modelItems"
+          value-key="value"
+        />
+      </div>
 
-      <p class="shrink-0 text-sm whitespace-nowrap text-zinc-400 tabular-nums">{{ qtd_games }} apostas</p>
+      <p class="self-end text-sm whitespace-nowrap text-zinc-400 tabular-nums sm:self-auto">{{ qtd_games }} apostas</p>
     </div>
 
     <template v-if="pending">
@@ -44,6 +46,7 @@
         >
           <span class="inline-flex items-end gap-2">
             <span class="text-sm font-bold text-teal-400">{{ group.time }}</span>
+
             <span class="text-xs text-zinc-500">{{ group.items.length }} apostas</span>
           </span>
         </div>
