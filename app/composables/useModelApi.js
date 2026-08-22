@@ -144,20 +144,21 @@ export function useModelBets(id, { page, size, sort, order }) {
   })
 }
 
-export function useDailyBets({ date, model = null } = {}) {
+export function useDailyBets({ date = null, model = null } = {}) {
   const cache = useCache()
+  const dateRef = isRef(date) ? date : ref(date)
   const modelRef = isRef(model) ? model : ref(model)
-  const cacheKey = computed(() => `daily-bets-${date.value ?? 'any'}-${modelRef.value ?? 'any'}`)
+  const cacheKey = computed(() => `daily-bets-${dateRef.value ?? 'any'}-${modelRef.value ?? 'any'}`)
   return useFetch(() => `${apiUrl()}/daily-bets`, {
     key: 'daily-bets',
     query: computed(() => {
       const q = {}
-      if (date.value) q.date = date.value
+      if (dateRef.value) q.date = dateRef.value
       if (modelRef.value) q.model = modelRef.value
       return q
     }),
     default: () => ({ date: null, bets: [], total: 0 }),
-    watch: [date, modelRef],
+    watch: [dateRef, modelRef],
     getCachedData: (key, nuxtApp) => {
       const cached = cacheGet(cache, cacheKey.value)
       if (cached) return cached
@@ -169,7 +170,7 @@ export function useDailyBets({ date, model = null } = {}) {
       // date the payload is stale and must not be returned, or the
       // refetch is skipped and the page renders the previous date's bets.
       const payloadData = nuxtApp?.payload?.data?.[key]
-      if (payloadData && (date.value === null || date.value === payloadData.date)) {
+      if (payloadData && (dateRef.value === null || dateRef.value === payloadData.date)) {
         return payloadData
       }
       return undefined
