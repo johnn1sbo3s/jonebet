@@ -100,6 +100,7 @@
                   :key="game.id"
                   :game="game"
                   :highlighted="game.id === activeHighlight"
+                  :pre-live-bets="preLiveBetsByGame[game.id] || []"
                 />
               </TransitionGroup>
             </div>
@@ -141,6 +142,7 @@
           :key="game.id"
           :game="game"
           :highlighted="game.id === activeHighlight"
+          :pre-live-bets="preLiveBetsByGame[game.id] || []"
         />
       </div>
 
@@ -157,6 +159,7 @@
 <script setup>
 import { DateTime } from 'luxon'
 import { useFavorites } from '~/composables/useFavorites'
+import { filterBetsForGame } from '~/utils/preLiveBets'
 import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 import { SP_TZ } from '~/utils/timezone'
 
@@ -216,6 +219,20 @@ const games = computed(() => snapshot.value?.games || [])
 // Favoritos no topo (só ao vivo — jogo finalizado sai da seção e volta pro
 // grid normal até sair do snapshot). O resto segue no grid principal.
 const { isFavorite } = useFavorites()
+
+// Daily-bets para indicador pré-live: fetch único, cruza com jogos do snapshot
+const { data: dailyBetsData } = useDailyBets()
+const allBets = computed(() => dailyBetsData.value?.bets || [])
+
+// Map: game.id → bets relevantes para aquele jogo
+const preLiveBetsByGame = computed(() => {
+  const map = {}
+  for (const game of games.value) {
+    map[game.id] = filterBetsForGame(allBets.value, game)
+  }
+  return map
+})
+
 const favoriteGames = computed(() => games.value.filter((g) => !g.finished && isFavorite(g.id)))
 const otherGames = computed(() =>
   filterScannerGames(
