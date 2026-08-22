@@ -218,13 +218,17 @@ const byLeague = computed(() => {
     if (!map.has(key)) map.set(key, [])
     map.get(key).push(j)
   }
-  // Ordem dos grupos = ordem de chegada da API: o backend já ordena por tier
-  // (T1 primeiro) e liga — reordenar alfabeticamente aqui quebraria isso.
-  return [...map.entries()].map(([league, items]) => ({
-    key: league,
-    label: league,
-    jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
-  }))
+  // Ordena os grupos por tier (0=elite → 1=fortes → 2=resto) usando o
+  // campo 'tier' que já vem injetado pelo backend em cada jogo.
+  // Dentro do mesmo tier, mantém a ordem original da API.
+  return [...map.entries()]
+    .map(([league, items]) => ({
+      key: league,
+      label: league,
+      tier: items[0]?.tier ?? 2,
+      jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
+    }))
+    .sort((a, b) => a.tier - b.tier)
 })
 
 // View mode escolhido pelo usuário: 'by_league' | 'by_hour'. Persistido em
