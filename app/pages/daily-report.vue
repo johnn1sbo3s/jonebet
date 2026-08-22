@@ -98,7 +98,13 @@
           </header>
 
           <TransitionGroup tag="div" name="fav" appear class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <ReportGameCard v-for="j in favoriteGames" :key="j.jogo_id" :game="j" :report-date="selectedDate" />
+            <ReportGameCard
+              v-for="j in favoriteGames"
+              :key="j.jogo_id"
+              :game="j"
+              :report-date="selectedDate"
+              :pre-live-bets="preLiveBetsByGame[j.jogo_id] || []"
+            />
           </TransitionGroup>
         </section>
 
@@ -155,7 +161,13 @@
           </header>
 
           <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <ReportGameCard v-for="j in group.jogos" :key="j.jogo_id" :game="j" :report-date="selectedDate" />
+            <ReportGameCard
+              v-for="j in group.jogos"
+              :key="j.jogo_id"
+              :game="j"
+              :report-date="selectedDate"
+              :pre-live-bets="preLiveBetsByGame[j.jogo_id] || []"
+            />
           </div>
         </section>
       </template>
@@ -172,6 +184,7 @@ import { formatDate } from '~/utils/formatDate'
 import { SP_TZ } from '~/utils/timezone'
 import { ANY_STRATEGY, filterReportGames } from '~/utils/filterReportGames'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
+import { filterBetsForGame } from '~/utils/preLiveBets'
 import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 
 const { state, load } = useDailyReport()
@@ -193,6 +206,18 @@ function defaultDate() {
 
 const selectedDate = ref(defaultDate())
 const reportDateLabel = computed(() => formatDate(selectedDate.value, { style: 'long' }))
+
+// Daily-bets para indicador pré-live (refetch automático ao mudar data)
+const { data: dailyBetsData } = useDailyBets({ date: selectedDate })
+const allBets = computed(() => dailyBetsData.value?.bets || [])
+
+const preLiveBetsByGame = computed(() => {
+  const map = {}
+  for (const jogo of state.response?.jogos || []) {
+    map[jogo.jogo_id] = filterBetsForGame(allBets.value, jogo)
+  }
+  return map
+})
 
 // Max date para o DatePicker: amanhã só depois das 23h (scanner já gerou os
 // dados); antes disso, max = hoje (não adianta navegar para amanhã sem dados).
