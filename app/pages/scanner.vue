@@ -145,7 +145,7 @@
               />
 
               <span id="only-pre-live-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
-                >só com pré-live</span
+                >Só com pré-live</span
               >
             </div>
           </div>
