@@ -17,15 +17,13 @@
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
           <div class="print-hide flex items-center gap-1.5">
-            <div
+            <ScannerActionButton
               v-if="game.notifications?.length"
-              class="pointer-events-none flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
+              icon="i-lucide-bell"
               title="Notificações recebidas pelo jogo"
             >
-              <UIcon name="i-lucide-bell" class="h-3.5 w-3.5" />
-
               <span class="text-2xs font-semibold">{{ game.notifications.length }}</span>
-            </div>
+            </ScannerActionButton>
 
             <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
               <button
@@ -34,7 +32,7 @@
                 title="Modelos com apostas pré-live"
                 @click.stop
               >
-                <UIcon name="i-lucide-target" class="h-3.5 w-3.5" />
+                <UIcon name="i-lucide-target" mode="svg" class="h-3.5 w-3.5" />
 
                 <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
               </button>
@@ -54,40 +52,28 @@
               </template>
             </UPopover>
 
-            <button
+            <ScannerActionButton
               v-if="!game.finished || isFavorite(game.id)"
-              class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-amber-400 hover:text-amber-400"
-              :class="{ 'star-fill border-amber-400/60 bg-amber-400/10 text-amber-400': isFavorite(game.id) }"
+              icon="i-lucide-star"
+              square
+              color="amber"
+              :active="isFavorite(game.id)"
+              :class="isFavorite(game.id) ? 'star-fill' : ''"
               :title="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
               :aria-label="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
               @click.stop="toggleFavorite(game.id)"
-            >
-              <UIcon
-                name="i-lucide-star"
-                mode="svg"
-                class="h-3.5 w-3.5"
-                :class="isFavorite(game.id) ? 'text-amber-400' : ''"
-              />
-            </button>
+            />
 
-            <button
-              class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-              title="Tirar print do card"
-              @click.stop="captureCard"
-            >
-              <UIcon name="i-lucide-camera" class="h-3.5 w-3.5" />
-            </button>
+            <ScannerActionButton icon="i-lucide-camera" square title="Tirar print do card" @click.stop="captureCard" />
 
-            <a
-              class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+            <ScannerActionButton
+              icon="i-lucide-arrow-up-right"
+              square
               :href="game.flashscore_url"
               target="_blank"
-              rel="noopener"
               title="Abrir no Flashscore"
               @click.stop
-            >
-              <UIcon name="i-lucide-arrow-up-right" class="h-3.5 w-3.5" />
-            </a>
+            />
           </div>
         </div>
 

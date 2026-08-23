@@ -220,8 +220,14 @@ const games = computed(() => snapshot.value?.games || [])
 // grid normal até sair do snapshot). O resto segue no grid principal.
 const { isFavorite } = useFavorites()
 
-// Daily-bets para indicador pré-live: fetch único, cruza com jogos do snapshot
-const { data: dailyBetsData } = useDailyBets()
+// Daily-bets para indicador pré-live: busca os bets do dia dos jogos ao vivo
+// (não do default "dia seguinte" da API, que quebra o cruzamento após a virada de dia).
+const preLiveDate = computed(() => {
+  const gen = snapshot.value?.generated_at
+  const base = gen ? DateTime.fromISO(gen).setZone(SP_TZ) : DateTime.now().setZone(SP_TZ)
+  return base.toFormat('yyyy-MM-dd')
+})
+const { data: dailyBetsData } = useDailyBets({ date: preLiveDate })
 const allBets = computed(() => dailyBetsData.value?.bets || [])
 
 // Map: game.id → bets relevantes para aquele jogo
