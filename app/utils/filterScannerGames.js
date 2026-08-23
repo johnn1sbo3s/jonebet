@@ -8,7 +8,10 @@ import { normalizeSearchText } from '~/utils/filterReportGames'
 import { isRecentNotification } from '~/utils/scanner'
 import { matchesOddsPreset } from '~/utils/oddsPresets'
 
-export function filterScannerGames(games = [], { query = '', onlyNotified = false, oddsPreset = 'todos', now } = {}) {
+export function filterScannerGames(
+  games = [],
+  { query = '', onlyNotified = false, oddsPreset = 'todos', onlyPreLive = false, preLiveGameIds = null, now } = {},
+) {
   const q = normalizeSearchText(query)
   return games.filter((game) => {
     if (q) {
@@ -18,6 +21,8 @@ export function filterScannerGames(games = [], { query = '', onlyNotified = fals
     if (onlyNotified && !isRecentNotification(game.notifications, now)) return false
     // prematch já tem as chaves home/away; undefined (sem odds) → não passa.
     if (oddsPreset !== 'todos' && !matchesOddsPreset(oddsPreset, game.odds?.prematch)) return false
+    // só jogo com ≥1 aposta pré-live (Set de ids vindos do scanner).
+    if (onlyPreLive && !(preLiveGameIds && preLiveGameIds.has(game.id))) return false
     return true
   })
 }

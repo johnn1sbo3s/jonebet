@@ -162,3 +162,34 @@ describe('filterScannerGames — preset de odds', () => {
     expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'favoritos', now: NOW })).toHaveLength(0)
   })
 })
+
+describe('filterScannerGames — só com pré-live', () => {
+  const baseGames = [
+    { id: 'g1', home: 'São Paulo', away: 'Corinthians', league: 'Brasileirão', notifications: [] },
+    { id: 'g2', home: 'Avaí', away: 'CRB', league: 'Série B', notifications: [] },
+    { id: 'g3', home: 'Real Madrid', away: 'Betis', league: 'La Liga', notifications: [] },
+  ]
+  const setOf = (...ids) => new Set(ids)
+
+  it('default (false) mantém todos os jogos', () => {
+    expect(filterScannerGames(baseGames, { preLiveGameIds: setOf('g1') })).toHaveLength(3)
+  })
+
+  it('onlyPreLive mantém só os ids do Set', () => {
+    const ids = filterScannerGames(baseGames, { onlyPreLive: true, preLiveGameIds: setOf('g1', 'g3') }).map((g) => g.id)
+    expect(ids).toEqual(['g1', 'g3'])
+  })
+
+  it('onlyPreLive sem Set (ou vazio) esconde tudo', () => {
+    expect(filterScannerGames(baseGames, { onlyPreLive: true })).toHaveLength(0)
+    expect(filterScannerGames(baseGames, { onlyPreLive: true, preLiveGameIds: new Set() })).toHaveLength(0)
+  })
+
+  it('combina com busca (interseção)', () => {
+    expect(
+      filterScannerGames(baseGames, { query: 'avai', onlyPreLive: true, preLiveGameIds: setOf('g1', 'g2') }).map(
+        (g) => g.id,
+      ),
+    ).toEqual(['g2'])
+  })
+})
