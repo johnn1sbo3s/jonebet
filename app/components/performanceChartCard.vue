@@ -248,7 +248,16 @@
 import { lineChartComponent } from '~/utils/chartSetup'
 import { formatDate } from '~/utils/formatDate'
 import { TRADING_DAYS_PER_YEAR } from '~/utils/enums'
+import { splitAccumulation } from '~/utils/accumulationSplit'
 import { usePerformanceChartOptions, useStaticLineOptions } from '~/composables/useChartOptions'
+
+// Colors per phase — validation (blue) vs real (teal), on the dark canvas.
+// The real phase reuses the brand teal (matches the positive-profit card
+// color); validation uses the app's blue token so the two are distinguishable.
+const VALIDATION_COLOR = '#3b82f6' // azul (validação)
+const VALIDATION_BG = 'rgba(59, 130, 246, 0.14)'
+const REAL_COLOR = '#2dd4bf' // teal (real)
+const REAL_BG = 'rgba(45, 212, 191, 0.14)'
 
 const LineChart = lineChartComponent()
 
@@ -401,28 +410,61 @@ const chartData = computed(() => {
   if (chartPending.value) return { labels: [], datasets: [] }
   const payload = chartPayload.value
   if (!payload || !payload.data) return { labels: [], datasets: [] }
-  const datasets = [
-    {
+  const data = payload.data || []
+
+  const datasets = []
+  const { valData, realData, split } = splitAccumulation(data, payload.annotationIndex ?? 0)
+  if (split) {
+    // Two series share the boundary point so the line stays connected, and the
+    // legend gets a clear "Validação" / "Real" entry for each phase.
+    datasets.push(
+      {
+        label: 'Validação',
+        data: valData,
+        borderColor: VALIDATION_COLOR,
+        backgroundColor: VALIDATION_BG,
+        pointRadius: 1,
+        pointHoverRadius: 7,
+        fill: true,
+        tension: 0.2,
+      },
+      {
+        label: 'Real',
+        data: realData,
+        borderColor: REAL_COLOR,
+        backgroundColor: REAL_BG,
+        pointRadius: 1,
+        pointHoverRadius: 7,
+        fill: true,
+        tension: 0.2,
+      },
+    )
+  } else {
+    // No split info → single series in the brand teal (keeps the previous
+    // one-line look; tests rely on this fallback for annotationIndex 0).
+    datasets.push({
       label: 'Acúmulo de capital',
-      data: payload.data || [],
-      borderColor: '#25D88B',
-      backgroundColor: 'rgb(37, 216, 139, 0.05)',
+      data,
+      borderColor: REAL_COLOR,
+      backgroundColor: REAL_BG,
       pointRadius: 1,
       pointHoverRadius: 7,
       fill: true,
       tension: 0.2,
-    },
-  ]
+    })
+  }
+
   if (trend.value?.line?.length) {
     datasets.push({
       label: 'Linha de tendência',
       data: trend.value.line,
-      borderColor: 'rgb(30, 158, 244, 0.6)',
+      borderColor: 'rgba(212, 212, 216, 0.45)',
       borderWidth: 2,
-      backgroundColor: 'rgb(109, 40, 217, 0.0)',
+      borderDash: [6, 4],
+      backgroundColor: 'rgba(212, 212, 216, 0)',
       pointRadius: 0,
       pointHoverRadius: 7,
-      fill: true,
+      fill: false,
       tension: 0.2,
     })
   }
