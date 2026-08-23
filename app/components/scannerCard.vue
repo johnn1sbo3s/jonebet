@@ -17,63 +17,72 @@
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
           <div class="print-hide flex items-center gap-1.5">
-            <ScannerActionButton
-              v-if="game.notifications?.length"
-              icon="i-lucide-bell"
-              title="Notificações recebidas pelo jogo"
-            >
-              <span class="text-2xs font-semibold">{{ game.notifications.length }}</span>
-            </ScannerActionButton>
+            <UTooltip v-if="game.notifications?.length" text="Notificações recebidas pelo jogo">
+              <ScannerActionButton icon="i-lucide-bell">
+                <span class="text-2xs font-semibold">{{ game.notifications.length }}</span>
+              </ScannerActionButton>
+            </UTooltip>
 
-            <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
-              <button
-                type="button"
-                class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
-                title="Modelos com apostas pré-live"
-                @click.stop
-              >
-                <UIcon name="i-lucide-target" mode="svg" class="h-3.5 w-3.5" />
+            <UTooltip v-if="preLiveBets.length > 0" text="Modelos com apostas pré-live">
+              <UPopover :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
+                <button
+                  type="button"
+                  class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
+                  @click.stop
+                >
+                  <UIcon name="i-lucide-target" mode="svg" class="h-3.5 w-3.5" />
 
-                <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
-              </button>
+                  <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
+                </button>
 
-              <template #content>
-                <div class="flex min-w-40 flex-col gap-1.5">
-                  <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
+                <template #content>
+                  <div class="flex min-w-40 flex-col gap-1.5">
+                    <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
 
-                  <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
-                    <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
+                    <div
+                      v-for="(bet, i) in preLiveBets"
+                      :key="i"
+                      class="flex items-center justify-between gap-3 text-xs"
+                    >
+                      <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
 
-                    <span class="font-semibold whitespace-nowrap text-teal-400">
-                      {{ formatNumber(bet.Odd, 2) }}
-                    </span>
+                      <span class="font-semibold whitespace-nowrap text-teal-400">
+                        {{ formatNumber(bet.Odd, 2) }}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </UPopover>
+                </template>
+              </UPopover>
+            </UTooltip>
 
-            <ScannerActionButton
+            <UTooltip
               v-if="!game.finished || isFavorite(game.id)"
-              icon="i-lucide-star"
-              square
-              color="amber"
-              :active="isFavorite(game.id)"
-              :class="isFavorite(game.id) ? 'star-fill' : ''"
-              :title="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
-              :aria-label="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
-              @click.stop="toggleFavorite(game.id)"
-            />
+              :text="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
+            >
+              <ScannerActionButton
+                icon="i-lucide-star"
+                square
+                color="amber"
+                :active="isFavorite(game.id)"
+                :class="isFavorite(game.id) ? 'star-fill' : ''"
+                :aria-label="isFavorite(game.id) ? 'Remover dos favoritos' : 'Favoritar jogo'"
+                @click.stop="toggleFavorite(game.id)"
+              />
+            </UTooltip>
 
-            <ScannerActionButton icon="i-lucide-camera" square title="Tirar print do card" @click.stop="captureCard" />
+            <UTooltip text="Tirar print do card">
+              <ScannerActionButton icon="i-lucide-camera" square @click.stop="captureCard" />
+            </UTooltip>
 
-            <ScannerActionButton
-              icon="i-lucide-arrow-up-right"
-              square
-              :href="game.flashscore_url"
-              target="_blank"
-              title="Abrir no Flashscore"
-              @click.stop
-            />
+            <UTooltip text="Abrir no Flashscore">
+              <ScannerActionButton
+                icon="i-lucide-arrow-up-right"
+                square
+                :href="game.flashscore_url"
+                target="_blank"
+                @click.stop
+              />
+            </UTooltip>
           </div>
         </div>
 
