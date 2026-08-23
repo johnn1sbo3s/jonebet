@@ -118,19 +118,36 @@
 
           <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
 
-          <div class="flex items-center justify-end gap-2">
-            <USwitch
-              v-model="onlyNotified"
-              size="md"
-              checked-icon="i-lucide-check"
-              unchecked-icon="i-lucide-x"
-              aria-labelledby="only-notified-label"
-              title="jogos com notificação nos últimos 5 min"
-            />
+          <div class="flex flex-wrap items-center justify-end gap-4 md:ml-auto">
+            <div class="flex items-center gap-2">
+              <USwitch
+                v-model="onlyNotified"
+                size="md"
+                checked-icon="i-lucide-check"
+                unchecked-icon="i-lucide-x"
+                aria-labelledby="only-notified-label"
+                title="jogos com notificação nos últimos 5 min"
+              />
 
-            <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
-              >Só notificados</span
-            >
+              <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
+                >Só notificados</span
+              >
+            </div>
+
+            <div class="flex items-center gap-2">
+              <USwitch
+                v-model="onlyPreLive"
+                size="md"
+                checked-icon="i-lucide-check"
+                unchecked-icon="i-lucide-x"
+                aria-labelledby="only-pre-live-label"
+                title="jogos com aposta de modelo pré-live"
+              />
+
+              <span id="only-pre-live-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"
+                >só com pré-live</span
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -178,14 +195,16 @@ const fetchError = ref(false)
 const offline = ref(false)
 const updatedAgo = ref('')
 
-// Filtros client-side (busca + só notificados + preset de odds) — estado transitório de
-// exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
+// Filtros client-side (busca + só notificados + preset de odds + só com pré-live) — estado
+// transitório de exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
 const query = ref('')
 const onlyNotified = ref(false)
+const onlyPreLive = ref(false)
 const oddsPreset = ref('todos')
 const oddsPresetOptions = ODDS_PRESET_OPTIONS
 const filtersActive = computed(
-  () => onlyNotified.value || oddsPreset.value !== 'todos' || normalizeSearchText(query.value) !== '',
+  () =>
+    onlyNotified.value || oddsPreset.value !== 'todos' || normalizeSearchText(query.value) !== '' || onlyPreLive.value,
 )
 
 // Favoritos colapsados — preferência de view persistida. Default expandido.
@@ -239,11 +258,22 @@ const preLiveBetsByGame = computed(() => {
   return map
 })
 
+// Set de ids de jogos que têm ≥1 aposta pré-live — usado pelo filtro "só com pré-live".
+const preLiveGameIds = computed(
+  () => new Set(Object.keys(preLiveBetsByGame.value).filter((id) => preLiveBetsByGame.value[id].length > 0)),
+)
+
 const favoriteGames = computed(() => games.value.filter((g) => !g.finished && isFavorite(g.id)))
 const otherGames = computed(() =>
   filterScannerGames(
     games.value.filter((g) => !(!g.finished && isFavorite(g.id))),
-    { query: query.value, onlyNotified: onlyNotified.value, oddsPreset: oddsPreset.value },
+    {
+      query: query.value,
+      onlyNotified: onlyNotified.value,
+      oddsPreset: oddsPreset.value,
+      onlyPreLive: onlyPreLive.value,
+      preLiveGameIds: preLiveGameIds.value,
+    },
   ),
 )
 
