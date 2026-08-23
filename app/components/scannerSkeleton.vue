@@ -8,10 +8,18 @@
 
         <USkeleton class="h-8 w-full rounded-lg md:w-90" />
 
-        <div class="flex items-center justify-end gap-2">
-          <USkeleton class="h-6 w-10 rounded-full" />
+        <div class="flex flex-wrap items-center justify-end gap-4 md:ml-auto">
+          <div class="flex items-center gap-2">
+            <USkeleton class="h-6 w-10 rounded-full" />
 
-          <USkeleton class="h-4 w-24" />
+            <USkeleton class="h-4 w-24" />
+          </div>
+
+          <div class="flex items-center gap-2">
+            <USkeleton class="h-6 w-10 rounded-full" />
+
+            <USkeleton class="h-4 w-28" />
+          </div>
         </div>
       </div>
     </div>
