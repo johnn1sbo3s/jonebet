@@ -126,7 +126,7 @@
                 checked-icon="i-lucide-check"
                 unchecked-icon="i-lucide-x"
                 aria-labelledby="only-notified-label"
-                title="jogos com notificação nos últimos 5 min"
+                title="jogos que já tiveram algum alerta"
               />
 
               <span id="only-notified-label" class="text-xs font-medium whitespace-nowrap text-zinc-400"

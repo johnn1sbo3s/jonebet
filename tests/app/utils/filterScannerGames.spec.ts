@@ -60,35 +60,37 @@ describe('filterScannerGames', () => {
     expect(filterScannerGames(games, { query: '   ' })).toHaveLength(4)
   })
 
-  it('só notificados mantém notificação recente (≤5 min) e exclui antiga/sem notificação', () => {
-    const ids = filterScannerGames(games, { onlyNotified: true, now: NOW }).map((g) => g.id)
-    expect(ids).toEqual(['g1', 'g4'])
+  it('só notificados mantém qualquer jogo que já teve alerta (recente ou antigo) e exclui sem notificação', () => {
+    // g1 (1 min), g2 (11 min, fora da janela de 5 min) e g4 (5 min) têm notificação;
+    // g3 não tem → só o g3 sai.
+    const ids = filterScannerGames(games, { onlyNotified: true }).map((g) => g.id)
+    expect(ids).toEqual(['g1', 'g2', 'g4'])
   })
 
-  it('fronteira de 5 min: exatamente 5 min entra, 5 min + 1s sai', () => {
-    const only = (at) => [{ rule: 'r', label: 'l', minute: 1, at }]
-    const onWindow = filterScannerGames(
-      [{ id: 'a', home: 'A', away: 'B', league: 'L', notifications: only(new Date(NOW - 5 * 60_000).toISOString()) }],
-      { onlyNotified: true, now: NOW },
+  it('só notificados inclui notificação antiga (fora da janela de 5 min)', () => {
+    const old = (at) => [{ rule: 'r', label: 'l', minute: 1, at }]
+    const recent = filterScannerGames(
+      [{ id: 'a', home: 'A', away: 'B', league: 'L', notifications: old(new Date(NOW - 5 * 60_000).toISOString()) }],
+      { onlyNotified: true },
     )
-    const offWindow = filterScannerGames(
+    const ancient = filterScannerGames(
       [
         {
           id: 'b',
           home: 'A',
           away: 'B',
           league: 'L',
-          notifications: only(new Date(NOW - 5 * 60_000 - 1000).toISOString()),
+          notifications: old(new Date(NOW - 3 * 60 * 60_000).toISOString()),
         },
       ],
-      { onlyNotified: true, now: NOW },
+      { onlyNotified: true },
     )
-    expect(onWindow).toHaveLength(1)
-    expect(offWindow).toHaveLength(0)
+    expect(recent).toHaveLength(1)
+    expect(ancient).toHaveLength(1)
   })
 
   it('busca e só notificados combinam (interseção)', () => {
-    expect(filterScannerGames(games, { query: 'avai', onlyNotified: true, now: NOW })).toHaveLength(0)
+    expect(filterScannerGames(games, { query: 'avai', onlyNotified: true })).toHaveLength(0)
   })
 })
 
@@ -158,8 +160,8 @@ describe('filterScannerGames — preset de odds', () => {
         odds: { prematch: { home: 1.3, away: 4 } },
       },
     ]
-    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'super', now: NOW })).toHaveLength(1)
-    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'favoritos', now: NOW })).toHaveLength(0)
+    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'super' })).toHaveLength(1)
+    expect(filterScannerGames(g, { onlyNotified: true, oddsPreset: 'favoritos' })).toHaveLength(0)
   })
 })
 
