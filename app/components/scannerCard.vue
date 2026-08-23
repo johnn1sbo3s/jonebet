@@ -17,17 +17,15 @@
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
           <div class="print-hide flex items-center gap-1.5">
-            <UBadge
+            <div
               v-if="game.notifications?.length"
-              color="neutral"
-              variant="outline"
-              size="md"
-              class="gap-1 px-2.5"
+              class="pointer-events-none flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
               title="Notificações recebidas pelo jogo"
             >
               <UIcon name="i-lucide-bell" class="h-3.5 w-3.5" />
-              {{ game.notifications.length }}
-            </UBadge>
+
+              <span class="text-2xs font-semibold">{{ game.notifications.length }}</span>
+            </div>
 
             <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
               <button
