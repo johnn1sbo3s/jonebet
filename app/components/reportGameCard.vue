@@ -10,6 +10,8 @@
       </div>
 
       <span class="flex items-center gap-1.5">
+        <TeamHistoryPopover v-if="game.team_history" :history="game.team_history" :home="game.home" :away="game.away" />
+
         <UPopover v-if="preLiveBets.length > 0" :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
           <button
             type="button"
@@ -67,8 +69,6 @@
           <UIcon name="i-lucide-arrow-up-right" class="h-3.5 w-3.5" />
         </a>
       </span>
-
-      <TeamHistoryPopover v-if="game.team_history" :history="game.team_history" :home="game.home" :away="game.away" />
     </header>
 
     <h3 class="text-sm font-bold text-zinc-100">
