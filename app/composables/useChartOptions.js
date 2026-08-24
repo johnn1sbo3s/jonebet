@@ -40,7 +40,7 @@ export function useBankrollChartOptions() {
         ticks: {
           color: ZINC_TICK,
           autoSkip: true,
-          maxTicksLimit: 8,
+          maxTicksLimit: typeof window !== 'undefined' && window.innerWidth < 640 ? 5 : 8,
           maxRotation: 0,
           minRotation: 0,
           autoSkipPadding: 16,
