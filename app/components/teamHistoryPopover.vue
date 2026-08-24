@@ -18,31 +18,32 @@
           <span>{{ away }}</span>
         </div>
 
-        <div
-          v-if="formHome || formAway"
-          class="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 border-b border-zinc-800 py-1.5"
-        >
-          <span class="flex justify-end gap-0.5">
-            <span
-              v-for="(r, i) in formHome"
-              :key="`h${i}`"
-              :class="resultClass(r)"
-              class="flex size-3.5 items-center justify-center rounded-sm text-[0.5rem] font-bold"
-              >{{ r }}</span
-            >
-          </span>
+        <div v-if="formHome || formAway" class="border-b border-zinc-800 py-1.5">
+          <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5">
+            <span class="flex justify-end gap-0.5">
+              <span
+                v-for="(r, i) in formHome"
+                :key="`h${i}`"
+                :class="[resultClass(r), i === 0 ? 'ring-1 ring-teal-300/70' : '']"
+                class="flex size-3.5 items-center justify-center rounded-sm text-[0.5rem] font-bold"
+                >{{ r }}</span
+              >
+            </span>
 
-          <span class="text-2xs text-zinc-500 uppercase">forma</span>
+            <span class="text-2xs text-zinc-500 uppercase">forma</span>
 
-          <span class="flex gap-0.5">
-            <span
-              v-for="(r, i) in formAway"
-              :key="`a${i}`"
-              :class="resultClass(r)"
-              class="flex size-3.5 items-center justify-center rounded-sm text-[0.5rem] font-bold"
-              >{{ r }}</span
-            >
-          </span>
+            <span class="flex gap-0.5">
+              <span
+                v-for="(r, i) in formAway"
+                :key="`a${i}`"
+                :class="[resultClass(r), i === 0 ? 'ring-1 ring-teal-300/70' : '']"
+                class="flex size-3.5 items-center justify-center rounded-sm text-[0.5rem] font-bold"
+                >{{ r }}</span
+              >
+            </span>
+          </div>
+
+          <p class="text-2xs mt-0.5 text-center text-zinc-600">primeira letra = último jogo</p>
         </div>
 
         <div

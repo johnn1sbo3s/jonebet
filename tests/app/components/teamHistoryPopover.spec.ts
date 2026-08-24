@@ -43,6 +43,13 @@ describe('teamHistoryPopover', () => {
     expect(wrapper.find('button').attributes('aria-label')).toBe('Histórico dos times')
   })
 
+  it('destaca a primeira letra da forma como último jogo', async () => {
+    const wrapper = await mount({ history, home: 'Lok. Plovdiv', away: 'Arda' })
+    const html = wrapper.html()
+    expect(html).toContain('ring-teal-300/70')
+    expect(html).toContain('primeira letra = último jogo')
+  })
+
   it('renderiza métricas espelhadas formatadas', async () => {
     const wrapper = await mount({ history, home: 'Lok. Plovdiv', away: 'Arda' })
     const html = wrapper.html()
