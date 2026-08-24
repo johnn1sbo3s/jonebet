@@ -67,6 +67,8 @@
           <UIcon name="i-lucide-arrow-up-right" class="h-3.5 w-3.5" />
         </a>
       </span>
+
+      <TeamHistoryPopover v-if="game.team_history" :history="game.team_history" :home="game.home" :away="game.away" />
     </header>
 
     <h3 class="text-sm font-bold text-zinc-100">

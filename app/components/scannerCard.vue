@@ -17,6 +17,13 @@
           <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">{{ game.league }}</span>
 
           <div class="print-hide flex items-center gap-1.5">
+            <TeamHistoryPopover
+              v-if="game.team_history"
+              :history="game.team_history"
+              :home="game.home"
+              :away="game.away"
+            />
+
             <UTooltip v-if="game.notifications?.length" text="Notificações recebidas pelo jogo">
               <ScannerActionButton icon="i-lucide-bell">
                 <span class="text-2xs font-semibold">{{ game.notifications.length }}</span>
