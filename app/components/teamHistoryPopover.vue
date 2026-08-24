@@ -103,6 +103,7 @@ const rows = computed(() => {
   push('pts últ. 5', hm.points5, am.points5, (v) => formatNumber(v, 0))
   push('gols/jogo', hm.avg_total_goals, am.avg_total_goals, (v) => formatNumber(v, 1))
   push('BTTS', hm.btts_rate, am.btts_rate, (v) => formatPercent(v * 100, 0))
+  push('over 1.5', hm.over15_rate, am.over15_rate, (v) => formatPercent(v * 100, 0))
   push('over 2.5', hm.over25_rate, am.over25_rate, (v) => formatPercent(v * 100, 0))
   push('gol no 1ºT', hm.ht_scored_rate, am.ht_scored_rate, (v) => formatPercent(v * 100, 0))
   return out

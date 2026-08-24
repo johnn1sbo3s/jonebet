@@ -101,6 +101,7 @@ describe('InstallDrawer', () => {
     localStorage.setItem('jonebet:gambling-alert-dismissed', '1')
     await vi.advanceTimersByTimeAsync(30_000)
     expect(usePwaInstall().state.open).toBe(true)
+    wrapper.unmount() // render pendente com fake timers derruba o happy-dom (insertBefore null)
     vi.useRealTimers()
   })
 })

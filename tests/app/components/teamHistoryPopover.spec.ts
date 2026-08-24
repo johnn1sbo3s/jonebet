@@ -9,6 +9,7 @@ const history = {
     points5: 12,
     avg_total_goals: 2.3,
     btts_rate: 0.4,
+    over15_rate: 0.7,
     over25_rate: 0.4,
     ht_scored_rate: 0.4,
   },
@@ -17,6 +18,7 @@ const history = {
     points5: 4,
     avg_total_goals: 2.4,
     btts_rate: 0.5,
+    over15_rate: 0.8,
     over25_rate: 0.4,
     ht_scored_rate: 0.2,
   },
@@ -46,6 +48,9 @@ describe('teamHistoryPopover', () => {
     const html = wrapper.html()
     expect(html).toContain('12') // pontos casa
     expect(html).toContain('4') // pontos fora
+    expect(html).toContain('over 1.5')
+    expect(html).toContain('70%') // over 1.5 casa
+    expect(html).toContain('80%') // over 1.5 fora
     expect(html).toContain('2.3') // gols/jogo casa
     expect(html).toContain('40%') // BTTS/over/gol 1ºT casa
   })
