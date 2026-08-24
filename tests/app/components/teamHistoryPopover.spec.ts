@@ -75,4 +75,12 @@ describe('teamHistoryPopover', () => {
     expect(html).toContain('9')
     expect(html).not.toContain('BTTS')
   })
+
+  it('aplica as cores W/D/L nas letras de forma', async () => {
+    const wrapper = await mount({ history, home: 'Lok. Plovdiv', away: 'Arda' })
+    const html = wrapper.html()
+    expect(html).toContain('bg-teal-500/15 text-teal-400') // W
+    expect(html).toContain('bg-zinc-500/15 text-zinc-400') // D
+    expect(html).toContain('bg-red-500/15 text-red-400') // L
+  })
 })

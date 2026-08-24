@@ -4,6 +4,7 @@
       type="button"
       class="text-2xs rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 font-semibold text-zinc-400 transition-colors hover:border-teal-600 hover:text-teal-400"
       title="Histórico dos times (pipeline pré-live)"
+      @click.stop
     >
       📊 Histórico
     </button>
@@ -108,7 +109,7 @@ const rows = computed(() => {
 
 const h2h = computed(() => props.history?.h2h ?? null)
 const h2hLine = computed(() => {
-  if (!h2h.value) return ''
+  if (!h2h.value || h2h.value.home_wins == null || h2h.value.away_wins == null) return ''
   const parts = [`${props.home} ${h2h.value.home_wins} × ${h2h.value.away_wins} ${props.away}`]
   if (h2h.value.draws) parts.push(`${h2h.value.draws} empate${h2h.value.draws > 1 ? 's' : ''}`)
   if (h2h.value.avg_goals != null) parts.push(`${formatNumber(h2h.value.avg_goals, 1)} gols/jogo`)
