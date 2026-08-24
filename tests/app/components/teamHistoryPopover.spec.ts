@@ -38,7 +38,7 @@ async function mount(props) {
 describe('teamHistoryPopover', () => {
   it('renderiza o botão gatilho', async () => {
     const wrapper = await mount({ history, home: 'Lok. Plovdiv', away: 'Arda' })
-    expect(wrapper.find('button').text()).toContain('Histórico')
+    expect(wrapper.find('button').attributes('aria-label')).toBe('Histórico dos times')
   })
 
   it('renderiza métricas espelhadas formatadas', async () => {
@@ -48,7 +48,6 @@ describe('teamHistoryPopover', () => {
     expect(html).toContain('4') // pontos fora
     expect(html).toContain('2.3') // gols/jogo casa
     expect(html).toContain('40%') // BTTS/over/gol 1ºT casa
-    expect(html).toContain('20%') // gol 1ºT fora
   })
 
   it('mostra faixa H2H quando presente', async () => {

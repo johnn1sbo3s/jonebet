@@ -1,16 +1,17 @@
 <template>
-  <UPopover :content="{ align: 'end' }">
+  <UPopover :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
     <button
       type="button"
-      class="text-2xs rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 font-semibold text-zinc-400 transition-colors hover:border-teal-600 hover:text-teal-400"
+      class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
       title="Histórico dos times (pipeline pré-live)"
+      aria-label="Histórico dos times"
       @click.stop
     >
-      📊 Histórico
+      <UIcon name="i-lucide-chart-column" mode="svg" class="h-3.5 w-3.5" />
     </button>
 
     <template #content>
-      <div class="w-64 p-3 text-xs text-zinc-200">
+      <div class="w-64 text-xs text-zinc-200">
         <div class="text-2xs mb-1 flex justify-between tracking-wide text-zinc-500 uppercase">
           <span>{{ home }}</span>
 
