@@ -19,6 +19,11 @@ export default defineAppConfig({
         overlay: 'bg-black/80',
       },
     },
+    popover: {
+      slots: {
+        content: 'bg-zinc-900 border-zinc-700',
+      },
+    },
     selectMenu: {
       slots: {
         base: 'rounded-xl',

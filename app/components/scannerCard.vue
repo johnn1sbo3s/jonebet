@@ -31,7 +31,7 @@
             </UTooltip>
 
             <UTooltip v-if="preLiveBets.length > 0" text="Modelos com apostas pré-live">
-              <UPopover :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
+              <UPopover>
                 <button
                   type="button"
                   class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
@@ -43,7 +43,7 @@
                 </button>
 
                 <template #content>
-                  <div class="flex min-w-40 flex-col gap-1.5">
+                  <div class="flex min-w-40 flex-col gap-1.5 p-2">
                     <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
 
                     <div

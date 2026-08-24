@@ -1,5 +1,5 @@
 <template>
-  <UPopover :ui="{ content: 'bg-zinc-900 border-zinc-700 p-2' }">
+  <UPopover>
     <button
       type="button"
       class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
@@ -11,7 +11,7 @@
     </button>
 
     <template #content>
-      <div class="w-64 text-xs text-zinc-200">
+      <div class="w-64 p-2 text-xs text-zinc-200">
         <div class="text-2xs mb-1 flex justify-between tracking-wide text-zinc-500 uppercase">
           <span>{{ home }}</span>
 
