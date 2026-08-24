@@ -11,7 +11,7 @@
     <template #content>
       <div class="w-64 p-3 text-xs text-zinc-200">
         <div class="text-2xs mb-1 flex justify-between tracking-wide text-zinc-500 uppercase">
-          <span>{{ home }} <span class="text-zinc-700">(últ. 10)</span></span>
+          <span>{{ home }}</span>
 
           <span>{{ away }}</span>
         </div>
@@ -112,6 +112,7 @@ const h2hLine = computed(() => {
   const parts = [`${props.home} ${h2h.value.home_wins} × ${h2h.value.away_wins} ${props.away}`]
   if (h2h.value.draws) parts.push(`${h2h.value.draws} empate${h2h.value.draws > 1 ? 's' : ''}`)
   if (h2h.value.avg_goals != null) parts.push(`${formatNumber(h2h.value.avg_goals, 1)} gols/jogo`)
+  if (h2h.value.btts_rate != null) parts.push(`BTTS ${formatPercent(h2h.value.btts_rate * 100, 0)}`)
   return parts.join(' · ')
 })
 </script>

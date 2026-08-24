@@ -56,6 +56,7 @@ describe('teamHistoryPopover', () => {
     const html = wrapper.html()
     expect(html).toContain('H2H')
     expect(html).toContain('2 × 1')
+    expect(html).toContain('BTTS 0%')
   })
 
   it('omite faixa H2H quando ausente', async () => {
