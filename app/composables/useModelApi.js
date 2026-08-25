@@ -160,8 +160,18 @@ export function useDailyBets({ date = null, model = null } = {}) {
     default: () => ({ date: null, bets: [], total: 0 }),
     watch: [dateRef, modelRef],
     getCachedData: (key, nuxtApp) => {
-      const cached = cacheGet(cache, cacheKey.value)
-      if (cached) return cached
+      // The null-date request asks the API to resolve the effective date
+      // (tomorrow when available, fallback today). That answer goes stale as
+      // the day rolls over, so outside hydration it is never served from
+      // cache — otherwise a page visited earlier in the day keeps showing
+      // "today" (and caps the picker's max at it) after the backend has
+      // already published tomorrow's bets. Explicit dates are immutable and
+      // keep the full cache path.
+      const allowCache = dateRef.value !== null || nuxtApp.isHydrating
+      if (allowCache) {
+        const cached = cacheGet(cache, cacheKey.value)
+        if (cached) return cached
+      }
       // SSR payload fallback is keyed by the static useFetch key, not by
       // the date-aware cacheKey. Use it only when its resolved date still
       // matches the current date (or `date` hasn't been set yet) — i.e.
@@ -169,6 +179,7 @@ export function useDailyBets({ date = null, model = null } = {}) {
       // that mirrors the API date. Once the user navigates to a different
       // date the payload is stale and must not be returned, or the
       // refetch is skipped and the page renders the previous date's bets.
+      if (!allowCache) return undefined
       const payloadData = nuxtApp?.payload?.data?.[key]
       if (payloadData && (dateRef.value === null || dateRef.value === payloadData.date)) {
         return payloadData
