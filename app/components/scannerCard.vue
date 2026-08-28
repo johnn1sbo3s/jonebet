@@ -199,31 +199,44 @@
             </div>
           </div>
 
-          <UButton
-            v-if="!game.finished"
-            block
-            class="mt-1"
-            color="primary"
-            variant="soft"
-            size="sm"
-            title="Ver a análise pré-jogo do jogo (relatório do dia)"
-            @click.stop="openPreGame"
-          >
-            Análise pré-jogo
-          </UButton>
+          <div v-if="!game.finished" class="mt-1 grid grid-cols-3 gap-1.5">
+            <UButton
+              block
+              color="primary"
+              variant="soft"
+              size="xs"
+              compact
+              title="Ver a evolução de xG do jogo"
+              @click.stop="openXgHistory"
+            >
+              Evolução de xG
+            </UButton>
 
-          <UButton
-            v-if="!game.finished"
-            block
-            color="primary"
-            variant="solid"
-            size="sm"
-            :disabled="aiLoading"
-            title="Avaliar o momento do jogo com IA"
-            @click.stop="openAiEvaluation"
-          >
-            Avaliar com IA
-          </UButton>
+            <UButton
+              block
+              color="primary"
+              variant="soft"
+              size="xs"
+              compact
+              title="Ver a análise pré-jogo do jogo (relatório do dia)"
+              @click.stop="openPreGame"
+            >
+              Análise pré-jogo
+            </UButton>
+
+            <UButton
+              block
+              color="primary"
+              variant="solid"
+              size="xs"
+              compact
+              :disabled="aiLoading"
+              title="Avaliar o momento do jogo com IA"
+              @click.stop="openAiEvaluation"
+            >
+              Avaliar com IA
+            </UButton>
+          </div>
         </div>
       </div>
 
@@ -388,11 +401,49 @@
         </div>
       </div>
     </div>
+
+    <div
+      v-if="xgOpen"
+      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
+      @click.stop
+    >
+      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Evolução de xG</span>
+
+          <button
+            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+            @click.stop="closeXgHistory"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div v-if="xgLoading" class="flex flex-col items-center gap-2 py-4">
+          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
+
+          <span class="text-xs text-zinc-400">Carregando xG...</span>
+        </div>
+
+        <div v-else-if="xgState.error" class="flex flex-col items-center gap-2 py-2 text-center">
+          <p class="text-xs text-zinc-400">Não foi possível carregar o histórico de xG.</p>
+
+          <button
+            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
+            @click.stop="retryXg"
+          >
+            Tentar de novo
+          </button>
+        </div>
+
+        <XgLineChart v-else :history="xgHistory" :live-samples="xgLiveSamples" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { formatNumber, formatPercent } from '~/utils/formatNumber'
@@ -401,7 +452,7 @@ import { toBlob } from 'html-to-image'
 import { useAiEvaluation } from '~/composables/useAiEvaluation'
 import { useFavorites } from '~/composables/useFavorites'
 import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
-
+import { useXgHistory } from '~/composables/useXgHistory'
 const props = defineProps({
   game: { type: Object, required: true },
   // Destaque vindo do Telegram (?game=<id>): luz viajante na borda por ~12s.
@@ -448,6 +499,51 @@ async function openPreGame() {
 
 function retryPreGame() {
   loadPreGame(props.game.id).catch(() => {})
+}
+
+const { get: getXgState, load: loadXgHistory } = useXgHistory()
+const xgOpen = ref(false)
+const xgLiveSamples = ref([])
+let stopXgWatch = null
+const xgState = computed(() => getXgState(props.game.id))
+const xgLoading = computed(() => xgState.value.status === 'loading')
+const xgHistory = computed(() => xgState.value.response?.series ?? [])
+
+async function openXgHistory() {
+  xgOpen.value = true
+  xgLiveSamples.value = []
+  try {
+    await loadXgHistory(props.game.id)
+  } catch {
+    // erro fica no estado
+  }
+  if (stopXgWatch) stopXgWatch()
+  stopXgWatch = watch(
+    () => props.game.stats?.xg,
+    (xg) => {
+      if (!xgOpen.value) return
+      const minute = props.game.minute
+      if (minute == null) return
+      const entry = { minute: Number(minute), xg_home: xg?.home ?? null, xg_away: xg?.away ?? null }
+      if (entry.xg_home == null && entry.xg_away == null) return
+      const idx = xgLiveSamples.value.findIndex((p) => p.minute === entry.minute)
+      if (idx >= 0) xgLiveSamples.value[idx] = entry
+      else xgLiveSamples.value.push(entry)
+    },
+    { immediate: true },
+  )
+}
+
+function closeXgHistory() {
+  xgOpen.value = false
+  if (stopXgWatch) {
+    stopXgWatch()
+    stopXgWatch = null
+  }
+}
+
+function retryXg() {
+  loadXgHistory(props.game.id).catch(() => {})
 }
 
 const STAT_LABELS = [

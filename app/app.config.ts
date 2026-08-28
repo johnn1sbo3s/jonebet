@@ -24,6 +24,13 @@ export default defineAppConfig({
         content: 'bg-zinc-900 border-zinc-700',
       },
     },
+    button: {
+      variants: {
+        compact: {
+          true: 'px-1 text-2xs',
+        },
+      },
+    },
     selectMenu: {
       slots: {
         base: 'rounded-xl',

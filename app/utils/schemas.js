@@ -76,6 +76,10 @@ export const endpointSchemas = {
     schema: FlexObject.default({ generated_at: null, games: [] }),
     fallback: { generated_at: null, games: [] },
   },
+  scannerXgHistory: {
+    schema: z.object({ game_id: z.unknown().nullable(), series: FlexArray.default([]) }).passthrough(),
+    fallback: { game_id: null, series: [] },
+  },
 }
 
 /**
