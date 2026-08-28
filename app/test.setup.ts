@@ -1,5 +1,26 @@
 import { vi } from 'vitest'
 
+// Polyfill localStorage for happy-dom + Node 26.x where it's undefined.
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map<string, string>()
+  globalThis.localStorage = {
+    getItem: (k) => store.get(k) ?? null,
+    setItem: (k, v) => {
+      store.set(k, String(v))
+    },
+    removeItem: (k) => {
+      store.delete(k)
+    },
+    clear: () => {
+      store.clear()
+    },
+    get length() {
+      return store.size
+    },
+    key: (i) => [...store.keys()][i] ?? null,
+  }
+}
+
 // Stub the chart stack globally so tests don't try to render real charts.
 // `chart.js` is CJS-only and vitest can't always interop its named
 // exports (`registerables`, `Element`, etc.), so we replace the whole
