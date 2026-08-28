@@ -23,8 +23,7 @@ logs
 .env.*
 !.env.example
 
-# AI docs / specs (local only)
-docs/superpowers/
+# AI runtime (local only) — specs em docs/superpowers/ são versionados
 .superpowers/
 .mimocode
 .playwright-mcp
