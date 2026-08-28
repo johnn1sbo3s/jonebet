@@ -204,8 +204,7 @@
               block
               color="primary"
               variant="soft"
-              size="xs"
-              compact
+              size="sm"
               title="Ver a evolução de xG do jogo"
               @click.stop="openXgHistory"
             >
@@ -216,8 +215,7 @@
               block
               color="primary"
               variant="soft"
-              size="xs"
-              compact
+              size="sm"
               title="Ver a análise pré-jogo do jogo (relatório do dia)"
               @click.stop="openPreGame"
             >
@@ -228,8 +226,7 @@
               block
               color="primary"
               variant="solid"
-              size="xs"
-              compact
+              size="sm"
               :disabled="aiLoading"
               title="Avaliar o momento do jogo com IA"
               @click.stop="openAiEvaluation"
