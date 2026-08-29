@@ -28,8 +28,6 @@
       <div class="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
         <USkeleton class="h-9 w-full md:w-72" />
 
-        <USkeleton class="h-9 w-full md:w-64" />
-
         <USkeleton class="h-9 w-full md:w-80" />
       </div>
 
@@ -118,19 +116,6 @@
           <div class="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
             <UInput v-model="query" icon="i-lucide-search" placeholder="Buscar time ou liga…" class="w-full md:w-72" />
 
-            <USelectMenu
-              v-model="selected"
-              :items="strategyOptions"
-              multiple
-              clear
-              value-key="value"
-              class="w-full md:w-64"
-            >
-              <template #default>
-                <span class="truncate" :class="selected.length === 0 ? 'text-zinc-500' : ''">{{ triggerLabel }}</span>
-              </template>
-            </USelectMenu>
-
             <SegmentedControl v-model="oddsPreset" :options="oddsPresetOptions" full-width />
           </div>
         </div>
@@ -182,8 +167,7 @@ import { useDailyReport } from '~/composables/useDailyReport'
 import { useFavorites } from '~/composables/useFavorites'
 import { formatDate } from '~/utils/formatDate'
 import { SP_TZ } from '~/utils/timezone'
-import { ANY_STRATEGY, filterReportGames } from '~/utils/filterReportGames'
-import { modelNameToNaturalName } from '~/utils/resolveModelName'
+import { filterReportGames } from '~/utils/filterReportGames'
 import { filterBetsForGame } from '~/utils/preLiveBets'
 import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 
@@ -234,7 +218,7 @@ const favoriteGames = computed(() =>
 )
 
 const byLeague = computed(() => {
-  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
+  // Jogos filtrados (busca + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()
@@ -273,46 +257,20 @@ const viewOptions = [
   { value: 'by_hour', label: 'Por horário' },
 ]
 
-// --- Filtros client-side (busca + estratégias + odds) ---
+// --- Filtros client-side (busca + odds) ---
 // Estado transitório de exploração — NÃO persiste entre visitas (diferente do
 // viewMode, que é preferência de visualização). Reseta naturalmente no
 // re-mount da página.
 const query = ref('')
-const selected = ref([])
 const oddsPreset = ref('todos')
 const oddsPresetOptions = ODDS_PRESET_OPTIONS
 
-// Opções do multiselect: "Com recomendação" + as estratégias distintas do
-// relatório do dia, em ordem alfabética do nome natural (nunca lista fixa).
-const strategyOptions = computed(() => {
-  const keys = [
-    ...new Set((state.response?.jogos || []).flatMap((j) => (j.estrategias || []).map((e) => e.estrategia))),
-  ]
-  const rest = keys
-    .map((key) => ({ value: key, label: modelNameToNaturalName(key) }))
-    .sort((a, b) => a.label.localeCompare(b.label))
-  return [{ value: ANY_STRATEGY, label: 'Com recomendação' }, ...rest]
-})
-
-const strategyLabel = (value) => (value === ANY_STRATEGY ? 'Com recomendação' : modelNameToNaturalName(value))
-
-// Gatilho compacto do multiselect: evita o label padrão do USelectMenu
-// (labels unidos por vírgula), que transborda no mobile com 3+ selecionadas.
-// A limpeza das estratégias fica no X embutido do próprio select (clear).
-const triggerLabel = computed(() => {
-  const n = selected.value.length
-  if (n === 0) return 'Estratégias'
-  if (n === 1) return strategyLabel(selected.value[0])
-  return `${n} estratégias`
-})
-
-// Jogos que passam busca + estratégias + preset de odds; alimenta os dois
+// Jogos que passam busca + preset de odds; alimenta os dois
 // agrupamentos (liga/horário). Favoritos continuam na lista completa — seção
 // fixa no topo.
 const filteredJogos = computed(() =>
   filterReportGames(state.response?.jogos || [], {
     query: query.value,
-    selected: selected.value,
     oddsPreset: oddsPreset.value,
   }),
 )
@@ -320,7 +278,7 @@ const filteredJogos = computed(() =>
 // Agrupa por bloco de hora do kickoff (ex.: "14h" junta 14:00, 14:30).
 // Jogo sem horário parseável cai no grupo "Outros", no final.
 const byHour = computed(() => {
-  // Jogos filtrados (busca + estratégias + odds); favoritos continuam duplicados na
+  // Jogos filtrados (busca + odds); favoritos continuam duplicados na
   // seção de cima, de propósito (usam a lista completa, não a filtrada).
   const jogos = filteredJogos.value
   const map = new Map()
