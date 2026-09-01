@@ -199,7 +199,7 @@
             </div>
           </div>
 
-          <div v-if="!game.finished" class="mt-1 grid grid-cols-3 gap-1.5">
+          <div v-if="!game.finished" class="mt-1 grid grid-cols-2 gap-1.5">
             <UButton
               block
               color="primary"
@@ -220,18 +220,6 @@
               @click.stop="openPreGame"
             >
               Análise pré-jogo
-            </UButton>
-
-            <UButton
-              block
-              color="primary"
-              variant="solid"
-              size="sm"
-              :disabled="aiLoading"
-              title="Avaliar o momento do jogo com IA"
-              @click.stop="openAiEvaluation"
-            >
-              Avaliar com IA
             </UButton>
           </div>
         </div>
@@ -276,64 +264,6 @@
     </div>
 
     <span v-if="isRecent && !flipped" class="alert-tag">Alerta</span>
-
-    <div
-      v-if="aiOpen"
-      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
-      @click.stop
-    >
-      <div class="w-full rounded-xl border border-zinc-700 bg-zinc-900 p-3">
-        <div class="mb-2 flex items-center justify-between">
-          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Análise da IA</span>
-
-          <button
-            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-            @click.stop="aiOpen = false"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div v-if="aiLoading" class="flex flex-col items-center gap-2 py-4">
-          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
-
-          <span class="text-xs text-zinc-400">Analisando o jogo...</span>
-        </div>
-
-        <div v-else-if="aiState.error" class="flex flex-col items-center gap-2 py-2 text-center">
-          <p class="text-xs text-zinc-400">Não foi possível avaliar agora.</p>
-
-          <button
-            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
-            @click.stop="retryAi"
-          >
-            Tentar de novo
-          </button>
-        </div>
-
-        <template v-else-if="aiResponse">
-          <p class="text-xs leading-relaxed text-zinc-200">{{ aiResponse.leitura_geral }}</p>
-
-          <div class="mt-2 flex flex-col gap-1.5">
-            <div
-              v-for="e in aiResponse.estrategias"
-              :key="e.estrategia"
-              class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
-            >
-              <span class="text-xs font-bold text-zinc-100">{{ modelNameToNaturalName(e.estrategia) }}</span>
-
-              <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
-                {{ e.recomendacao }} · {{ e.confianca }}%
-              </span>
-            </div>
-
-            <p v-for="e in aiResponse.estrategias" :key="e.estrategia + '-an'" class="text-2xs text-zinc-500">
-              {{ e.analise }}
-            </p>
-          </div>
-        </template>
-      </div>
-    </div>
 
     <div
       v-if="preGameOpen"
@@ -446,7 +376,6 @@ import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { formatNumber, formatPercent } from '~/utils/formatNumber'
 import { computePressure, computeControl } from '~/utils/scannerPressure'
 import { toBlob } from 'html-to-image'
-import { useAiEvaluation } from '~/composables/useAiEvaluation'
 import { useFavorites } from '~/composables/useFavorites'
 import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 import { useXgHistory } from '~/composables/useXgHistory'
@@ -458,25 +387,6 @@ const props = defineProps({
 })
 
 const { isFavorite, toggleFavorite } = useFavorites()
-
-const { get: getAiState, evaluate: evaluateAi } = useAiEvaluation()
-const aiOpen = ref(false)
-const aiState = computed(() => getAiState(props.game.id))
-const aiLoading = computed(() => aiState.value.status === 'loading')
-const aiResponse = computed(() => aiState.value.response)
-
-async function openAiEvaluation() {
-  aiOpen.value = true
-  try {
-    await evaluateAi(props.game.id)
-  } catch {
-    // erro fica no estado (aiState.error) e o popover mostra retry
-  }
-}
-
-function retryAi() {
-  evaluateAi(props.game.id).catch(() => {})
-}
 
 const { get: getPreGame, load: loadPreGame } = usePreGameAnalysis()
 const preGameOpen = ref(false)

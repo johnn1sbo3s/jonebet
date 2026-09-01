@@ -270,45 +270,6 @@ describe('ScannerCard', () => {
     expect(nameTooltip).toBeTruthy()
   })
 })
-
-// Mock do composable com estado REATIVO (objeto plano não invalida computed).
-vi.mock('~/composables/useAiEvaluation', async () => {
-  const { reactive } = await import('vue')
-  const state = reactive({ status: 'idle', response: null, fetchedAt: 0, error: null })
-  return {
-    useAiEvaluation: () => ({
-      get: () => state,
-      evaluate: vi.fn(async () => {
-        state.status = 'done'
-        state.response = {
-          jogo_id: 'abc123',
-          leitura_geral: 'O Palmeiras pressiona.',
-          estrategias: [{ estrategia: 'gol_20min', recomendacao: 'entrar', confianca: 60, analise: 'ação alta' }],
-        }
-        return state.response
-      }),
-    }),
-  }
-})
-
-describe('ScannerCard avaliação com IA', () => {
-  it('mostra botão Avaliar apenas em jogos ao vivo', async () => {
-    const live = await mountCard(ScannerCard, { props: { game: game() } })
-    expect(live.text()).toContain('Avaliar com IA')
-    const fin = await mountCard(ScannerCard, { props: { game: { ...game(), finished: true } } })
-    expect(fin.text()).not.toContain('Avaliar com IA')
-  })
-
-  it('abre o popover com a resposta ao clicar', async () => {
-    const w = await mountCard(ScannerCard, { props: { game: game() } })
-    const btn = w.findAll('button').find((b) => b.text().includes('Avaliar com IA'))!
-    await btn.trigger('click')
-    await new Promise((r) => setTimeout(r, 0))
-    expect(w.text()).toContain('O Palmeiras pressiona.')
-    expect(w.text()).toContain('Gol 20min')
-  })
-})
-
 // Cenário mutável para o mock do composable de pré-jogo (vi.mock é hoisted —
 // não pode referenciar variáveis do escopo; vi.hoisted resolve isso).
 const preGameScenario = vi.hoisted(() => ({ response: null, error: null }))
