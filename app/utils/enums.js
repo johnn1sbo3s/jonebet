@@ -26,6 +26,4 @@ export const TRADING_DAYS_PER_YEAR = 252
 
 // API market names → display labels. Add long/awkward names here instead of
 // special-casing in components.
-export const MARKET_LABELS = Object.freeze({
-  'Goleada Casa': 'Golea. H',
-})
+export const MARKET_LABELS = Object.freeze({})
