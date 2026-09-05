@@ -40,6 +40,11 @@ const navItems = [
       to: '/performance',
     },
     {
+      label: 'Trading Models',
+      icon: 'i-lucide-trending-up',
+      to: '/trading-models',
+    },
+    {
       label: 'Academia',
       icon: 'i-lucide-graduation-cap',
       to: '/academy',
