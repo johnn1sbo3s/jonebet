@@ -38,40 +38,40 @@ function onDateChange(newDate) {
 </script>
 
 <template>
-  <div>
-    <div class="mb-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs text-zinc-500">Stake 10u · Green +10 · RL −5% liability · Red −30%</p>
-      </div>
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-semibold text-white">Resultados por modelo</h3>
 
-      <DatePicker :model-value="selectedDate" @update:model-value="onDateChange" />
+      <p class="text-xs text-zinc-500">Stake de R$ 10,00</p>
     </div>
 
-    <div class="grid grid-cols-1 gap-3">
-      <TradingModelsSkeleton v-if="dailyPending" />
+    <DatePicker :model-value="selectedDate" @update:model-value="onDateChange" />
+  </div>
+
+  <div class="grid grid-cols-1 gap-3">
+    <TradingModelsSkeleton v-if="dailyPending" />
+
+    <template v-else>
+      <TradingModelDayCard v-for="model in daily?.daily ?? []" :key="model.model" :model="model" />
+
+      <DataErrorCard v-if="dailyError" message="Não foi possível carregar as apostas do dia" />
+
+      <DataErrorCard v-else-if="!hasDailyModels" message="Sem apostas neste dia" icon="i-lucide-calendar-x" />
+    </template>
+
+    <TradingModelsSkeleton v-if="summaryPending" />
+
+    <template v-else>
+      <DataErrorCard
+        v-if="summaryError && !summary?.week && !summary?.month"
+        message="Não foi possível carregar semana e mês"
+      />
 
       <template v-else>
-        <TradingModelDayCard v-for="model in daily?.daily ?? []" :key="model.model" :model="model" />
+        <TradingModelAggTable v-if="summary?.week" :title="weeklyTitle" :agg="summary.week" />
 
-        <DataErrorCard v-if="dailyError" message="Não foi possível carregar as apostas do dia" />
-
-        <DataErrorCard v-else-if="!hasDailyModels" message="Sem apostas neste dia" icon="i-lucide-calendar-x" />
+        <TradingModelAggTable v-if="summary?.month" :title="monthlyTitle" :agg="summary.month" />
       </template>
-
-      <TradingModelsSkeleton v-if="summaryPending" />
-
-      <template v-else>
-        <DataErrorCard
-          v-if="summaryError && !summary?.week && !summary?.month"
-          message="Não foi possível carregar semana e mês"
-        />
-
-        <template v-else>
-          <TradingModelAggTable v-if="summary?.week" :title="weeklyTitle" :agg="summary.week" />
-
-          <TradingModelAggTable v-if="summary?.month" :title="monthlyTitle" :agg="summary.month" />
-        </template>
-      </template>
-    </div>
+    </template>
   </div>
 </template>

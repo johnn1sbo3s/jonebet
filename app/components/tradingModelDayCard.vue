@@ -8,13 +8,14 @@ const props = defineProps({
 
 const badgeClass = computed(() => TRADING_MODEL_BADGE[props.model.model] ?? 'bg-zinc-700 text-zinc-300')
 const modelLabel = computed(() => tradingModelLabel(props.model.model, props.model.model_label))
-const subtotalClass = computed(() => (props.model.subtotal >= 0 ? 'pnl-pos' : 'pnl-neg'))
+const subtotalClass = computed(() => (props.model.subtotal >= 0 ? 'text-green-400' : 'text-red-400'))
 const subtotalFormatted = computed(() => {
   const sign = props.model.subtotal >= 0 ? '+' : ''
   return `${sign}${formatUnit(props.model.subtotal)}`
 })
 const scoreText = (s) => (s ? `${s[0]}x${s[1]}` : '—')
-const goalsText = (h, a) => [...(h ?? []), ...(a ?? [])].map((m) => `${m}'`).join(' ') || '—'
+const goalsText = (mins) => (mins ?? []).map((m) => `${m}'`).join(', ') || '--'
+const resultLabel = (r) => (r === 'RED_LIGHT' ? 'AJUSTE' : r)
 </script>
 
 <template>
@@ -24,7 +25,7 @@ const goalsText = (h, a) => [...(h ?? []), ...(a ?? [])].map((m) => `${m}'`).joi
         {{ modelLabel }}
       </span>
 
-      <span data-testid="subtotal" :class="['text-sm font-semibold', subtotalClass]">
+      <span data-testid="subtotal" :class="['text-sm font-bold', subtotalClass]">
         {{ subtotalFormatted }}
       </span>
     </div>
@@ -45,7 +46,9 @@ const goalsText = (h, a) => [...(h ?? []), ...(a ?? [])].map((m) => `${m}'`).joi
 
             <th class="pr-3 pb-2 text-center font-medium">FT</th>
 
-            <th class="pr-3 pb-2 text-center font-medium">Gols</th>
+            <th class="pr-3 pb-2 text-center font-medium">Gols Casa</th>
+
+            <th class="pr-3 pb-2 text-center font-medium">Gols Fora</th>
 
             <th class="pr-3 pb-2 text-center font-medium">Resultado</th>
 
@@ -69,11 +72,13 @@ const goalsText = (h, a) => [...(h ?? []), ...(a ?? [])].map((m) => `${m}'`).joi
 
             <td class="py-2 pr-3 text-center text-zinc-400">{{ scoreText(bet.ft_score) }}</td>
 
-            <td class="py-2 pr-3 text-center text-zinc-400">{{ goalsText(bet.goals_home, bet.goals_away) }}</td>
+            <td class="py-2 pr-3 text-center text-zinc-400">{{ goalsText(bet.goals_home) }}</td>
+
+            <td class="py-2 pr-3 text-center text-zinc-400">{{ goalsText(bet.goals_away) }}</td>
 
             <td class="py-2 pr-3 text-center">
               <span :class="['font-bold', TRADING_MODEL_RESULT[bet.result] ?? 'text-zinc-400']">
-                {{ bet.result }}
+                {{ resultLabel(bet.result) }}
               </span>
             </td>
 

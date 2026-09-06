@@ -34,12 +34,13 @@ describe('TradingModelDayCard', () => {
     expect(wrapper.text()).toContain('Donkey')
   })
 
-  it('renders subtotal with pnl-pos class when positive', async () => {
+  it('renders subtotal with green color when positive', async () => {
     const wrapper = await mountSuspended(TradingModelDayCard, {
       props: { model: mockModel },
     })
     const subtotal = wrapper.find('[data-testid="subtotal"]')
-    expect(subtotal.classes()).toContain('pnl-pos')
+    expect(subtotal.classes()).toContain('text-green-400')
+    expect(subtotal.classes()).toContain('font-bold')
     expect(subtotal.text()).toContain('10.00')
   })
 
@@ -51,13 +52,13 @@ describe('TradingModelDayCard', () => {
     expect(wrapper.text()).toContain('GREEN')
   })
 
-  it('applies pnl-neg class when subtotal is negative', async () => {
+  it('applies red color when subtotal is negative', async () => {
     const negativeModel = { ...mockModel, subtotal: -23.17 }
     const wrapper = await mountSuspended(TradingModelDayCard, {
       props: { model: negativeModel },
     })
     const subtotal = wrapper.find('[data-testid="subtotal"]')
-    expect(subtotal.classes()).toContain('pnl-neg')
+    expect(subtotal.classes()).toContain('text-red-400')
   })
 
   it('renders profit cell with green color when positive', async () => {
@@ -114,13 +115,31 @@ describe('TradingModelDayCard', () => {
     expect(wrapper.text()).toContain('—')
   })
 
-  it('renders goal minutes literally', async () => {
+  it('renders goal minutes literally with comma separator', async () => {
     const wrapper = await mountSuspended(TradingModelDayCard, {
       props: {
         model: { ...mockModel, bets: [{ ...mockModel.bets[0], goals_home: [], goals_away: ['53', '90+10'] }] },
       },
     })
-    expect(wrapper.text()).toContain("53'")
-    expect(wrapper.text()).toContain("90+10'")
+    expect(wrapper.text()).toContain("53', 90+10'")
+  })
+
+  it('renders double dash when no goals', async () => {
+    const wrapper = await mountSuspended(TradingModelDayCard, {
+      props: {
+        model: { ...mockModel, bets: [{ ...mockModel.bets[0], goals_home: [], goals_away: [] }] },
+      },
+    })
+    expect(wrapper.text()).toContain('--')
+  })
+
+  it('displays RED_LIGHT as AJUSTE', async () => {
+    const wrapper = await mountSuspended(TradingModelDayCard, {
+      props: {
+        model: { ...mockModel, bets: [{ ...mockModel.bets[0], result: 'RED_LIGHT' }] },
+      },
+    })
+    expect(wrapper.text()).toContain('AJUSTE')
+    expect(wrapper.text()).not.toContain('RED_LIGHT')
   })
 })
