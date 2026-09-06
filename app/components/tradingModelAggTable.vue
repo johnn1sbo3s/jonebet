@@ -1,12 +1,15 @@
 <script setup>
 import { formatUnit } from '~/utils/formatNumber'
+import { tradingModelLabel } from '~/utils/enums'
 
-defineProps({
+const props = defineProps({
   title: { type: String, required: true },
   agg: { type: Object, required: true },
 })
 
 const cellClass = (val) => (val >= 0 ? 'text-green-400' : 'text-red-400')
+const rowLabel = (row) => tradingModelLabel(row.model, row.model_label)
+const grandTotal = computed(() => props.agg.rows.reduce((s, r) => s + (r.total ?? 0), 0))
 </script>
 
 <template>
@@ -32,7 +35,7 @@ const cellClass = (val) => (val >= 0 ? 'text-green-400' : 'text-red-400')
 
       <tbody>
         <tr v-for="row in agg.rows" :key="row.model" class="border-b border-zinc-900">
-          <td class="px-3 py-2 text-white capitalize">{{ row.model }}</td>
+          <td class="px-3 py-2 text-white">{{ rowLabel(row) }}</td>
 
           <td class="px-3 py-2 text-center text-zinc-300">{{ row.games }}</td>
 
@@ -50,8 +53,8 @@ const cellClass = (val) => (val >= 0 ? 'text-green-400' : 'text-red-400')
         <tr data-testid="agg-total" class="bg-zinc-950 font-bold">
           <td colspan="5" class="px-3 py-2 text-white">TOTAL</td>
 
-          <td :class="['px-3 py-2 text-right', cellClass(agg.total)]">
-            {{ formatUnit(agg.total) }}
+          <td :class="['px-3 py-2 text-right', cellClass(grandTotal)]">
+            {{ formatUnit(grandTotal) }}
           </td>
         </tr>
       </tbody>
