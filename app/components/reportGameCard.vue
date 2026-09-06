@@ -32,10 +32,10 @@
               <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
 
               <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
-                <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
+                <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo ?? bet.model) }}</span>
 
                 <span class="font-semibold whitespace-nowrap text-teal-400">
-                  {{ formatNumber(bet.Odd, 2) }}
+                  {{ formatNumber(bet.Odd ?? bet.Odds, 2) }}
                 </span>
               </div>
             </div>

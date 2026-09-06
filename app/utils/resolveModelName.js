@@ -1,5 +1,8 @@
 export function modelNameToNaturalName(modelName) {
-  return modelName.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  if (modelName == null) return ''
+  return String(modelName)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 export function modelNameToIdName(modelName) {

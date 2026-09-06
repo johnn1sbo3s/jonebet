@@ -30,37 +30,34 @@
               </ScannerActionButton>
             </UTooltip>
 
-            <UTooltip v-if="preLiveBets.length > 0" text="Modelos com apostas pré-live">
-              <UPopover>
-                <button
-                  type="button"
-                  class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
-                  @click.stop
-                >
-                  <UIcon name="i-lucide-target" mode="svg" class="h-3.5 w-3.5" />
+            <UPopover v-if="preLiveBets.length > 0">
+              <button
+                type="button"
+                title="Modelos com apostas pré-live"
+                class="flex h-7 items-center gap-1 rounded-lg border border-zinc-800 px-2 text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-400"
+                @click.stop
+              >
+                <UIcon name="i-lucide-target" mode="svg" class="h-3.5 w-3.5" />
 
-                  <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
-                </button>
+                <span class="text-2xs font-semibold">{{ preLiveBets.length }}</span>
+              </button>
 
-                <template #content>
-                  <div class="flex min-w-40 flex-col gap-1.5 p-2">
-                    <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
+              <template #content>
+                <div class="flex min-w-40 flex-col gap-1.5 p-2">
+                  <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Modelos pré-live</span>
 
-                    <div
-                      v-for="(bet, i) in preLiveBets"
-                      :key="i"
-                      class="flex items-center justify-between gap-3 text-xs"
-                    >
-                      <span class="font-semibold text-zinc-100">{{ modelNameToNaturalName(bet.Modelo) }}</span>
+                  <div v-for="(bet, i) in preLiveBets" :key="i" class="flex items-center justify-between gap-3 text-xs">
+                    <span class="font-semibold text-zinc-100">{{
+                      modelNameToNaturalName(bet.Modelo ?? bet.model)
+                    }}</span>
 
-                      <span class="font-semibold whitespace-nowrap text-teal-400">
-                        {{ formatNumber(bet.Odd, 2) }}
-                      </span>
-                    </div>
+                    <span class="font-semibold whitespace-nowrap text-teal-400">
+                      {{ formatNumber(bet.Odd ?? bet.Odds, 2) }}
+                    </span>
                   </div>
-                </template>
-              </UPopover>
-            </UTooltip>
+                </div>
+              </template>
+            </UPopover>
 
             <UTooltip
               v-if="!game.finished || isFavorite(game.id)"

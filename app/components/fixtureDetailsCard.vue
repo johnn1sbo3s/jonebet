@@ -113,7 +113,7 @@ const props = defineProps({
 })
 
 const fixtureAllowedModels = computed(() => {
-  return props.bets.map((item) => modelNameToNaturalName(item.Modelo))
+  return props.bets.map((item) => modelNameToNaturalName(item.Modelo ?? item.model))
 })
 </script>
 

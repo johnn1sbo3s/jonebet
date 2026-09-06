@@ -113,11 +113,11 @@ watch(
 
 const bets = computed(() => {
   const list = (dailyBetsResponse.value?.bets || []).filter(
-    (item) => !selectedModel.value || item.Modelo === selectedModel.value,
+    (item) => !selectedModel.value || (item.Modelo ?? item.model) === selectedModel.value,
   )
   return list.map((item) => ({
     ...item,
-    Modelo: modelNameToNaturalName(item.Modelo),
+    Modelo: modelNameToNaturalName(item.Modelo ?? item.model),
     FT_Odds_H: formatNumber(item.FT_Odds_H),
     FT_Odds_D: formatNumber(item.FT_Odds_D),
     FT_Odds_A: formatNumber(item.FT_Odds_A),
