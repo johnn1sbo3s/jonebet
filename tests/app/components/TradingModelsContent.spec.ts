@@ -14,8 +14,8 @@ function mockReturn(overrides = {}) {
     summary: ref({ week: null, month: null }),
     dailyPending: ref(false),
     summaryPending: ref(false),
-    pending: ref(false),
-    error: ref(null),
+    dailyError: ref(null),
+    summaryError: ref(null),
     refresh: vi.fn(),
     ...overrides,
   })
@@ -28,10 +28,22 @@ describe('TradingModelsContent', () => {
     expect(wrapper.findComponent({ name: 'TradingModelsSkeleton' }).exists()).toBe(true)
   })
 
-  it('shows error card on fetch failure', async () => {
-    mockReturn({ error: ref(new Error('boom')) })
+  it('shows error card on daily fetch failure', async () => {
+    mockReturn({ dailyError: ref(new Error('boom')) })
     const wrapper = await mountSuspended(TradingModelsContent)
-    expect(wrapper.text()).toContain('Não foi possível carregar')
+    expect(wrapper.text()).toContain('Não foi possível carregar as apostas do dia')
+  })
+
+  it('still renders summary tables when daily fails', async () => {
+    mockReturn({
+      dailyError: ref(new Error('boom')),
+      summary: ref({
+        week: { start_date: '2026-08-31', end_date: '2026-09-06', rows: [] },
+        month: null,
+      }),
+    })
+    const wrapper = await mountSuspended(TradingModelsContent)
+    expect(wrapper.text()).toContain('31/08')
   })
 
   it('shows empty-day message when daily has no models', async () => {

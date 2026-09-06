@@ -10,7 +10,8 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
   const summary = ref({ week: null, month: null })
   const dailyPending = ref(false)
   const summaryPending = ref(false)
-  const error = ref(null)
+  const dailyError = ref(null)
+  const summaryError = ref(null)
   let summaryLoaded = false
 
   async function loadDaily() {
@@ -20,7 +21,7 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
       const raw = await fetchFn(`${apiUrl()}/trading-models/daily?date=${dateRef.value}`)
       daily.value = safeParse('tradingDaily', raw)
     } catch (e) {
-      error.value = e
+      dailyError.value = e
       daily.value = { date: dateRef.value, daily: [] }
     } finally {
       dailyPending.value = false
@@ -35,21 +36,25 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
       const raw = await fetchFn(`${apiUrl()}/trading-models/summary`)
       summary.value = safeParse('tradingSummary', raw)
     } catch (e) {
-      error.value = e
+      summaryError.value = e
     } finally {
       summaryPending.value = false
     }
   }
 
   function refresh() {
-    error.value = null
+    dailyError.value = null
+    summaryError.value = null
     loadDaily()
     loadSummary()
   }
 
-  watch(dateRef, loadDaily)
+  watch(dateRef, () => {
+    dailyError.value = null
+    loadDaily()
+  })
   refresh()
 
   const pending = computed(() => dailyPending.value || summaryPending.value)
-  return { daily, summary, dailyPending, summaryPending, pending, error, refresh }
+  return { daily, summary, dailyPending, summaryPending, pending, dailyError, summaryError, refresh }
 }

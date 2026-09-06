@@ -13,7 +13,9 @@ const props = defineProps({
 
 const selectedDate = ref(props.initialDate ?? yesterdayIso())
 
-const { daily, summary, dailyPending, summaryPending, error } = useTradingModels({ date: selectedDate })
+const { daily, summary, dailyPending, summaryPending, dailyError, summaryError } = useTradingModels({
+  date: selectedDate,
+})
 
 const shortDay = (iso) => formatDate(iso, { style: 'short' }).slice(0, 5)
 
@@ -45,23 +47,30 @@ function onDateChange(newDate) {
       <DatePicker :model-value="selectedDate" @update:model-value="onDateChange" />
     </div>
 
-    <DataErrorCard v-if="error" message="Não foi possível carregar os trading models" />
-
-    <div v-else class="grid grid-cols-1 gap-3">
+    <div class="grid grid-cols-1 gap-3">
       <TradingModelsSkeleton v-if="dailyPending" />
 
       <template v-else>
         <TradingModelDayCard v-for="model in daily?.daily ?? []" :key="model.model" :model="model" />
 
-        <DataErrorCard v-if="!hasDailyModels" message="Sem apostas neste dia" icon="i-lucide-calendar-x" />
+        <DataErrorCard v-if="dailyError" message="Não foi possível carregar as apostas do dia" />
+
+        <DataErrorCard v-else-if="!hasDailyModels" message="Sem apostas neste dia" icon="i-lucide-calendar-x" />
       </template>
 
       <TradingModelsSkeleton v-if="summaryPending" />
 
       <template v-else>
-        <TradingModelAggTable v-if="summary?.week" :title="weeklyTitle" :agg="summary.week" />
+        <DataErrorCard
+          v-if="summaryError && !summary?.week && !summary?.month"
+          message="Não foi possível carregar semana e mês"
+        />
 
-        <TradingModelAggTable v-if="summary?.month" :title="monthlyTitle" :agg="summary.month" />
+        <template v-else>
+          <TradingModelAggTable v-if="summary?.week" :title="weeklyTitle" :agg="summary.week" />
+
+          <TradingModelAggTable v-if="summary?.month" :title="monthlyTitle" :agg="summary.month" />
+        </template>
       </template>
     </div>
   </div>

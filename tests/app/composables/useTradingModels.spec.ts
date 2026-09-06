@@ -33,9 +33,9 @@ describe('useTradingModels', () => {
     const fetchFn = vi.fn(async () => {
       throw new Error('boom')
     })
-    const { daily, error } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
+    const { daily, dailyError } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
     await flush()
-    expect(error.value).toBeInstanceOf(Error)
+    expect(dailyError.value).toBeInstanceOf(Error)
     expect(daily.value.daily).toEqual([])
   })
 
@@ -49,4 +49,17 @@ describe('useTradingModels', () => {
     expect(fetchFn.mock.calls.filter(([u]) => u.includes('/daily')).length).toBe(2)
     expect(fetchFn.mock.calls.filter(([u]) => u.includes('/summary')).length).toBe(1)
   })
+})
+
+it('daily failure does not block summary rendering', async () => {
+  const fetchFn = vi.fn(async (url) => {
+    if (url.includes('/summary')) return SUMMARY
+    throw new Error('daily boom')
+  })
+  const { daily, summary, dailyError, summaryError } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
+  await flush()
+  expect(dailyError.value).toBeInstanceOf(Error)
+  expect(summaryError.value).toBeNull()
+  expect(summary.value.week.start_date).toBe('2026-08-31')
+  expect(daily.value.daily).toEqual([])
 })
