@@ -26,31 +26,58 @@ const subtotalFormatted = computed(() => {
       </span>
     </div>
 
-    <div
-      v-for="bet in model.bets"
-      :key="bet.fixture_id"
-      class="mt-4 border-t border-zinc-800 pt-4 first:mt-0 first:border-t-0 first:pt-0"
-    >
-      <div class="text-sm font-semibold text-white">{{ bet.home }} vs {{ bet.away }}</div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs">
+        <thead>
+          <tr class="border-b border-zinc-800 text-left text-zinc-500">
+            <th class="pr-3 pb-2 font-medium">Jogo</th>
 
-      <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400">
-        <span>{{ bet.time }}</span>
+            <th class="pr-3 pb-2 font-medium">Hora</th>
 
-        <span class="font-semibold text-white">{{ formatNumber(bet.odd) }}</span>
+            <th class="pr-3 pb-2 text-right font-medium">Odd</th>
 
-        <span
-          >HT {{ bet.ht_score[0] }}x{{ bet.ht_score[1] }} · 70' {{ bet.minute_70_score[0] }}x{{
-            bet.minute_70_score[1]
-          }}
-          · FT {{ bet.ft_score[0] }}x{{ bet.ft_score[1] }}</span
-        >
+            <th class="pr-3 pb-2 text-center font-medium">HT</th>
 
-        <span :class="['font-bold', TRADING_MODEL_RESULT[bet.result]]">{{ bet.result }}</span>
+            <th class="pr-3 pb-2 text-center font-medium">70'</th>
 
-        <span :class="['font-bold', bet.profit >= 0 ? 'text-green-400' : 'text-red-400']">
-          {{ bet.profit >= 0 ? '+' : '' }}{{ formatUnit(bet.profit) }}
-        </span>
-      </div>
+            <th class="pr-3 pb-2 text-center font-medium">FT</th>
+
+            <th class="pr-3 pb-2 text-center font-medium">Resultado</th>
+
+            <th class="pb-2 text-right font-medium">PnL</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="bet in model.bets" :key="bet.fixture_id" class="border-b border-zinc-800/50 last:border-b-0">
+            <td class="py-2 pr-3 font-semibold text-white">{{ bet.home }} vs {{ bet.away }}</td>
+
+            <td class="py-2 pr-3 text-zinc-400">{{ bet.time }}</td>
+
+            <td class="py-2 pr-3 text-right font-semibold text-white">{{ formatNumber(bet.odd) }}</td>
+
+            <td class="py-2 pr-3 text-center text-zinc-400">{{ bet.ht_score[0] }}x{{ bet.ht_score[1] }}</td>
+
+            <td class="py-2 pr-3 text-center text-zinc-400">
+              {{ bet.minute_70_score[0] }}x{{ bet.minute_70_score[1] }}
+            </td>
+
+            <td class="py-2 pr-3 text-center text-zinc-400">{{ bet.ft_score[0] }}x{{ bet.ft_score[1] }}</td>
+
+            <td class="py-2 pr-3 text-center">
+              <span :class="['font-bold', TRADING_MODEL_RESULT[bet.result]]">
+                {{ bet.result }}
+              </span>
+            </td>
+
+            <td class="py-2 text-right">
+              <span :class="['font-bold', bet.profit >= 0 ? 'text-green-400' : 'text-red-400']">
+                {{ bet.profit >= 0 ? '+' : '' }}{{ formatUnit(bet.profit) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
