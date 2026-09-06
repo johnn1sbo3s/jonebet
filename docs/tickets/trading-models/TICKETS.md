@@ -6,12 +6,12 @@
 
 ## Status dos tickets
 
-| Marcador | Significado |
-| -------- | ----------- |
-| 🔴 Não iniciado | Ainda não começou |
-| 🟡 Em planejamento | Planning rodando |
-| 🟡 Spec aprovada | Planning aprovado, aguardando solve |
-| 🟢 Completo | Implementação concluída |
+| Marcador           | Significado                         |
+| ------------------ | ----------------------------------- |
+| 🔴 Não iniciado    | Ainda não começou                   |
+| 🟡 Em planejamento | Planning rodando                    |
+| 🟡 Spec aprovada   | Planning aprovado, aguardando solve |
+| 🟢 Completo        | Implementação concluída             |
 
 ---
 
@@ -90,7 +90,7 @@ Esboçar a página `/trading-models` para definir o contrato de JSON com o backe
 
 ## Ticket 3 — Endpoint + service na API
 
-**Status:** 🔴 Não iniciado
+**Status:** 🟢 Completo em 2026-09-06
 
 ### Objetivo
 
@@ -120,7 +120,7 @@ Criar endpoint `/trading-models/:model` que:
 
 ## Ticket 4 — Frontend: wire up
 
-**Status:** 🔴 Não iniciado
+**Status:** 🟢 Completo em 2026-09-06
 
 ### Objetivo
 
