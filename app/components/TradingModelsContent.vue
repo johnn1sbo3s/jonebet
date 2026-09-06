@@ -3,7 +3,7 @@ import { useTradingModels } from '~/composables/useTradingModels'
 import TradingModelDayCard from '~/components/tradingModelDayCard.vue'
 import TradingModelAggTable from '~/components/tradingModelAggTable.vue'
 import TradingModelsSkeleton from '~/components/tradingModelsSkeleton.vue'
-import DataErrorCard from '~/components/DataErrorCard.vue'
+import DataErrorCard from '~/components/dataErrorCard.vue'
 import { yesterdayIso } from '~/utils/timezone'
 import { formatDate } from '~/utils/formatDate'
 
