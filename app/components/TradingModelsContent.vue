@@ -2,8 +2,10 @@
 import { useTradingModels } from '~/composables/useTradingModels'
 import TradingModelDayCard from '~/components/tradingModelDayCard.vue'
 import TradingModelAggTable from '~/components/tradingModelAggTable.vue'
+import TradingModelsSkeleton from '~/components/tradingModelsSkeleton.vue'
 import DataErrorCard from '~/components/DataErrorCard.vue'
 import { yesterdayIso } from '~/utils/timezone'
+import { formatDate } from '~/utils/formatDate'
 
 const props = defineProps({
   initialDate: { type: String, default: null },
@@ -11,18 +13,22 @@ const props = defineProps({
 
 const selectedDate = ref(props.initialDate ?? yesterdayIso())
 
-const { data, pending, error } = useTradingModels({ date: selectedDate })
+const { daily, summary, dailyPending, summaryPending, error } = useTradingModels({ date: selectedDate })
+
+const shortDay = (iso) => formatDate(iso, { style: 'short' }).slice(0, 5)
 
 const weeklyTitle = computed(() => {
-  if (!data.value?.weekly?.start_date) return 'Semana'
-  return `Semana (${data.value.weekly.start_date} a ${data.value.weekly.end_date})`
+  if (!summary.value?.week?.start_date) return 'Semana'
+  return `Semana (${shortDay(summary.value.week.start_date)} a ${shortDay(summary.value.week.end_date)})`
 })
 
 const monthlyTitle = computed(() => {
-  if (!data.value?.monthly?.year) return 'Mês'
+  if (!summary.value?.month?.year) return 'Mês'
   const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-  return `${meses[data.value.monthly.month - 1]} ${data.value.monthly.year}`
+  return `${meses[summary.value.month.month - 1]} ${summary.value.month.year}`
 })
+
+const hasDailyModels = computed(() => (daily.value?.daily?.length ?? 0) > 0)
 
 function onDateChange(newDate) {
   selectedDate.value = newDate
@@ -39,18 +45,24 @@ function onDateChange(newDate) {
       <DatePicker :model-value="selectedDate" @update:model-value="onDateChange" />
     </div>
 
-    <div v-if="pending" class="grid grid-cols-1 gap-3">
-      <div v-for="i in 5" :key="i" class="h-32 animate-pulse rounded-2xl bg-zinc-900"></div>
-    </div>
-
-    <DataErrorCard v-else-if="error" message="Erro ao carregar dados" />
+    <DataErrorCard v-if="error" message="Não foi possível carregar os trading models" />
 
     <div v-else class="grid grid-cols-1 gap-3">
-      <TradingModelDayCard v-for="model in data?.daily ?? []" :key="model.model" :model="model" />
+      <TradingModelsSkeleton v-if="dailyPending" />
 
-      <TradingModelAggTable v-if="data?.weekly" :title="weeklyTitle" :agg="data.weekly" />
+      <template v-else>
+        <TradingModelDayCard v-for="model in daily?.daily ?? []" :key="model.model" :model="model" />
 
-      <TradingModelAggTable v-if="data?.monthly" :title="monthlyTitle" :agg="data.monthly" />
+        <DataErrorCard v-if="!hasDailyModels" message="Sem apostas neste dia" icon="i-lucide-calendar-x" />
+      </template>
+
+      <TradingModelsSkeleton v-if="summaryPending" />
+
+      <template v-else>
+        <TradingModelAggTable v-if="summary?.week" :title="weeklyTitle" :agg="summary.week" />
+
+        <TradingModelAggTable v-if="summary?.month" :title="monthlyTitle" :agg="summary.month" />
+      </template>
     </div>
   </div>
 </template>
