@@ -4,7 +4,7 @@ import TradingModelsContent from '~/components/TradingModelsContent.vue'
 
 <template>
   <div class="min-h-screen p-4">
-    <UBreadcrumb :links="[{ label: 'Performance', to: '/performance' }, { label: 'Trading Models' }]" class="mb-4" />
+    <UBreadcrumb :items="[{ label: 'Performance', to: '/performance' }, { label: 'Trading Models' }]" class="mb-4" />
 
     <TradingModelsContent />
   </div>
