@@ -56,9 +56,13 @@ export const endpointSchemas = {
     schema: z.object({ game_id: z.unknown().nullable(), series: FlexArray.default([]) }).passthrough(),
     fallback: { game_id: null, series: [] },
   },
-  tradingModelsList: {
-    schema: FlexObject.default({ date: null, daily: [], weekly: {}, monthly: {} }),
-    fallback: { date: null, daily: [], weekly: {}, monthly: {} },
+  tradingDaily: {
+    schema: FlexObject.default({ date: null, daily: [] }),
+    fallback: { date: null, daily: [] },
+  },
+  tradingSummary: {
+    schema: FlexObject.default({ week: null, month: null }),
+    fallback: { week: null, month: null },
   },
 }
 
