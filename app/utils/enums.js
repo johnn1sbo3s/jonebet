@@ -28,17 +28,27 @@ export const TRADING_DAYS_PER_YEAR = 252
 // special-casing in components. Currently empty (was 'Goleada Casa' → 'Golea. H').
 export const MARKET_LABELS = Object.freeze({})
 
-// Trading model sub-model badge colors (crash/donkey/luigi/pacman/scorpion).
+// Trading model badge colors, keyed by full API model names (lay_0x1_*).
 export const TRADING_MODEL_BADGE = Object.freeze({
-  donkey: 'bg-blue-500/20 text-blue-400',
-  luigi: 'bg-green-500/20 text-green-400',
-  crash: 'bg-red-500/20 text-red-400',
-  pacman: 'bg-purple-500/20 text-purple-400',
-  scorpion: 'bg-amber-500/20 text-amber-400',
+  lay_0x1_donkey: 'bg-blue-500/20 text-blue-400',
+  lay_0x1_luigi: 'bg-green-500/20 text-green-400',
+  lay_0x1_crash: 'bg-red-500/20 text-red-400',
+  lay_0x1_pacman: 'bg-purple-500/20 text-purple-400',
+  lay_0x1_scorpion: 'bg-amber-500/20 text-amber-400',
 })
 
 export const TRADING_MODEL_RESULT = Object.freeze({
   GREEN: 'text-green-400',
   RED_LIGHT: 'text-amber-400',
   RED: 'text-red-400',
+  PENDING: 'text-zinc-400',
 })
+
+// Display label: 'lay_0x1_scorpion' -> 'Scorpion'; unknown names use the API model_label.
+export function tradingModelLabel(model, fallback) {
+  if (typeof model === 'string' && model.startsWith('lay_0x1_')) {
+    const suffix = model.slice('lay_0x1_'.length)
+    if (suffix) return suffix.charAt(0).toUpperCase() + suffix.slice(1)
+  }
+  return fallback ?? model
+}
