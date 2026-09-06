@@ -23,70 +23,136 @@ const MOCK_DATA = {
   daily: [
     {
       model: 'lay_0x1',
-      bets: 3,
-      green: 2,
-      red_light: 0,
-      red: 1,
-      pnl: 12.5,
-      roi: 41.67,
+      model_label: '0x1',
+      subtotal: 10.0,
+      bets: [
+        {
+          fixture_id: 9001,
+          home: 'Flamengo',
+          away: 'Palmeiras',
+          time: '20:00',
+          odd: 3.4,
+          ht_score: [0, 0],
+          minute_70_score: [0, 1],
+          ft_score: [1, 1],
+          result: 'GREEN',
+          profit: 10.0,
+        },
+      ],
     },
     {
       model: 'back_home',
-      bets: 5,
-      green: 3,
-      red_light: 1,
-      red: 1,
-      pnl: 7.0,
-      roi: 14.0,
-    },
-    {
-      model: 'lay_goleada_home',
-      bets: 2,
-      green: 2,
-      red_light: 0,
-      red: 0,
-      pnl: 20.0,
-      roi: 100.0,
+      model_label: 'Casa',
+      subtotal: 10.0,
+      bets: [
+        {
+          fixture_id: 9002,
+          home: 'São Paulo',
+          away: 'Corinthians',
+          time: '18:30',
+          odd: 2.1,
+          ht_score: [1, 0],
+          minute_70_score: [1, 0],
+          ft_score: [2, 0],
+          result: 'GREEN',
+          profit: 10.0,
+        },
+      ],
     },
     {
       model: 'ltd',
-      bets: 4,
-      green: 2,
-      red_light: 1,
-      red: 1,
-      pnl: 3.0,
-      roi: 7.5,
-    },
-    {
-      model: 'lay_away',
-      bets: 3,
-      green: 1,
-      red_light: 0,
-      red: 2,
-      pnl: -15.0,
-      roi: -50.0,
+      model_label: 'Empate',
+      subtotal: -3.0,
+      bets: [
+        {
+          fixture_id: 9003,
+          home: 'Grêmio',
+          away: 'Internacional',
+          time: '21:30',
+          odd: 3.2,
+          ht_score: [1, 1],
+          minute_70_score: [1, 1],
+          ft_score: [1, 1],
+          result: 'RED',
+          profit: -3.0,
+        },
+      ],
     },
   ],
   weekly: {
     start_date: '2026-08-30',
     end_date: '2026-09-05',
     rows: [
-      { model: 'lay_0x1', bets: 14, green: 9, red_light: 2, red: 3, pnl: 45.0, roi: 32.14 },
-      { model: 'back_home', bets: 22, green: 13, red_light: 4, red: 5, pnl: 18.0, roi: 8.18 },
-      { model: 'lay_goleada_home', bets: 10, green: 8, red_light: 1, red: 1, pnl: 65.0, roi: 65.0 },
-      { model: 'ltd', bets: 18, green: 10, red_light: 3, red: 5, pnl: 5.0, roi: 2.78 },
-      { model: 'lay_away', bets: 15, green: 6, red_light: 2, red: 7, pnl: -28.0, roi: -18.67 },
+      { model: 'lay_0x1', model_label: '0x1', bets_count: 14, green: 9, red_light: 2, red: 3, pnl: 45.0, roi: 32.14 },
+      {
+        model: 'back_home',
+        model_label: 'Casa',
+        bets_count: 22,
+        green: 13,
+        red_light: 4,
+        red: 5,
+        pnl: 18.0,
+        roi: 8.18,
+      },
+      {
+        model: 'lay_goleada_home',
+        model_label: 'AOHW',
+        bets_count: 10,
+        green: 8,
+        red_light: 1,
+        red: 1,
+        pnl: 65.0,
+        roi: 65.0,
+      },
+      { model: 'ltd', model_label: 'Empate', bets_count: 18, green: 10, red_light: 3, red: 5, pnl: 5.0, roi: 2.78 },
+      {
+        model: 'lay_away',
+        model_label: 'Fora',
+        bets_count: 15,
+        green: 6,
+        red_light: 2,
+        red: 7,
+        pnl: -28.0,
+        roi: -18.67,
+      },
     ],
   },
   monthly: {
     year: 2026,
     month: 9,
     rows: [
-      { model: 'lay_0x1', bets: 14, green: 9, red_light: 2, red: 3, pnl: 45.0, roi: 32.14 },
-      { model: 'back_home', bets: 22, green: 13, red_light: 4, red: 5, pnl: 18.0, roi: 8.18 },
-      { model: 'lay_goleada_home', bets: 10, green: 8, red_light: 1, red: 1, pnl: 65.0, roi: 65.0 },
-      { model: 'ltd', bets: 18, green: 10, red_light: 3, red: 5, pnl: 5.0, roi: 2.78 },
-      { model: 'lay_away', bets: 15, green: 6, red_light: 2, red: 7, pnl: -28.0, roi: -18.67 },
+      { model: 'lay_0x1', model_label: '0x1', bets_count: 14, green: 9, red_light: 2, red: 3, pnl: 45.0, roi: 32.14 },
+      {
+        model: 'back_home',
+        model_label: 'Casa',
+        bets_count: 22,
+        green: 13,
+        red_light: 4,
+        red: 5,
+        pnl: 18.0,
+        roi: 8.18,
+      },
+      {
+        model: 'lay_goleada_home',
+        model_label: 'AOHW',
+        bets_count: 10,
+        green: 8,
+        red_light: 1,
+        red: 1,
+        pnl: 65.0,
+        roi: 65.0,
+      },
+      { model: 'ltd', model_label: 'Empate', bets_count: 18, green: 10, red_light: 3, red: 5, pnl: 5.0, roi: 2.78 },
+      {
+        model: 'lay_away',
+        model_label: 'Fora',
+        bets_count: 15,
+        green: 6,
+        red_light: 2,
+        red: 7,
+        pnl: -28.0,
+        roi: -18.67,
+      },
     ],
   },
 }
@@ -97,7 +163,7 @@ export function useTradingModels({ date } = {}) {
   const cacheKey = computed(() => `tm-${dateRef.value ?? 'today'}`)
   const query = computed(() => (dateRef.value ? { date: dateRef.value } : {}))
 
-  const result = useFetch(`${apiUrl()}/trading-models`, {
+  const { data, pending, error, refresh } = useFetch(`${apiUrl()}/trading-models`, {
     key: 'trading-models',
     query,
     default: () => MOCK_DATA,
@@ -110,12 +176,13 @@ export function useTradingModels({ date } = {}) {
         response._data = parsed
       }
     },
-    onResponseError() {
-      // API não existe ainda (ticket 3) — retorna mock
-      result.data.value = MOCK_DATA
-      result.error.value = null
-    },
   })
 
-  return result
+  // API não existe ainda (ticket 3) — retorna mock quando fetch falha
+  return {
+    data: computed(() => (error.value ? MOCK_DATA : data.value)),
+    pending,
+    error: computed(() => null),
+    refresh,
+  }
 }
