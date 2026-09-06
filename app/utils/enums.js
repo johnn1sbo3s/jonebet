@@ -25,8 +25,10 @@ export const PERIOD = Object.freeze({
 export const TRADING_DAYS_PER_YEAR = 252
 
 // API market names → display labels. Add long/awkward names here instead of
-// special-casing in components.
+// special-casing in components. Currently empty (was 'Goleada Casa' → 'Golea. H').
+export const MARKET_LABELS = Object.freeze({})
 
+// Trading model sub-model badge colors (crash/donkey/luigi/pacman/scorpion).
 export const TRADING_MODEL_BADGE = Object.freeze({
   donkey: 'bg-blue-500/20 text-blue-400',
   luigi: 'bg-green-500/20 text-green-400',
