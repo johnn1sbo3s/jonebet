@@ -4,7 +4,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import TradingModelDayCard from '~/components/tradingModelDayCard.vue'
 
 const mockModel = {
-  model: 'donkey',
+  model: 'lay_0x1_donkey',
   model_label: 'Donkey',
   subtotal: 10.0,
   bets: [
@@ -17,8 +17,8 @@ const mockModel = {
       ht_score: [0, 1],
       minute_70_score: [1, 1],
       ft_score: [2, 3],
-      goals_home_minutes: ['34'],
-      goals_away_minutes: ['54', '68', '84'],
+      goals_home: ['34'],
+      goals_away: ['54', '68', '84'],
       result: 'GREEN',
       profit: 10.0,
       liability: 0,
@@ -79,5 +79,48 @@ describe('TradingModelDayCard', () => {
     })
     const redCells = wrapper.findAll('.text-red-400')
     expect(redCells.length).toBeGreaterThan(0)
+  })
+
+  it('derives badge label from full model name', async () => {
+    const wrapper = await mountSuspended(TradingModelDayCard, {
+      props: { model: { ...mockModel, model: 'lay_0x1_scorpion', model_label: '0x1' } },
+    })
+    expect(wrapper.text()).toContain('Scorpion')
+  })
+
+  it('renders dashes for PENDING bet without crashing', async () => {
+    const pendingModel = {
+      ...mockModel,
+      model: 'lay_0x1_scorpion',
+      bets: [
+        {
+          fixture_id: 'p1',
+          home: 'Flu',
+          away: 'Fla',
+          time: '18:00',
+          odd: 4.2,
+          ht_score: null,
+          minute_70_score: null,
+          ft_score: null,
+          goals_home: null,
+          goals_away: null,
+          result: 'PENDING',
+          profit: 0,
+        },
+      ],
+    }
+    const wrapper = await mountSuspended(TradingModelDayCard, { props: { model: pendingModel } })
+    expect(wrapper.text()).toContain('PENDING')
+    expect(wrapper.text()).toContain('—')
+  })
+
+  it('renders goal minutes literally', async () => {
+    const wrapper = await mountSuspended(TradingModelDayCard, {
+      props: {
+        model: { ...mockModel, bets: [{ ...mockModel.bets[0], goals_home: [], goals_away: ['53', '90+10'] }] },
+      },
+    })
+    expect(wrapper.text()).toContain("53'")
+    expect(wrapper.text()).toContain("90+10'")
   })
 })
