@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+  <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
     <div class="flex items-center gap-3">
       <div class="flex flex-col gap-1">
         <h1 class="align-middle text-xl font-semibold text-white sm:text-2xl">

@@ -68,7 +68,7 @@ watch(chosenModelId, () => {
       <template #right>
         <UButton
           to="/performance/trading-models"
-          color="teal"
+          color="primary"
           variant="soft"
           size="sm"
           trailing-icon="i-lucide-arrow-right"
