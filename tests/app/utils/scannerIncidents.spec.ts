@@ -106,6 +106,32 @@ describe('sideOf + buildTracks', () => {
     expect(tracks[0].extra).toBe(1)
   })
 
+  it('item chute+alerta expõe hasAlerts true; só-chute expõe false', () => {
+    const withAlert = buildTracks(
+      {
+        shots: [{ minute: 20, team: 'home', tier: 'C2', xg_delta: 0.3, label: 'Boa chance' }],
+        goals: [],
+        notifications: [{ rule: 'r', label: 'Pico', minute: 20, at: 't' }],
+      },
+      [{ minute: 20, half: 1, home: 0.8, away: 0.1 }],
+      (g) => g.minute * 10,
+    )
+    expect(withAlert).toHaveLength(1)
+    expect(withAlert[0].hasAlerts).toBe(true)
+
+    const shotsOnly = buildTracks(
+      {
+        shots: [{ minute: 20, team: 'home', tier: 'C2', xg_delta: 0.3, label: 'Boa chance' }],
+        goals: [],
+        notifications: [],
+      },
+      [{ minute: 20, half: 1, home: 0.8, away: 0.1 }],
+      (g) => g.minute * 10,
+    )
+    expect(shotsOnly).toHaveLength(1)
+    expect(shotsOnly[0].hasAlerts).toBe(false)
+  })
+
   it('gol vai pra trilha própria mesmo com chute no minuto', () => {
     const tracks = buildTracks(
       {

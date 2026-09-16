@@ -130,6 +130,7 @@ export function buildTracks({ shots = [], goals = [], notifications = [] } = {},
     const alerts = it.groups.flatMap((g) => g.alerts)
     const total = shots.length + alerts.length + (it.kind === 'goal' ? it.groups.length : 0)
     it.shownShot = shots[0] ?? null
+    it.hasAlerts = alerts.length > 0
     it.extra = total - 1
   }
 
