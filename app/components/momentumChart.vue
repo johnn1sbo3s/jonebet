@@ -13,7 +13,7 @@
       <template v-for="lane in lanes" :key="lane.key">
         <template v-for="item in lane.items" :key="trackKey(item)">
           <g
-            v-if="item.kind === 'shots' && item.shownShot"
+            v-if="item.kind === 'shots' && item.shownShot && !item.hasAlerts"
             class="lane-shot"
             tabindex="0"
             @mouseenter="activeKey = trackKey(item)"

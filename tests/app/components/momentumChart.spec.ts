@@ -184,7 +184,7 @@ describe('MomentumChart', () => {
         bars: [{ minute: 35, home: 0.79, away: 0.12 }],
         goals: [],
         shots: [{ minute: 35, team: 'home', tier: 'C2', xg_delta: 0.3, label: 'Boa chance' }],
-        notifications: [{ rule: 'r', label: 'Pico do favorito', minute: 35, at: 't' }],
+        notifications: [],
       },
     })
     expect(wrapper.find('.lane-pop').exists()).toBe(false)
@@ -208,11 +208,28 @@ describe('MomentumChart', () => {
         ],
       },
     })
-    await wrapper.find('.lane-shot').trigger('mouseenter')
+    await wrapper.find('.lane-alert').trigger('mouseenter')
     const pop = wrapper.find('.lane-pop')
     expect(pop.exists()).toBe(true)
     expect(pop.text()).toContain('Gol HT')
     expect(pop.text()).not.toContain('antes do intervalo')
+  })
+
+  it('chute+alerta desenha losango com +1, sem bolinha de chute', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        bars: [{ minute: 35, home: 0.79, away: 0.12 }],
+        goals: [],
+        shots: [{ minute: 35, team: 'home', tier: 'C2', xg_delta: 0.3, label: 'Boa chance' }],
+        notifications: [
+          { rule: 'entrada_gol_ht', label: 'Gol HT — entrada pra gol antes do intervalo', minute: 35, at: 't' },
+        ],
+      },
+    })
+    expect(wrapper.find('.lane-alert').exists()).toBe(true)
+    expect(wrapper.find('.lane-shot').exists()).toBe(false)
+    expect(wrapper.find('.lane-more').exists()).toBe(true)
+    expect(wrapper.find('.lane-more').text()).toBe('+1')
   })
 
   it('toque no marcador alterna o popover sem propagar o clique', async () => {
