@@ -159,7 +159,14 @@ export function useDailyBets({ date = null, model = null } = {}) {
   const modelRef = isRef(model) ? model : ref(model)
   const cacheKey = computed(() => `daily-bets-${dateRef.value ?? 'any'}-${modelRef.value ?? 'any'}`)
   return useFetch(() => `${apiUrl()}/daily-bets`, {
-    key: 'daily-bets',
+    // `key` TEM de ser a computada por data+modelo: é a chave do
+    // nuxtApp._asyncData (dedupe do framework), não só a do LRU. Com a
+    // string fixa 'daily-bets', scanner + daily-report + daily-bets
+    // compartilham a entrada na mesma sessão SPA: quem monta por último
+    // reaproveita os bets de outra data (ex.: vazios) sem refetch — e o
+    // botão 🎯 some de todos os cards até o hard refresh. Mesmo bug já
+    // corrigido no useModelsList (ver comentário lá).
+    key: cacheKey,
     query: computed(() => {
       const q = {}
       if (dateRef.value) q.date = dateRef.value
