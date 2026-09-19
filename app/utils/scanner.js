@@ -280,3 +280,42 @@ export function saveSoundPreset(id, storage = globalThis.localStorage) {
     // storage indisponível — segue sem persistir
   }
 }
+
+// Critérios que bateram p/ os chips do item do painel.
+// Retorna [{ key, label, value, hot }]: hot = perna do OU que efetivamente
+// decidiu (chip primary). Sem dados (alerta antigo) → [] e a linha some.
+// Regras de momento (regra_*) não têm dados → [].
+export function entryCriteria(n = {}) {
+  const d = n.dados
+  if (!d || typeof d !== 'object') return []
+  const num = (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : '—')
+  const shots = Number.isFinite(Number(d.chutes))
+    ? { key: 'chutes', label: 'chutes', value: `${d.chutes}`, hot: false }
+    : null
+  const chip = (key, raw, hot = false) => ({ key, label: key, value: raw, hot })
+  if (n.rule === 'entrada_gol_ht') {
+    const hot = new Set(n.gatilhos || [])
+    const legs = [
+      chip('fav5', num(d.fav5), hot.has('fav5')),
+      chip('pico', num(d.pico), hot.has('pico')),
+      chip('soma5', num(d.soma5), hot.has('soma5')),
+    ]
+    // Só o que decidiu: pernas quentes + contexto (odd/chutes nunca em destaque).
+    const decided = legs.filter((l) => l.hot)
+    const shown = decided.length ? decided : legs
+    const out = [chip('odd', num(d.odd)), ...shown]
+    if (shots) out.push(shots)
+    return out
+  }
+  if (n.rule === 'entrada_ltd') {
+    const out = [chip('odd', num(d.odd)), chip('soma10', num(d.soma10), true)]
+    if (shots) out.push(shots)
+    return out
+  }
+  if (n.rule === 'entrada_fim_jogo') {
+    const out = [chip('soma5', num(d.soma5), true)]
+    if (shots) out.push(shots)
+    return out
+  }
+  return []
+}

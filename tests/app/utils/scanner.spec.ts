@@ -14,6 +14,7 @@ import {
   saveDayEntries,
   findNewEntries,
   entryTitle,
+  entryCriteria,
   formatAlertTime,
   loadAlertsSeenAt,
   saveAlertsSeenAt,
@@ -331,5 +332,34 @@ describe('sound prefs', () => {
     expect(loadSoundEnabled(broken)).toBe(false)
     expect(loadSoundPreset(broken)).toBe('ping')
     expect(() => saveSoundEnabled(true, broken)).not.toThrow()
+  })
+})
+
+describe('entryCriteria', () => {
+  const ht = (dados, gatilhos) => ({ rule: 'entrada_gol_ht', dados, gatilhos })
+  it('gol HT: só a perna que decidiu vai em destaque', () => {
+    const d = { odd: 1.72, fav5: 0.3, pico: 0.3, soma5: 0.5, chutes: 4 }
+    const out = entryCriteria(ht(d, ['fav5', 'soma5']))
+    expect(out.map((c) => c.key)).toEqual(['odd', 'fav5', 'soma5', 'chutes'])
+    expect(out.filter((c) => c.hot).map((c) => c.key)).toEqual(['fav5', 'soma5'])
+    expect(out.find((c) => c.key === 'odd')).toMatchObject({ label: 'odd', value: '1.72', hot: false })
+    expect(out.find((c) => c.key === 'fav5')).toMatchObject({ label: 'fav5', value: '0.30', hot: true })
+    expect(out.find((c) => c.key === 'chutes')).toMatchObject({ label: 'chutes', value: '4' })
+  })
+  it('gol HT sem gatilhos: mostra as três pernas sem destaque (alerta antigo)', () => {
+    const d = { odd: 1.72, fav5: 0.3, pico: 0.3, soma5: 0.5, chutes: 4 }
+    const out = entryCriteria(ht(d, []))
+    expect(out.map((c) => c.key)).toEqual(['odd', 'fav5', 'pico', 'soma5', 'chutes'])
+    expect(out.some((c) => c.hot)).toBe(false)
+  })
+  it('ltd e fim de jogo: destaca o gate de pressão', () => {
+    const ltd = entryCriteria({ rule: 'entrada_ltd', dados: { odd: 1.95, soma10: 0.46, chutes: 9 } })
+    expect(ltd.find((c) => c.key === 'soma10')).toMatchObject({ value: '0.46', hot: true })
+    const fim = entryCriteria({ rule: 'entrada_fim_jogo', dados: { soma5: 0.56, chutes: 12 } })
+    expect(fim.find((c) => c.key === 'soma5')).toMatchObject({ value: '0.56', hot: true })
+  })
+  it('sem dados retorna vazio (linha some)', () => {
+    expect(entryCriteria({ rule: 'entrada_gol_ht' })).toEqual([])
+    expect(entryCriteria({ rule: 'regra_jogo_quente' })).toEqual([])
   })
 })
