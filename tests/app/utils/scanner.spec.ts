@@ -362,4 +362,15 @@ describe('entryCriteria', () => {
     expect(entryCriteria({ rule: 'entrada_gol_ht' })).toEqual([])
     expect(entryCriteria({ rule: 'regra_jogo_quente' })).toEqual([])
   })
+  it('valor ausente vira traço sem destaque indevido', () => {
+    const out = entryCriteria({ rule: 'entrada_ltd', dados: { odd: 1.95, soma10: null, chutes: 9 } })
+    expect(out.find((c) => c.key === 'soma10')).toMatchObject({ value: '—', hot: false })
+    const fim = entryCriteria({ rule: 'entrada_fim_jogo', dados: { chutes: 12 } })
+    expect(fim.find((c) => c.key === 'soma5')).toMatchObject({ value: '—', hot: false })
+    const noShots = entryCriteria({
+      rule: 'entrada_fim_jogo',
+      dados: { soma5: 0.56, chutes: null },
+    })
+    expect(noShots.map((c) => c.key)).toEqual(['soma5'])
+  })
 })

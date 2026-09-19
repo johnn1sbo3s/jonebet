@@ -256,6 +256,12 @@ it('item com dados mostra chips UBadge com gatilho primary', async () => {
   expect(crit.text()).not.toContain('pico')
   expect(w.text()).toContain('Palmeiras x Botafogo · 24')
   expect(w.text()).not.toContain('GHT')
+  const badges = crit.findAllComponents({ name: 'UBadge' })
+  expect(badges.length).toBeGreaterThan(0)
+  const byText = new Map(badges.map((b) => [b.text(), b.props('color')]))
+  expect(byText.get('odd1.72')).toBe('neutral')
+  expect(byText.get('fav50.30')).toBe('primary')
+  expect(byText.get('soma50.50')).toBe('primary')
   w.unmount()
 })
 

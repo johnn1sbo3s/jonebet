@@ -288,10 +288,9 @@ export function saveSoundPreset(id, storage = globalThis.localStorage) {
 export function entryCriteria(n = {}) {
   const d = n.dados
   if (!d || typeof d !== 'object') return []
-  const num = (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : '—')
-  const shots = Number.isFinite(Number(d.chutes))
-    ? { key: 'chutes', label: 'chutes', value: `${d.chutes}`, hot: false }
-    : null
+  const num = (v) => (v == null || v === '' || !Number.isFinite(Number(v)) ? '—' : Number(v).toFixed(2))
+  const finite = (v) => v != null && v !== '' && Number.isFinite(Number(v))
+  const shots = finite(d.chutes) ? { key: 'chutes', label: 'chutes', value: `${d.chutes}`, hot: false } : null
   const chip = (key, raw, hot = false) => ({ key, label: key, value: raw, hot })
   if (n.rule === 'entrada_gol_ht') {
     const hot = new Set(n.gatilhos || [])
@@ -308,12 +307,12 @@ export function entryCriteria(n = {}) {
     return out
   }
   if (n.rule === 'entrada_ltd') {
-    const out = [chip('odd', num(d.odd)), chip('soma10', num(d.soma10), true)]
+    const out = [chip('odd', num(d.odd)), chip('soma10', num(d.soma10), finite(d.soma10))]
     if (shots) out.push(shots)
     return out
   }
   if (n.rule === 'entrada_fim_jogo') {
-    const out = [chip('soma5', num(d.soma5), true)]
+    const out = [chip('soma5', num(d.soma5), finite(d.soma5))]
     if (shots) out.push(shots)
     return out
   }

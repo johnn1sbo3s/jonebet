@@ -45,7 +45,7 @@ minuto em texto corrido na linha do jogo.
 O scanner já inclui em cada notificação de entrada:
 `dados: {odd, fav5, pico, soma5, chutes, ...}` + `gatilhos: ["fav5", ...]`.
 O front só renderiza — `entryCriteria()` em `app/utils/scanner.js` mantém o
-shape `[{key, text, hot}]`; o painel decide cor pelo `hot`.
+shape `[{key, label, value, hot}]`; o painel decide cor pelo `hot`.
 
 ## Fora de escopo
 
