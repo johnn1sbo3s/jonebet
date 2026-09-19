@@ -423,7 +423,43 @@ describe('ScannerCard análise pré-jogo', () => {
     expect(w.text()).toContain('Análise pré-jogo · 16:30')
     expect(w.text()).toContain('Jogo equilibrado, poucos gols esperados.')
     expect(w.text()).toContain('Lay 1x0')
-    expect(w.text()).toContain('entrar · 78%')
+    // UBadge do relatório: "· entrar 78%" (ponto médio, sem espaços finos)
+    expect(w.text()).toContain('entrar 78%')
+  })
+
+  it('análises secundárias vêm colapsadas e expandem ao clicar', async () => {
+    preGameScenario.response = {
+      time: '16:30',
+      leitura_geral: 'Jogo equilibrado.',
+      estrategias: [
+        { estrategia: 'lay_1x0', recomendacao: 'entrar', confianca: 78, analise: '1-0 é raridade no histórico' },
+        { estrategia: 'over_25', recomendacao: 'ficar_de_fora', confianca: 60, analise: 'Over raro aqui' },
+      ],
+    }
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    // Colapsado por padrão: nome visível, texto da análise escondido
+    expect(w.text()).not.toContain('1-0 é raridade no histórico')
+    expect(w.text()).not.toContain('Over raro aqui')
+    const toggle = w.findAll('button').find((b) => b.text().includes('Lay 1x0') && b.text().length < 30)!
+    await toggle.trigger('click')
+    expect(w.text()).toContain('1-0 é raridade no histórico')
+    expect(w.text()).not.toContain('Over raro aqui')
+  })
+
+  it('fecha o modal clicando no backdrop', async () => {
+    preGameScenario.response = { time: '16:30', leitura_geral: 'Conteúdo X', estrategias: [] }
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Conteúdo X')
+    // Backdrop: o overlay raiz (bg-black/70); clique nele fecha
+    const backdrop = w.find('.bg-black\\/70')
+    await backdrop.trigger('click')
+    expect(w.text()).not.toContain('Conteúdo X')
   })
 
   it('fecha o modal pelo botão ✕', async () => {

@@ -270,11 +270,14 @@
 
     <div
       v-if="preGameOpen"
-      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
-      @click.stop
+      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-4"
+      @click.stop="preGameOpen = false"
     >
-      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
-        <div class="mb-2 flex items-center justify-between">
+      <div
+        class="flex max-h-[calc(100%-1rem)] w-[calc(100%-1rem)] flex-col gap-2 overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3"
+        @click.stop
+      >
+        <div class="flex items-center justify-between">
           <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">
             {{ preGameResponse?.time ? `Análise pré-jogo · ${preGameResponse.time}` : 'Análise pré-jogo' }}
           </span>
@@ -305,24 +308,57 @@
         </div>
 
         <template v-else-if="preGameResponse">
-          <p class="text-xs leading-relaxed text-zinc-200">{{ preGameResponse.leitura_geral }}</p>
+          <p class="text-sm leading-snug text-zinc-200">{{ preGameResponse.leitura_geral }}</p>
 
-          <div class="mt-2 flex flex-col gap-1.5">
-            <div
+          <div class="flex flex-wrap gap-1.5">
+            <UBadge
               v-for="e in preGameResponse.estrategias"
               :key="e.estrategia"
-              class="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5"
+              :color="e.recomendacao === 'entrar' ? 'primary' : 'warning'"
+              variant="soft"
+              size="md"
+              class="gap-1.5"
             >
-              <span class="text-xs font-bold text-zinc-100">{{ modelNameToNaturalName(e.estrategia) }}</span>
+              {{ modelNameToNaturalName(e.estrategia) }}
 
-              <span class="text-xs font-bold" :class="e.recomendacao === 'entrar' ? 'text-teal-400' : 'text-amber-400'">
-                {{ e.recomendacao }} · {{ e.confianca }}%
-              </span>
+              <span class="font-semibold opacity-70">· {{ e.recomendacao }} {{ e.confianca }}%</span>
+            </UBadge>
+          </div>
+
+          <div class="flex flex-col gap-2.5">
+            <div v-for="e in preGameResponse.estrategias" :key="e.estrategia + '-an'">
+              <button
+                type="button"
+                class="flex w-full items-center justify-between gap-2 text-left"
+                :aria-expanded="expandedAnalysis[e.estrategia] === true"
+                @click.stop="toggleAnalysis(e.estrategia)"
+              >
+                <span
+                  class="border-l-2 pl-2 text-sm leading-snug font-semibold"
+                  :class="
+                    e.recomendacao === 'entrar'
+                      ? 'border-teal-400/40 text-zinc-200'
+                      : 'border-amber-400/40 text-zinc-200'
+                  "
+                >
+                  {{ modelNameToNaturalName(e.estrategia) }}
+                </span>
+
+                <UIcon
+                  name="i-lucide-chevron-down"
+                  class="h-3.5 w-3.5 shrink-0 text-zinc-500 transition-transform duration-200"
+                  :class="{ 'rotate-180': expandedAnalysis[e.estrategia] === true }"
+                />
+              </button>
+
+              <p
+                v-if="expandedAnalysis[e.estrategia] === true"
+                class="border-l-2 pl-2 text-sm leading-snug text-zinc-400"
+                :class="e.recomendacao === 'entrar' ? 'border-teal-400/40' : 'border-amber-400/40'"
+              >
+                {{ e.analise }}
+              </p>
             </div>
-
-            <p v-for="e in preGameResponse.estrategias" :key="e.estrategia + '-an'" class="text-2xs text-zinc-500">
-              {{ e.analise }}
-            </p>
           </div>
         </template>
 
@@ -395,11 +431,19 @@ const { isFavorite, toggleFavorite } = useFavorites()
 const { get: getPreGame, load: loadPreGame } = usePreGameAnalysis()
 const preGameOpen = ref(false)
 
+// Análises secundárias da IA: colapsadas por padrão; o usuário expande se quiser ler.
+const expandedAnalysis = ref({})
+
+function toggleAnalysis(key) {
+  expandedAnalysis.value = { ...expandedAnalysis.value, [key]: expandedAnalysis.value[key] !== true }
+}
+
 const preGameState = computed(() => getPreGame(props.game.id))
 const preGameLoading = computed(() => preGameState.value.status === 'loading')
 const preGameResponse = computed(() => preGameState.value.response)
 
 async function openPreGame() {
+  expandedAnalysis.value = {}
   preGameOpen.value = true
   try {
     await loadPreGame(props.game.id)
