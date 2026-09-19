@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-w-0 flex-col gap-5">
-    <div class="min-w-0">
+    <div class="flex min-w-0 flex-col gap-5">
       <PageHeader title="Scanner ao vivo">
         <template #title>
           Scanner ao vivo

@@ -92,9 +92,9 @@
       <line x1="0" y1="196" x2="640" y2="196" stroke="#3f3f46" stroke-width="1" />
 
       <g transform="translate(0 56)">
-        <rect x="0" y="0" :width="W1" height="110" fill="#27272a" />
+        <rect x="0" y="0" :width="P2 - GAP" height="110" fill="#27272a" />
 
-        <rect :x="P2" y="0" :width="W2" height="110" fill="#27272a" />
+        <rect :x="P2" y="0" :width="640 - P2" height="110" fill="#27272a" />
 
         <rect x="0" y="0" width="640" height="33" fill="#fafafa" opacity="0.05" />
 
@@ -186,6 +186,9 @@ const TICKS = [
 // GAP: vão vazio entre os tempos (estilo Flashscore) — os dois painéis têm o
 // mesmo fundo zinc-800 e a separação vem do espaço vazio, não de linha/cor.
 const GAP = 8
+// Padding lateral p/ os marcadores do minuto 1/último não cortarem na borda
+// (raio 10 do ícone + anel de hover 14 → calibrar visualmente; começar em 8).
+const PAD = 10
 function halfOf(item) {
   return Number(item.half) === 2 ? 2 : 1
 }
@@ -202,11 +205,10 @@ const h1Len = computed(() => Math.min(50, Math.max(45, halfMaxMinute(1, props.ba
 const h2Len = computed(() =>
   Math.min(50, Math.max(45, halfMaxMinute(2, props.bars) - 45, halfMaxMinute(2, props.goals) - 45)),
 )
-const STEP = computed(() => (640 - GAP) / (h1Len.value + h2Len.value))
+const STEP = computed(() => (640 - PAD * 2 - GAP) / (h1Len.value + h2Len.value))
 const W1 = computed(() => h1Len.value * STEP.value)
-const W2 = computed(() => h2Len.value * STEP.value)
-// Start do 2º painel: após o painel 1 + o gap.
-const P2 = computed(() => W1.value + GAP)
+// Start do 1º painel: após o padding. 2º painel: após o painel 1 + o gap.
+const P2 = computed(() => PAD + W1.value + GAP)
 
 // Minuto relativo ao painel: o 2º tempo recomeça em 1 (46' -> 1). Sem `half`
 // mantém o mapeamento legado contínuo. Clamp só no relativo do 2º painel:
@@ -218,12 +220,12 @@ function panelMinute(item) {
 }
 
 function barX(item) {
-  return (halfOf(item) === 2 ? P2.value : 0) + (panelMinute(item) - 1) * STEP.value
+  return (halfOf(item) === 2 ? P2.value : PAD) + (panelMinute(item) - 1) * STEP.value
 }
 
 function tickX(t) {
   const rel = t.half === 2 ? t.minute - 45 : t.minute
-  return (t.half === 2 ? P2.value : 0) + (rel - 1) * STEP.value
+  return (t.half === 2 ? P2.value : PAD) + (rel - 1) * STEP.value
 }
 
 function barHeight(b) {
