@@ -167,7 +167,7 @@ Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`,
 
 ### Issue tracker
 
-Issues live as markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+Single centralized tracker shared with the other JoneBet repos: issues live as markdown files under `.scratch/<feature>/` at the parent (`Projetos/jonebet/.scratch/`). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
@@ -175,4 +175,4 @@ Default five canonical roles used as-is. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context layout (root `CONTEXT.md` + `docs/adr/`). See `docs/agents/domain.md`.
+Single-context layout (this repo's `CONTEXT.md` + `docs/adr/`); cross-context map at the parent's `CONTEXT-MAP.md`. See `docs/agents/domain.md`.

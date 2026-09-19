@@ -4,39 +4,30 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Before exploring, read these
 
-- **`CONTEXT.md`** at the repo root, or
-- **`CONTEXT-MAP.md`** at the repo root if it exists: it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
-- **`docs/adr/`**: read ADRs that touch the area you're about to work in. In multi-context repos, also check `src/<context>/docs/adr/` for context-scoped decisions.
+- **`CONTEXT.md`** at this repo root if it exists. If the session opened at the JoneBet parent
+  (`Projetos/jonebet/`), start at the parent's **`CONTEXT-MAP.md`** to confirm this (`frontend`) is the
+  right context, then read this repo's `CONTEXT.md`.
+- **`docs/adr/`** in this repo: read ADRs that touch the area you're about to work in. For
+  system-wide decisions crossing more than one JoneBet repo, also check the parent's `docs/adr/`.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
 ## File structure
 
-Single-context repo (most repos):
+Single-context repo (this repo):
 
 ```
-/
+jonebet-frontend/
 ├── CONTEXT.md
 ├── docs/adr/
 │   ├── 0001-event-sourced-orders.md
 │   └── 0002-postgres-for-write-model.md
-└── src/
+└── app/
 ```
 
-Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
-
-```
-/
-├── CONTEXT-MAP.md
-├── docs/adr/                          ← system-wide decisions
-└── src/
-    ├── ordering/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← context-specific decisions
-    └── billing/
-        ├── CONTEXT.md
-        └── docs/adr/
-```
+Cross-context features are spec'd once in the parent's `.scratch/` (see `docs/agents/issue-tracker.md`),
+with each ticket naming its repo in a `Repo:` line. The cross-context map lives at the parent's
+`CONTEXT-MAP.md` (not here).
 
 ## Use the glossary's vocabulary
 
