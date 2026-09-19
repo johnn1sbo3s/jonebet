@@ -231,6 +231,40 @@ it('footer: toggle de som + presets; rail sem footer', async () => {
   rail.unmount()
 })
 
+it('item com dados mostra chips UBadge com gatilho primary', async () => {
+  const withData = [
+    {
+      gameId: 'm3',
+      rule: 'entrada_gol_ht',
+      label: 'GOL HT — entrada pra gol antes do intervalo',
+      minute: 24,
+      half: 1,
+      at: ago(2),
+      home: 'Palmeiras',
+      away: 'Botafogo',
+      league: 'Brasil Série A',
+      dados: { odd: 1.72, fav5: 0.3, pico: 0.3, soma5: 0.5, chutes: 4 },
+      gatilhos: ['fav5', 'soma5'],
+    },
+  ]
+  const w = await mountSuspended(ScannerAlertsPanel, { props: { items: withData, open: true } })
+  const crit = w.find('[data-testid="alert-criteria-m3-0"]')
+  expect(crit.exists()).toBe(true)
+  expect(crit.text()).toContain('odd')
+  expect(crit.text()).toContain('1.72')
+  expect(crit.text()).toContain('fav5')
+  expect(crit.text()).not.toContain('pico')
+  expect(w.text()).toContain('Palmeiras x Botafogo · 24')
+  expect(w.text()).not.toContain('GHT')
+  w.unmount()
+})
+
+it('item sem dados não mostra linha de critérios', async () => {
+  const w = await mountSuspended(ScannerAlertsPanel, { props: { items, open: true } })
+  expect(w.find('[data-testid="alert-criteria-m1-0"]').exists()).toBe(false)
+  w.unmount()
+})
+
 it('rail: não-lidas em cima com fundo teal + divider; lidas embaixo', async () => {
   // Marco há 10min: item de 3min é não-lido (teal), item de 40min é lido.
   localStorage.setItem(SEEN_KEY, String(Date.now() - 10 * 60_000))

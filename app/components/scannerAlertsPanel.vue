@@ -58,28 +58,37 @@
         <button
           :data-testid="`alert-${a.gameId}-${i}`"
           :aria-label="`${a.home} x ${a.away}: ${entryTitle(a.rule, a.label)}`"
-          class="flex w-full flex-col gap-0.5 border-b border-zinc-800/60 px-3 py-2 text-left hover:bg-zinc-800/40"
+          class="flex w-full flex-col gap-2 border-b border-zinc-800/60 px-3 py-2 text-left hover:bg-zinc-800/40"
           :class="{ 'bg-teal-400/10': isUnseen(a.at) }"
           @click="$emit('select', a.gameId)"
         >
           <span class="flex items-center justify-between gap-2">
-            <span class="flex min-w-0 items-center gap-1.5">
-              <span class="shrink-0 rounded bg-teal-400 px-1 py-px text-xs font-extrabold text-zinc-950">{{
-                entryTag(a.rule)
-              }}</span>
-
-              <span class="truncate text-xs font-bold text-zinc-100">{{ entryTitle(a.rule, a.label) }}</span>
-            </span>
+            <span class="truncate text-sm font-bold text-zinc-100">{{ entryTitle(a.rule, a.label) }}</span>
 
             <span class="shrink-0 text-xs text-zinc-500">{{ formatAlertTime(a.at, now) }}</span>
           </span>
 
-          <span class="truncate text-xs text-zinc-400">{{ a.home }} x {{ a.away }}</span>
+          <span class="truncate text-sm text-zinc-400"
+            >{{ a.home }} x {{ a.away
+            }}<span v-if="a.minute != null"> · {{ a.minute }}&prime;{{ halfSuffix(a.half) }}</span></span
+          >
 
-          <span v-if="a.minute != null" class="flex items-center gap-1.5 text-xs text-zinc-500">
-            <span class="rounded-full border border-zinc-700 px-1.5"
-              >{{ a.minute }}&prime;{{ halfSuffix(a.half) }}</span
+          <span
+            v-if="entryCriteria(a).length"
+            :data-testid="`alert-criteria-${a.gameId}-${i}`"
+            class="flex flex-wrap items-center gap-1.5"
+          >
+            <UBadge
+              v-for="c in entryCriteria(a)"
+              :key="c.key"
+              :color="c.hot ? 'primary' : 'neutral'"
+              variant="soft"
+              size="sm"
             >
+              <span class="font-normal text-zinc-400">{{ c.label }}</span>
+
+              <span class="font-bold text-zinc-100">{{ c.value }}</span>
+            </UBadge>
           </span>
         </button>
       </li>
@@ -148,7 +157,7 @@
           :key="`${a.gameId}|${a.rule}|${a.at}`"
           :data-testid="`alert-${a.gameId}-${items.indexOf(a)}`"
           :aria-label="`${a.home} x ${a.away}: ${entryTitle(a.rule, a.label)}`"
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-teal-400 bg-teal-400 p-0.5 text-2xs leading-none font-extrabold text-zinc-950"
+          class="text-2xs flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-teal-400 bg-teal-400 p-0.5 leading-none font-extrabold text-zinc-950"
           @click.stop="onRailSelect(a.gameId)"
         >
           {{ entryTag(a.rule) }}
@@ -183,6 +192,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   SOUND_PRESETS,
   countUnseen,
+  entryCriteria,
   entryTag,
   entryTitle,
   formatAlertTime,
