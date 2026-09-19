@@ -162,3 +162,17 @@ Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`,
 | betsTableCard | 4 | `betsTableCard.spec.ts` |
 | blockMetricsPanel | 3 | `blockMetricsPanel.spec.ts` |
 | resultsTablesGrid | 2 | `resultsTablesGrid.spec.ts` |
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five canonical roles used as-is. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout (root `CONTEXT.md` + `docs/adr/`). See `docs/agents/domain.md`.
