@@ -59,16 +59,25 @@
           :data-testid="`alert-${a.gameId}-${i}`"
           :aria-label="`${a.home} x ${a.away}: ${entryTitle(a.rule, a.label)}`"
           class="flex w-full flex-col gap-2 border-b border-zinc-800/60 px-3 py-2 text-left hover:bg-zinc-800/40"
-          :class="{ 'bg-teal-400/10': isUnseen(a.at) }"
           @click="$emit('select', a.gameId)"
         >
           <span class="flex items-center justify-between gap-2">
-            <span class="truncate text-sm font-bold text-zinc-100">{{ entryTitle(a.rule, a.label) }}</span>
+            <span class="flex min-w-0 flex-1 items-center gap-1.5">
+              <span v-if="isUnseen(a.at)" class="h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
 
-            <span class="shrink-0 text-xs text-zinc-500">{{ formatAlertTime(a.at, now) }}</span>
+              <span class="truncate text-sm text-zinc-100" :class="isUnseen(a.at) ? 'font-bold' : 'font-medium'">{{
+                entryTitle(a.rule, a.label)
+              }}</span>
+            </span>
+
+            <span
+              class="shrink-0 text-xs"
+              :class="isUnseen(a.at) ? 'font-bold text-teal-400' : 'font-normal text-zinc-500'"
+              >{{ formatAlertTime(a.at, now) }}</span
+            >
           </span>
 
-          <span class="truncate text-sm text-zinc-400"
+          <span class="truncate text-sm text-zinc-400" :class="isUnseen(a.at) ? 'font-bold' : 'font-normal'"
             >{{ a.home }} x {{ a.away
             }}<span v-if="a.minute != null"> · {{ a.minute }}&prime;{{ halfSuffix(a.half) }}</span></span
           >
@@ -215,8 +224,8 @@ const props = defineProps({
 
 const now = ref(Date.now())
 const seenAt = ref(loadAlertsSeenAt())
-// Congelado no mount: fundo mostra quem era novo ANTES de abrir; o badge
-// (seenAt) zera na abertura mas o fundo não apaga junto. Nada visto ainda
+// Congelado no mount: negrito mostra quem era novo ANTES de abrir; o badge
+// (seenAt) zera na abertura mas o negrito não apaga junto. Nada visto ainda
 // (seenAt=0) → marco 0, tudo com at válido destaca.
 const highlightSince = ref(seenAt.value)
 const unseen = computed(() => countUnseen(props.items, seenAt.value))
@@ -245,7 +254,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', onDocClick, true)
   document.removeEventListener('keydown', onKeyDown)
 })
-// Abrir zera o badge, mas o FUNDO congela no valor anterior (senão apagava
+// Abrir zera o badge, mas o NEGRITO congela no valor anterior (senão apagava
 // junto e não servia de nada).
 function markSeen() {
   highlightSince.value = seenAt.value

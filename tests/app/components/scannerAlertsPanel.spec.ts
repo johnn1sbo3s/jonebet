@@ -129,9 +129,9 @@ it('sem collapseOnOutside o clique fora não emite (drawer)', async () => {
   w.unmount()
 })
 
-it('item não-visto tem fundo distinto; item visto não', async () => {
-  // Marco pré-semeado há 10min: item de 40min atrás já era visto (sem
-  // fundo), item de 2min é novo (com fundo) — mesmo com o badge zerado.
+it('item não-visto tem texto em negrito; item visto não', async () => {
+  // Marco pré-semeado há 10min: item de 40min atrás já era visto (peso
+  // normal), item de 2min é novo (negrito) — mesmo com o badge zerado.
   localStorage.setItem(SEEN_KEY, String(Date.now() - 10 * 60_000))
   const old = {
     gameId: 'm2',
@@ -156,8 +156,27 @@ it('item não-visto tem fundo distinto; item visto não', async () => {
     league: 'Portugal Liga',
   }
   const w = await mountSuspended(ScannerAlertsPanel, { props: { items: [fresh, old], open: true } })
-  expect(w.find('[data-testid="alert-m1-0"]').classes()).toContain('bg-teal-400/10')
-  expect(w.find('[data-testid="alert-m2-1"]').classes()).not.toContain('bg-teal-400/10')
+  const freshBtn = w.find('[data-testid="alert-m1-0"]')
+  const freshSpans = freshBtn.findAll('span')
+  // título + jogo + horário em negrito no item novo
+  // [0] linha externa, [1] wrapper título+dot, [2] dot, [3] título
+  expect(freshSpans[3].classes()).toContain('font-bold')
+  const freshTime = freshSpans[4]
+  expect(freshTime.classes()).toContain('font-bold')
+  expect(freshTime.classes()).toContain('text-teal-400')
+  expect(freshBtn.find('span.bg-teal-400.rounded-full').exists()).toBe(true)
+  const oldBtn = w.find('[data-testid="alert-m2-1"]')
+  const oldSpans = oldBtn.findAll('span')
+  // título aliviado + jogo peso normal + horário cinza no item visto
+  // [0] linha externa, [1] wrapper título, [2] título
+  expect(oldSpans[2].classes()).toContain('font-medium')
+  expect(oldSpans[2].classes()).not.toContain('font-bold')
+  const oldTime = oldSpans[3]
+  expect(oldTime.classes()).toContain('font-normal')
+  expect(oldTime.classes()).not.toContain('font-bold')
+  expect(oldTime.classes()).toContain('text-zinc-500')
+  expect(oldTime.classes()).not.toContain('text-teal-400')
+  expect(oldBtn.find('span.bg-teal-400.rounded-full').exists()).toBe(false)
   w.unmount()
 })
 
