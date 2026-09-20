@@ -1,0 +1,5 @@
+#!/bin/sh
+# Pre-push do front: suíte vitest completa (veredito final antes de
+# publicar — pega quebra cruzada que o pre-commit 1:1 não cobre, ~10s).
+
+pnpm test:unit
