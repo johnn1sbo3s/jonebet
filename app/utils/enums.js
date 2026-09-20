@@ -53,6 +53,26 @@ export function tradingModelLabel(model, fallback) {
   return fallback ?? model
 }
 
+// Perguntas do "Perguntar à IA" (scannerCard → POST /ask-ai).
+// Espelha QUESTIONS do backend (momentum/jev_client.py) + regra 47/92
+// (minutos_restantes 47−min 1ºT / 92−min 2ºT, acréscimo fixo 2').
+export const AI_QUESTIONS = Object.freeze([
+  { id: 'gol_1t', label: 'Sai gol no 1º tempo?' },
+  { id: 'gol_20min', label: 'Sai gol nos próximos 20 min?' },
+  { id: 'under2_fim', label: 'Sai menos de 2 gols até o fim?' },
+])
+
+export const AI_VEREDICT = Object.freeze({
+  SIM: 'SIM',
+  NAO: 'NÃO',
+  INCONCLUSIVO: 'inconclusivo',
+  SEM_AMOSTRA: 'sem amostra',
+})
+
+export const AI_HALF_END = Object.freeze({ FIRST: 47, SECOND: 92 })
+export const AI_GOL_1T_MAX_MINUTE = 45
+export const AI_GOL_20MIN_WINDOW = 20
+
 // Níveis de chute do scanner (tipos de chute C1–C4) → nomes PT-BR.
 // Espelha o TIER_LABELS do backend (momentum/shot_classifier.py). O campo
 // `label` de cada evento tem precedência quando presente; esta tabela é o

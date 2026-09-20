@@ -224,6 +224,40 @@
             >
               Análise pré-jogo
             </UButton>
+
+            <UButton
+              block
+              color="primary"
+              variant="solid"
+              size="sm"
+              class="col-span-2"
+              title="Perguntar à IA sobre gols neste jogo"
+              @click.stop="toggleAiAsk"
+            >
+              Perguntar à IA
+            </UButton>
+          </div>
+
+          <div
+            v-if="!game.finished && aiAskOpen"
+            class="mt-1.5 flex flex-col gap-1 rounded-xl border border-zinc-800 bg-zinc-950 p-1.5"
+            @click.stop
+          >
+            <button
+              v-for="q in aiQuestions"
+              :key="q.id"
+              type="button"
+              :disabled="q.disabled"
+              class="rounded-lg px-2 py-1.5 text-left text-xs font-semibold transition-colors"
+              :class="
+                q.disabled ? 'cursor-not-allowed text-zinc-600' : 'text-zinc-200 hover:bg-zinc-800 hover:text-teal-400'
+              "
+              :title="q.title"
+              @click.stop="askQuestion(q.id)"
+            >
+              {{ q.label }}
+              <span v-if="q.hint" class="ml-1 font-normal text-zinc-500">{{ q.hint }}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -405,6 +439,72 @@
         <XgLineChart v-else :history="xgHistory" :live-samples="xgLiveSamples" />
       </div>
     </div>
+
+    <div
+      v-if="aiAnswerOpen"
+      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
+      @click.stop
+    >
+      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">{{
+            aiQuestionLabel || 'Pergunta à IA'
+          }}</span>
+
+          <button
+            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
+            @click.stop="aiAnswerOpen = false"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div v-if="aiLoading" class="flex flex-col items-center gap-2 py-4">
+          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
+
+          <span class="text-xs text-zinc-400">Consultando a IA...</span>
+        </div>
+
+        <div v-else-if="aiState.error" class="flex flex-col items-center gap-2 py-2 text-center">
+          <p class="text-xs text-zinc-400">Não foi possível consultar agora.</p>
+
+          <button
+            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
+            @click.stop="retryAi"
+          >
+            Tentar de novo
+          </button>
+        </div>
+
+        <div v-else-if="aiResponse" class="flex flex-col items-center gap-1.5 py-2 text-center">
+          <span v-if="aiIsLowSample" class="text-xs font-semibold text-zinc-400"
+            >Sem amostra suficiente de jogos parecidos.</span
+          >
+
+          <template v-else>
+            <span
+              class="text-2xl font-extrabold"
+              :class="
+                aiVeredict === AI_VEREDICT.SIM
+                  ? 'text-teal-400'
+                  : aiVeredict === AI_VEREDICT.NAO
+                    ? 'text-red-400'
+                    : 'text-amber-400'
+              "
+              >{{ aiVeredict }}</span
+            >
+
+            <span v-if="aiProbLabel" class="text-sm font-semibold text-zinc-200">
+              {{ aiProbLabel }}
+            </span>
+
+            <span v-if="aiSampleLabel" class="text-2xs text-zinc-500">
+              {{ aiSampleLabel }}
+            </span>
+          </template>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -419,6 +519,57 @@ import { toBlob } from 'html-to-image'
 import { useFavorites } from '~/composables/useFavorites'
 import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 import { useXgHistory } from '~/composables/useXgHistory'
+import { useAiAsk } from '~/composables/useAiAsk'
+import { AI_QUESTIONS, AI_VEREDICT } from '~/utils/enums'
+import { aiQuestionState } from '~/utils/aiAsk'
+
+// Perguntar à IA: botão no grid xG/pré-jogo abre as 3 perguntas fixas;
+// 1 chamada por escolha (regra de minuto/half/hint em ~/utils/aiAsk).
+const aiAskOpen = ref(false)
+const aiAnswerOpen = ref(false)
+const aiQuestionId = ref(null)
+const { get: getAiState, load: loadAiAsk } = useAiAsk()
+const aiState = computed(() =>
+  aiQuestionId.value ? getAiState(props.game.id, aiQuestionId.value) : { status: 'idle', response: null, error: null },
+)
+const aiLoading = computed(() => aiState.value.status === 'loading')
+const aiResponse = computed(() => aiState.value.response)
+const aiQuestionLabel = computed(() => AI_QUESTIONS.find((q) => q.id === aiQuestionId.value)?.label || '')
+const aiVeredict = computed(() => aiResponse.value?.veredito)
+const aiIsLowSample = computed(
+  () =>
+    aiVeredict.value === AI_VEREDICT.SEM_AMOSTRA ||
+    (aiResponse.value?.similares_N != null && aiResponse.value.similares_N < 8),
+)
+const aiProbLabel = computed(() =>
+  aiResponse.value?.noul != null ? formatPercent(aiResponse.value.noul * 100, 0) : '',
+)
+const aiSampleLabel = computed(() =>
+  aiResponse.value?.similares_N != null
+    ? `Baseado em ${formatNumber(aiResponse.value.similares_N, 0)} jogos parecidos`
+    : '',
+)
+
+const aiQuestions = computed(() => aiQuestionState(props.game))
+
+async function askQuestion(questionId) {
+  aiAskOpen.value = false
+  aiQuestionId.value = questionId
+  aiAnswerOpen.value = true
+  try {
+    await loadAiAsk(props.game.id, questionId)
+  } catch {
+    // erro fica no estado (aiState.error) e o modal mostra retry
+  }
+}
+
+function toggleAiAsk() {
+  aiAskOpen.value = !aiAskOpen.value
+}
+
+function retryAi() {
+  if (aiQuestionId.value) loadAiAsk(props.game.id, aiQuestionId.value).catch(() => {})
+}
 const props = defineProps({
   game: { type: Object, required: true },
   // Destaque vindo do Telegram (?game=<id>): luz viajante na borda por ~12s.

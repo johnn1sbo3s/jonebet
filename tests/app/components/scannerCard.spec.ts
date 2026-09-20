@@ -13,6 +13,8 @@ vi.mock('~/composables/useXgHistory', () => ({
   }),
 }))
 
+import { aiAskScenario } from '~/test.setup'
+
 // O UTooltip (Nuxt UI v4) depende do TooltipProvider do reka-ui, que no app
 // real vem do UApp (app.vue) — ausente no mountSuspended isolado (o reka-ui
 // é externalizado e não pode ser interceptado por vi.mock). Stubamos o
@@ -498,5 +500,62 @@ describe('ScannerCard análise pré-jogo', () => {
     await retry.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
     expect(w.text()).toContain('Recuperou')
+  })
+
+  it('botão Perguntar à IA no grid; gol_1t desabilitada após 45’', async () => {
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
+    expect(w.text()).toContain('Perguntar à IA')
+    const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    // game() está no minuto 65: gol_1t sem sentido → desabilitada
+    const opt1t = w.findAll('button').find((b) => b.text().includes('Sai gol no 1º tempo'))!
+    expect(opt1t.attributes('disabled')).toBeDefined()
+    const opt20 = w.findAll('button').find((b) => b.text().includes('próximos 20'))!
+    expect(opt20.attributes('disabled')).toBeUndefined()
+    expect(opt20.text()).toContain('faltam 20')
+  })
+
+  it('gol_1t habilitada no 1º tempo; resposta SIM aparece no modal', async () => {
+    aiAskScenario.response = { veredito: 'SIM', noul: 0.8, similares_N: 8, question_id: 'gol_1t' }
+    const g = { ...game(), minute: 30, status: "30'" }
+    const w = await mountCard(ScannerCard, { props: { game: g } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const opt1t = w.findAll('button').find((b) => b.text().includes('Sai gol no 1º tempo'))!
+    expect(opt1t.attributes('disabled')).toBeUndefined()
+    await opt1t.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('SIM')
+    aiAskScenario.response = null
+  })
+
+  it('similares_N<8 mostra sem amostra mesmo com veredito inconclusivo', async () => {
+    aiAskScenario.response = { veredito: 'inconclusivo', noul: 0.55, similares_N: 3, question_id: 'gol_1t' }
+    const g = { ...game(), minute: 30, status: "30'" }
+    const w = await mountCard(ScannerCard, { props: { game: g } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const opt1t = w.findAll('button').find((b) => b.text().includes('Sai gol no 1º tempo'))!
+    await opt1t.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Sem amostra suficiente')
+    aiAskScenario.response = null
+  })
+
+  it('falha mostra "não foi possível consultar" com retry', async () => {
+    aiAskScenario.error = 'zen 500'
+    const g = { ...game(), minute: 30, status: "30'" }
+    const w = await mountCard(ScannerCard, { props: { game: g } })
+    const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
+    await btn.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    const opt1t = w.findAll('button').find((b) => b.text().includes('Sai gol no 1º tempo'))!
+    await opt1t.trigger('click')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(w.text()).toContain('Não foi possível consultar agora.')
+    aiAskScenario.error = null
   })
 })

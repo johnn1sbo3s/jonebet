@@ -82,3 +82,41 @@ vi.mock('~/composables/useModelApi.js', async () => {
 // runtime looks up dynamically in the test env.
 vi.stubGlobal('useRoute', () => ({ params: {} }))
 vi.stubGlobal('useRuntimeConfig', () => ({ public: { API_URL: 'http://test' } }))
+
+// Mock padrão de useAiAsk (cenário mutável por teste via aiAskScenario).
+// Centralizado aqui para não duplicar o mock em cada spec de card.
+// NOTA: o spec do próprio composable (useAiAsk.spec.ts) importa o módulo
+// real via importOriginal — este mock vale para os specs de componente.
+export const aiAskScenario = { response: null, error: null }
+
+vi.mock('~/composables/useAiAsk', async () => {
+  const { reactive } = await import('vue')
+  const byKey = new Map()
+  const stateOf = (id, qid) => {
+    const key = `${id}|${qid}`
+    if (!byKey.has(key)) byKey.set(key, reactive({ status: 'idle', response: null, error: null }))
+    return byKey.get(key)
+  }
+  return {
+    useAiAsk: () => ({
+      get: (id, qid) => stateOf(id, qid),
+      load: vi.fn(async (id, qid) => {
+        const s = stateOf(id, qid)
+        s.error = null
+        if (aiAskScenario.error) {
+          s.status = 'error'
+          s.error = new Error(aiAskScenario.error)
+          throw s.error
+        }
+        s.status = 'done'
+        s.response = aiAskScenario.response ?? {
+          veredito: 'SIM',
+          noul: 0.8,
+          similares_N: 8,
+          question_id: qid,
+        }
+        return s.response
+      }),
+    }),
+  }
+})
