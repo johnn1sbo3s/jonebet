@@ -225,39 +225,50 @@
               Análise pré-jogo
             </UButton>
 
-            <UButton
-              block
-              color="primary"
-              variant="solid"
-              size="sm"
-              class="col-span-2"
-              title="Perguntar à IA sobre gols neste jogo"
-              @click.stop="toggleAiAsk"
-            >
-              Perguntar à IA
-            </UButton>
-          </div>
+            <UPopover v-model:open="aiAskOpen">
+              <UButton
+                block
+                color="primary"
+                variant="solid"
+                size="sm"
+                class="col-span-2"
+                title="Perguntar à IA sobre gols neste jogo"
+                @click.stop
+              >
+                <span class="flex items-center justify-center gap-1.5">
+                  <UIcon name="i-lucide-sparkles" class="h-3.5 w-3.5" />
 
-          <div
-            v-if="!game.finished && aiAskOpen"
-            class="mt-1.5 flex flex-col gap-1 rounded-xl border border-zinc-800 bg-zinc-950 p-1.5"
-            @click.stop
-          >
-            <button
-              v-for="q in aiQuestions"
-              :key="q.id"
-              type="button"
-              :disabled="q.disabled"
-              class="rounded-lg px-2 py-1.5 text-left text-xs font-semibold transition-colors"
-              :class="
-                q.disabled ? 'cursor-not-allowed text-zinc-600' : 'text-zinc-200 hover:bg-zinc-800 hover:text-teal-400'
-              "
-              :title="q.title"
-              @click.stop="askQuestion(q.id)"
-            >
-              {{ q.label }}
-              <span v-if="q.hint" class="ml-1 font-normal text-zinc-500">{{ q.hint }}</span>
-            </button>
+                  Perguntar à IA
+                  <UIcon
+                    name="i-lucide-chevron-down"
+                    class="h-3.5 w-3.5 transition-transform duration-200"
+                    :class="{ 'rotate-180': aiAskOpen }"
+                  />
+                </span>
+              </UButton>
+
+              <template #content>
+                <div class="flex min-w-52 flex-col gap-1 p-1.5" @click.stop>
+                  <button
+                    v-for="q in aiQuestions"
+                    :key="q.id"
+                    type="button"
+                    :disabled="q.disabled"
+                    class="rounded-lg px-2 py-1.5 text-left text-xs font-semibold transition-colors"
+                    :class="
+                      q.disabled
+                        ? 'cursor-not-allowed text-zinc-600'
+                        : 'text-zinc-200 hover:bg-zinc-800 hover:text-teal-400'
+                    "
+                    :title="q.title"
+                    @click.stop="askQuestion(q.id)"
+                  >
+                    {{ q.label }}
+                    <span v-if="q.hint" class="ml-1 font-normal text-zinc-500">{{ q.hint }}</span>
+                  </button>
+                </div>
+              </template>
+            </UPopover>
           </div>
         </div>
       </div>
@@ -561,10 +572,6 @@ async function askQuestion(questionId) {
   } catch {
     // erro fica no estado (aiState.error) e o modal mostra retry
   }
-}
-
-function toggleAiAsk() {
-  aiAskOpen.value = !aiAskOpen.value
 }
 
 function retryAi() {

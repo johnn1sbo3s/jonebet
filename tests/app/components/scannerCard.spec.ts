@@ -20,6 +20,8 @@ import { aiAskScenario } from '~/test.setup'
 // é externalizado e não pode ser interceptado por vi.mock). Stubamos o
 // UTooltip com um pass-through: o slot renderiza o conteúdo real (nome
 // truncado / ícone de tendência) e o prop `text` fica acessível para assert.
+// UPopover teleporta o #content para o body (fora do wrapper): stub rende
+// o slot inline — o flutuante/chevron real é do Nuxt UI, não nosso.
 const mountCard = (component, options) =>
   mountSuspended(component, {
     ...options,
@@ -28,6 +30,10 @@ const mountCard = (component, options) =>
       stubs: {
         ...options?.global?.stubs,
         UTooltip: { name: 'UTooltip', props: ['text'], template: '<span><slot /></span>' },
+        UPopover: {
+          name: 'UPopover',
+          template: '<div><slot /><slot name="content" /></div>',
+        },
       },
     },
   })
