@@ -1,8 +1,10 @@
 // Regras do "Perguntar à IA" compartilhadas (scannerCard + testes).
 // Minuto tolera número ou string do Flashscore ("45+2'", "65'").
-// Half: usa game.status quando indica 2º tempo, senão minuto ≤47 é 1ºT
-// (acréscimo 46'–47' ainda é 1ºT); minutos_restantes 47−min / 92−min.
-import { AI_GOL_1T_MAX_MINUTE, AI_GOL_20MIN_WINDOW, AI_HALF_END, AI_QUESTIONS } from '~/utils/enums'
+// Half: usa game.status quando indica o tempo, senão minuto ≤47 é 1ºT
+// (acréscimo 46'–47' ainda é 1ºT). Sem hint de minutos: a janela real
+// (gol_20min atravessa o intervalo) vive só no backend — o front só
+// desabilita pergunta sem sentido.
+import { AI_GOL_1T_MAX_MINUTE, AI_HALF_END, AI_QUESTIONS } from '~/utils/enums'
 
 export function parseMinute(value) {
   if (typeof value === 'number' && Number.isFinite(value)) return Math.floor(value)
@@ -24,32 +26,27 @@ export function halfOf(game, minute) {
   return 1
 }
 
-export function minutesLeft(game, questionId) {
+// Restante real de jogo (p/ desabilitar): 1ºT conta até 47', 2ºT até 92'.
+// Só zera no apito final — nunca no intervalo.
+export function gameLeft(game) {
   const minute = parseMinute(game?.minute)
   if (minute == null) return null
-  if (questionId === 'gol_20min') {
-    const half = halfOf(game, minute)
-    const rest = Math.max(0, (half === 1 ? AI_HALF_END.FIRST : AI_HALF_END.SECOND) - minute)
-    return Math.min(AI_GOL_20MIN_WINDOW, rest)
-  }
-  return null
+  const half = halfOf(game, minute)
+  if (half === 1) return Math.max(0, AI_HALF_END.FIRST - minute)
+  return Math.max(0, AI_HALF_END.SECOND - minute)
 }
 
 export function aiQuestionState(game) {
   const minute = parseMinute(game?.minute)
+  const left = gameLeft(game)
   return AI_QUESTIONS.map((q) => {
     if (q.id === 'gol_1t') {
       const disabled = minute != null && minute > AI_GOL_1T_MAX_MINUTE
       return { ...q, disabled, hint: '', title: disabled ? 'O 1º tempo já acabou' : q.label }
     }
     if (q.id === 'gol_20min') {
-      const left = minutesLeft(game, q.id)
-      return {
-        ...q,
-        disabled: left != null && left <= 0,
-        hint: left != null ? `(faltam ${left}')` : '',
-        title: q.label,
-      }
+      const disabled = left != null && left <= 0
+      return { ...q, disabled, hint: '', title: disabled ? 'O jogo já acabou' : q.label }
     }
     return { ...q, disabled: false, hint: '', title: q.label }
   })

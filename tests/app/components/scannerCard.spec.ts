@@ -519,7 +519,7 @@ describe('ScannerCard análise pré-jogo', () => {
     expect(opt1t.attributes('disabled')).toBeDefined()
     const opt20 = w.findAll('button').find((b) => b.text().includes('próximos 20'))!
     expect(opt20.attributes('disabled')).toBeUndefined()
-    expect(opt20.text()).toContain('faltam 20')
+    expect(opt20.text()).not.toContain('faltam')
   })
 
   it('gol_1t habilitada no 1º tempo; resposta SIM aparece no modal', async () => {
