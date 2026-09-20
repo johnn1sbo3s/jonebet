@@ -198,23 +198,28 @@
       />
     </aside>
 
-    <UButton
+    <button
       v-if="canOpenDrawer && panelItems.length"
-      class="fixed right-5 bottom-5 z-40 xl:hidden"
-      icon="i-lucide-bell"
-      color="primary"
-      variant="solid"
+      type="button"
+      aria-label="Abrir alertas"
+      class="fixed right-5 bottom-5 z-40 flex size-14 items-center justify-center rounded-full border-2 border-teal-300 bg-teal-500 text-white shadow-[0_0_20px_2px] shadow-teal-500/50 transition hover:bg-teal-400 active:scale-95 xl:hidden"
       @click="alertsDrawer = true"
     >
-      {{ panelItems.length }}
-    </UButton>
+      <UIcon name="i-lucide-bell" class="size-6" />
+
+      <span
+        class="absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-teal-300 bg-red-500 px-1 text-xs font-bold text-white"
+        >{{ panelItems.length > 9 ? '9+' : panelItems.length }}</span
+      >
+    </button>
 
     <UDrawer v-model:open="alertsDrawer" :ui="{ content: 'bg-zinc-900' }">
       <template #content>
-        <div class="flex flex-col gap-3 p-5">
+        <div class="flex max-h-[85vh] flex-col gap-3 p-4">
           <ScannerAlertsPanel
             :items="panelItems"
             :open="true"
+            fluid
             :sound-enabled="soundEnabled"
             :sound-preset="soundPreset"
             toggle-icon="i-lucide-x"

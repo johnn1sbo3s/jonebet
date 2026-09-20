@@ -3,7 +3,8 @@
     v-if="open"
     ref="rootEl"
     key="alerts-open"
-    class="flex h-full w-72 shrink-0 flex-col overflow-hidden border-l border-zinc-700 bg-zinc-900"
+    class="flex h-full shrink-0 flex-col overflow-hidden bg-zinc-900"
+    :class="fluid ? 'w-full rounded-2xl border border-zinc-700' : 'w-72 border-l border-zinc-700'"
   >
     <header class="flex items-center justify-between border-b border-zinc-800 px-3 py-2.5">
       <span class="relative flex items-center gap-1.5 text-xs font-bold text-zinc-200">
@@ -220,6 +221,8 @@ const props = defineProps({
   collapseOnOutside: { type: Boolean, default: false },
   soundEnabled: { type: Boolean, default: false },
   soundPreset: { type: String, default: 'ping' },
+  // Drawer mobile: ocupa a largura total do drawer, sem borda lateral nem altura fixa.
+  fluid: { type: Boolean, default: false },
 })
 
 const now = ref(Date.now())
