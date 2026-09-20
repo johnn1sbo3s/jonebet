@@ -488,31 +488,13 @@
         </div>
 
         <div v-else-if="aiResponse" class="flex flex-col items-center gap-1.5 py-2 text-center">
-          <span v-if="aiIsLowSample" class="text-xs font-semibold text-zinc-400"
-            >Sem amostra suficiente de jogos parecidos.</span
-          >
+          <span v-if="aiProbLabel" class="text-2xl font-extrabold text-zinc-100">
+            {{ aiProbLabel }}
+          </span>
 
-          <template v-else>
-            <span
-              class="text-2xl font-extrabold"
-              :class="
-                aiVeredict === AI_VEREDICT.SIM
-                  ? 'text-teal-400'
-                  : aiVeredict === AI_VEREDICT.NAO
-                    ? 'text-red-400'
-                    : 'text-amber-400'
-              "
-              >{{ aiVeredict }}</span
-            >
-
-            <span v-if="aiProbLabel" class="text-sm font-semibold text-zinc-200">
-              {{ aiProbLabel }}
-            </span>
-
-            <span v-if="aiSampleLabel" class="text-2xs text-zinc-500">
-              {{ aiSampleLabel }}
-            </span>
-          </template>
+          <span v-if="aiSampleLabel" class="text-2xs text-zinc-500">
+            {{ aiSampleLabel }}
+          </span>
         </div>
       </div>
     </div>
@@ -531,7 +513,7 @@ import { useFavorites } from '~/composables/useFavorites'
 import { usePreGameAnalysis } from '~/composables/usePreGameAnalysis'
 import { useXgHistory } from '~/composables/useXgHistory'
 import { useAiAsk } from '~/composables/useAiAsk'
-import { AI_QUESTIONS, AI_VEREDICT } from '~/utils/enums'
+import { AI_QUESTIONS } from '~/utils/enums'
 import { aiQuestionState } from '~/utils/aiAsk'
 
 // Perguntar à IA: botão no grid xG/pré-jogo abre as 3 perguntas fixas;
@@ -546,20 +528,15 @@ const aiState = computed(() =>
 const aiLoading = computed(() => aiState.value.status === 'loading')
 const aiResponse = computed(() => aiState.value.response)
 const aiQuestionLabel = computed(() => AI_QUESTIONS.find((q) => q.id === aiQuestionId.value)?.label || '')
-const aiVeredict = computed(() => aiResponse.value?.veredito)
-const aiIsLowSample = computed(
-  () =>
-    aiVeredict.value === AI_VEREDICT.SEM_AMOSTRA ||
-    (aiResponse.value?.similares_N != null && aiResponse.value.similares_N < 8),
-)
 const aiProbLabel = computed(() =>
   aiResponse.value?.noul != null ? formatPercent(aiResponse.value.noul * 100, 0) : '',
 )
-const aiSampleLabel = computed(() =>
-  aiResponse.value?.similares_N != null
-    ? `Baseado em ${formatNumber(aiResponse.value.similares_N, 0)} jogos parecidos`
-    : '',
-)
+const aiSampleLabel = computed(() => {
+  const n = aiResponse.value?.similares_N
+  if (n == null) return ''
+  if (n === 0) return 'sem jogos similares — leitura só do momento'
+  return `Baseado em ${formatNumber(n, 0)} jogos parecidos`
+})
 
 const aiQuestions = computed(() => aiQuestionState(props.game))
 

@@ -62,12 +62,8 @@ export const AI_QUESTIONS = Object.freeze([
   { id: 'under2_fim', label: 'Sai menos de 2 gols até o fim?' },
 ])
 
-export const AI_VEREDICT = Object.freeze({
-  SIM: 'SIM',
-  NAO: 'NÃO',
-  INCONCLUSIVO: 'inconclusivo',
-  SEM_AMOSTRA: 'sem amostra',
-})
+// AI_VEREDICT removido na v2: o backend devolve só a % (noul),
+// sem SIM/NÃO/inconclusivo/sem amostra.
 
 export const AI_HALF_END = Object.freeze({ FIRST: 47, SECOND: 92 })
 export const AI_GOL_1T_MAX_MINUTE = 45

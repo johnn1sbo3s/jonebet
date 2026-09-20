@@ -110,9 +110,8 @@ vi.mock('~/composables/useAiAsk', async () => {
         }
         s.status = 'done'
         s.response = aiAskScenario.response ?? {
-          veredito: 'SIM',
           noul: 0.8,
-          similares_N: 8,
+          similares_N: 10,
           question_id: qid,
         }
         return s.response

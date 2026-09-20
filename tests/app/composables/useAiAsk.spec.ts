@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
-const ANSWER = { veredito: 'SIM', noul: 0.8, similares_N: 8, question_id: 'gol_1t' }
+const ANSWER = { noul: 0.8, similares_N: 10, question_id: 'gol_1t' }
 
 // O setup global mocka ~/composables/useAiAsk (cenário p/ cards) — aqui
 // testamos o módulo REAL via importOriginal do mock registrado.

@@ -59,14 +59,14 @@ export const endpointSchemas = {
   scannerAiAnswer: {
     schema: z
       .object({
-        veredito: z.string(),
+        veredito: z.string().optional(),
         noul: z.number().nullable(),
         similares_N: z.number().nullable(),
         question_id: z.string(),
         error: z.string().optional(),
       })
       .passthrough(),
-    fallback: { veredito: 'inconclusivo', noul: null, similares_N: null, question_id: '' },
+    fallback: { noul: null, similares_N: null, question_id: '' },
   },
   tradingDaily: {
     schema: FlexObject.default({ date: null, daily: [] }),

@@ -522,8 +522,8 @@ describe('ScannerCard análise pré-jogo', () => {
     expect(opt20.text()).not.toContain('faltam')
   })
 
-  it('gol_1t habilitada no 1º tempo; resposta SIM aparece no modal', async () => {
-    aiAskScenario.response = { veredito: 'SIM', noul: 0.8, similares_N: 8, question_id: 'gol_1t' }
+  it('gol_1t habilitada no 1º tempo; resposta mostra só a %', async () => {
+    aiAskScenario.response = { noul: 0.8, similares_N: 10, question_id: 'gol_1t' }
     const g = { ...game(), minute: 30, status: "30'" }
     const w = await mountCard(ScannerCard, { props: { game: g } })
     const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
@@ -533,12 +533,14 @@ describe('ScannerCard análise pré-jogo', () => {
     expect(opt1t.attributes('disabled')).toBeUndefined()
     await opt1t.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
-    expect(w.text()).toContain('SIM')
+    expect(w.text()).toContain('80%')
+    expect(w.text()).toContain('Baseado em 10 jogos parecidos')
+    expect(w.text()).not.toContain('SIM')
     aiAskScenario.response = null
   })
 
-  it('similares_N<8 mostra sem amostra mesmo com veredito inconclusivo', async () => {
-    aiAskScenario.response = { veredito: 'inconclusivo', noul: 0.55, similares_N: 3, question_id: 'gol_1t' }
+  it('similares_N=0 mostra % com aviso de leitura só do momento', async () => {
+    aiAskScenario.response = { noul: 0.55, similares_N: 0, question_id: 'gol_1t' }
     const g = { ...game(), minute: 30, status: "30'" }
     const w = await mountCard(ScannerCard, { props: { game: g } })
     const btn = w.findAll('button').find((b) => b.text().includes('Perguntar à IA'))!
@@ -547,7 +549,8 @@ describe('ScannerCard análise pré-jogo', () => {
     const opt1t = w.findAll('button').find((b) => b.text().includes('Sai gol no 1º tempo'))!
     await opt1t.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
-    expect(w.text()).toContain('Sem amostra suficiente')
+    expect(w.text()).toContain('55%')
+    expect(w.text()).toContain('sem jogos similares')
     aiAskScenario.response = null
   })
 
