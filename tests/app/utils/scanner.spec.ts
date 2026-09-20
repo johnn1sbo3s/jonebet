@@ -1,6 +1,7 @@
 import { beforeEach, describe, it, expect } from 'vitest'
 import {
   isRecentNotification,
+  alertScoreText,
   formatUpdatedAgo,
   mergeHistories,
   loadLocalHistory,
@@ -231,6 +232,18 @@ describe('findNewEntries', () => {
     const prev = { m1: [{ rule: 'entrada_ltd', at: '2026-09-13T14:32:00-03:00' }] }
     expect(findNewEntries(prev, [live('m1')])).toHaveLength(0)
     expect(findNewEntries({}, [live('m9', true)])).toHaveLength(0)
+  })
+})
+
+describe('alertScoreText', () => {
+  const base = { home: 'Porto', away: 'Benfica' }
+  it('com score: Casa H x A Fora', () => {
+    expect(alertScoreText({ ...base, score: { home: 1, away: 0 } })).toBe('Porto 1 x 0 Benfica')
+  })
+  it('sem score (alerta antigo): cai no Casa x Fora', () => {
+    expect(alertScoreText(base)).toBe('Porto x Benfica')
+    expect(alertScoreText({ ...base, score: null })).toBe('Porto x Benfica')
+    expect(alertScoreText({ ...base, score: { home: 'x', away: 0 } })).toBe('Porto x Benfica')
   })
 })
 

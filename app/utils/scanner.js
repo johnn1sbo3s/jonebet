@@ -281,6 +281,17 @@ export function saveSoundPreset(id, storage = globalThis.localStorage) {
   }
 }
 
+// Texto do placar congelado no alerta ("Porto 1 x 0 Benfica"); sem score
+// (alerta antigo) cai no "Casa x Fora" de antes.
+export function alertScoreText(n = {}) {
+  const { home = '', away = '' } = n
+  const s = n.score
+  const hs = Number(s?.home)
+  const as = Number(s?.away)
+  if (s == null || !Number.isFinite(hs) || !Number.isFinite(as)) return `${home} x ${away}`
+  return `${home} ${hs} x ${as} ${away}`
+}
+
 // Critérios que bateram p/ os chips do item do painel.
 // Retorna [{ key, label, value, hot }]: hot = perna do OU que efetivamente
 // decidiu (chip primary). Sem dados (alerta antigo) → [] e a linha some.

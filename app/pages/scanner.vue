@@ -249,6 +249,7 @@ import { SP_TZ } from '~/utils/timezone'
 import { isAgeGateDismissed } from '~/utils/pwaInstall'
 import {
   SOUND_PRESETS,
+  alertScoreText,
   entryTag,
   entryTitle,
   formatAlertTime,
@@ -366,14 +367,14 @@ watch(newEntries, async (entries) => {
   const first = entries[0]
   const title =
     entries.length === 1
-      ? `${entryTitle(first.rule, first.label)} · ${first.home} x ${first.away}`
+      ? `${entryTitle(first.rule, first.label)} · ${alertScoreText(first)}`
       : `${entries.length} novos alertas`
   toast.add({
     title,
     description:
       entries.length === 1
         ? `${formatAlertTime(first.at, Date.now())} · ${first.league || ''}`.trim()
-        : `${entryTag(first.rule)} · ${first.home} x ${first.away} (+${entries.length - 1})`,
+        : `${entryTag(first.rule)} · ${alertScoreText(first)} (+${entries.length - 1})`,
     color: 'primary',
     onClick: () => {
       alertsCollapsed.value = false

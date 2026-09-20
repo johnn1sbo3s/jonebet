@@ -79,7 +79,7 @@
           </span>
 
           <span class="truncate text-sm text-zinc-400" :class="isUnseen(a.at) ? 'font-bold' : 'font-normal'"
-            >{{ a.home }} x {{ a.away
+            >{{ alertScoreText(a)
             }}<span v-if="a.minute != null"> · {{ a.minute }}&prime;{{ halfSuffix(a.half) }}</span></span
           >
 
@@ -201,6 +201,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   SOUND_PRESETS,
+  alertScoreText,
   countUnseen,
   entryCriteria,
   entryTag,
