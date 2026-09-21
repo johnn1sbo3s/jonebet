@@ -56,18 +56,6 @@ export const endpointSchemas = {
     schema: z.object({ game_id: z.unknown().nullable(), series: FlexArray.default([]) }).passthrough(),
     fallback: { game_id: null, series: [] },
   },
-  scannerAiAnswer: {
-    schema: z
-      .object({
-        veredito: z.string().optional(),
-        noul: z.number().nullable(),
-        similares_N: z.number().nullable(),
-        question_id: z.string(),
-        error: z.string().optional(),
-      })
-      .passthrough(),
-    fallback: { noul: null, similares_N: null, question_id: '' },
-  },
   tradingDaily: {
     schema: FlexObject.default({ date: null, daily: [] }),
     fallback: { date: null, daily: [] },
