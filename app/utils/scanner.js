@@ -158,6 +158,18 @@ function todaySP(now = Date.now()) {
   return DateTime.fromMillis(now).setZone(SP_TZ).toFormat('yyyy-MM-dd')
 }
 
+function eventDateSP(at) {
+  if (!at) return null
+  const timestamp = Date.parse(at)
+  if (Number.isNaN(timestamp)) return null
+  return DateTime.fromMillis(timestamp).setZone(SP_TZ).toFormat('yyyy-MM-dd')
+}
+
+function isEntryForDay(n, day) {
+  const eventDay = eventDateSP(n?.at)
+  return eventDay == null || eventDay === day
+}
+
 // Histórico do dia: { date: 'yyyy-MM-dd', byGame: { [id]: [entry] } }.
 // Chave separada do cache do card — jogo que sai do snapshot não pode
 // levar o histórico junto, mas finalizado some daqui (decisão ticket 2).
@@ -187,18 +199,17 @@ export function saveDayEntries(state) {
 
 // Anexa entradas dos jogos vivos (com metadados p/ exibir mesmo se o jogo
 // sair do snapshot), remove finalizados, zera na virada do dia (SP).
+// `games` sempre vem de um snapshot já carregado com sucesso; por isso um
+// array vazio é autoritativo e deve limpar o histórico que saiu do radar.
 export function mergeDayEntries(stored, games = [], now = Date.now()) {
   const today = todaySP(now)
   if (!stored || stored.date !== today) stored = { date: today, byGame: {} }
   const byGame = { ...stored.byGame }
-  // Varredura de sumidos: id fora do snapshot sem flag finished (evicção do
-  // cap, fim de janela) não volta — remove. Só com snapshot (vazio = ainda
-  // carregando, não apaga nada).
-  if (games.length > 0) {
-    const alive = new Set(games.map((g) => g.id))
-    for (const id of Object.keys(byGame)) {
-      if (!alive.has(id)) delete byGame[id]
-    }
+  // Varredura de sumidos: qualquer id fora do snapshot sai, inclusive quando
+  // o snapshot é uma lista vazia (jogo removido por fim de janela/encerramento).
+  const alive = new Set(games.map((g) => g.id))
+  for (const id of Object.keys(byGame)) {
+    if (!alive.has(id)) delete byGame[id]
   }
   for (const g of games) {
     if (g.finished) {
@@ -209,6 +220,7 @@ export function mergeDayEntries(stored, games = [], now = Date.now()) {
     const next = [...(byGame[g.id] || [])]
     for (const n of g.notifications || []) {
       if (n.kind !== 'entrada' && !String(n.rule || '').startsWith('entrada_')) continue
+      if (!isEntryForDay(n, today)) continue
       const key = `${n.rule}|${n.at}`
       if (seen.has(key)) continue
       seen.add(key)
@@ -222,7 +234,8 @@ export function mergeDayEntries(stored, games = [], now = Date.now()) {
 // Diff de alertas novos p/ o ticket 3: entradas de jogos vivos ausentes no
 // guardado anterior (chave rule|at). O applySnapshot joga o resultado no ref
 // newEntries, que painel e notificação consomem.
-export function findNewEntries(prevByGame = {}, games = []) {
+export function findNewEntries(prevByGame = {}, games = [], now = Date.now()) {
+  const day = todaySP(now)
   const seen = new Set()
   for (const list of Object.values(prevByGame)) {
     for (const n of list || []) seen.add(`${n.rule}|${n.at}`)
@@ -232,6 +245,7 @@ export function findNewEntries(prevByGame = {}, games = []) {
     if (g.finished) continue
     for (const n of g.notifications || []) {
       if (n.kind !== 'entrada' && !String(n.rule || '').startsWith('entrada_')) continue
+      if (!isEntryForDay(n, day)) continue
       const key = `${n.rule}|${n.at}`
       if (seen.has(key)) continue
       seen.add(key)

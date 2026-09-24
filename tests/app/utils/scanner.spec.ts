@@ -212,26 +212,35 @@ describe('mergeDayEntries', () => {
     expect(out.byGame.m9).toBeUndefined()
     expect(out.byGame.m1).toHaveLength(1)
   })
-  it('games vazio não apaga nada (ainda carregando)', () => {
+  it('games vazio remove entradas de jogos que saíram do snapshot', () => {
     const stored = {
       date: '2026-09-13',
       byGame: { m9: [{ rule: 'entrada_ltd', label: 'x', minute: 80, at: '2026-09-13T13:00:00-03:00', gameId: 'm9' }] },
     }
     const out = mergeDayEntries(stored, [], DAY)
-    expect(out.byGame.m9).toHaveLength(1)
+    expect(out.byGame.m9).toBeUndefined()
+  })
+  it('não copia entrada de ontem para o bucket de hoje', () => {
+    const game = live('m1')
+    game.notifications[0].at = '2026-09-12T23:55:00-03:00'
+    const out = mergeDayEntries({ date: '2026-09-13', byGame: {} }, [game], DAY)
+    expect(out.byGame.m1).toBeUndefined()
   })
 })
 
 describe('findNewEntries', () => {
-  it('retorna entradas ausentes no guardado', () => {
-    const added = findNewEntries({}, [live('m1')])
+  it('retorna entradas ausentes do guardado', () => {
+    const added = findNewEntries({}, [live('m1')], Date.parse('2026-09-13T15:00:00-03:00'))
     expect(added).toHaveLength(1)
     expect(added[0]).toMatchObject({ rule: 'entrada_ltd', gameId: 'm1' })
   })
-  it('ignora já guardadas e jogos finalizados', () => {
+  it('ignora já guardadas, jogos finalizados e entradas de ontem', () => {
     const prev = { m1: [{ rule: 'entrada_ltd', at: '2026-09-13T14:32:00-03:00' }] }
     expect(findNewEntries(prev, [live('m1')])).toHaveLength(0)
     expect(findNewEntries({}, [live('m9', true)])).toHaveLength(0)
+    const old = live('m10')
+    old.notifications[0].at = '2026-09-12T23:55:00-03:00'
+    expect(findNewEntries({}, [old], Date.parse('2026-09-13T15:00:00-03:00'))).toHaveLength(0)
   })
 })
 

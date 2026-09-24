@@ -478,8 +478,9 @@ function applySnapshot(parsed) {
   })
   saveLocalHistory(pruneLocalHistory(games))
   const prevDay = dayEntries.value.date ? dayEntries.value : loadDayEntries()
-  newEntries.value = findNewEntries(prevDay.byGame, games)
-  dayEntries.value = mergeDayEntries(prevDay, games)
+  const now = Date.now()
+  newEntries.value = findNewEntries(prevDay.byGame, games, now)
+  dayEntries.value = mergeDayEntries(prevDay, games, now)
   saveDayEntries(dayEntries.value)
   snapshot.value = { ...parsed, games }
   loading.value = false
@@ -517,6 +518,7 @@ async function pollLoop() {
           : controller.signal // browsers sem AbortSignal.any (Safari <17.4, Chrome <116): só o abort manual
       const data = await $fetch(url, { signal })
       if (!pollActive) return
+      if (!data || !Array.isArray(data.games)) throw new Error('snapshot inválido')
       const parsed = safeParse('scannerSnapshot', data)
       fetchError.value = false
       offline.value = false // todo sucesso limpa os flags, inclusive no caso de mesma versão
