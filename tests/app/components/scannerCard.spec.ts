@@ -2,6 +2,7 @@
 // @vitest-environment nuxt
 import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { ref } from 'vue'
 import ScannerCard from '~/components/scannerCard.vue'
 import MomentumChart from '~/components/momentumChart.vue'
 import { useFavorites } from '~/composables/useFavorites'
@@ -10,6 +11,8 @@ vi.mock('~/composables/useXgHistory', () => ({
   useXgHistory: () => ({
     get: () => ({ status: 'done', response: { series: [] }, fetchedAt: Date.now(), error: null }),
     load: vi.fn().mockResolvedValue({ series: [] }),
+    refreshTick: ref(0),
+    requestRefresh: () => {},
   }),
 }))
 

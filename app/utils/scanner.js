@@ -27,6 +27,11 @@ export function formatUpdatedAgo(generatedAt, now = Date.now()) {
 
 const HISTORY_KEY = 'scanner.notifications.v1'
 
+export function snapshotGap(lastVersion, version) {
+  if (lastVersion == null || version == null) return false
+  return version !== lastVersion + 1
+}
+
 // Une o histórico do backend (autoritativo) com o cache local (sobrevive a
 // restart do scanner): dedupe por regra+horário, mais recente primeiro, máx 10.
 export function mergeHistories(backend = [], local = []) {

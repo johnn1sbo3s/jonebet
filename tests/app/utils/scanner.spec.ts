@@ -24,6 +24,7 @@ import {
   saveSoundEnabled,
   loadSoundPreset,
   saveSoundPreset,
+  snapshotGap,
 } from '~/utils/scanner.js'
 const AT = '2026-08-07T23:55:03-03:00'
 const NOW = Date.parse('2026-08-07T23:59:03-03:00')
@@ -394,5 +395,26 @@ describe('entryCriteria', () => {
       dados: { soma5: 0.56, chutes: null },
     })
     expect(noShots.map((c) => c.key)).toEqual(['soma5'])
+  })
+})
+
+describe('snapshotGap', () => {
+  it('false na primeira aplicação (sem versão anterior)', () => {
+    expect(snapshotGap(null, 10)).toBe(false)
+    expect(snapshotGap(10, null)).toBe(false)
+  })
+
+  it('false quando o cliente aplicou todos os snapshots', () => {
+    expect(snapshotGap(10, 11)).toBe(false)
+    expect(snapshotGap(1098, 1099)).toBe(false)
+  })
+
+  it('true quando pulou versão — perdeu snapshot (e o shot_events daquele ciclo)', () => {
+    expect(snapshotGap(10, 12)).toBe(true)
+    expect(snapshotGap(10, 40)).toBe(true)
+  })
+
+  it('true quando a versão voltou (restart do scanner no meio da sessão)', () => {
+    expect(snapshotGap(10, 3)).toBe(true)
   })
 })

@@ -202,18 +202,7 @@
             </div>
           </div>
 
-          <div v-if="!game.finished" class="mt-1 grid grid-cols-2 gap-1.5">
-            <UButton
-              block
-              color="primary"
-              variant="soft"
-              size="sm"
-              title="Ver a evolução de xG do jogo"
-              @click.stop="openXgHistory"
-            >
-              Evolução de xG
-            </UButton>
-
+          <div v-if="!game.finished" class="mt-1">
             <UButton
               block
               color="primary"
@@ -368,43 +357,7 @@
       </div>
     </div>
 
-    <div
-      v-if="xgOpen"
-      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/70 p-3"
-      @click.stop
-    >
-      <div class="max-h-full w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-900 p-3">
-        <div class="mb-2 flex items-center justify-between">
-          <span class="text-2xs font-bold tracking-wide text-teal-400 uppercase">Evolução de xG</span>
-
-          <button
-            class="flex h-5 w-5 items-center justify-center rounded border border-zinc-700 text-xs text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-            @click.stop="closeXgHistory"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div v-if="xgLoading" class="flex flex-col items-center gap-2 py-4">
-          <span class="h-5 w-5 animate-spin rounded-full border-2 border-teal-500/25 border-t-teal-400"></span>
-
-          <span class="text-xs text-zinc-400">Carregando xG...</span>
-        </div>
-
-        <div v-else-if="xgState.error" class="flex flex-col items-center gap-2 py-2 text-center">
-          <p class="text-xs text-zinc-400">Não foi possível carregar o histórico de xG.</p>
-
-          <button
-            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
-            @click.stop="retryXg"
-          >
-            Tentar de novo
-          </button>
-        </div>
-
-        <XgLineChart v-else :history="xgHistory" :live-samples="xgLiveSamples" />
-      </div>
-    </div>
+    <span v-if="isRecent && !flipped" class="alert-tag">Alerta</span>
   </div>
 </template>
 
@@ -457,15 +410,12 @@ function retryPreGame() {
   loadPreGame(props.game.id).catch(() => {})
 }
 
-const { get: getXgState, load: loadXgHistory } = useXgHistory()
-const xgOpen = ref(false)
+const { get: getXgState, load: loadXgHistory, refreshTick } = useXgHistory()
 const xgLiveSamples = ref([])
 const xgState = computed(() => getXgState(props.game.id))
-const xgLoading = computed(() => xgState.value.status === 'loading')
-const xgHistory = computed(() => xgState.value.response?.series ?? [])
 
-// Acumula o delta do ciclo sempre (não só com o modal aberto): o gráfico de
-// momentum precisa da série completa desde o mount.
+// Acumula o delta de cada ciclo: o gráfico de momentum precisa da série
+// completa desde o mount.
 watch(
   () => props.game.stats?.xg,
   (xg) => {
@@ -495,25 +445,20 @@ onMounted(() => {
   loadXgHistory(props.game.id).catch(() => {})
 })
 
-const chartShots = computed(() => collectShots(mergeXgSeries(xgHistory.value, xgLiveSamples.value)))
+watch(
+  () => props.game,
+  () => {
+    if (xgState.value.status === 'error') loadXgHistory(props.game.id).catch(() => {})
+  },
+)
 
-async function openXgHistory() {
-  xgOpen.value = true
-  xgLiveSamples.value = []
-  try {
-    await loadXgHistory(props.game.id)
-  } catch {
-    // erro fica no estado
-  }
-}
-
-function closeXgHistory() {
-  xgOpen.value = false
-}
-
-function retryXg() {
+watch(refreshTick, () => {
   loadXgHistory(props.game.id).catch(() => {})
-}
+})
+
+const chartShots = computed(() =>
+  collectShots(mergeXgSeries(xgState.value.response?.series ?? [], xgLiveSamples.value)),
+)
 
 const STAT_LABELS = [
   ['shots', 'FINALIZAÇÕES', 0, ''],

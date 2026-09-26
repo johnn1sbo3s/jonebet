@@ -243,6 +243,7 @@
 <script setup>
 import { DateTime } from 'luxon'
 import { useFavorites } from '~/composables/useFavorites'
+import { useXgHistory } from '~/composables/useXgHistory'
 import { filterBetsForGame } from '~/utils/preLiveBets'
 import { ODDS_PRESET_OPTIONS } from '~/utils/oddsPresets'
 import { SP_TZ } from '~/utils/timezone'
@@ -257,12 +258,14 @@ import {
   loadSoundPreset,
   saveSoundEnabled,
   saveSoundPreset,
+  snapshotGap,
 } from '~/utils/scanner'
 import { playPreset, previewPreset, unlockSound } from '~/utils/alertSound'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
+const { requestRefresh: refreshShotHistory } = useXgHistory()
 
 // Relatório de amanhã: disponível depois das 23h (scanner já gerou os dados).
 const now = DateTime.now().setZone(SP_TZ)
@@ -529,6 +532,7 @@ async function pollLoop() {
         continue
       }
       if (parsed.version === lastVersion) continue // hold expirou sem mudança: re-pede já
+      if (snapshotGap(lastVersion, parsed.version)) refreshShotHistory()
       lastVersion = parsed.version
       applySnapshot(parsed)
     } catch {
