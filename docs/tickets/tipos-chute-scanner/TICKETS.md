@@ -82,7 +82,7 @@ Ticket 0 (`shot_tiers` no live.json). Ticket 1 **não** é fonte das barras (só
 
 ## Ticket 3 — Marcadores de chute no gráfico xG
 
-**Status:** 🔴 Não iniciado
+**Status:** 🔴 Cancelado — o gráfico de linha de xG (botão "Evolução de xG", modal e `xgLineChart.vue`) saiu do card em 2026-09-26; os marcadores de chute já vivem no gráfico de momentum (`momentumChart.vue`) e o tooltip por minuto virou o popover das trilhas
 
 ### Objetivo
 Marcar no gráfico de xG (`xgLineChart.vue`) os minutos com chute, com cor/símbolo por nível.
@@ -105,7 +105,7 @@ Ticket 1.
 
 ## Ticket 4 — Tooltip por minuto (gol + chute + alerta)
 
-**Status:** 🔴 Não iniciado
+**Status:** 🔴 Cancelado — o gráfico de linha de xG (botão "Evolução de xG", modal e `xgLineChart.vue`) saiu do card em 2026-09-26; os marcadores de chute já vivem no gráfico de momentum (`momentumChart.vue`) e o tooltip por minuto virou o popover das trilhas
 
 ### Objetivo
 Hover em cada linha de minuto do gráfico xG abre tooltip mostrando o que aconteceu naquele minuto: gol, chute(s) e notificação/alerta.
