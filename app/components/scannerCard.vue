@@ -441,10 +441,16 @@ watch(
   { immediate: true },
 )
 
+// O histórico é a única fonte dos chutes anteriores ao mount, e ele entra no
+// gráfico junto com os deltas ao vivo. Busca sempre rebuscando (sem servir
+// série cacheada): um card que remonta em poucos minutos herdaria a série
+// velha e o buraco no gráfico voltava.
 onMounted(() => {
   loadXgHistory(props.game.id).catch(() => {})
 })
 
+// O fetch tem timeout; quando falha, tenta de novo a cada snapshot até dar
+// certo — sem isso o gráfico ficaria só com os chutes de depois do mount.
 watch(
   () => props.game,
   () => {
@@ -452,6 +458,8 @@ watch(
   },
 )
 
+// A página avisa quando perdeu um snapshot (snapshotGap em pages/scanner.vue);
+// aí os cards refazem o histórico pra repor o chute do ciclo que sumiu.
 watch(refreshTick, () => {
   loadXgHistory(props.game.id).catch(() => {})
 })

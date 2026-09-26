@@ -27,6 +27,12 @@ export function formatUpdatedAgo(generatedAt, now = Date.now()) {
 
 const HISTORY_KEY = 'scanner.notifications.v1'
 
+// O backend incrementa a versão do snapshot a cada ciclo. Pular versão (ou ela
+// regredir, quando o scanner reinicia no meio da sessão) quer dizer que o
+// cliente não aplicou aquele snapshot — e shot_events é delta por ciclo, então
+// o chute daquele ciclo nunca mais é reenviado: só um refetch do /xg-history
+// recupera, a partir do banco. É o que derrubava bolinha do gráfico até o
+// reload da página.
 export function snapshotGap(lastVersion, version) {
   if (lastVersion == null || version == null) return false
   return version !== lastVersion + 1
