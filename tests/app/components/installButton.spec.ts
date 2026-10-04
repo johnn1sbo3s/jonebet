@@ -1,13 +1,18 @@
 // @vitest-environment nuxt
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import InstallButton from '~/components/installButton.vue'
 
-function mockDevice(flags) {
+// Ticket 35: mock pela superfície oficial do módulo (auto-import de
+// useDevice), não pelo caminho interno do pacote em node_modules. Os flags
+// variam por teste, então o mock lê um holder mutável.
+const deviceFlags = vi.hoisted(() => ({ current: { isMobileOrTablet: false, isIos: false } }))
+
+mockNuxtImport('useDevice', () => () => deviceFlags.current)
+
+function mockDevice(flags: { isMobileOrTablet: boolean; isIos: boolean }) {
   vi.resetModules()
-  vi.doMock('../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice', () => ({
-    useDevice: () => flags,
-  }))
+  deviceFlags.current = flags
 }
 
 // UTooltip real exige o TooltipProvider que só o UApp provê (app.vue) — o

@@ -7,7 +7,6 @@
 <script setup>
 import { platform } from '~/utils/pwaInstall'
 import { usePwaInstall } from '~/composables/usePwaInstall'
-import { useDevice } from '../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice'
 
 const { state, openDrawer, promptInstall, showInstructions } = usePwaInstall()
 const device = useDevice()

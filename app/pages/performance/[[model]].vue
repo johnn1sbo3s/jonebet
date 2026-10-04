@@ -1,5 +1,4 @@
 <script setup>
-import { useDevice } from '../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice'
 import { yesterdayIso } from '~/utils/timezone'
 
 const route = useRoute()

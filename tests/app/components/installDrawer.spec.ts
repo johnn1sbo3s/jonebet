@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { AGE_GATE_KEY, INSTALL_DISMISS_KEY } from '~/utils/pwaInstall'
 
-vi.mock('../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice', () => ({
-  useDevice: () => ({ isMobileOrTablet: true, isIos: true }),
-}))
+// Ticket 35: mock pela superfície oficial do módulo (auto-import de
+// useDevice), não pelo caminho interno do pacote em node_modules.
+mockNuxtImport('useDevice', () => () => ({ isMobileOrTablet: true, isIos: true }))
 
 describe('InstallDrawer', () => {
   beforeEach(() => {
