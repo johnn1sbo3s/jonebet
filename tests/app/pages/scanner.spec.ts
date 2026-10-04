@@ -245,3 +245,137 @@ describe('scanner: encoding do parâmetro v do long-polling', () => {
     }
   })
 })
+
+// O bloco de status segura a largura no pior caso justamente para a idade do dado
+// (que reescreve a cada segundo) nunca empurrar a bolinha nem os botões ao lado.
+describe('scanner: bloco de status com largura reservada', () => {
+  it('reserva largura fixa e usa dígitos tabulares na idade do dado', async () => {
+    const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+    await flushSnapshot()
+
+    const block = w.find('[data-status-block]')
+    expect(block.classes()).toContain('w-[8.5rem]')
+
+    const age = block.find('[data-age-seq]')
+    expect(age.classes()).toContain('tabular-nums')
+    // 6ch comporta "há 100:00" (3 dígitos de minuto), que a tabular sozinha não
+    // segura — ela uniformiza os dígitos, não a contagem deles.
+    const slot = block.find('[data-status-slot]')
+    expect(slot.classes()).toContain('w-[6ch]')
+    // O número anima ABSOLUTO dentro de um slot único: sem isso, durante os 200ms do
+    // reset os dois valores coexistem no fluxo e o novo abre uma segunda coluna,
+    // estourando a largura reservada antes de voltar.
+    expect(slot.classes()).toContain('relative')
+    expect(age.classes()).toContain('absolute')
+    expect(age.element.closest('[data-status-slot]')).toBe(slot.element)
+    w.unmount()
+  })
+
+  it('mantém a idade de 2 dígitos de minuto dentro do slot reservado', async () => {
+    // 10 minutos de idade = "há 10:0x", o pior caso de 2 dígitos; o slot de 6ch é o
+    // que também comporta o de 3. A largura reservada é o que impede o texto de sair.
+    const original = h.fetchMock.getMockImplementation()
+    h.fetchMock.mockImplementation(() => {
+      if (h.polls++ === 0)
+        return Promise.resolve({
+          version: 1,
+          generated_at: new Date(Date.now() - 600_000).toISOString(),
+          games: [GAME],
+        })
+      return Promise.withResolvers().promise
+    })
+    try {
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      await flushSnapshot()
+
+      const age = w.find('[data-age-seq]')
+      expect(age.text().trim()).toMatch(/^há 10:0\d$/)
+      expect(w.find('[data-status-slot]').classes()).toContain('w-[6ch]')
+      w.unmount()
+    } finally {
+      h.fetchMock.mockImplementation(original)
+    }
+  })
+
+  it('não anima a cada tick: só quando entra snapshot novo', async () => {
+    const original = h.fetchMock.getMockImplementation()
+    h.fetchMock.mockImplementation(() => {
+      const n = h.polls++
+      if (n === 0) return Promise.resolve({ version: 1, generated_at: '2026-10-03T20:00:00-03:00', games: [GAME] })
+      if (n === 1) return Promise.resolve({ version: 2, generated_at: '2026-10-03T20:00:05-03:00', games: [GAME] })
+      return Promise.withResolvers().promise
+    })
+    try {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-10-03T20:00:10-03:00'))
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      await vi.advanceTimersByTimeAsync(50)
+
+      // 2º snapshot: a geração avança, e é ela que dispara o deslocamento vertical.
+      const afterReset = w.find('[data-age-seq]')
+      expect(afterReset.attributes('data-age-seq')).toBe('2')
+
+      // Ticks seguintes reescrevem o texto no lugar — mesmo nó, mesma geração, sem animação.
+      const seqBefore = afterReset.attributes('data-age-seq')
+      await vi.advanceTimersByTimeAsync(5_000)
+      expect(w.find('[data-age-seq]').attributes('data-age-seq')).toBe(seqBefore)
+      w.unmount()
+    } finally {
+      vi.useRealTimers()
+      h.fetchMock.mockImplementation(original)
+    }
+  })
+
+  it('primeiro carregamento deixa o bloco vazio na largura reservada, sem skeleton', async () => {
+    const original = h.fetchMock.getMockImplementation()
+    h.fetchMock.mockImplementation(() => Promise.withResolvers().promise)
+    try {
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+
+      const block = w.find('[data-status-block]')
+      expect(block.classes()).toContain('w-[8.5rem]')
+      expect(block.find('[data-status-age]').text()).toBe('')
+      // USkeleton usa animate-pulse; o header não tem mais um esquelho próprio —
+      // a página inteira já cobre o primeiro carregamento.
+      expect(block.find('[class*="animate-pulse"]').exists()).toBe(false)
+      w.unmount()
+    } finally {
+      h.fetchMock.mockImplementation(original)
+    }
+  })
+
+  it('offline troca a bolinha para laranja e tira o texto visível', async () => {
+    const original = h.fetchMock.getMockImplementation()
+    // Snapshot chega, depois a rede cai: é o caso em que a idade do dado continua
+    // aparecendo ao lado do sinal de offline.
+    h.fetchMock.mockImplementation(() =>
+      h.polls++ === 0
+        ? Promise.resolve({ version: 1, generated_at: '2026-10-03T20:00:00-03:00', games: [GAME] })
+        : Promise.reject(new Error('offline')),
+    )
+    try {
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      await flushSnapshot()
+
+      const block = w.find('[data-status-block]')
+      const dot = block.find('[data-status-dot]')
+      expect(dot.find('.bg-orange-400').exists()).toBe(true)
+      expect(dot.find('.bg-teal-400').exists()).toBe(false)
+      // A bolinha continua pulsando offline — só a cor mudou.
+      expect(dot.find('.animate-ping').exists()).toBe(true)
+
+      // O texto visível não menciona offline…
+      const visible = block.find('[data-status-age]').text()
+      expect(visible).not.toContain('sem conexão')
+      // …e a idade do dado continua lá, que é quando ela mais importa.
+      expect(visible).toMatch(/Atualizado\s*há\s*\d+:\d\d/)
+      // Para o leitor de tela o estado segue disponível, sem aria-live para não
+      // anunciar uma vez por segundo.
+      expect(block.find('.sr-only').text()).toContain('sem conexão')
+      expect(block.find('[aria-live]').exists()).toBe(false)
+      w.unmount()
+    } finally {
+      h.fetchMock.mockImplementation(original)
+    }
+  })
+})

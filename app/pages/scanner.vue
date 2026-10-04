@@ -13,37 +13,49 @@
 
         <template #right>
           <div
-            class="flex w-full items-center justify-between gap-3 text-xs text-zinc-400 sm:ml-auto sm:w-auto sm:justify-end"
+            class="flex w-full flex-col items-start gap-3 text-xs text-zinc-400 sm:ml-auto sm:w-auto sm:flex-row sm:items-center sm:justify-end"
           >
-            <UButton to="/daily-report" target="_blank" color="primary" variant="soft" size="xs">
-              Relatório do dia
-            </UButton>
+            <div class="flex items-center gap-3">
+              <UButton to="/daily-report" target="_blank" color="primary" variant="soft" size="xs">
+                Relatório do dia
+              </UButton>
 
-            <UButton
-              v-if="hasTomorrowReport"
-              :to="`/daily-report?date=${tomorrowIso}`"
-              target="_blank"
-              color="primary"
-              variant="outline"
-              size="xs"
-            >
-              Relatório de amanhã
-            </UButton>
+              <UButton
+                v-if="hasTomorrowReport"
+                :to="`/daily-report?date=${tomorrowIso}`"
+                target="_blank"
+                color="primary"
+                variant="outline"
+                size="xs"
+              >
+                Relatório de amanhã
+              </UButton>
+            </div>
 
-            <span class="flex items-center gap-2">
-              <span class="relative flex h-2 w-2">
+            <span data-status-block class="flex w-[8.5rem] shrink-0 items-center gap-2">
+              <span data-status-dot class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
                 <span
-                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+                  :class="dotColor"
                 ></span>
 
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-400"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full" :class="dotColor"></span>
               </span>
 
-              <USkeleton v-if="loading && !snapshot" class="h-3 w-28" />
+              <span data-status-age class="flex items-center gap-1.5" aria-hidden="true">
+                <span v-if="updatedAgo" class="shrink-0">Atualizado</span>
 
-              <span v-else-if="updatedAgo">Atualizado {{ updatedAgo }}</span>
+                <span data-status-slot class="relative inline-block w-[6ch] shrink-0">
+                  &nbsp;
+                  <Transition name="age">
+                    <span v-if="updatedAgo" :key="ageSeq" class="absolute inset-0 tabular-nums" :data-age-seq="ageSeq">
+                      {{ updatedAgo }}
+                    </span>
+                  </Transition>
+                </span>
+              </span>
 
-              <span v-if="offline" class="text-zinc-600">· sem conexão</span>
+              <span class="sr-only">{{ statusLabel }}</span>
             </span>
           </div>
         </template>
@@ -286,6 +298,31 @@ const fetchError = ref(false)
 const offline = ref(false)
 const updatedAgo = ref('')
 
+// O bloco de status reserva a largura no pior caso — o rótulo "Atualizado" mais
+// "há 100:00" (3 dígitos de minuto, o maior que o formatador produz antes de virar
+// quatro), medido em 136px com a fonte do app (w-[8.5rem] no template) e cabendo nos
+// 6ch do slot da idade. Medido em 2026-10-04 com o design em
+// docs/superpowers/specs/2026-10-04-scanner-updated-ago-frescor-design.md: nenhum estado
+// (dado novo, virada de minuto, offline, primeiro carregamento) muda essa caixa. Foi a
+// largura fixa, e não o tabular-nums, que segurou a troca de 2 para 3 dígitos de minuto.
+// Se o rótulo "Atualizado" crescer, este número precisa ser remedido junto.
+
+// A bolinha é o único sinal visível de offline (q3), então a cor mora num lugar só.
+const dotColor = computed(() => (offline.value ? 'bg-orange-400' : 'bg-teal-400'))
+
+// Geração da idade do dado: só avança quando entra snapshot novo, nunca a cada tick.
+// É ela que dispara a animação de reset (o número antigo sai pra cima, o novo entra de
+// baixo) — o tick de 1s reescreve o texto no lugar, sem animação, como antes.
+const ageSeq = ref(0)
+
+// O texto visível do offline saiu de cena (a bolinha laranja cobre o sinal), então o
+// leitor de tela precisa do estado por fora. Sem aria-live de propósito: o texto muda
+// a cada segundo e um aria-live educado viraria um fluxo de anúncio.
+const statusLabel = computed(() => {
+  const base = updatedAgo.value ? `Atualizado ${updatedAgo.value}` : 'Aguardando o primeiro snapshot'
+  return offline.value ? `${base}, sem conexão` : base
+})
+
 // Filtros client-side (busca + só notificados + preset de odds + só com pré-live) — estado
 // transitório de exploração, não persiste entre visitas. Favoritos seguem SEM filtro.
 const query = ref('')
@@ -503,6 +540,10 @@ function applySnapshot(parsed) {
   dayEntries.value = mergeDayEntries(prevDay, games, now)
   saveDayEntries(dayEntries.value)
   snapshot.value = { ...parsed, games }
+  // Zera a idade e avança a geração juntos: se o texto só fosse corrigido no tick
+  // seguinte, a animação de reset entraria exibindo o valor velho por até 1s.
+  updatedAgo.value = formatUpdatedAgo(parsed.generated_at)
+  ageSeq.value++
   loading.value = false
   maybeHighlight(games)
 }
@@ -638,3 +679,37 @@ function onCollapseLeave(el, done) {
   el.addEventListener('transitionend', handleEnd)
 }
 </script>
+
+<style scoped>
+/* Reset da idade do dado: o número velho sobe e some, o novo entra de baixo. O
+   movimento acontece dentro da largura reservada do bloco, então nada ao redor se
+   move — é o número que troca de lugar, não o layout. */
+.age-enter-active,
+.age-leave-active {
+  transition:
+    transform 200ms ease-out,
+    opacity 200ms ease-out;
+}
+
+.age-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.age-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .age-enter-active,
+  .age-leave-active {
+    transition: none;
+  }
+
+  .age-enter-from,
+  .age-leave-to {
+    transform: none;
+  }
+}
+</style>

@@ -1,0 +1,2193 @@
+<!doctype html>
+<!--
+  Tópico: updated-ago-frescor-scanner — redesenho do bloco de status do header
+  da página /scanner (bolinha que pisca + "Atualizado há M:SS").
+
+  Questões refletidas — todas as seis respondidas, nenhuma região assumida:
+    q1 (B) — o BLOCO DE STATUS inteiro reserva largura fixa igual à do pior
+       caso; os quatro estados trocam dentro dela, com tabular figures
+       cobrindo a virada de 9:59 → 10:00.
+    q2 (A) — abaixo de sm o bloco desce para uma linha própria, sob os dois
+       botões de relatório, ocupando a largura toda.
+    q3 (A + nota do usuário) — o texto "· sem conexão" sai do span; quando
+       offline só a cor da bolinha vira laranja e a idade do dado continua.
+    q4 (B) — o reset anima: o número antigo sobe e sai da caixa, o novo entra
+       de baixo, ~200ms ease-out, inteiro dentro da caixa reservada.
+    q5 (A) — a bolinha continua pulsando offline; só a cor muda.
+    q6 (B) — sem USkeleton no header: o bloco fica vazio na largura reservada
+       até o primeiro snapshot, porque a página já mostra o ScannerSkeleton
+       inteiro nesse instante.
+
+  Esta versão (v2) mantém tudo o que estava na v1 — os dois viewports, o toggle
+  HOJE × PROPOSTO, a régua que mede quanto cada elemento se mexe, a tira dos
+  quatro estados e a reserva de 130px — e muda três coisas:
+    · q6: o estado "carregando" virou caixa vazia, sem barra cinza, e o frame
+      passa a desenhar o ScannerSkeleton da página, que é o que ele mostra de
+      verdade antes do primeiro snapshot.
+    · q4: o reset é movimento de verdade — seção própria com o deslize em 1×
+      (medido pela régua, com guias nas bordas da caixa que não se mexem) e em
+      2,2× só para o olho acompanhar; o laço automático dos frames também anima.
+    · q5: offline desenhado pulsando em laranja — só a cor muda, o pulso é o
+      mesmo de quando está online.
+
+  Régua de medição: abaixo de cada frame o prototype mede, a cada quadro, a
+  borda esquerda do bloco, a borda esquerda do botão "Relatório de amanhã", a
+  largura do bloco e quanto conteúdo fica fora da linha — contando quantas
+  vezes alguma delas muda. Em HOJE o contador sobe a cada segundo; em PROPOSTO
+  fica em zero, inclusive durante a animação do reset.
+
+  Fidelidade: zinc-950/900, teal-400, text-xs secundário, UButton primary
+  soft/outline size xs, badge de jogos, seção "Jogos favoritos", Filtros e cards
+  do ScannerCard. A app usa a webfont Plus Jakarta Sans; sem rede o frame usa o
+  fallback mais próximo do sistema (system-ui). O logo do app é um <img>; aqui
+  é uma marca inline equivalente (sem requisições externas).
+-->
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scanner ao vivo — bloco de status</title>
+    <style>
+      :root {
+        --z950: #09090b;
+        --z900: #18181b;
+        --z800: #27272a;
+        --z700: #3f3f46;
+        --z600: #52525b;
+        --z500: #71717a;
+        --z400: #a1a1aa;
+        --z300: #d4d4d8;
+        --teal: #14b8a6;
+        --teal-soft: rgba(20, 184, 166, 0.1);
+        --bw: 170px; /* largura reservada do bloco de status (medida no load) */
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: #050506;
+        color: #e4e4e7;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 28px 20px 72px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      /* ---------- cabeçalho da própria página do visual ---------- */
+      .vhead h1 {
+        margin: 0 0 6px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .vhead p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--z400);
+        max-width: 82ch;
+      }
+
+      .vhead .q {
+        color: var(--z300);
+      }
+
+      .vhead code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        background: var(--z900);
+        border: 1px solid var(--z800);
+        border-radius: 4px;
+        padding: 1px 5px;
+        color: #5eead4;
+      }
+
+      /* ---------- controles ---------- */
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 18px;
+        padding: 14px 16px;
+        border: 1px solid var(--z800);
+        border-radius: 12px;
+        background: #0b0b0d;
+      }
+
+      .ctl {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ctl > .lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--z500);
+      }
+
+      .seg {
+        display: inline-flex;
+        height: 30px;
+        align-items: stretch;
+        gap: 3px;
+        border: 1px solid var(--z800);
+        border-radius: 8px;
+        background: var(--z900);
+        padding: 3px;
+      }
+
+      .seg button {
+        border: 0;
+        background: transparent;
+        color: var(--z400);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 0 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .seg button:hover {
+        color: #fff;
+      }
+
+      .seg button[aria-pressed='true'] {
+        background: var(--teal);
+        color: #04211f;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chip {
+        border: 1px solid var(--z800);
+        background: var(--z900);
+        color: var(--z300);
+        font: inherit;
+        font-size: 12px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .chip:hover {
+        border-color: var(--z700);
+        color: #fff;
+      }
+
+      .chip[aria-pressed='true'] {
+        border-color: rgba(20, 184, 166, 0.6);
+        background: var(--teal-soft);
+        color: #5eead4;
+      }
+
+      .hint {
+        font-size: 11.5px;
+        color: var(--z500);
+        line-height: 1.55;
+      }
+
+      /* ---------- blocos / frames ---------- */
+      .block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .blockhead {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px 14px;
+      }
+
+      .blockhead h2 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #fff;
+      }
+
+      .blockhead .tag {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--z500);
+        border: 1px solid var(--z800);
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+
+      .blockhead p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--z400);
+      }
+
+      .pair {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-items: flex-start;
+      }
+
+      /* ---------- régua de medição (prova de que nada se move) ---------- */
+      .readout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        font-size: 11px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: var(--z500);
+        padding: 7px 10px;
+        border: 1px dashed var(--z800);
+        border-radius: 8px;
+        background: #0b0b0d;
+      }
+
+      .readout b {
+        color: var(--z300);
+        font-weight: 600;
+      }
+
+      .readout .v {
+        color: #5eead4;
+        transition: color 0.4s;
+      }
+
+      .readout .v.moved,
+      .readout b.moved {
+        color: #fbbf24;
+      }
+
+      /* ================= APP (fidelidade do jonebet) ================= */
+      .frame {
+        border: 1px solid var(--z800);
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--z950);
+      }
+
+      .frame-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--z500);
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--z800);
+        background: #101013;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .frame-label .today {
+        color: #fb7185;
+      }
+
+      .frame-label .prop {
+        color: #5eead4;
+      }
+
+      .viewport {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .viewport.desktop {
+        height: 620px;
+      }
+
+      .viewport.mobile {
+        height: 560px;
+      }
+
+      .viewport::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 72px;
+        background: linear-gradient(to top, var(--z950) 25%, rgba(9, 9, 11, 0));
+        pointer-events: none;
+      }
+
+      .app {
+        background: var(--z950);
+      }
+
+      /* UHeader */
+      .uheader {
+        height: 64px;
+        border-bottom: 1px solid rgba(39, 39, 42, 0.5);
+        background: rgba(9, 9, 11, 0.6);
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 0 16px;
+        gap: 8px;
+      }
+
+      .uheader.m {
+        display: flex;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        height: 32px;
+        width: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: #04211f;
+        font-weight: 800;
+        font-size: 15px;
+        justify-content: center;
+      }
+
+      .unav {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 2px;
+      }
+
+      .unav span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--z400);
+        white-space: nowrap;
+      }
+
+      .unav span svg {
+        width: 15px;
+        height: 15px;
+        flex: 0 0 15px;
+      }
+
+      .unav span.on {
+        color: var(--teal);
+        background: var(--z900);
+      }
+
+      .iconbtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--z800);
+        background: var(--z900);
+        color: var(--z400);
+      }
+
+      .iconbtn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* UMain + UContainer */
+      .umain {
+        background: var(--z950);
+      }
+
+      .ucontainer {
+        padding: 20px 16px 32px;
+      }
+
+      .frame-desktop .ucontainer {
+        max-width: 1088px;
+        margin: 0 auto;
+        padding: 20px 24px 32px;
+      }
+
+      /* PageHeader */
+      .pageheader {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 20px;
+        row-gap: 8px;
+      }
+
+      .ph-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .ph-title h1 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .frame-mobile .ph-title h1 {
+        font-size: 18px;
+      }
+
+      .ph-badge {
+        display: inline-block;
+        margin-left: 8px;
+        border-radius: 999px;
+        border: 1px solid var(--z800);
+        background: var(--z900);
+        padding: 2px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--z400);
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+
+      /* slot #right */
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--z400);
+      }
+
+      /* HOJE: um flex só, largura automática, fonte proporcional */
+      .row.today {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .frame-desktop .row.today {
+        margin-left: auto;
+        width: auto;
+        justify-content: flex-end;
+      }
+
+      /* PROPOSTO: botões numa linha, bloco de status em linha própria no mobile */
+      .row.prop {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 8px;
+      }
+
+      .frame-desktop .row.prop {
+        flex-direction: row;
+        align-items: center;
+        width: auto;
+        margin-left: auto;
+        gap: 12px;
+      }
+
+      .row.prop .btnrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .frame-desktop .row.prop .btnrow {
+        justify-content: flex-end;
+      }
+
+      .row.prop .slot {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .btn-soft {
+        background: var(--teal-soft);
+        color: var(--teal);
+        box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.25);
+      }
+
+      .btn-outline {
+        border: 1px solid rgba(20, 184, 166, 0.5);
+        color: var(--teal);
+      }
+
+      /* bloco de status */
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px; /* o bloco é text-xs dentro do slot #right */
+        white-space: nowrap;
+      }
+
+      .status.prop {
+        width: var(--bw);
+      }
+
+      .status.prop .age {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* q4: o número entra e sai dentro da caixa reservada */
+      .status.prop .agebox {
+        position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 16px;
+        overflow: hidden;
+      }
+
+      .status.prop .agebox .age {
+        position: absolute;
+        left: 0;
+        top: 0;
+        line-height: 16px;
+        white-space: nowrap;
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .status.prop .agebox .age.in {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      .status.prop .agebox .age.on {
+        transform: translateY(0);
+        opacity: 1;
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+      }
+
+      .status.prop .agebox .age.out {
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+      }
+
+      .age {
+        color: var(--z400);
+      }
+
+      .dot {
+        position: relative;
+        display: flex;
+        width: 8px;
+        height: 8px;
+        flex: 0 0 8px;
+      }
+
+      .dot .ping {
+        position: absolute;
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+        opacity: 0.75;
+        animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+      }
+
+      .dot .core {
+        position: relative;
+        display: inline-flex;
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      @keyframes ping {
+        75%,
+        100% {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+
+      .teal {
+        background: #2dd4bf;
+      }
+
+      .orange {
+        background: #fb923c;
+      }
+
+      .sk {
+        display: block;
+        border-radius: 16px;
+        background: var(--z800);
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse {
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* q6: o ScannerSkeleton que a página inteira mostra antes do 1º snapshot */
+      .pgsk {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 4px;
+      }
+
+      .skhead {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .skcard {
+        border-radius: 16px;
+        background: var(--z800);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      .skline {
+        display: block;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--z700);
+      }
+
+      .skblock {
+        display: block;
+        height: 54px;
+        border-radius: 10px;
+        background: var(--z700);
+      }
+
+      /* corpo da página do app */
+      .fav {
+        border-radius: 16px;
+        background: rgba(245, 158, 11, 0.1);
+        padding: 16px;
+        margin-top: 20px;
+      }
+
+      .fav-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .fav-head h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--z300);
+      }
+
+      .fav-head h2 svg {
+        width: 16px;
+        height: 16px;
+        color: #fbbf24;
+      }
+
+      .fav-head > span svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .fav-count {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--z400);
+        border: 1px solid rgba(20, 184, 166, 0.3);
+        background: var(--z950);
+        border-radius: 999px;
+        padding: 1px 10px;
+        margin-left: 4px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .frame-mobile .grid,
+      .frame-desktop .grid.one {
+        grid-template-columns: 1fr;
+      }
+
+      .separator {
+        height: 1px;
+        background: var(--z800);
+        margin: 20px 0;
+      }
+
+      .filters {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .filters > span {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--z500);
+      }
+
+      .filters .line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .input {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 288px;
+        height: 32px;
+        border: 1px solid var(--z800);
+        border-radius: 8px;
+        background: var(--z900);
+        padding: 0 10px;
+        font-size: 13px;
+        color: var(--z500);
+      }
+
+      .input svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .segctl {
+        display: inline-flex;
+        height: 32px;
+        align-items: stretch;
+        gap: 4px;
+        border: 1px solid var(--z800);
+        border-radius: 8px;
+        background: var(--z900);
+        padding: 4px;
+      }
+
+      .segctl span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 0 12px;
+        font-size: 13px;
+        color: var(--z400);
+        white-space: nowrap;
+      }
+
+      .segctl span.on {
+        background: var(--teal);
+        color: #04211f;
+        font-weight: 600;
+      }
+
+      .switches {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        margin-left: auto;
+      }
+
+      .switch {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--z400);
+      }
+
+      .switch i {
+        width: 30px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--z800);
+        display: inline-block;
+      }
+
+      /* card do ScannerCard */
+      .card {
+        border: 1px solid var(--z800);
+        border-radius: 16px;
+        background: var(--z900);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .league {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--z500);
+      }
+
+      .card-acts {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .cact {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--z800);
+        border-radius: 8px;
+        color: var(--z400);
+      }
+
+      .cact svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .cact.star {
+        color: #fbbf24;
+        background: rgba(245, 158, 11, 0.12);
+        border-color: rgba(245, 158, 11, 0.3);
+      }
+
+      .teams {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .teams .t {
+        color: var(--z400);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .teams .score {
+        color: var(--z300);
+        font-size: 16px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .minute {
+        margin-left: auto;
+        border-radius: 999px;
+        background: var(--teal-soft);
+        box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.25);
+        color: var(--teal);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 1px 9px;
+        white-space: nowrap;
+      }
+
+      .odds {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+      }
+
+      .odds div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .odds small {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--z600);
+      }
+
+      .odds b {
+        width: 100%;
+        text-align: center;
+        border-radius: 6px;
+        background: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 1px 0;
+      }
+
+      .stats {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .stat .lbl {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        font-size: 12px;
+      }
+
+      .stat .lbl span:first-child,
+      .stat .lbl span:last-child {
+        font-weight: 700;
+        color: var(--z300);
+      }
+
+      .stat .lbl em {
+        font-size: 10px;
+        font-style: normal;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--z500);
+        font-weight: 600;
+      }
+
+      .bar {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--z800);
+        display: flex;
+        overflow: hidden;
+      }
+
+      .bar i:first-child {
+        background: #2dd4bf;
+      }
+
+      .bar i:last-child {
+        background: #3b82f6;
+      }
+
+      .cardbtn {
+        height: 28px;
+        border-radius: 8px;
+        background: var(--teal-soft);
+        box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.25);
+        color: var(--teal);
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* ================= tira de estados ================= */
+      .states {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+        gap: 10px;
+      }
+
+      .state {
+        border: 1px solid var(--z800);
+        border-radius: 10px;
+        background: #0b0b0d;
+        padding: 10px;
+        position: relative;
+      }
+
+      .state .cap {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--z500);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .state .cap b {
+        color: var(--z300);
+        font-weight: 700;
+      }
+
+      .state .box {
+        box-sizing: content-box;
+        width: var(--bw);
+        border: 1px dashed rgba(20, 184, 166, 0.35);
+        border-radius: 8px;
+        padding: 6px 0;
+      }
+
+      .state .foot {
+        margin-top: 8px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--z500);
+      }
+
+      /* ================= reset do ciclo (q4) ================= */
+      .resetwrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .resetstage {
+        position: relative;
+        flex-direction: column;
+        gap: 14px;
+        padding: 30px 26px 24px;
+        border: 1px dashed var(--z800);
+        border-radius: 12px;
+        background: #0b0b0d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .zoomed {
+        zoom: 2.2;
+      }
+
+      .resetbox {
+        position: relative;
+        z-index: 1;
+      }
+
+      .resetbox .status {
+        background: var(--z950);
+        border-radius: 4px;
+      }
+
+      .guide {
+        position: absolute;
+        top: 6px;
+        bottom: 6px;
+        width: 1px;
+        background: rgba(20, 184, 166, 0.5);
+        pointer-events: none;
+      }
+
+      .guide::after {
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: -4px;
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--teal);
+      }
+
+      .stagelbl {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--z600);
+      }
+
+      .resetctl {
+        flex: 1 1 320px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .resetctl p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--z400);
+      }
+
+      .resetctl .seg {
+        align-self: flex-start;
+      }
+
+      /* ================= notas ================= */
+      .notes {
+        border: 1px solid var(--z800);
+        border-radius: 12px;
+        background: #0b0b0d;
+        padding: 16px;
+        font-size: 12.5px;
+        line-height: 1.7;
+        color: var(--z400);
+      }
+
+      .notes h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--z500);
+      }
+
+      .notes ul {
+        margin: 0;
+        padding-left: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .notes b {
+        color: var(--z300);
+      }
+
+      .ok {
+        color: #5eead4;
+      }
+
+      .open {
+        color: #fbbf24;
+      }
+
+      .sr {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        visibility: hidden;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="vhead">
+        <h1>Scanner ao vivo — bloco de status do header</h1>
+        <p>
+          O bloco de status (bolinha que pisca + idade do dado) hoje tem quatro larguras e troca de
+          caixa a cada segundo: é isso que empurra a bolinha e os botões de relatório. Abaixo, o header
+          real em <span class="q">desktop</span> e <span class="q">celular</span>, cada um em duas
+          variantes — <b class="today">HOJE</b> (largura automática, fonte proporcional) e
+          <b class="prop">PROPOSTO</b> (largura reservada + tabular). Use os controles: no
+          <code>Automático</code> o contador corre de verdade e reseta a cada ciclo do scanner.
+        </p>
+        <p>
+          Decidido, todas as seis: <code>q1 = B</code> largura reservada no bloco inteiro ·
+          <code>q2 = A</code> linha própria no celular · <code>q3 = A</code> "· sem conexão" sai do
+          texto e vira <b style="color: #fb923c">laranja na bolinha</b>, com a idade do dado sempre
+          visível · <code>q4 = B</code> o reset desliza o número dentro da caixa, 200ms ·
+          <code>q5 = A</code> a bolinha <b>pulsa</b> offline, só a cor muda ·
+          <code>q6 = B</code> sem USkeleton no header: o bloco fica vazio na reserva e quem cobre o
+          primeiro carregamento é o <code>ScannerSkeleton</code> da página.
+        </p>
+      </header>
+
+      <div class="controls">
+        <div class="ctl">
+          <span class="lbl">Variante</span>
+          <div class="seg" id="seg-mode">
+            <button data-mode="today" aria-pressed="true">Hoje</button>
+            <button data-mode="prop" aria-pressed="false">Proposto</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <span class="lbl">Estado</span>
+          <div class="chips" id="chips">
+            <button class="chip" data-state="auto" aria-pressed="true">Automático (conta em tempo real)</button>
+            <button class="chip" data-state="live">fresco · há 0:12</button>
+            <button class="chip" data-state="aged">envelhecido · há 1:20</button>
+            <button class="chip" data-state="roll">virada 3 dígitos · há 10:00</button>
+            <button class="chip" data-state="empty">sem snapshot</button>
+            <button class="chip" data-state="loading">carregando · caixa vazia</button>
+            <button class="chip" data-state="offline">offline</button>
+          </div>
+        </div>
+        <div class="hint" id="hint"></div>
+      </div>
+
+      <section class="block">
+        <div class="blockhead">
+          <h2>Desktop — bloco na linha dos botões</h2>
+          <span class="tag">≥ sm</span>
+          <p>
+            Variante proposta: a reserva fica no <b>bloco inteiro</b> (não só no número), então a
+            bolinha, a largura da caixa e a posição dos dois botões ficam travadas.
+          </p>
+        </div>
+        <div class="pair">
+          <div class="frame frame-desktop" id="frame-desktop">
+            <div class="frame-label" id="label-desktop"></div>
+            <div class="viewport desktop">
+              <div class="app" id="app-desktop"></div>
+            </div>
+          </div>
+          <div class="readout" id="read-desktop"></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blockhead">
+          <h2>Celular — bloco na linha própria, abaixo dos botões</h2>
+          <span class="tag">&lt; sm</span>
+          <p>
+            Hoje os dois botões e o bloco disputam a mesma linha (<code>justify-between</code>), que é
+            onde a largura apertada mais aparece.
+          </p>
+        </div>
+        <div class="pair">
+          <div class="frame frame-mobile" id="frame-mobile" style="width: 390px">
+            <div class="frame-label" id="label-mobile"></div>
+            <div class="viewport mobile">
+              <div class="app" id="app-mobile"></div>
+            </div>
+          </div>
+          <div class="readout" id="read-mobile"></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="blockhead">
+          <h2>Os quatro estados dentro da mesma largura reservada</h2>
+          <span class="tag" id="bw-tag">—</span>
+          <p>
+            Tracejado teal = a largura reservada do bloco. Repare que a caixa é a mesma em todos os
+            estados, inclusive quando não há texto nenhum.
+          </p>
+        </div>
+        <div class="states" id="states"></div>
+      </section>
+
+      <section class="block">
+        <div class="blockhead">
+          <h2>O reset do ciclo — o número desliza dentro da caixa, nada mais se mexe</h2>
+          <span class="tag">200ms ease-out</span>
+          <p>
+            O bloco de status com a largura travada. Toque em <b>Reproduzir o reset</b>: o
+            <code>há 1:20</code> sobe e sai da caixa e o <code>há 0:03</code> entra de baixo. As duas
+            guias teais são as bordas da caixa reservada — elas não saem do lugar, e a régua embaixo
+            conta zero medidas que mudaram.
+          </p>
+        </div>
+        <div class="resetwrap">
+          <div class="resetstage">
+            <span class="guide" id="gl"></span><span class="guide" id="gr"></span>
+            <div class="resetbox" id="reset-box"></div>
+            <span class="stagelbl">1× · tamanho real</span>
+          </div>
+          <div class="resetstage">
+            <div class="resetbox zoomed" id="reset-box-zoom"></div>
+            <span class="stagelbl">2,2× · só para o olho acompanhar</span>
+          </div>
+          <div class="resetctl">
+            <div class="seg" id="seg-reset">
+              <button id="reset-play" aria-pressed="false">Reproduzir o reset</button>
+              <button id="reset-loop" aria-pressed="false">Repetir em loop</button>
+            </div>
+            <p>
+              O movimento acontece <b>dentro</b> da caixa reservada: o número antigo sai para cima, o
+              novo entra por baixo, e a largura da caixa, a posição dela e a dos botões ao lado não
+              mudam. É o número que troca de lugar — não é deslocamento de layout.
+            </p>
+          </div>
+        </div>
+        <div class="readout" id="read-reset"></div>
+      </section>
+
+      <div class="notes">
+        <h3>Como ler este visual</h3>
+        <ul>
+          <li>
+            <b class="ok">Fixo</b> — largura reservada no bloco de status, com
+            <code>tabular-nums</code> cobrindo de 1 a 3 dígitos (<code>q1 = B</code>).
+          </li>
+          <li>
+            <b class="ok">Fixo</b> — no celular o bloco desce para uma linha própria, com a largura
+            toda da linha (<code>q2 = A</code>).
+          </li>
+          <li>
+            <b class="ok">Fixo</b> — "· sem conexão" sai do span; offline vira bolinha laranja e a
+            idade do dado continua aparecendo (<code>q3 = A</code> + nota).
+          </li>
+          <li>
+            <b class="ok">Fixo</b> — o reset do contador desliza: o número antigo sobe e sai, o novo
+            entra de baixo, 200ms com ease-out, tudo dentro da caixa reservada (<code>q4 = B</code>).
+          </li>
+          <li>
+            <b class="ok">Fixo</b> — a bolinha continua pulsando offline; o que muda é só a cor
+            (<code>q5 = A</code>).
+          </li>
+          <li>
+            <b class="ok">Fixo</b> — sem USkeleton no header: carregando é a caixa vazia na largura
+            reservada, e quem cobre o primeiro carregamento é o <code>ScannerSkeleton</code> inteiro da
+            página (<code>q6 = B</code>).
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <span class="sr" id="measure" aria-hidden="true"></span>
+
+    <script>
+      (function () {
+        'use strict'
+
+        // ---------------------------------------------------------------- ícones
+        var ICON = {
+          grid:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>',
+          calendar:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>',
+          clipboard:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01"/></svg>',
+          activity:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+          chart:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>',
+          cap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"/></svg>',
+          search:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+          download:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></svg>',
+          menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+          star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+          chevron:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
+          bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>',
+          camera:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+          arrow:
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>'
+        }
+
+        var NAV = [
+          ['Dashboard', ICON.grid],
+          ['Jogos do Dia', ICON.calendar],
+          ['Apostas do Dia', ICON.clipboard],
+          ['Scanner', ICON.activity],
+          ['Performance', ICON.chart],
+          ['Academia', ICON.cap]
+        ]
+
+        // ------------------------------------------------------------------ dados
+        var FAVS = [
+          {
+            league: 'Brasileirão Série A',
+            home: 'Internacional',
+            away: 'Flamengo',
+            score: ['1', '0'],
+            min: "67'",
+            odds: ['1.85', '3.60', '4.10', '1.90', '3.65'],
+            seed: 7,
+            fav: true,
+            alerts: 3,
+            pre: 2,
+            stats: [
+              ['xG', 1.42, 0.86],
+              ['Posse', 54, 46]
+            ]
+          },
+          {
+            league: 'Brasileirão Série A',
+            home: 'Palmeiras',
+            away: 'São Paulo',
+            score: ['0', '0'],
+            min: "55'",
+            odds: ['1.60', '3.90', '5.40', '1.62', '3.95'],
+            seed: 21,
+            fav: true,
+            alerts: 1,
+            pre: 0,
+            stats: [
+              ['xG', 0.94, 0.52],
+              ['Posse', 61, 39]
+            ]
+          }
+        ]
+
+        var OTHERS = [
+          {
+            league: 'Premier League',
+            home: 'Brighton',
+            away: 'Arsenal',
+            score: ['0', '1'],
+            min: "34'",
+            odds: ['3.40', '3.50', '2.20', '3.30', '3.55'],
+            seed: 33,
+            fav: false,
+            alerts: 2,
+            pre: 1,
+            stats: [
+              ['xG', 0.61, 1.18],
+              ['Posse', 47, 53]
+            ]
+          },
+          {
+            league: 'La Liga',
+            home: 'Sevilla',
+            away: 'Real Betis',
+            score: ['2', '1'],
+            min: "78'",
+            odds: ['1.95', '3.55', '3.95', '2.05', '3.40'],
+            seed: 44,
+            fav: false,
+            alerts: 4,
+            pre: 3,
+            stats: [
+              ['xG', 1.88, 0.94],
+              ['Posse', 58, 42]
+            ]
+          },
+          {
+            league: 'Serie A',
+            home: 'Roma',
+            away: 'Lazio',
+            score: ['1', '1'],
+            min: "88'",
+            odds: ['2.45', '3.10', '2.85', '2.40', '3.15'],
+            seed: 58,
+            fav: false,
+            alerts: 0,
+            pre: 0,
+            stats: [
+              ['xG', 1.12, 1.06],
+              ['Posse', 52, 48]
+            ]
+          }
+        ]
+
+        function bars(seed) {
+          var s = seed
+          var out = []
+          for (var i = 0; i < 34; i++) {
+            s = (s * 1103515245 + 12345) % 2147483648
+            out.push(0.18 + (s / 2147483648) * 0.82)
+          }
+          return out
+        }
+
+        function momentum(seed, home) {
+          var data = bars(seed)
+          var w = 6
+          var gap = 1.5
+          var wTotal = data.length * (w + gap)
+          var parts = []
+          for (var i = 0; i < data.length; i++) {
+            var h = data[i] * 38
+            var x = i * (w + gap)
+            var col = i % 7 === 3 ? '#fb923c' : home ? '#2dd4bf' : '#3b82f6'
+            parts.push(
+              '<rect x="' +
+                x +
+                '" y="' +
+                (40 - h) +
+                '" width="' +
+                w +
+                '" height="' +
+                h +
+                '" rx="1.5" fill="' +
+                col +
+                '" opacity="' +
+                (0.55 + data[i] * 0.4) +
+                '"/>'
+            )
+          }
+          return (
+            '<svg viewBox="0 0 ' +
+            wTotal +
+            ' 40" preserveAspectRatio="none" style="width:100%;height:44px;display:block">' +
+            parts.join('') +
+            '</svg>'
+          )
+        }
+
+        function card(g, home) {
+          var acts =
+            '<div class="card-acts">' +
+            (g.alerts
+              ? '<span class="cact">' + ICON.bell + '</span><span class="cact" style="gap:4px">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></span>'
+              : '') +
+            (g.pre
+              ? '<span class="cact">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>'
+              : '') +
+            '<span class="cact star">' + ICON.star + '</span>' +
+            '<span class="cact">' + ICON.camera + '</span>' +
+            '<span class="cact">' + ICON.arrow + '</span>' +
+            '</div>'
+
+          var stats = g.stats
+            .map(function (row) {
+              return (
+                '<div class="stat"><div class="lbl"><span>' +
+                row[1] +
+                '</span><em>' +
+                row[0] +
+                '</em><span>' +
+                row[2] +
+                '</span></div><div class="bar"><i style="width:' +
+                row[1] +
+                '%"></i><i style="width:' +
+                row[2] +
+                '%"></i></div></div>'
+              )
+            })
+            .join('')
+
+          var odds = ['CASA', 'FORA', 'X', 'ODD 1', 'ODD 2']
+            .map(function (label, i) {
+              return '<div><small>' + label + '</small><b>' + g.odds[i] + '</b></div>'
+            })
+            .join('')
+
+          return (
+            '<div class="card">' +
+            '<div class="card-top"><span class="league">' +
+            g.league +
+            '</span>' +
+            acts +
+            '</div>' +
+            '<div class="teams"><span class="t">' +
+            g.home +
+            '</span><span class="score">' +
+            g.score[0] +
+            ' x ' +
+            g.score[1] +
+            '</span><span class="t">' +
+            g.away +
+            '</span><span class="minute">' +
+            g.min +
+            '</span></div>' +
+            '<div class="odds">' +
+            odds +
+            '</div>' +
+            momentum(g.seed, home) +
+            '<div class="stats">' +
+            stats +
+            '</div>' +
+            '<div class="cardbtn">Análise pré-jogo</div>' +
+            '</div>'
+          )
+        }
+
+        function favSection(gridClass) {
+          var cards = FAVS.map(function (g) {
+            return card(g, true)
+          }).join('')
+          return (
+            '<section class="fav"><div class="fav-head"><h2>' +
+            ICON.star +
+            'Jogos favoritos<span class="fav-count">2 jogos</span></h2><span style="color:var(--z500)">' +
+            ICON.chevron +
+            '</span></div>' +
+            '<div class="grid ' +
+            gridClass +
+            '">' +
+            cards +
+            '</div></section>'
+          )
+        }
+
+        function filters() {
+          return (
+            '<div class="separator"></div>' +
+            '<div class="filters"><span>Filtros</span><div class="line">' +
+            '<div class="input">' +
+            ICON.search +
+            'Buscar time ou liga…</div>' +
+            '<div class="segctl"><span class="on">Todos</span><span>Favorito</span><span>Parelho</span></div>' +
+            '<div class="switches"><span class="switch"><i></i>Só notificados</span>' +
+            '<span class="switch"><i></i>Só com pré-live</span></div>' +
+            '</div></div>'
+          )
+        }
+
+        function others(gridClass) {
+          var cards = OTHERS.map(function (g, i) {
+            return card(g, i % 2 === 0)
+          }).join('')
+          return '<div class="grid ' + gridClass + '" style="margin-top:16px">' + cards + '</div>'
+        }
+
+        // -------------------------------------------------------------- header app
+        function appHeader(isMobile) {
+          var nav = NAV.map(function (n) {
+            return (
+              '<span class="' +
+              (n[0] === 'Scanner' ? 'on' : '') +
+              '">' +
+              n[1] +
+              n[0] +
+              '</span>'
+            )
+          }).join('')
+
+          if (isMobile) {
+            return (
+              '<header class="uheader m"><span class="logo">D</span>' +
+              '<div class="unav" style="margin-left:auto">' +
+              '<span class="iconbtn">' +
+              ICON.download +
+              '</span><span class="iconbtn" style="margin-left:8px">' +
+              ICON.menu +
+              '</span></div></header>'
+            )
+          }
+          return (
+            '<header class="uheader"><span class="logo">D</span><span></span>' +
+            '<div class="unav">' +
+            nav +
+            '</div></header>'
+          )
+        }
+
+        // -------------------------------------------------------- bloco de status
+        function dot(off) {
+          return (
+            '<span class="dot"><span class="ping ' +
+            (off ? 'orange' : 'teal') +
+            '"></span><span class="core ' +
+            (off ? 'orange' : 'teal') +
+            '"></span></span>'
+          )
+        }
+
+        // mode: 'today' (largura automática) | 'prop' (largura reservada)
+        function statusHtml(mode, st, live) {
+          var liveCls = live ? 'live-status' : ''
+          // q6: no PROPOSTO o bloco chega vazio, sem USkeleton — a página já
+          // está coberta pelo ScannerSkeleton inteiro nesse instante.
+          if (mode === 'prop' && st.loading) {
+            return '<span class="status prop ' + liveCls + ' is-empty"></span>'
+          }
+          var text = st.value ? 'Atualizado ' + st.value : ''
+          var body =
+            mode === 'today'
+              ? st.loading
+                ? '<span class="sk" style="width:112px;height:12px"></span>'
+                : '<span class="age">' + text + '</span>'
+              : '<span class="agebox"><span class="age">' + text + '</span></span>'
+          return (
+            '<span class="status ' + mode + ' ' + liveCls + '">' + dot(st.offline) + body + '</span>'
+          )
+        }
+
+        // q4: o número troca de lugar dentro da caixa, nunca a caixa de lugar.
+        function swapAge(box, text, animate) {
+          var cur = box.__text
+          box.__text = text
+          if (cur === text) return
+          if (!animate || cur === undefined) {
+            box.innerHTML = '<span class="age">' + text + '</span>'
+            return
+          }
+          var old = box.querySelector('.age')
+          var fresh = document.createElement('span')
+          fresh.className = 'age in'
+          fresh.textContent = text
+          box.appendChild(fresh)
+          if (old) old.className = 'age out'
+          void box.offsetHeight // reflow: garante que o estado inicial conte
+          fresh.className = 'age on'
+          if (old) {
+            setTimeout(function () {
+              if (old.parentNode) old.parentNode.removeChild(old)
+            }, 260)
+          }
+        }
+
+        function rightRow(mode, st) {
+          var btns =
+            '<button class="btn btn-soft">Relatório do dia</button>' +
+            '<button class="btn btn-outline" data-btn>Relatório de amanhã</button>'
+          var block = statusHtml(mode, st, true)
+
+          if (mode === 'today') {
+            return '<div class="row today">' + btns + block + '</div>'
+          }
+          return (
+            '<div class="row prop"><div class="btnrow">' +
+            btns +
+            '</div><div class="slot">' +
+            block +
+            '</div></div>'
+          )
+        }
+
+        // q6: no estado "carregando" é a página inteira que mostra o
+        // ScannerSkeleton; o header só precisa do bloco vazio na reserva.
+        function pageSkeleton() {
+          var cards = ''
+          for (var i = 0; i < 4; i++) {
+            cards +=
+              '<div class="skcard"><span class="skline" style="width:64%"></span>' +
+              '<span class="skline" style="width:40%"></span>' +
+              '<span class="skblock"></span></div>'
+          }
+          return (
+            '<div class="pgsk"><div class="skhead">' +
+            '<span class="sk" style="width:180px;height:20px"></span>' +
+            '<span class="sk" style="width:88px;height:16px"></span>' +
+            '</div>' +
+            '<div class="grid">' +
+            cards +
+            '</div></div>'
+          )
+        }
+
+        function app(isMobile, mode, st) {
+          var body = st.loading
+            ? pageSkeleton()
+            : favSection(isMobile ? 'one' : '') + filters() + others(isMobile ? 'one' : '')
+          return (
+            appHeader(isMobile) +
+            '<main class="umain"><div class="ucontainer">' +
+            '<div class="pageheader"><div class="ph-title"><h1>Scanner ao vivo' +
+            '<span class="ph-badge">12 jogos</span></h1></div>' +
+            rightRow(mode, st) +
+            '</div>' +
+            body +
+            '</div></main>'
+          )
+        }
+
+        // ------------------------------------------------------------ tira estados
+        var STRIP = [
+          {
+            cap: 'fresco',
+            note: 'Snapshot novo; a bolinha teal está no tempo normal.',
+            st: { value: 'há 0:12' }
+          },
+          {
+            cap: 'envelhecido',
+            note: 'Um ciclo inteiro sem snapshot novo.',
+            st: { value: 'há 1:20' }
+          },
+          {
+            cap: 'virada 3 dígitos',
+            note: '9:59 → 10:00: tabular-nums + reserva fecham a caixa.',
+            st: { value: 'há 10:00' }
+          },
+          {
+            cap: 'sem snapshot',
+            note: 'Sem generated_at não há idade do dado: a reserva continua ocupando a caixa.',
+            st: { value: '' }
+          },
+          {
+            cap: 'carregando',
+            note: 'Sem USkeleton (q6 = B): o bloco fica vazio na largura reservada até o primeiro snapshot. Quem cobre o primeiro carregamento é o ScannerSkeleton inteiro da página, então o header não precisa de um segundo esqueleto.',
+            st: { loading: true }
+          },
+          {
+            cap: 'offline',
+            note: 'Sem texto "· sem conexão": a bolinha vira laranja e continua pulsando na mesma animação (q5 = A) — o offline é só cor. A idade do dado continua aparecendo.',
+            st: { value: 'há 1:20', offline: true }
+          },
+          {
+            cap: 'reset do ciclo',
+            note: '1:20 → 0:03 a cada snapshot novo (q4 = B): o número antigo sobe e sai, o novo entra de baixo, 200ms ease-out, tudo dentro da caixa. Reproduza na seção abaixo.',
+            st: { value: 'há 0:03' }
+          }
+        ]
+
+        // ------------------------------------------------------------------- estado
+        var mode = 'today'
+        var stateKey = 'auto'
+        var seconds = 12
+        var offline = false
+
+        function currentSt() {
+          if (stateKey === 'live') return { value: 'há 0:12' }
+          if (stateKey === 'aged') return { value: 'há 1:20' }
+          if (stateKey === 'roll') return { value: 'há 10:00' }
+          if (stateKey === 'empty') return { value: '' }
+          if (stateKey === 'loading') return { loading: true }
+          if (stateKey === 'offline') return { value: 'há 1:20', offline: true }
+          var m = Math.floor(seconds / 60)
+          var s = seconds % 60
+          var v = 'há ' + m + ':' + (s < 10 ? '0' + s : s)
+          return { value: v, offline: offline }
+        }
+
+        // -------------------------------------------------------------- render base
+        function build() {
+          var st = currentSt()
+          document.getElementById('app-desktop').innerHTML = app(false, mode, st)
+          document.getElementById('app-mobile').innerHTML = app(true, mode, st)
+          renderLabels()
+          measure()
+          renderStrip()
+        }
+
+        function renderLabels() {
+          var today = mode === 'today'
+          var name = today ? 'HOJE' : 'PROPOSTO'
+          var desc = today
+            ? 'largura automática · fonte proporcional · "· sem conexão" no texto'
+            : 'largura reservada no bloco · tabular-nums · offline na cor da bolinha'
+          document.getElementById('label-desktop').innerHTML =
+            '<span class="' +
+            (today ? 'today' : 'prop') +
+            '">' +
+            name +
+            '</span><span>' +
+            desc +
+            '</span>'
+          document.getElementById('label-mobile').innerHTML =
+            '<span class="' +
+            (today ? 'today' : 'prop') +
+            '">' +
+            name +
+            '</span><span>' +
+            desc +
+            '</span>'
+        }
+
+        function renderStrip() {
+          document.getElementById('states').innerHTML = STRIP.map(function (s) {
+            return (
+              '<div class="state"><div class="cap"><b>' +
+              s.cap +
+              '</b></div><div class="box">' +
+              statusHtml('prop', s.st) +
+              '</div><div class="foot">' +
+              s.note +
+              '</div></div>'
+            )
+          }).join('')
+        }
+
+        function secs(v) {
+          var m = /:(\d+)$/.exec(v || '')
+          return m ? parseInt(m[1], 10) : null
+        }
+
+        // no PROPOSTO o bloco já existe e só o número troca de lugar (q4);
+        // no HOJE o nó inteiro é substituído, como acontece no app hoje.
+        function renderStatus() {
+          var st = currentSt()
+          var text = st.loading || !st.value ? '' : 'Atualizado ' + st.value
+          var list = document.querySelectorAll('.live-status')
+          for (var i = 0; i < list.length; i++) {
+            var el = list[i]
+            if (mode === 'prop' && !st.loading) {
+              var box = el.querySelector('.agebox')
+              if (box) {
+                // q5: offline muda só a cor da bolinha; o pulso é o mesmo
+                var tone = st.offline ? 'orange' : 'teal'
+                var ping = el.querySelector('.ping')
+                var core = el.querySelector('.core')
+                if (ping.className !== 'ping ' + tone) ping.className = 'ping ' + tone
+                if (core.className !== 'core ' + tone) core.className = 'core ' + tone
+                var a = secs(st.value)
+                var b = box.__secs
+                var isReset = a !== null && b !== null && a < b
+                box.__secs = a
+                swapAge(box, text, isReset)
+                continue
+              }
+            }
+            var tmp = document.createElement('span')
+            tmp.innerHTML = statusHtml(mode, st, true)
+            var fresh = tmp.firstChild
+            if (el.parentNode) el.parentNode.replaceChild(fresh, el)
+          }
+        }
+
+        // ------------------------------------------------- demo do reset (q4)
+        var RESET = { from: 'Atualizado há 1:20', to: 'Atualizado há 0:03' }
+        var resetTimer = null
+        var resetState = { cur: 'from', moved: 0, last: null, base: null }
+
+        function resetMount() {
+          var a = document.getElementById('reset-box')
+          var b = document.getElementById('reset-box-zoom')
+          // sem `live`: a demo é dirigida só pelos botões, não pelo laço de 1s
+          a.innerHTML = statusHtml('prop', { value: 'há 1:20' })
+          b.innerHTML = statusHtml('prop', { value: 'há 1:20' })
+          a.querySelector('.agebox').__text = RESET.from
+          b.querySelector('.agebox').__text = RESET.from
+          resetState.cur = 'from'
+          resetState.moved = 0
+          resetState.last = null
+        }
+
+        function resetStep() {
+          var a = document.getElementById('reset-box')
+          var b = document.getElementById('reset-box-zoom')
+          resetState.cur = resetState.cur === 'from' ? 'to' : 'from'
+          var next = resetState.cur === 'to' ? RESET.to : RESET.from
+          swapAge(a.querySelector('.agebox'), next, true)
+          swapAge(b.querySelector('.agebox'), next, true)
+          resetState.moved = 0
+          resetState.last = null
+        }
+
+        function resetToggle() {
+          if (resetTimer) {
+            clearInterval(resetTimer)
+            resetTimer = null
+            document.getElementById('reset-loop').setAttribute('aria-pressed', 'false')
+            return
+          }
+          resetTimer = setInterval(resetStep, 1100)
+          document.getElementById('reset-loop').setAttribute('aria-pressed', 'true')
+        }
+
+        // régua do reset: mede a caixa do bloco, não o número que desliza
+        function updateResetRead() {
+          var stage = document.getElementById('reset-box').parentNode
+          var block = stage.querySelector('.status')
+          if (!block) return
+          var sbase = stage.getBoundingClientRect()
+          var x = Math.round(block.getBoundingClientRect().left - sbase.left)
+          var w = Math.round(block.getBoundingClientRect().width)
+          document.getElementById('gl').style.left = x + 'px'
+          document.getElementById('gr').style.left = (x + w) + 'px'
+
+          var prev = resetState.last
+          if (prev && (prev.x !== x || prev.w !== w)) resetState.moved += 1
+          resetState.last = { x: x, w: w }
+
+          var html =
+            '<span>borda esquerda da caixa <b class="v">' +
+            x +
+            'px</b></span>' +
+            '<span>largura da caixa <b class="v">' +
+            w +
+            'px</b></span>' +
+            '<span>medidas que mudaram no reset <b class="' +
+            (resetState.moved ? 'moved' : '') +
+            '">' +
+            resetState.moved +
+            '</b></span>'
+          var el = document.getElementById('read-reset')
+          if (el.innerHTML !== html) el.innerHTML = html
+        }
+
+        // ------------------------------------------------- largura reservada (q1)
+        function measure() {
+          var probe = document.getElementById('measure')
+          // mede o pior caso em largura NATURAL (sem a classe .status.prop,
+          // senão a própria medição dependeria da variável que ela define)
+          probe.innerHTML =
+            '<span style="display:inline-flex;align-items:center;gap:8px;font-size:12px">' +
+            '<i style="display:inline-block;width:8px;height:8px"></i>' +
+            '<span style="font-variant-numeric:tabular-nums">Atualizado há 10:00</span></span>'
+          var w = probe.firstChild.getBoundingClientRect().width
+          // q6: sem USkeleton, o pior caso é só o texto com 3 dígitos
+          var total = Math.ceil(w)
+          document.documentElement.style.setProperty('--bw', total + 'px')
+          document.getElementById('bw-tag').textContent =
+            total + 'px reservados · a mesma caixa nos 4 estados'
+        }
+
+        // --------------------------------------------------------- régua de medição
+        var last = {}
+        var moved = { desktop: 0, mobile: 0 }
+        function resetMoved() {
+          moved.desktop = 0
+          moved.mobile = 0
+          last = {}
+        }
+        function readouts() {
+          updateRead('desktop', 'read-desktop', 'app-desktop')
+          updateRead('mobile', 'read-mobile', 'app-mobile')
+        }
+
+        function updateRead(key, readId, appId) {
+          var appEl = document.getElementById(appId)
+          var block = appEl.querySelector('.live-status')
+          var row = appEl.querySelector('.row')
+          var btn = appEl.querySelector('[data-btn]')
+          if (!btn || !block || !row) return
+
+          var base = appEl.getBoundingClientRect().left
+          var blkX = Math.round(block.getBoundingClientRect().left - base)
+          var btnX = Math.round(btn.getBoundingClientRect().left - base)
+          var w = Math.round(block.getBoundingClientRect().width)
+          var over = Math.max(0, Math.round(row.scrollWidth - row.clientWidth))
+
+          var prev = last[key]
+          if (prev && (prev.blkX !== blkX || prev.btnX !== btnX || prev.w !== w || prev.over !== over)) {
+            moved[key] += 1
+          }
+          last[key] = { blkX: blkX, btnX: btnX, w: w, over: over }
+
+          function cell(label, value, before, after) {
+            var changed = before !== undefined && before !== value
+            return (
+              '<span>' +
+              label +
+              ' <b class="v' +
+              (changed ? ' moved' : '') +
+              '">' +
+              value +
+              'px</b></span>'
+            )
+          }
+
+          var html =
+            cell('borda esquerda do bloco', blkX, prev && prev.blkX, blkX) +
+            cell('borda esq. de "Relatório de amanhã"', btnX, prev && prev.btnX, btnX) +
+            cell('largura do bloco', w, prev && prev.w, w) +
+            cell('conteúdo fora da linha', over, prev && prev.over, over) +
+            '<span>medidas que mudaram <b class="' +
+            (moved[key] ? 'moved' : '') +
+            '">' +
+            moved[key] +
+            '</b></span>'
+
+          var el = document.getElementById(readId)
+          if (el.innerHTML !== html) el.innerHTML = html
+        }
+
+        // ---------------------------------------------------------------- eventos
+        document.getElementById('seg-mode').addEventListener('click', function (e) {
+          var b = e.target.closest('button')
+          if (!b) return
+          mode = b.dataset.mode
+          var all = this.querySelectorAll('button')
+          for (var i = 0; i < all.length; i++)
+            all[i].setAttribute('aria-pressed', String(all[i] === b))
+          resetMoved()
+          build()
+          hint()
+        })
+
+        document.getElementById('chips').addEventListener('click', function (e) {
+          var b = e.target.closest('.chip')
+          if (!b) return
+          var prev = stateKey
+          stateKey = b.dataset.state
+          if (stateKey === 'auto') seconds = 12
+          if (stateKey === 'offline') offline = false
+          var all = this.querySelectorAll('.chip')
+          for (var i = 0; i < all.length; i++)
+            all[i].setAttribute('aria-pressed', String(all[i] === b))
+          resetMoved()
+          // q6: o estado "carregando" troca a página inteira pelo
+          // ScannerSkeleton, então precisa remontar, não só o bloco.
+          if (prev === 'loading' || stateKey === 'loading') build()
+          else renderStatus()
+          readouts()
+          hint()
+        })
+
+        document.addEventListener('click', function (e) {
+          var b = e.target.closest('[data-btn]')
+          if (!b) return
+          b.style.transform = 'translateY(1px)'
+          setTimeout(function () {
+            b.style.transform = ''
+          }, 90)
+        })
+
+        document.getElementById('reset-play').addEventListener('click', function () {
+          resetStep()
+        })
+
+        document.getElementById('reset-loop').addEventListener('click', function () {
+          resetToggle()
+        })
+
+        function hint() {
+          var h = document.getElementById('hint')
+          if (mode === 'today') {
+            h.innerHTML =
+              'Em <b style="color:#fb7185">HOJE</b> o número muda de largura a cada segundo: a reserva de tempo estática que as outras coisas não têm.'
+          } else {
+            h.innerHTML =
+              'Em <b style="color:#5eead4">PROPOSTO</b> nada ao redor se mexe — nem a bolinha, nem os botões, nem a linha. No reset o número desliza <b>dentro</b> da caixa reservada.'
+          }
+        }
+
+        // ------------------------------------------------------------- loop de 1s
+        setInterval(function () {
+          if (stateKey !== 'auto') return
+          seconds += 1
+          if (seconds % 14 === 0) {
+            seconds = 2
+            offline = false
+          } else if (seconds % 14 === 9) {
+            offline = true
+          }
+          renderStatus()
+        }, 1000)
+
+        // régua: mede a cada frame, então qualquer mexida aparece na hora
+        ;(function loop() {
+          readouts()
+          updateResetRead()
+          requestAnimationFrame(loop)
+        })()
+
+        build()
+        resetMount()
+        hint()
+      })()
+    </script>
+  </body>
+</html>
