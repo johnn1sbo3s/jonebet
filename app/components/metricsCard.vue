@@ -59,8 +59,14 @@ const props = defineProps({
 })
 
 function calcLucroEfetivo(m) {
-  if (!m || m.medLoss === 0) return 0
-  return (m.ev / -m.medLoss) * 100
+  // Guard cobre null/undefined/NaN/zero: `Number(null)` vira 0 e `-undefined`
+  // vira NaN, então o `medLoss === 0` original deixava passar divisão por
+  // -0 (Infinity) e por NaN. O resultado também é conferido — o schema da API
+  // é passthrough e pode mandar ev não numérico.
+  const medLoss = Number(m?.medLoss)
+  if (!Number.isFinite(medLoss) || medLoss === 0) return 0
+  const pct = (Number(m.ev) / -medLoss) * 100
+  return Number.isFinite(pct) ? pct : 0
 }
 
 function normalizeMetrics(m) {

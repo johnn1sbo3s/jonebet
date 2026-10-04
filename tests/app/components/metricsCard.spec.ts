@@ -180,6 +180,41 @@ describe('MetricsCard', () => {
     expect(wrapper.text()).toContain('-5.00%')
   })
 
+  it('renders 0.00% (never NaN%/Infinity%) when medLoss is null', async () => {
+    const wrapper = await mountSuspended(MetricsCard, {
+      props: { metricsData: { ...baseMetrics, medLoss: null }, cardTitle: 'x' },
+    })
+    expect(wrapper.text()).toContain('0.00%')
+    expect(wrapper.text()).not.toContain('NaN')
+    expect(wrapper.text()).not.toContain('Infinity')
+  })
+
+  it('renders 0.00% (never NaN%) when medLoss is undefined', async () => {
+    const wrapper = await mountSuspended(MetricsCard, {
+      props: { metricsData: { ...baseMetrics, medLoss: undefined }, cardTitle: 'x' },
+    })
+    expect(wrapper.text()).toContain('0.00%')
+    expect(wrapper.text()).not.toContain('NaN')
+    expect(wrapper.text()).not.toContain('Infinity')
+  })
+
+  it('renders 0.00% (never Infinity%) when medLoss is -0', async () => {
+    const wrapper = await mountSuspended(MetricsCard, {
+      props: { metricsData: { ...baseMetrics, medLoss: -0 }, cardTitle: 'x' },
+    })
+    expect(wrapper.text()).toContain('0.00%')
+    expect(wrapper.text()).not.toContain('Infinity')
+  })
+
+  it('renders 0.00% when ev is null alongside a medLoss that would divide to NaN', async () => {
+    const wrapper = await mountSuspended(MetricsCard, {
+      props: { metricsData: { ...baseMetrics, ev: null, medLoss: null }, cardTitle: 'x' },
+    })
+    expect(wrapper.text()).toContain('0.00%')
+    expect(wrapper.text()).not.toContain('NaN')
+    expect(wrapper.text()).not.toContain('Infinity')
+  })
+
   it('does not render comparison indicators when compareWith is not provided', async () => {
     const wrapper = await mountSuspended(MetricsCard, {
       props: { metricsData: baseMetrics, cardTitle: 'x' },
