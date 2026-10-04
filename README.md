@@ -21,6 +21,24 @@ The frontend is built with **Vue.js**, and its main role is to **visualize the r
 - This repo **does not contain the AI/ML backend logic** — that part is kept private.
 - This project is part of an ongoing exploration of applying machine learning to betting models.
 
+## 📦 Package manager
+
+The project pins `pnpm@9.15.9` in `package.json` (`packageManager`).
+
+**On pnpm 9, every dependency's install script runs on `pnpm install`.** There is
+no build-script allowlist to configure: pnpm only gained that control
+(`allowBuilds` in the workspace config, `pnpm approve-builds`) in v10.1+, so on
+pnpm 9 such a field would be silently ignored — it would advertise a
+supply-chain protection that is not actually in force. For that reason the
+workspace config carries no build-script allowlist, and this note stands as the
+deliberate decision it is.
+
+Do not bump the pinned pnpm to fix this: Vercel ignores the `packageManager`
+field and runs the pnpm it detected when the project was created, so a lockfile
+written by a newer pnpm fails the build with
+`ERR_PNPM_LOCKFILE_CONFIG_MISMATCH`. Upgrading pnpm requires changing Vercel's
+install command first, outside this repo.
+
 ## 🚧 To Do
 
 - Improve data visualization
