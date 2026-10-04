@@ -335,15 +335,16 @@ const toast = useToast()
 const soundEnabled = ref(false)
 const soundPreset = ref('ping')
 const hadSnapshot = ref(false) // guard do 1º snapshot: dia inteiro não é "novo"
+// Som persistido ligado de outra sessão: o contexto nasce suspenso (autoplay
+// policy) e o play do watch sai mudo até o 1º gesto — o primeiro clique/tecla
+// em qualquer lugar resume. Referência estável (fora do onMounted) para que o
+// unmount remova exatamente o handler registrado.
+function gestureUnlock() {
+  if (soundEnabled.value) unlockSound()
+}
 onMounted(() => {
   soundEnabled.value = loadSoundEnabled()
   soundPreset.value = loadSoundPreset()
-  // Som persistido ligado de outra sessão: o contexto nasce suspenso
-  // (autoplay policy) e o play do watch sai mudo até o 1º gesto — o
-  // primeiro clique/tecla em qualquer lugar resume.
-  const gestureUnlock = () => {
-    if (soundEnabled.value) unlockSound()
-  }
   window.addEventListener('pointerdown', gestureUnlock)
   window.addEventListener('keydown', gestureUnlock)
 })
@@ -584,6 +585,8 @@ onUnmounted(() => {
   clearInterval(tickTimer)
   clearTimeout(highlightTimer)
   document.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('pointerdown', gestureUnlock)
+  window.removeEventListener('keydown', gestureUnlock)
 })
 
 // Accordion suave: anima 0 ↔ altura real do conteúdo (grid responsivo 1–3 colunas).
