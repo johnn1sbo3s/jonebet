@@ -89,13 +89,19 @@ export function usePwaInstall() {
 
   // Auto-abertura do drawer: espera o age-gate 18+ ser dispensado (poll), depois
   // ~1,5s, e abre se shouldShowDrawer. Uma vez por sessão.
+  // Retorna um disposer: se o gate já estiver dispensado no boot o poll nem
+  // nasce; se nascer, o consumidor (installDrawer) cancela no unmount — sem
+  // isso o timer de 500ms vivia a sessão inteira lendo localStorage.
   function maybeAutoOpen() {
-    if (autoOpenStarted || !import.meta.client) return
+    if (autoOpenStarted || !import.meta.client) return () => {}
     autoOpenStarted = true
-    const poll = setInterval(() => {
-      if (!isAgeGateDismissed()) return
-      clearInterval(poll)
-      setTimeout(() => {
+
+    let poll = null
+    let openTimer = null
+
+    const scheduleOpen = () => {
+      openTimer = setTimeout(() => {
+        openTimer = null
         if (
           shouldShowDrawer({
             isMobileOrTablet: device.isMobileOrTablet,
@@ -107,7 +113,28 @@ export function usePwaInstall() {
           state.open = true
         }
       }, 1500)
+    }
+
+    const stop = () => {
+      if (poll) clearInterval(poll)
+      if (openTimer) clearTimeout(openTimer)
+      poll = null
+      openTimer = null
+    }
+
+    if (isAgeGateDismissed()) {
+      scheduleOpen()
+      return stop
+    }
+
+    poll = setInterval(() => {
+      if (!isAgeGateDismissed()) return
+      clearInterval(poll)
+      poll = null
+      scheduleOpen()
     }, 500)
+
+    return stop
   }
 
   return { state, openDrawer, closeDrawer, promptInstall, showInstructions, confirmDismiss, maybeAutoOpen }

@@ -127,8 +127,17 @@ import { platform } from '~/utils/pwaInstall'
 const { state, closeDrawer, promptInstall, showInstructions, confirmDismiss, maybeAutoOpen } = usePwaInstall()
 const device = useDevice()
 
+let stopAutoOpen = () => {}
+
 onMounted(() => {
-  maybeAutoOpen()
+  stopAutoOpen = maybeAutoOpen()
+})
+
+// O poll do age-gate (500ms) pertence ao componente: sem isto ele sobrevive ao
+// unmount e continua lendo localStorage pelo resto da sessão.
+onBeforeUnmount(() => {
+  stopAutoOpen()
+  stopAutoOpen = () => {}
 })
 
 function onInstall() {

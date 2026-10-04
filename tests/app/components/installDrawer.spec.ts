@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { INSTALL_DISMISS_KEY } from '~/utils/pwaInstall'
+import { AGE_GATE_KEY, INSTALL_DISMISS_KEY } from '~/utils/pwaInstall'
 
 vi.mock('../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice', () => ({
   useDevice: () => ({ isMobileOrTablet: true, isIos: true }),
@@ -102,6 +102,25 @@ describe('InstallDrawer', () => {
     await vi.advanceTimersByTimeAsync(30_000)
     expect(usePwaInstall().state.open).toBe(true)
     wrapper.unmount() // render pendente com fake timers derruba o happy-dom (insertBefore null)
+    vi.useRealTimers()
+  })
+
+  // Ticket 27: o poll de 500ms pertence ao drawer — desmontar cancela.
+  it('desmontar com o age-gate pendente cancela o poll', async () => {
+    vi.useFakeTimers()
+    const { default: InstallDrawer } = await import('~/components/installDrawer.vue')
+    const { usePwaInstall } = await import('~/composables/usePwaInstall')
+    const wrapper = await mountSuspended(InstallDrawer)
+    await wrapper.vm.$nextTick()
+    expect(vi.getTimerCount()).toBe(1)
+
+    wrapper.unmount()
+    expect(vi.getTimerCount()).toBe(0)
+
+    // Gate dispensado depois do unmount não abre nada: o timer morreu.
+    localStorage.setItem(AGE_GATE_KEY, '1')
+    await vi.advanceTimersByTimeAsync(30_000)
+    expect(usePwaInstall().state.open).toBe(false)
     vi.useRealTimers()
   })
 })

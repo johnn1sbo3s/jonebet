@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { INSTALL_DISMISS_KEY } from '~/utils/pwaInstall'
+import { AGE_GATE_KEY, INSTALL_DISMISS_KEY } from '~/utils/pwaInstall'
 
 vi.mock('../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice', () => ({
   useDevice: () => ({ isMobileOrTablet: true, isIos: true }),
@@ -84,5 +84,55 @@ describe('usePwaInstall', () => {
     await Promise.resolve()
     expect(state.standalone).toBe(true)
     expect(state.open).toBe(false)
+  })
+})
+
+// Ticket 27: o poll de 500ms do age-gate precisa ter dono e caminho de
+// cancelamento — com o gate nunca dispensado ele não pode sobreviver à sessão.
+describe('usePwaInstall: ciclo de vida do poll do age-gate', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.resetModules()
+  })
+
+  it('com o gate já dispensado no boot nenhum setInterval é criado', async () => {
+    localStorage.setItem(AGE_GATE_KEY, '1')
+    vi.useFakeTimers()
+    try {
+      const intervalSpy = vi.spyOn(globalThis, 'setInterval')
+      const { usePwaInstall } = await import('~/composables/usePwaInstall')
+      const { state, maybeAutoOpen } = usePwaInstall()
+
+      maybeAutoOpen()
+      expect(intervalSpy).not.toHaveBeenCalled()
+
+      // Sem poll, o drawer ainda abre (delay de 1,5s preservado).
+      await vi.advanceTimersByTimeAsync(2000)
+      expect(state.open).toBe(true)
+      intervalSpy.mockRestore()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('o disposer cancela o poll e nenhum callback dispara depois', async () => {
+    vi.useFakeTimers()
+    try {
+      const { usePwaInstall } = await import('~/composables/usePwaInstall')
+      const { state, maybeAutoOpen } = usePwaInstall()
+
+      const stopAutoOpen = maybeAutoOpen()
+      expect(vi.getTimerCount()).toBe(1)
+
+      stopAutoOpen()
+      expect(vi.getTimerCount()).toBe(0)
+
+      // Nem com o gate dispensado depois do cancelamento o drawer abre.
+      localStorage.setItem(AGE_GATE_KEY, '1')
+      await vi.advanceTimersByTimeAsync(60_000)
+      expect(state.open).toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
