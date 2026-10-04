@@ -157,16 +157,22 @@ watch(selectedTab, (value) => {
   emits('source-change', value)
 })
 
+let resetChosenGameTimer = null
 watch(
   () => showMobileModal.value,
   (newValue) => {
     if (newValue === false) {
-      setTimeout(() => {
+      clearTimeout(resetChosenGameTimer)
+      resetChosenGameTimer = setTimeout(() => {
         chosenGame.value = {}
       }, 300)
     }
   },
 )
+
+onBeforeUnmount(() => {
+  clearTimeout(resetChosenGameTimer)
+})
 
 async function handleGameClick(game) {
   if (game._id === chosenGame.value._id) {

@@ -106,6 +106,10 @@ function debouncedEmit(cal) {
   emitTimer = setTimeout(() => emit('update:modelValue', calendarDateToIso(cal)), 700)
 }
 
+onBeforeUnmount(() => {
+  clearTimeout(emitTimer)
+})
+
 watch(
   () => props.modelValue,
   (newIso) => {
