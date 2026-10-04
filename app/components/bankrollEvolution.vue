@@ -17,7 +17,6 @@ const LineChart = lineChartComponent()
 const props = defineProps({
   bankrollData: {
     type: Object,
-    required: true,
     default: () => {},
   },
 })
