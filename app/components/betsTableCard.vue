@@ -27,7 +27,7 @@
         </template>
 
         <template #result-cell="{ row }">
-          <span :class="row.original.result?.toLowerCase() === 'green' ? 'text-teal-400' : 'text-red-400'">
+          <span :class="resultClass(row.original.result)">
             {{ row.original.result ? row.original.result[0].toUpperCase() + row.original.result.slice(1) : '—' }}
           </span>
         </template>
@@ -67,6 +67,16 @@ const props = defineProps({
 defineEmits(['update:page'])
 
 const tableRef = ref(null)
+
+// Espelha a semântica do card de day trading (tradingModelDayCard, via
+// TRADING_MODEL_RESULT): PENDING/ausente é estado neutro em cinza, não
+// prejuízo. Antes, todo valor que não fosse 'green' caía no vermelho.
+const resultClass = (result) => {
+  const key = result?.toUpperCase()
+  if (!key || key === 'PENDING') return 'text-zinc-400'
+  if (key === 'GREEN') return 'text-teal-400'
+  return 'text-red-400'
+}
 
 watch(
   () => props.page,
