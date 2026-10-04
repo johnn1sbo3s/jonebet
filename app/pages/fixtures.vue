@@ -6,7 +6,22 @@
       </template>
     </PageHeader>
 
-    <FixturesList :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
+    <div
+      v-if="fetchError"
+      class="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 py-14 text-center"
+    >
+      <p class="text-sm text-zinc-400">Não foi possível carregar os jogos</p>
+
+      <button
+        data-testid="fixtures-retry"
+        class="rounded-lg border border-teal-500/30 px-4 py-1.5 text-xs font-semibold text-teal-400"
+        @click="fetchDaily"
+      >
+        Tentar de novo
+      </button>
+    </div>
+
+    <FixturesList v-else :fixtures="fixtures" :bets="bets" :loading="isLoading" @source-change="onSourceChange" />
   </div>
 </template>
 
@@ -49,8 +64,8 @@ async function fetchDaily() {
     const parsed = safeParse('fixturesDaily', result)
     fixtures.value = parsed.fixtures || []
     bets.value = parsed.bets || []
-  } catch {
-    fetchError.value = true
+  } catch (e) {
+    fetchError.value = e
   } finally {
     isLoading.value = false
   }
