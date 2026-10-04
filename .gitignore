@@ -6,6 +6,9 @@
 .cache
 dist
 
+# Malformed `nuxt dev --port` artifact: the flag becomes a directory name.
+/--port/
+
 # Node dependencies
 node_modules
 
