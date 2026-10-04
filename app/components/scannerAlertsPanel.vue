@@ -282,8 +282,13 @@ function onRailSelect(gameId) {
   emit('select', gameId)
   emit('toggle')
 }
+// Lê o relógio do intervalo (ref), não Date.now(): com o painel colapsado o
+// drawer não renderiza, e só o rail lia o badge de "novo" — sem esta
+// dependência o tick de 30s não re-renderiza nada e o selo fica eternamente
+// preso no alerta. O tick é o único que avança `now`, então a janela de 5min
+// expira sozinha, sem novo snapshot.
 function isNew(at) {
-  return isRecentNotification([{ at }], Date.now(), 5)
+  return isRecentNotification([{ at }], now.value, 5)
 }
 function isUnseen(at) {
   const t = Date.parse(at)

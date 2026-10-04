@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { it, expect } from 'vitest'
+import { it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import ScannerAlertsPanel from '~/components/scannerAlertsPanel.vue'
 import { formatClockTime } from '~/utils/scanner.js'
@@ -307,4 +307,64 @@ it('rail: não-lidas em cima com fundo teal + divider; lidas embaixo', async () 
   expect(w.find('[data-testid="rail-unread-divider"]').exists()).toBe(false)
   expect(w.find('[data-testid="alert-m1-0"]').classes()).not.toContain('bg-teal-400')
   w.unmount()
+})
+
+it('rail colapsado: selo "novo" some sozinho no tique de 30s, sem novo snapshot', async () => {
+  vi.useFakeTimers()
+  try {
+    vi.setSystemTime(new Date('2026-10-03T20:00:00Z'))
+    // Item já "visto" (marco = agora) para cair no rail de lidos — onde o
+    // selo âmbar de "novo" aparece — e ainda dentro da janela de 5min.
+    localStorage.setItem(SEEN_KEY, String(Date.now()))
+    const fresh = {
+      gameId: 'm9',
+      rule: 'entrada_gol_ht',
+      label: 'GHT — gol no primeiro tempo',
+      minute: 43,
+      half: 1,
+      at: ago(4),
+      home: 'Famalicão',
+      away: 'Sporting',
+      league: 'Portugal Liga',
+    }
+    const w = await mountSuspended(ScannerAlertsPanel, { props: { items: [fresh], open: false } })
+    expect(w.find('[data-testid="alert-m9-0"]').classes()).toContain('border-amber-400/80')
+
+    // Dois tiques do intervalo de 30s: o alerta passa de 5min sem interação.
+    await vi.advanceTimersByTimeAsync(2 * 60_000)
+    await w.vm.$nextTick()
+
+    expect(w.find('[data-testid="alert-m9-0"]').classes()).not.toContain('border-amber-400/80')
+    w.unmount()
+  } finally {
+    vi.clearAllTimers()
+    vi.useRealTimers()
+  }
+})
+
+it('rail colapsado: alerta dentro da janela de 5min mantém o selo "novo"', async () => {
+  vi.useFakeTimers()
+  try {
+    vi.setSystemTime(new Date('2026-10-03T20:00:00Z'))
+    localStorage.setItem(SEEN_KEY, String(Date.now()))
+    const fresh = {
+      gameId: 'm9',
+      rule: 'entrada_gol_ht',
+      label: 'GHT — gol no primeiro tempo',
+      minute: 43,
+      half: 1,
+      at: ago(2),
+      home: 'Famalicão',
+      away: 'Sporting',
+      league: 'Portugal Liga',
+    }
+    const w = await mountSuspended(ScannerAlertsPanel, { props: { items: [fresh], open: false } })
+    await vi.advanceTimersByTimeAsync(60_000)
+    await w.vm.$nextTick()
+    expect(w.find('[data-testid="alert-m9-0"]').classes()).toContain('border-amber-400/80')
+    w.unmount()
+  } finally {
+    vi.clearAllTimers()
+    vi.useRealTimers()
+  }
 })
