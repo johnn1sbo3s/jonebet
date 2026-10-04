@@ -179,3 +179,15 @@ describe('useTradingModels: respostas fora de ordem', () => {
     expect(dailyPending.value).toBe(false)
   })
 })
+
+describe('useTradingModels: encoding da query date', () => {
+  it('codifica caracteres especiais da data sem injetar parâmetros extras', async () => {
+    const fetchFn = fetchFnFor()
+    useTradingModels({ date: ref('2026-09-05&evil=1 #x'), fetchFn })
+    await flush()
+    const url = fetchFn.mock.calls.find(([u]) => u.includes('/daily'))[0]
+    expect(url).toContain('date=2026-09-05%26evil%3D1%20%23x')
+    expect(new URL(url).searchParams.get('date')).toBe('2026-09-05&evil=1 #x')
+    expect(new URL(url).searchParams.get('evil')).toBeNull()
+  })
+})

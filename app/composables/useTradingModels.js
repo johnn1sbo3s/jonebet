@@ -19,7 +19,7 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
     const requestedDate = dateRef.value
     dailyPending.value = true
     try {
-      const raw = await fetchFn(`${apiUrl()}/trading-models/daily?date=${requestedDate}`)
+      const raw = await fetchFn(`${apiUrl()}/trading-models/daily?date=${encodeURIComponent(requestedDate)}`)
       if (requestedDate !== dateRef.value) return
       daily.value = safeParse('tradingDaily', raw)
     } catch (e) {
