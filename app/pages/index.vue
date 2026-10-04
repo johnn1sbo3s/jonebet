@@ -162,6 +162,7 @@
 
 <script setup>
 import { DateTime } from 'luxon'
+import { SP_TZ, yesterdayIso } from '~/utils/timezone'
 
 const runtimeConfig = useRuntimeConfig()
 const apiUrl = runtimeConfig.public.API_URL
@@ -212,9 +213,8 @@ const data = computed(() => {
   }
 })
 
-// Date picker
-const timezone = 'America/Sao_Paulo'
-const yesterday = DateTime.now().setZone(timezone).minus({ days: 1 }).toFormat('yyyy-MM-dd')
+// Date picker — "ontem"/"hoje" na timezone do app (SP_TZ), fonte única em utils/timezone.
+const yesterday = yesterdayIso()
 const chosenDateIso = ref(yesterday)
 const maxDateIso = yesterday
 const dayLoading = ref(false)
@@ -223,7 +223,7 @@ const yesterdayData = ref({})
 // Month label for the dashboard "current month" card, in the same
 // "Mês/aa" format used by `bankrollEvolution` entries (e.g. "Julho/26").
 const currentMonthLabel = computed(() => {
-  const dt = DateTime.now().setZone(timezone).setLocale('pt-BR')
+  const dt = DateTime.now().setZone(SP_TZ).setLocale('pt-BR')
   const month = dt.toFormat('LLLL')
   return `${month.charAt(0).toUpperCase()}${month.slice(1)}/${dt.toFormat('yy')}`
 })

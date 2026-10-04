@@ -1,13 +1,14 @@
 <script setup>
-import { DateTime } from 'luxon'
 import { useDevice } from '../../../node_modules/@nuxtjs/device/dist/runtime/composables/useDevice'
+import { yesterdayIso } from '~/utils/timezone'
 
 const route = useRoute()
 
 // --- Models list (with playedOn flag for the green dot) ---
-const yesterdayIso = DateTime.now().minus({ days: 1 }).toFormat('yyyy-MM-dd')
+// "Ontem" na timezone do app (SP_TZ), não na TZ da máquina.
+const playedOnIso = yesterdayIso()
 const { data: modelsPayload, status: statusModels } = await useModelsList({
-  playedOn: yesterdayIso,
+  playedOn: playedOnIso,
   metricsOnly: true,
 })
 const listModels = computed(() => (modelsPayload.value?.items || []).map((m) => m.name))

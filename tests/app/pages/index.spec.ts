@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, afterEach, type MockInstance } from 'vitest'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { ref } from 'vue'
 import IndexPage from '~/pages/index.vue'
@@ -81,5 +81,32 @@ describe('home: resposta de data antiga não sobrescreve a vigente', () => {
     expect(wrapper.text()).not.toContain('Não foi possível carregar os resultados')
     const dayCard = wrapper.findAllComponents(YesterdayMetricsCard)[0]
     expect(dayCard.props('items').find((i: { name: string }) => i.name === 'Profit').value).toBe(42)
+  })
+})
+
+// Ticket 15: a home e a página de performance produzem o mesmo "ontem" para o
+// mesmo instante, e esse "ontem" é o de São Paulo (SP_TZ), não o da TZ da máquina.
+describe('home: "ontem" do date picker segue a timezone do app', () => {
+  const originalTz = process.env.TZ
+  let nowSpy: MockInstance<() => number> | null = null
+
+  // 2026-10-04T02:30Z = 2026-10-03 23:30 em SP: "ontem" em SP é 02/10, mas
+  // "ontem" na TZ da máquina (UTC) seria 03/10.
+  const INSTANT = new Date('2026-10-04T02:30:00Z')
+
+  afterEach(() => {
+    nowSpy?.mockRestore()
+    nowSpy = null
+    if (originalTz === undefined) delete process.env.TZ
+    else process.env.TZ = originalTz
+  })
+
+  it('limita o picker no ontem de SP com a SO em UTC', async () => {
+    process.env.TZ = 'UTC'
+    nowSpy = vi.spyOn(Date, 'now').mockReturnValue(INSTANT.getTime())
+
+    const wrapper = await mountSuspended(IndexPage)
+    const picker = wrapper.findComponent({ name: 'DatePicker' })
+    expect(picker.props('maxValue')).toBe('2026-10-02')
   })
 })

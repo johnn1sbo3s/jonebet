@@ -65,8 +65,9 @@
 
 <script setup>
 import { DateTime } from 'luxon'
+import { SP_TZ } from '~/utils/timezone'
 
-const todayIso = DateTime.now().setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd')
+const todayIso = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 
 // date starts null: the API resolves the effective date (tomorrow, fallback today)
 // and echoes it in the response. The watch below syncs the picker once.
