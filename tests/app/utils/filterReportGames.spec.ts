@@ -1,6 +1,6 @@
 // tests/app/utils/filterReportGames.spec.ts
 import { describe, it, expect } from 'vitest'
-import { ANY_STRATEGY, filterReportGames, normalizeSearchText } from '~/utils/filterReportGames.js'
+import { filterReportGames, normalizeSearchText } from '~/utils/filterReportGames.js'
 
 const games = [
   {
@@ -66,24 +66,8 @@ describe('filterReportGames', () => {
     expect(filterReportGames(games, { query: ' sao' }).map((g) => g.jogo_id)).toEqual(['1'])
   })
 
-  it('estratégia única filtra pelos jogos daquela estratégia', () => {
-    expect(filterReportGames(games, { selected: ['gol_1t'] }).map((g) => g.jogo_id)).toEqual(['1'])
-  })
-
-  it('múltiplas estratégias usam união (OR)', () => {
-    expect(filterReportGames(games, { selected: ['lay_0x1', 'lay_zebra'] }).map((g) => g.jogo_id)).toEqual(['2', '4'])
-  })
-
-  it('Com recomendação mostra jogos com pelo menos 1 estratégia', () => {
-    expect(filterReportGames(games, { selected: [ANY_STRATEGY] }).map((g) => g.jogo_id)).toEqual(['1', '2', '4'])
-  })
-
-  it('busca e estratégias combinam (interseção)', () => {
-    expect(filterReportGames(games, { query: 'avai', selected: ['gol_1t'] })).toHaveLength(0)
-  })
-
-  it('seleção vazia não filtra', () => {
-    expect(filterReportGames(games, { selected: [] })).toHaveLength(4)
+  it('estratégia não filtra mais: a UI de seleção foi removida e games nunca são descartados por estratégia', () => {
+    expect(filterReportGames(games, { selected: ['gol_1t'] }).map((g) => g.jogo_id)).toEqual(['1', '2', '3', '4'])
   })
 })
 
@@ -132,19 +116,8 @@ describe('filterReportGames — preset de odds', () => {
     expect(filterReportGames(oddsGames, {})).toHaveLength(4)
   })
 
-  it('combina com busca e estratégias (interseção)', () => {
+  it('combina com busca (interseção)', () => {
     expect(filterReportGames(oddsGames, { query: 'avai', oddsPreset: 'parelho' }).map((g) => g.jogo_id)).toEqual(['7'])
-    const withStrategy = [
-      {
-        jogo_id: '9',
-        home: 'A',
-        away: 'B',
-        league: 'L',
-        estrategias: [{ estrategia: 'gol_1t' }],
-        odds: { h: 1.8, a: 2.2 },
-      },
-    ]
-    expect(filterReportGames(withStrategy, { selected: ['gol_1t'], oddsPreset: 'favorito' })).toHaveLength(1)
-    expect(filterReportGames(withStrategy, { selected: ['lay_zebra'], oddsPreset: 'favorito' })).toHaveLength(0)
+    expect(filterReportGames(oddsGames, { query: 'flamengo', oddsPreset: 'parelho' })).toHaveLength(0)
   })
 })
