@@ -269,11 +269,13 @@ async function fetchDayResults(date) {
   dayLoading.value = true
   try {
     const result = await $fetch(`${apiUrl}/daily-results/${date}`)
+    if (date !== chosenDateIso.value) return
     yesterdayData.value = safeParse('dailyResults', result)
   } catch {
+    if (date !== chosenDateIso.value) return
     yesterdayData.value = null
   } finally {
-    dayLoading.value = false
+    if (date === chosenDateIso.value) dayLoading.value = false
   }
 }
 

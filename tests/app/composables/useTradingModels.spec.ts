@@ -114,3 +114,68 @@ it('daily failure does not block summary rendering', async () => {
   expect(summary.value.week.start_date).toBe('2026-08-31')
   expect(daily.value.daily).toEqual([])
 })
+
+describe('useTradingModels: respostas fora de ordem', () => {
+  function deferredFetch() {
+    const pending: Record<string, { resolve: (v: unknown) => void; reject: (e: Error) => void }> = {}
+    const fetchFn = vi.fn((url) => {
+      if (url.includes('/summary')) return Promise.resolve(SUMMARY)
+      const requested = url.split('date=')[1]
+      const { promise, resolve, reject } = Promise.withResolvers<unknown>()
+      pending[requested] = { resolve, reject }
+      return promise
+    })
+    return { fetchFn, pending }
+  }
+
+  it('ignora a resposta antiga que chega depois da nova', async () => {
+    const { fetchFn, pending } = deferredFetch()
+    const date = ref('2026-09-03')
+    const { daily } = useTradingModels({ date, fetchFn })
+    await flush()
+
+    date.value = '2026-09-04'
+    await flush()
+    pending['2026-09-04'].resolve({ date: '2026-09-04', daily: [{ model: 'novo' }] })
+    await flush()
+    expect(daily.value.date).toBe('2026-09-04')
+
+    pending['2026-09-03'].resolve({ date: '2026-09-03', daily: [{ model: 'antigo' }] })
+    await flush()
+    expect(daily.value.date).toBe('2026-09-04')
+    expect(daily.value.daily[0].model).toBe('novo')
+  })
+
+  it('não deixa a resposta antiga marcar erro nem zerar o pending da nova', async () => {
+    const { fetchFn, pending } = deferredFetch()
+    const date = ref('2026-09-03')
+    const { daily, dailyError, dailyPending } = useTradingModels({ date, fetchFn })
+    await flush()
+
+    date.value = '2026-09-04'
+    await flush()
+    pending['2026-09-04'].resolve({ date: '2026-09-04', daily: [{ model: 'novo' }] })
+    await flush()
+
+    pending['2026-09-03'].reject(new Error('antigo falhou'))
+    await flush()
+    expect(dailyError.value).toBeNull()
+    expect(dailyPending.value).toBe(false)
+    expect(daily.value.daily[0].model).toBe('novo')
+  })
+
+  it('mantém pending enquanto a requisição da data vigente está em voo', async () => {
+    const { fetchFn, pending } = deferredFetch()
+    const date = ref('2026-09-03')
+    const { dailyPending } = useTradingModels({ date, fetchFn })
+    await flush()
+    date.value = '2026-09-04'
+    await flush()
+    pending['2026-09-03'].resolve({ date: '2026-09-03', daily: [] })
+    await flush()
+    expect(dailyPending.value).toBe(true)
+    pending['2026-09-04'].resolve({ date: '2026-09-04', daily: [] })
+    await flush()
+    expect(dailyPending.value).toBe(false)
+  })
+})
