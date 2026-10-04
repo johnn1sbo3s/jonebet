@@ -647,9 +647,16 @@ const oddsColumns = computed(() => [
 const frontEl = ref(null)
 const toast = useToast()
 
+// Trava de reentrada: `toBlob` é async e o `finally` restaura o glow, então
+// um clique duplo rodava duas capturas do mesmo nó e a primeira devolvia a
+// classe enquanto a segunda ainda estava capturando (print saía com glow).
+let captureInFlight = false
+
 async function captureCard() {
+  if (captureInFlight) return
   const node = frontEl.value
   if (!node) return
+  captureInFlight = true
   // Print sem o glow: remove a classe só durante a captura (o glow é animado
   // via box-shadow e "vaza" para fora do card na imagem). O front face é o
   // alvo — o verso (flip) é irmão no DOM e não entra no subtree.
@@ -682,6 +689,7 @@ async function captureCard() {
     toast.add({ title: 'Não foi possível gerar o print', color: 'error' })
   } finally {
     if (hadGlow) node.classList.add('alert-recent')
+    captureInFlight = false
   }
 }
 </script>

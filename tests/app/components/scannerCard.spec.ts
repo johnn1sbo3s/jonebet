@@ -1,6 +1,6 @@
 // tests/app/components/scannerCard.spec.ts
 // @vitest-environment nuxt
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
 import { ref } from 'vue'
@@ -16,6 +16,25 @@ vi.mock('~/composables/useXgHistory', () => ({
     requestRefresh: () => {},
   }),
 }))
+
+// O print usa html-to-image, que precisa de canvas/SVG real — no happy-dom
+// mockamos o `toBlob` para controlar quando a captura resolve/rejeita e
+// observar com o glow ainda presente ou não.
+const capture = vi.hoisted(() => ({ toBlob: vi.fn() }))
+
+vi.mock('html-to-image', () => ({ toBlob: capture.toBlob }))
+
+// Botão da câmera: o UTooltip é stubado como pass-through, mas o prop `text`
+// continua acessível — é ele que identifica o botão sem depender do ícone.
+const cameraButton = (wrapper) =>
+  wrapper
+    .findAllComponents({ name: 'UTooltip' })
+    .find((t) => t.props('text') === 'Tirar print do card')!
+    .find('button')!
+
+// Jogo com notificação recente: o front face ganha a classe `alert-recent`,
+// que o print remove durante a captura e devolve no `finally`.
+const glowedGame = () => game([{ rule: 'regra_jogo_quente', label: 'Jogo quente', minute: 62, at: RECENT }])
 
 // O UTooltip (Nuxt UI v4) depende do TooltipProvider do reka-ui, que no app
 // real vem do UApp (app.vue) — ausente no mountSuspended isolado (o reka-ui
@@ -563,5 +582,68 @@ describe('ScannerCard link externo do Flashscore', () => {
     // nenhuma âncora executável sobrou e o card continua renderizado
     expect(hrefs.filter((h) => h && !h.startsWith('http'))).toEqual([])
     expect(w.text()).toContain('Palmeiras')
+  })
+})
+
+describe('ScannerCard print do card', () => {
+  beforeEach(() => {
+    capture.toBlob.mockReset()
+    // sem clipboard no happy-dom → o componente cairia no download, que exige
+    // URL.createObjectURL; stubamos para o caminho de sucesso ficar aqui.
+    vi.stubGlobal('ClipboardItem', class {})
+    vi.stubGlobal('navigator', { ...navigator, clipboard: { write: vi.fn().mockResolvedValue(undefined) } })
+  })
+
+  it('clique duplo durante a captura gera uma captura só', async () => {
+    const pending = Promise.withResolvers<Blob>()
+    capture.toBlob.mockImplementation(() => pending.promise)
+    const wrapper = await mountCard(ScannerCard, { props: { game: glowedGame() } })
+    const button = cameraButton(wrapper)
+
+    await button.trigger('click')
+    await button.trigger('click')
+    await button.trigger('click')
+
+    expect(capture.toBlob).toHaveBeenCalledTimes(1)
+    pending.resolve(new Blob())
+    await flushPromises()
+    expect(capture.toBlob).toHaveBeenCalledTimes(1)
+  })
+
+  it('glow só volta quando a captura termina, e nova captura é liberada depois', async () => {
+    const pending = Promise.withResolvers<Blob>()
+    capture.toBlob.mockImplementation(() => pending.promise)
+    const wrapper = await mountCard(ScannerCard, { props: { game: glowedGame() } })
+    const button = cameraButton(wrapper)
+    expect(wrapper.find('.alert-recent').exists()).toBe(true)
+
+    await button.trigger('click')
+    // enquanto a captura corre, o print segue sem o glow
+    expect(wrapper.find('.alert-recent').exists()).toBe(false)
+
+    pending.resolve(new Blob())
+    await flushPromises()
+    expect(wrapper.find('.alert-recent').exists()).toBe(true)
+
+    // trava liberada: um novo print roda de novo
+    capture.toBlob.mockResolvedValue(new Blob())
+    await button.trigger('click')
+    await flushPromises()
+    expect(capture.toBlob).toHaveBeenCalledTimes(2)
+  })
+
+  it('captura que falha também libera a trava', async () => {
+    capture.toBlob.mockRejectedValue(new Error('canvas indisponível'))
+    const wrapper = await mountCard(ScannerCard, { props: { game: glowedGame() } })
+    const button = cameraButton(wrapper)
+
+    await button.trigger('click')
+    await flushPromises()
+    expect(wrapper.find('.alert-recent').exists()).toBe(true)
+
+    capture.toBlob.mockResolvedValue(new Blob())
+    await button.trigger('click')
+    await flushPromises()
+    expect(capture.toBlob).toHaveBeenCalledTimes(2)
   })
 })
