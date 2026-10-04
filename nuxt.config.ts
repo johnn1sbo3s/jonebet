@@ -10,7 +10,7 @@ export default defineNuxtConfig({
       link: [{ rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }],
     },
   },
-  modules: ['@nuxt/ui', '@nuxt/fonts', '@pinia/nuxt', '@nuxtjs/device', '@nuxt/eslint', '@vite-pwa/nuxt'],
+  modules: ['@nuxt/ui', '@nuxt/fonts', '@nuxtjs/device', '@nuxt/eslint', '@vite-pwa/nuxt'],
 
   pwa: {
     registerType: 'autoUpdate',
@@ -75,7 +75,7 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ['chart.js', 'chartjs-plugin-annotation', 'chartjs-plugin-zoom', 'luxon', 'pinia', 'vue-chart-3', 'zod'],
+      include: ['chart.js', 'chartjs-plugin-annotation', 'chartjs-plugin-zoom', 'luxon', 'vue-chart-3', 'zod'],
     },
   },
 })
