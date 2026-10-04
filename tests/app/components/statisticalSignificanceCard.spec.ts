@@ -80,4 +80,23 @@ describe('StatisticalSignificanceCard', () => {
     })
     expect(wrapper.text()).toContain('—')
   })
+
+  // Ticket 21: IC ausente não pode virar "0.00% → 0.00%" (zeros fabricados);
+  // o próprio componente já usa "—" para campo sem dado.
+  it('IC ausente renderiza "—" dos dois lados, não 0.00%', async () => {
+    const { roiConfidenceInterval: _omitted, ...stats } = baseStats
+    const wrapper = await mountSuspended(StatisticalSignificanceCard, {
+      props: { stats },
+    })
+    const ic = wrapper.findAll('p.text-base').find((el) => el.text()?.includes('→'))
+    expect(ic?.text()).toBe('— → —')
+  })
+
+  it('IC presente mantém o formato atual', async () => {
+    const wrapper = await mountSuspended(StatisticalSignificanceCard, {
+      props: { stats: baseStats },
+    })
+    const ic = wrapper.findAll('p.text-base').find((el) => el.text()?.includes('→'))
+    expect(ic?.text()).toBe('-0.52% → 0.42%')
+  })
 })
