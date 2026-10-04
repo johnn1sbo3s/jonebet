@@ -28,8 +28,8 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
     }
   }
 
-  async function loadSummary() {
-    if (summaryLoaded) return
+  async function loadSummary({ force = false } = {}) {
+    if (summaryLoaded && !force) return
     summaryLoaded = true
     summaryPending.value = true
     try {
@@ -46,7 +46,7 @@ export function useTradingModels({ date, fetchFn = defaultFetch } = {}) {
     dailyError.value = null
     summaryError.value = null
     loadDaily()
-    loadSummary()
+    loadSummary({ force: true })
   }
 
   watch(dateRef, () => {

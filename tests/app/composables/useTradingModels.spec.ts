@@ -49,6 +49,57 @@ describe('useTradingModels', () => {
     expect(fetchFn.mock.calls.filter(([u]) => u.includes('/daily')).length).toBe(2)
     expect(fetchFn.mock.calls.filter(([u]) => u.includes('/summary')).length).toBe(1)
   })
+
+  it('refresh refetches summary after a failure and clears the error', async () => {
+    let summaryCalls = 0
+    const fetchFn = vi.fn(async (url) => {
+      if (!url.includes('/summary')) return DAILY
+      summaryCalls += 1
+      if (summaryCalls === 1) throw new Error('summary boom')
+      return SUMMARY
+    })
+    const { summary, summaryError, refresh } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
+    await flush()
+    expect(summaryError.value).toBeInstanceOf(Error)
+    expect(summary.value.week).toBeNull()
+
+    refresh()
+    await flush()
+    expect(summaryCalls).toBe(2)
+    expect(summaryError.value).toBeNull()
+    expect(summary.value.week.start_date).toBe('2026-08-31')
+  })
+
+  it('refresh failure surfaces the error and the next refresh recovers', async () => {
+    let summaryCalls = 0
+    const fetchFn = vi.fn(async (url) => {
+      if (!url.includes('/summary')) return DAILY
+      summaryCalls += 1
+      if (summaryCalls === 2) throw new Error('summary boom again')
+      return SUMMARY
+    })
+    const { summary, summaryError, refresh } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
+    await flush()
+
+    refresh()
+    await flush()
+    expect(summaryError.value).toBeInstanceOf(Error)
+
+    refresh()
+    await flush()
+    expect(summaryCalls).toBe(3)
+    expect(summaryError.value).toBeNull()
+    expect(summary.value.week.start_date).toBe('2026-08-31')
+  })
+
+  it('refresh issues exactly one extra summary request, never two', async () => {
+    const fetchFn = fetchFnFor()
+    const { refresh } = useTradingModels({ date: ref('2026-09-05'), fetchFn })
+    await flush()
+    refresh()
+    await flush()
+    expect(fetchFn.mock.calls.filter(([u]) => u.includes('/summary')).length).toBe(2)
+  })
 })
 
 it('daily failure does not block summary rendering', async () => {
