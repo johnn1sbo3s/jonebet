@@ -23,6 +23,7 @@ describe('InstallDrawer', () => {
     // USlideover portaliza para document.body (slot #content)
     expect(document.body.textContent).toContain('Instale o DataPlay como app')
     expect(document.body.textContent).toContain('Instalar agora')
+    wrapper.unmount()
   })
 
   it('CTA em iOS troca o conteúdo para o passo-a-passo (visual C)', async () => {
@@ -36,6 +37,7 @@ describe('InstallDrawer', () => {
     cta.click()
     await wrapper.vm.$nextTick()
     expect(document.body.textContent).toContain('Adicionar à Tela de Início')
+    wrapper.unmount()
   })
 
   it('"Não mostrar novamente" persiste e fecha', async () => {
@@ -51,6 +53,7 @@ describe('InstallDrawer', () => {
     await wrapper.vm.$nextTick()
     expect(localStorage.getItem(INSTALL_DISMISS_KEY)).toBe('1')
     expect(usePwaInstall().state.open).toBe(false)
+    wrapper.unmount()
   })
 
   it('X fecha sem persistir', async () => {
@@ -65,6 +68,7 @@ describe('InstallDrawer', () => {
     await wrapper.vm.$nextTick()
     expect(localStorage.getItem(INSTALL_DISMISS_KEY)).toBeNull()
     expect(usePwaInstall().state.open).toBe(false)
+    wrapper.unmount()
   })
 
   it('fechar por backdrop/Esc (update:open false) reseta a view para home', async () => {
@@ -86,6 +90,7 @@ describe('InstallDrawer', () => {
     await wrapper.vm.$nextTick()
     expect(usePwaInstall().state.open).toBe(false)
     expect(usePwaInstall().state.view).toBe('home')
+    wrapper.unmount()
   })
 
   it('auto-abertura: não abre com age-gate pendente; abre após dispensar + delay', async () => {
