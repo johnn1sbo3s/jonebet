@@ -144,11 +144,14 @@ Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`,
 - **Framework**: Vitest 4.1.8 + @nuxt/test-utils 4.0.3 + happy-dom 20.10.3
 - **Run**: `pnpm test:unit` (single run, no watch)
 - **Setup**: `app/test.setup.ts` — stubs chart.js stack, vue-chart-3, 6 useModelApi composables, `useRoute`, `useRuntimeConfig`
-- **Specs**: 8 files, 55 tests under `tests/app/components/`
-- **Coverage**: 8 of 28 components tested (29%). No coverage tooling configured.
-- **Untested**: 20 components, all composables, all utils, all pages, all layouts
+- **Specs**: 59 files, 557 tests — `components/` 26, `utils/` 18, `composables/` 7, `pages/` 6, root 2
+- **Coverage**: no coverage tooling configured. Components, utils and composables are covered where
+  the logic is testable without a real browser.
+- **Untested**: layouts, and pages/components whose behaviour is purely visual
 - **Pattern**: `mountSuspended()` + `// @vitest-environment nuxt` + centralized mocks
-- **No page-level tests** — pages verified visually via `pnpm run dev`
+- **Page-level tests are allowed** when the page owns logic worth pinning — polling, clock-driven
+  state, long-polling encoding, header layout invariants. What stays out is anything only a browser
+  can answer (actual pixel geometry, animation frames): verify that on `pnpm run dev`, not in Vitest
 
 ### Component Test Coverage
 

@@ -42,7 +42,7 @@
                 <span class="relative inline-flex h-2 w-2 rounded-full" :class="dotColor"></span>
               </span>
 
-              <span data-status-age class="flex items-center gap-1.5" aria-hidden="true">
+              <span data-status-age class="flex items-center gap-0.5" aria-hidden="true">
                 <span v-if="updatedAgo" class="shrink-0">Atualizado</span>
 
                 <span data-status-slot class="relative inline-block w-[6ch] shrink-0">
