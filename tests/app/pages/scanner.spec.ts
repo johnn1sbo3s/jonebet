@@ -216,3 +216,32 @@ describe('scanner: relatório de amanhã reage ao relógio', () => {
     }
   })
 })
+
+describe('scanner: encoding do parâmetro v do long-polling', () => {
+  it('codifica a version do snapshot sem injetar parâmetro na query', async () => {
+    const original = h.fetchMock.getMockImplementation()
+    h.fetchMock.mockClear()
+    h.polls = 0
+    // 1ª requisição entrega uma version com caracteres especiais; a 2ª fica
+    // pendente, então a URL do 2º poll é a última chamada registrada.
+    h.fetchMock.mockImplementation(() =>
+      h.polls++ === 0
+        ? Promise.resolve({ version: '7&evil=1 #x', generated_at: '2026-10-03T20:00:00-03:00', games: [GAME] })
+        : Promise.withResolvers().promise,
+    )
+    try {
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      await flushSnapshot()
+
+      expect(h.fetchMock.mock.calls[0][0]).toBe('https://scanner.jonebet.xyz/live.json')
+      const polled = h.fetchMock.mock.calls[1][0]
+      expect(polled).toContain('v=7%26evil%3D1%20%23x')
+      const parsed = new URL(polled)
+      expect(parsed.searchParams.get('v')).toBe('7&evil=1 #x')
+      expect(parsed.searchParams.get('evil')).toBeNull()
+      w.unmount()
+    } finally {
+      h.fetchMock.mockImplementation(original)
+    }
+  })
+})

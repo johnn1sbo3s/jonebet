@@ -531,7 +531,7 @@ async function pollLoop() {
     pollController = controller
     try {
       const base = config.public.SCANNER_SNAPSHOT_URL
-      const url = lastVersion == null ? base : `${base}?v=${lastVersion}`
+      const url = lastVersion == null ? base : `${base}?v=${encodeURIComponent(lastVersion)}`
       const signal =
         typeof AbortSignal.any === 'function'
           ? AbortSignal.any([controller.signal, AbortSignal.timeout(35_000)])
