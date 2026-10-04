@@ -22,7 +22,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:tailwind": "node scripts/check-arbitrary-values.cjs app/",
-    "backend": "json-server --watch db/db.json --port 5000",
     "test:unit": "vitest run",
     "prepare": "husky"
   },
@@ -36,7 +35,6 @@
     "chartjs-plugin-annotation": "^2.2.1",
     "chartjs-plugin-zoom": "^2.2.0",
     "html-to-image": "^1.11.13",
-    "json-server": "1.0.0-beta.15",
     "luxon": "^3.7.2",
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.3.3",
