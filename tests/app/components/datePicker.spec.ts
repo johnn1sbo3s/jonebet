@@ -61,3 +61,41 @@ describe('DatePicker', () => {
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
 })
+
+// Ticket 16: sem maxValue explícito, o limite do calendário é o "hoje" do app
+// (America/Sao_Paulo), não o dia da TZ da máquina.
+describe('DatePicker: limite de "hoje" em America/Sao_Paulo', () => {
+  const originalTz = process.env.TZ
+
+  // 2026-10-04T02:30Z = 2026-10-03 23:30 em SP: "hoje" em SP é 03/10, mas a TZ
+  // da máquina (UTC) já virou 04/10.
+  const INSTANT = new Date('2026-10-04T02:30:00Z')
+
+  afterEach(() => {
+    vi.useRealTimers()
+    if (originalTz === undefined) delete process.env.TZ
+    else process.env.TZ = originalTz
+  })
+
+  it('com a SO em UTC trava o próximo dia no "hoje" de SP', async () => {
+    process.env.TZ = 'UTC'
+    vi.useFakeTimers({ now: INSTANT })
+
+    const wrapper = await mountSuspended(DatePicker, { props: { modelValue: '2026-10-03' }, global: { stubs } })
+
+    // 03/10 é o "hoje" de SP: a seta de próximo dia já está no limite.
+    expect(wrapper.find('[aria-label="Próxima data"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('com maxValue explícito o contrato não muda', async () => {
+    process.env.TZ = 'UTC'
+    vi.useFakeTimers({ now: INSTANT })
+
+    const wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: '2026-10-02', maxValue: '2026-10-02' },
+      global: { stubs },
+    })
+
+    expect(wrapper.find('[aria-label="Próxima data"]').attributes('disabled')).toBeDefined()
+  })
+})

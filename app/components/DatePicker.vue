@@ -38,6 +38,8 @@
 
 <script setup>
 import { CalendarDate } from '@internationalized/date'
+import { DateTime } from 'luxon'
+import { SP_TZ } from '~/utils/timezone'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -58,8 +60,7 @@ function calendarDateToIso(cal) {
 }
 
 function todayIso() {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 }
 
 const calendarValue = ref(isoToCalendarDate(props.modelValue))
