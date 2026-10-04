@@ -10,16 +10,22 @@ let setupPromise = null
 
 export function ensureChartSetup() {
   if (!setupPromise) {
-    setupPromise = Promise.all([
-      import('chart.js'),
-      import('chartjs-plugin-zoom'),
-      import('chartjs-plugin-annotation'),
-    ]).then(([{ Chart, registerables }, { default: zoomPlugin }, { default: annotationPlugin }]) => {
-      Chart.register(zoomPlugin)
-      Chart.register(annotationPlugin)
-      Chart.register(...registerables)
-      return Chart
-    })
+    setupPromise = Promise.all([import('chart.js'), import('chartjs-plugin-zoom'), import('chartjs-plugin-annotation')])
+      .then(([{ Chart, registerables }, { default: zoomPlugin }, { default: annotationPlugin }]) => {
+        Chart.register(zoomPlugin)
+        Chart.register(annotationPlugin)
+        Chart.register(...registerables)
+        return Chart
+      })
+      .catch((error) => {
+        // Falha transitória (chunk não baixou: rede fraca, offline momentâneo)
+        // não pode ficar memoizada — sem o reset, todo gráfico seguinte da
+        // sessão receberia a mesma rejeição e só voltaria com hard reload. A
+        // rejeição segue propagando para quem chamou; o que se descarta é o
+        // cache, para a próxima tentativa reimportar os módulos.
+        setupPromise = null
+        throw error
+      })
   }
   return setupPromise
 }
