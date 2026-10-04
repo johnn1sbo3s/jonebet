@@ -28,7 +28,7 @@
   "dependencies": {
     "@internationalized/date": "3.12.3",
     "@nuxt/fonts": "^0.14.0",
-    "@nuxt/ui": "^4.10.0",
+    "@nuxt/ui": "^4.11.0",
     "@nuxtjs/device": "^3.2.4",
     "@vite-pwa/nuxt": "1.1.1",
     "chart.js": "^3.9.1",
