@@ -60,6 +60,8 @@ function handleHome() {
 }
 
 function handleClear() {
-  clearError({ redirect: '/' })
+  // Sem redirect: o Nuxt limpa o erro e reprocessa a rota que falhou. Se ela
+  // falhar de novo, a página de erro reaparece (sem loop — só um retry por clique).
+  clearError()
 }
 </script>
