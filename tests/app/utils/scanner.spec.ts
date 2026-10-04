@@ -162,6 +162,38 @@ describe('formatClockTime', () => {
   })
 })
 
+// Ticket 14: o app tem timezone única (America/Sao_Paulo, ver utils/timezone).
+// A hora do alerta não pode seguir a TZ da máquina do usuário.
+describe('formatClockTime na timezone do app', () => {
+  const AT = '2026-09-13T23:32:00-03:00' // 23:32 em SP / 02:32 UTC do dia seguinte
+  const withTZ = (tz: string, fn: () => void) => {
+    const before = process.env.TZ
+    process.env.TZ = tz
+    try {
+      fn()
+    } finally {
+      if (before === undefined) delete process.env.TZ
+      else process.env.TZ = before
+    }
+  }
+
+  it.each([
+    ['UTC', 'UTC'],
+    ['Asia/Tokyo', 'Asia/Tokyo'],
+    ['America/New_York', 'America/New_York'],
+    ['Europe/Lisbon', 'Europe/Lisbon'],
+  ])('SO em %s mostra a hora de São Paulo', (_label, tz) => {
+    withTZ(tz, () => expect(formatClockTime(AT)).toBe('23:32'))
+  })
+
+  it('formatAlertTime também formata em São Paulo, não na TZ da máquina', () => {
+    const at = '2026-09-13T23:32:00-03:00'
+    const now = Date.parse('2026-09-14T11:32:00Z') // > 10min depois → HH:MM
+    withTZ('UTC', () => expect(formatAlertTime(at, now)).toBe('23:32'))
+    withTZ('Asia/Tokyo', () => expect(formatAlertTime(at, now)).toBe('23:32'))
+  })
+})
+
 describe('halfSuffix', () => {
   it('2 → 2ºT, 1 → 1ºT, ausente → vazio', () => {
     expect(halfSuffix(2)).toBe(' 2ºT')

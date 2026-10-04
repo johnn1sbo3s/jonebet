@@ -247,7 +247,7 @@
               >{{ n.minute }}'</span
             >
 
-            <span class="text-xs whitespace-nowrap text-zinc-500">{{ formatTime(n.at) }}</span>
+            <span class="text-xs whitespace-nowrap text-zinc-500">{{ formatClockTime(n.at) }}</span>
           </div>
         </div>
 
@@ -370,7 +370,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { entryTitle, isRecentNotification } from '~/utils/scanner.js'
+import { entryTitle, formatClockTime, isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { formatNumber, formatPercent } from '~/utils/formatNumber'
 import { safeExternalUrl } from '~/utils/flashscore'
@@ -643,10 +643,6 @@ const oddsColumns = computed(() => [
   { label: 'O2.5', value: prematch.value.over25 },
   { label: 'BTTS', value: prematch.value.btts },
 ])
-
-function formatTime(at) {
-  return new Date(at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-}
 
 const frontEl = ref(null)
 const toast = useToast()

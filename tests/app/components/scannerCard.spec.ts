@@ -499,7 +499,6 @@ describe('ScannerCard análise pré-jogo', () => {
     await flushPromises()
     expect(w.text()).toContain('Chegou agora')
   })
-
   it('mostra erro com Tentar de novo; retry carrega a análise', async () => {
     preGameScenario.response = null
     preGameScenario.error = 'offline'
@@ -515,6 +514,27 @@ describe('ScannerCard análise pré-jogo', () => {
     await retry.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
     expect(w.text()).toContain('Recuperou')
+  })
+})
+
+// Ticket 14: a hora da notificação no verso do card segue a timezone do app
+// (America/Sao_Paulo), não a TZ da máquina.
+describe('ScannerCard hora da notificação', () => {
+  it('mostra 23:32 (hora de SP) mesmo com o SO em UTC', async () => {
+    const before = process.env.TZ
+    process.env.TZ = 'UTC'
+    try {
+      const w = await mountCard(ScannerCard, {
+        props: {
+          game: game([{ rule: 'gol_ht', label: 'Gol HT', minute: 20, at: '2026-09-13T23:32:00-03:00' }]),
+        },
+      })
+      await w.find('.perspective-distant').trigger('click')
+      expect(w.text()).toContain('23:32')
+    } finally {
+      if (before === undefined) delete process.env.TZ
+      else process.env.TZ = before
+    }
   })
 })
 

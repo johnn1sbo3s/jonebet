@@ -149,13 +149,15 @@ export function countUnseen(items = [], seenAt = 0) {
   return items.filter((n) => (Date.parse(n?.at) || 0) > seenAt).length
 }
 
-// Horário real HH:MM pt-BR — mesma fonte do verso do card (não duplicar;
-// scannerCard.vue mantém a sua local por estar fora do escopo).
+// Horário real HH:MM pt-BR na timezone do app (SP_TZ), nunca na TZ da máquina
+// do usuário — sem `timeZone`, um SO em UTC veria o alerta deslocado do
+// kickoff e do resto da tela. É a única formatação de hora do scanner:
+// scannerCard.vue usa esta (ticket 14 — a local duplicada foi removida).
 export function formatClockTime(at) {
   if (!at) return ''
   const t = Date.parse(at)
   if (Number.isNaN(t)) return ''
-  return new Date(t).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(t).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: SP_TZ })
 }
 
 // Sufixo de tempo: 2 → ' 2ºT', 1 → ' 1ºT', ausente/outro → '' (sem chute).
