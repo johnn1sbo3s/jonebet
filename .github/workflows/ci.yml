@@ -13,18 +13,18 @@ concurrency:
 jobs:
   install:
     name: Install (frozen lockfile)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # pnpm 9.15.9 is what the Vercel project runs; installing it explicitly keeps
       # the lockfile readable by the exact same major/minor that builds production.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
           run_install: false
           cache: true
       # Nuxt 4.5.2 requires ^22.19.0 || ^24.11.0 || >=26.0.0, so 24.x alone is too loose.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24.11.0'
       - run: pnpm install --frozen-lockfile
@@ -32,15 +32,15 @@ jobs:
   quality:
     name: Lint
     needs: install
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
           run_install: false
           cache: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24.11.0'
       - run: pnpm install --frozen-lockfile
@@ -50,15 +50,15 @@ jobs:
   test:
     name: Unit tests
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
           run_install: false
           cache: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24.11.0'
       - run: pnpm install --frozen-lockfile
@@ -67,15 +67,15 @@ jobs:
   build:
     name: Build
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
           run_install: false
           cache: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24.11.0'
       - run: pnpm install --frozen-lockfile
@@ -85,16 +85,16 @@ jobs:
   audit:
     name: Dependency audit (report-only)
     needs: install
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
           run_install: false
           cache: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24.11.0'
       - run: pnpm install --frozen-lockfile
