@@ -49,16 +49,36 @@ describe('usePreGameAnalysis', () => {
     expect(get('g-midnight').response.leitura_geral).toBe('ok ontem')
   })
 
-  it('sem análise nos dois dias → response null e sem refetch depois', async () => {
+  it('sem análise nos dois dias → indisponível (não cacheado); nova chamada refaz', async () => {
     vi.setSystemTime(new Date('2026-08-30T15:00:00-03:00'))
     const fetchFn = vi.fn().mockResolvedValue({ date: '2026-08-30', jogos: [] })
     const { get, load } = usePreGameAnalysis(fetchFn)
     await load('g-absent')
     expect(fetchFn).toHaveBeenCalledTimes(2) // hoje + ontem
-    expect(get('g-absent').status).toBe('done')
+    expect(get('g-absent').status).toBe('unavailable')
     expect(get('g-absent').response).toBeNull()
     await load('g-absent')
-    expect(fetchFn).toHaveBeenCalledTimes(2) // cache: não refaz
+    expect(fetchFn).toHaveBeenCalledTimes(4) // nada em cache: o relatório pode ter nascido
+  })
+
+  it('relatório que aparece depois é exibido no retry, sem reload', async () => {
+    vi.setSystemTime(new Date('2026-09-01T15:00:00-03:00'))
+    // 1ª load: hoje e ontem sem o jogo; retry: o relatório já foi gerado.
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValueOnce({ date: '2026-09-01', jogos: [] })
+      .mockResolvedValueOnce({ date: '2026-08-31', jogos: [] })
+      .mockResolvedValue({ date: '2026-09-01', jogos: [jogo('ok apareceu')] })
+    const { get, load } = usePreGameAnalysis(fetchFn)
+    await load('g-late')
+    expect(get('g-late').status).toBe('unavailable')
+    await load('g-late')
+    expect(get('g-late').status).toBe('done')
+    expect(get('g-late').response.leitura_geral).toBe('ok apareceu')
+    // já tem relatório → cache permanente, sem refetch. O retry achou no
+    // relatório de hoje (1 fetch), então o total é 2 + 1 = 3.
+    await load('g-late')
+    expect(fetchFn).toHaveBeenCalledTimes(3)
   })
 
   it('erro no fetch → status error; nova chamada refaz a requisição', async () => {

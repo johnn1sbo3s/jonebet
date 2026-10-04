@@ -37,7 +37,9 @@ async function fetchGame(fetchFn, id, daysAgo) {
 export function usePreGameAnalysis(fetchFn = $fetch) {
   async function load(id) {
     const s = stateOf(id)
-    if (s.status === 'done') return s.response // relatório é imutável por data: cache permanente
+    // Só relatório existente vira cache permanente (imutável por data).
+    // 'unavailable' (ainda não gerado) e 'error' refazem a requisição.
+    if (s.status === 'done') return s.response
     if (inFlight.has(id)) return inFlight.get(id) // já está rodando: junta
     s.status = 'loading'
     s.error = null
@@ -47,7 +49,9 @@ export function usePreGameAnalysis(fetchFn = $fetch) {
         // relatório de ontem — cai no fallback quando hoje não o tem.
         let jogo = await fetchGame(fetchFn, id, 0)
         if (!jogo) jogo = await fetchGame(fetchFn, id, 1)
-        s.status = 'done'
+        // Sem relatório nos dois dias: não cacheia — o pipeline pode gerar o
+        // relatório da noite mais tarde e o retry precisa trazê-lo.
+        s.status = jogo ? 'done' : 'unavailable'
         s.response = jogo
         s.fetchedAt = Date.now()
         return s.response

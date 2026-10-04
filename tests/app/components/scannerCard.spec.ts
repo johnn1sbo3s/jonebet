@@ -2,6 +2,7 @@
 // @vitest-environment nuxt
 import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { flushPromises } from '@vue/test-utils'
 import { ref } from 'vue'
 import ScannerCard from '~/components/scannerCard.vue'
 import MomentumChart from '~/components/momentumChart.vue'
@@ -399,7 +400,9 @@ vi.mock('~/composables/usePreGameAnalysis', async () => {
             state.error = new Error(preGameScenario.error)
             throw state.error
           }
-          state.status = 'done'
+          // Sem relatório não é "concluído": fica indisponível e o retry
+          // reconsulta (o pipeline pode ter gerado o relatório depois).
+          state.status = preGameScenario.response ? 'done' : 'unavailable'
           state.response = preGameScenario.response
           return state.response
         }),
@@ -482,13 +485,19 @@ describe('ScannerCard análise pré-jogo', () => {
     expect(w.text()).not.toContain('Conteúdo X')
   })
 
-  it('mostra estado vazio quando o jogo não tem análise pré-jogo', async () => {
+  it('sem relatório mostra indisponibilidade com retry; retry reconsulta e exibe', async () => {
     preGameScenario.response = null
     const w = await mountCard(ScannerCard, { props: { game: game() } })
     const btn = w.findAll('button').find((b) => b.text().includes('Análise pré-jogo'))!
     await btn.trigger('click')
-    await new Promise((r) => setTimeout(r, 0))
-    expect(w.text()).toContain('Sem análise pré-jogo para este jogo.')
+    await flushPromises()
+    expect(w.text()).toContain('Análise pré-jogo ainda não disponível.')
+
+    preGameScenario.response = { time: '16:30', leitura_geral: 'Chegou agora', estrategias: [] }
+    const retry = w.findAll('button').find((b) => b.text().includes('Tentar de novo'))!
+    await retry.trigger('click')
+    await flushPromises()
+    expect(w.text()).toContain('Chegou agora')
   })
 
   it('mostra erro com Tentar de novo; retry carrega a análise', async () => {

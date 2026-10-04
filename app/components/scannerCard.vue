@@ -351,8 +351,15 @@
           </div>
         </template>
 
-        <div v-else class="flex flex-col items-center gap-1 py-4 text-center">
-          <p class="text-xs text-zinc-400">Sem análise pré-jogo para este jogo.</p>
+        <div v-else class="flex flex-col items-center gap-2 py-4 text-center">
+          <p class="text-xs text-zinc-400">Análise pré-jogo ainda não disponível.</p>
+
+          <button
+            class="rounded-lg border border-teal-500/30 px-3 py-1 text-xs font-semibold text-teal-400"
+            @click.stop="retryPreGame"
+          >
+            Tentar de novo
+          </button>
         </div>
       </div>
     </div>
