@@ -43,4 +43,18 @@ describe('ReportGameCard', () => {
     expect(w.find('button[aria-label="Favoritar jogo"]').exists()).toBe(true)
     expect(localStorage.getItem('dataPlay.favorites')).toBeNull()
   })
+
+  it('linka para o jogo no flashscore quando jogo_id é válido', async () => {
+    const w = await mountSuspended(ReportGameCard, { props: { game: game({ jogo_id: '1234567' }) } })
+    expect(w.find('a[title="Abrir no Flashscore"]').attributes('href')).toBe(
+      'https://www.flashscore.com.br/jogo/1234567/',
+    )
+  })
+
+  it('suprime o link do flashscore mas mantém o card quando jogo_id é malformado', async () => {
+    const w = await mountSuspended(ReportGameCard, { props: { game: game({ jogo_id: '../../evil' }) } })
+    expect(w.find('a[title="Abrir no Flashscore"]').exists()).toBe(false)
+    expect(w.html()).not.toContain('evil')
+    expect(w.text()).toContain('Flamengo x Palmeiras')
+  })
 })

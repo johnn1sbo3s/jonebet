@@ -11,8 +11,8 @@
     </div>
 
     <a
-      v-if="fixture?.Fixture_ID"
-      :href="flashscoreUrl(fixture.Fixture_ID)"
+      v-if="flashscoreHref"
+      :href="flashscoreHref"
       target="_blank"
       rel="noopener noreferrer"
       class="mt-1 inline-flex items-center gap-1 self-center text-xs text-zinc-500 hover:text-teal-400"
@@ -115,6 +115,8 @@ const props = defineProps({
 const fixtureAllowedModels = computed(() => {
   return props.bets.map((item) => modelNameToNaturalName(item.Modelo ?? item.model))
 })
+
+const flashscoreHref = computed(() => flashscoreUrl(props.fixture?.Fixture_ID))
 </script>
 
 <style lang="scss" scoped></style>

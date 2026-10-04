@@ -59,8 +59,9 @@
         </button>
 
         <a
+          v-if="flashscoreHref"
           class="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:border-teal-400 hover:text-teal-400"
-          :href="flashscoreUrl(game.jogo_id)"
+          :href="flashscoreHref"
           target="_blank"
           rel="noopener"
           title="Abrir no Flashscore"
@@ -113,7 +114,7 @@ import { formatNumber } from '~/utils/formatNumber'
 import { useFavorites } from '~/composables/useFavorites'
 import { flashscoreUrl } from '~/utils/flashscore'
 
-defineProps({
+const props = defineProps({
   game: { type: Object, required: true },
   // Data do relatório (yyyy-MM-dd) — usada para gravar o favorito com a
   // data correta do jogo, não "hoje". Assim favoritos de relatórios de
@@ -123,4 +124,6 @@ defineProps({
 })
 
 const { isFavorite, toggleFavorite } = useFavorites()
+
+const flashscoreHref = computed(() => flashscoreUrl(props.game.jogo_id))
 </script>

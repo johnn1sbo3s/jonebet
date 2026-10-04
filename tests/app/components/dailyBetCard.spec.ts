@@ -100,4 +100,23 @@ describe('DailyBetCard', () => {
       expect(text).not.toContain('2x0')
     })
   })
+
+  describe('flashscore link', () => {
+    it('links to the flashscore game when Fixture_ID is valid', async () => {
+      const wrapper = await mountSuspended(DailyBetCard, { props: { bet: { ...bet, Fixture_ID: '1234567' } } })
+      const link = wrapper.find('a[aria-label="Ver no Flashscore"]')
+      expect(link.exists()).toBe(true)
+      expect(link.attributes('href')).toBe('https://www.flashscore.com.br/jogo/1234567/')
+    })
+
+    it('suppresses the flashscore link but keeps the card when Fixture_ID is malformed', async () => {
+      const wrapper = await mountSuspended(DailyBetCard, {
+        props: { bet: { ...bet, Fixture_ID: '../../evil' } },
+      })
+      expect(wrapper.find('a[aria-label="Ver no Flashscore"]').exists()).toBe(false)
+      expect(wrapper.html()).not.toContain('evil')
+      expect(wrapper.text()).toContain('Lay favorite home')
+      expect(wrapper.text()).toContain('Flamengo')
+    })
+  })
 })

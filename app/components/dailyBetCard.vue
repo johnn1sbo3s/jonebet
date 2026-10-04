@@ -4,8 +4,8 @@
       <span class="truncate text-sm font-semibold text-teal-400">{{ bet.Modelo ?? bet.model }}</span>
 
       <a
-        v-if="bet.Fixture_ID"
-        :href="flashscoreUrl(bet.Fixture_ID)"
+        v-if="flashscoreHref"
+        :href="flashscoreHref"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Ver no Flashscore"
@@ -57,7 +57,9 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   bet: { type: Object, required: true },
 })
+
+const flashscoreHref = computed(() => flashscoreUrl(props.bet.Fixture_ID))
 </script>

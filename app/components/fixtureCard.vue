@@ -27,7 +27,7 @@
             <span>{{ item.Home }} x {{ item.Away }}</span>
 
             <a
-              v-if="item.Fixture_ID"
+              v-if="flashscoreUrl(item.Fixture_ID)"
               :href="flashscoreUrl(item.Fixture_ID)"
               target="_blank"
               rel="noopener noreferrer"
