@@ -20,8 +20,11 @@ const REPORT = {
 // módulo do composable — que aceita fetchFn injetável.
 vi.mock('~/composables/useDailyReport.js', async () => {
   const real = await vi.importActual('~/composables/useDailyReport.js')
-  return { useDailyReport: () => real.useDailyReport(() => Promise.resolve(REPORT)) }
+  return { useDailyReport: () => real.useDailyReport(() => Promise.resolve(currentReport)) }
 })
+// Mock de $fetch precisa do relatório corrente; a factory roda no import,
+// então o valor é lido no momento da fetch (não no hoisting do vi.mock).
+let currentReport = REPORT
 // localStorage "bloqueado" (política de privacidade / Safari restrito): todo
 // acesso lança, como no navegador real nesse cenário.
 function blockStorage() {
@@ -114,5 +117,42 @@ describe('daily-report: data default acompanha o relógio', () => {
     } finally {
       spy.mockRestore()
     }
+  })
+})
+
+describe('daily-report: agrupamento por horário', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    currentReport = REPORT
+  })
+
+  it('ordena por hora numérica e junta 9:30 com 09:30; sem hora vai para "Outros" no fim', async () => {
+    currentReport = {
+      date: '2026-10-03',
+      jogos: [
+        { jogo_id: 'h14', league: 'Série A', time: '14:00', home: 'C14', away: 'F14', tier: 0 },
+        { jogo_id: 'h9a', league: 'Série A', time: '9:30', home: 'C9a', away: 'F9a', tier: 0 },
+        { jogo_id: 'h9b', league: 'Série A', time: '09:30', home: 'C9b', away: 'F9b', tier: 0 },
+        { jogo_id: 'h21', league: 'Série A', time: '21:15', home: 'C21', away: 'F21', tier: 0 },
+        { jogo_id: 'sem', league: 'Série A', time: '', home: 'Csem', away: 'Fsem', tier: 0 },
+      ],
+    }
+    const w = await mountSuspended(DailyReportPage)
+    await flushReport()
+    const byHour = w.findAll('button').find((b) => b.text() === 'Por horário')
+    await byHour.trigger('click')
+    await flushReport()
+
+    const labels = w
+      .findAll('section')
+      .map((s) => s.find('h2').text())
+      .filter((t) => /^\d{1,2}h$/.test(t) || t === 'Outros')
+
+    // 9:30 e 09:30 caem no mesmo grupo, e "9h" antes de "14h" (bug era 14h, 21h, 9h).
+    expect(labels).toEqual(['9h', '14h', '21h', 'Outros'])
+    const nineGroup = w.findAll('section').find((s) => s.find('h2').text() === '9h')
+    expect(nineGroup.text()).toContain('C9a')
+    expect(nineGroup.text()).toContain('C9b')
+    w.unmount()
   })
 })

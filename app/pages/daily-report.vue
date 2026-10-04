@@ -335,20 +335,23 @@ const byHour = computed(() => {
   const map = new Map()
   for (const j of jogos) {
     const match = /^(\d{1,2}):/.exec(j.time || '')
-    const key = match ? `${match[1]}h` : 'Outros'
+    // Normaliza a hora (9:30 e 09:30 → mesmo grupo "9h") e ordena por valor
+    // numérico: comparar as chaves como texto punha "9h" depois de "14h".
+    const key = match ? Number(match[1]) : null
     if (!map.has(key)) map.set(key, [])
     map.get(key).push(j)
   }
   return [...map.entries()]
     .map(([hour, items]) => ({
-      key: hour,
-      label: hour,
+      key: hour === null ? 'Outros' : `${hour}h`,
+      label: hour === null ? 'Outros' : `${hour}h`,
+      hour,
       jogos: items.sort((a, b) => (a.time || '').localeCompare(b.time || '')),
     }))
     .sort((a, b) => {
-      if (a.key === 'Outros') return 1
-      if (b.key === 'Outros') return -1
-      return a.key.localeCompare(b.key)
+      if (a.hour === null) return 1
+      if (b.hour === null) return -1
+      return a.hour - b.hour
     })
 })
 
