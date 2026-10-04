@@ -29,6 +29,18 @@ function cacheSet(cache, key, value) {
   }
 }
 
+// `onResponse` receives the options resolved when the request was dispatched,
+// so `options.key` is the key the request was fired with — not whatever the
+// reactive key became while it was in flight. Writing under the live key
+// files an out-of-order response under another key's entry, and the LRU then
+// serves that wrong payload on every later visit (getCachedData skips the
+// refetch). Falls back to the live key when the hook carries no request-scoped
+// one.
+function dispatchedKey(context, liveKey) {
+  const dispatched = context?.options?.key
+  return typeof dispatched === 'string' ? dispatched : liveKey
+}
+
 export function useModelsList({ playedOn = null, metricsOnly = false } = {}) {
   const cache = useCache()
   const playedOnRef = isRef(playedOn) ? playedOn : ref(playedOn)
@@ -49,11 +61,12 @@ export function useModelsList({ playedOn = null, metricsOnly = false } = {}) {
     query,
     default: () => ({ items: [] }),
     watch: [playedOnRef],
-    getCachedData: () => cacheGet(cache, cacheKey.value),
-    onResponse({ response }) {
+    getCachedData: (k) => cacheGet(cache, k),
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelsList', response._data)
-        cacheSet(cache, cacheKey.value, parsed)
+        cacheSet(cache, dispatchedKey(context, cacheKey.value), parsed)
         response._data = parsed
       }
     },
@@ -68,10 +81,11 @@ export function useModelById(id) {
     default: () => null,
     watch: [id],
     getCachedData: (k) => cacheGet(cache, k),
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelById', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, dispatchedKey(context, key.value), parsed)
         response._data = parsed
       }
     },
@@ -87,10 +101,11 @@ export function useModelChart(id, groupBy) {
     default: () => ({ labels: [], data: [], annotationIndex: 0 }),
     watch: [id, groupBy],
     getCachedData: (k) => cacheGet(cache, k),
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelChart', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, dispatchedKey(context, key.value), parsed)
         response._data = parsed
       }
     },
@@ -105,10 +120,11 @@ export function useModelTrend(id, enabled) {
     default: () => ({ slope: 0, intercept: 0, line: [], distance: 0 }),
     watch: [id, enabled],
     getCachedData: (k) => cacheGet(cache, k),
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelTrend', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, dispatchedKey(context, key.value), parsed)
         response._data = parsed
       }
     },
@@ -124,10 +140,11 @@ export function useModelResults(id, period) {
     default: () => [],
     watch: [id, period],
     getCachedData: (k) => cacheGet(cache, k),
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelResults', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, dispatchedKey(context, key.value), parsed)
         response._data = parsed
       }
     },
@@ -143,10 +160,11 @@ export function useModelBets(id, { page, size, sort, order }) {
     default: () => ({ items: [], total: 0, page: page.value, size: size.value }),
     watch: [id, page, size, sort, order],
     getCachedData: (k) => cacheGet(cache, k),
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data) {
         const parsed = safeParse('modelBets', response._data)
-        cacheSet(cache, key.value, parsed)
+        cacheSet(cache, dispatchedKey(context, key.value), parsed)
         response._data = parsed
       }
     },
@@ -185,7 +203,7 @@ export function useDailyBets({ date = null, model = null } = {}) {
       // keep the full cache path.
       const allowCache = dateRef.value !== null || nuxtApp.isHydrating
       if (allowCache) {
-        const cached = cacheGet(cache, cacheKey.value)
+        const cached = cacheGet(cache, key)
         if (cached) return cached
       }
       // SSR payload fallback is keyed by the static useFetch key, not by
@@ -202,10 +220,11 @@ export function useDailyBets({ date = null, model = null } = {}) {
       }
       return undefined
     },
-    onResponse({ response }) {
+    onResponse(context) {
+      const { response } = context
       if (response?.ok && response._data !== undefined) {
         const parsed = safeParse('dailyBets', response._data)
-        cacheSet(cache, cacheKey.value, parsed)
+        cacheSet(cache, dispatchedKey(context, cacheKey.value), parsed)
         response._data = parsed
       }
     },
