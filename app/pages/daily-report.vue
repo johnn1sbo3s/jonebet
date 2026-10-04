@@ -245,11 +245,21 @@ const byLeague = computed(() => {
 const viewMode = ref('by_league')
 
 if (import.meta.client) {
-  viewMode.value = localStorage.getItem('dailyReport.viewMode') || 'by_league'
+  try {
+    viewMode.value = localStorage.getItem('dailyReport.viewMode') || 'by_league'
+  } catch {
+    // storage bloqueado (política de privacidade / Safari restrito): default em memória
+    viewMode.value = 'by_league'
+  }
 }
 
 watch(viewMode, (v) => {
-  if (import.meta.client) localStorage.setItem('dailyReport.viewMode', v)
+  if (!import.meta.client) return
+  try {
+    localStorage.setItem('dailyReport.viewMode', v)
+  } catch {
+    // storage bloqueado: a preferência vale só para a sessão
+  }
 })
 
 const viewOptions = [

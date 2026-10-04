@@ -6,6 +6,19 @@ import { SP_TZ } from '~/utils/timezone'
 const KEY = 'dataPlay.favorites'
 const hoje = DateTime.now().setZone(SP_TZ).toFormat('yyyy-MM-dd')
 
+// localStorage "bloqueado" (política de privacidade / Safari restrito):
+// todo acesso lança, como acontece no navegador real nesse cenário.
+function blockStorage() {
+  const boom = () => {
+    throw new Error('storage bloqueado')
+  }
+  const fake = { getItem: boom, setItem: boom, removeItem: boom, clear: boom, key: boom, length: 0 }
+  const original = globalThis.localStorage
+  Object.defineProperty(globalThis, 'localStorage', { value: fake, configurable: true, writable: true })
+  return () =>
+    Object.defineProperty(globalThis, 'localStorage', { value: original, configurable: true, writable: true })
+}
+
 describe('useFavorites', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -58,5 +71,35 @@ describe('useFavorites', () => {
     localStorage.setItem(KEY, 'não é json')
     const { useFavorites } = await import('~/composables/useFavorites')
     expect(useFavorites().isFavorite('abc')).toBe(false)
+  })
+
+  it('storage bloqueado: toggle não lança e reflete o estado na sessão', async () => {
+    const restore = blockStorage()
+    try {
+      const { useFavorites } = await import('~/composables/useFavorites')
+      const f = useFavorites()
+      expect(f.isFavorite('abc')).toBe(false) // leitura bloqueada → default, sem lançar
+
+      f.toggleFavorite('abc')
+      expect(f.isFavorite('abc')).toBe(true)
+      expect(f.favoritesOf([{ id: 'abc' }])).toHaveLength(1)
+
+      f.toggleFavorite('abc')
+      expect(f.isFavorite('abc')).toBe(false)
+    } finally {
+      restore()
+    }
+  })
+
+  it('storage bloqueado: evento de storage de outra aba não derruba nada', async () => {
+    const restore = blockStorage()
+    try {
+      const { useFavorites } = await import('~/composables/useFavorites')
+      const f = useFavorites()
+      expect(() => window.dispatchEvent(new StorageEvent('storage', { key: KEY }))).not.toThrow()
+      expect(f.isFavorite('abc')).toBe(false)
+    } finally {
+      restore()
+    }
   })
 })

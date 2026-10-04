@@ -44,8 +44,18 @@ function syncFromStorage() {
     favorites[id] = date
   }
   if (import.meta.client && Object.keys(limpo).length !== Object.keys(stored).length) {
-    if (Object.keys(limpo).length === 0) localStorage.removeItem(STORAGE_KEY)
-    else localStorage.setItem(STORAGE_KEY, JSON.stringify(limpo))
+    writeStored(limpo)
+  }
+}
+
+// Escrita nunca propaga erro: storage bloqueado (política de privacidade /
+// Safari restrito) só custa a persistência, não a sessão.
+function writeStored(map) {
+  try {
+    if (Object.keys(map).length === 0) localStorage.removeItem(STORAGE_KEY)
+    else localStorage.setItem(STORAGE_KEY, JSON.stringify(map))
+  } catch {
+    // storage indisponível — o estado reativo segue válido
   }
 }
 
@@ -77,10 +87,7 @@ export function useFavorites() {
       } else {
         favorites[id] = reportDate || todayIso()
       }
-      if (import.meta.client) {
-        if (Object.keys(favorites).length === 0) localStorage.removeItem(STORAGE_KEY)
-        else localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites))
-      }
+      if (import.meta.client) writeStored(favorites)
     },
     // Preserva a ordem original (a API já vem ordenada por tier).
     favoritesOf: (games) => games.filter((g) => Boolean(favorites[idOf(g)])),

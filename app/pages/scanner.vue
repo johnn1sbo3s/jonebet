@@ -295,14 +295,22 @@ const favoritesCollapsed = ref(false)
 let favoritesCollapsedReady = false // evita persistir o valor default antes da leitura do storage
 
 onMounted(() => {
-  favoritesCollapsed.value = localStorage.getItem('dataPlay.scanner.favoritesCollapsed') === '1'
+  try {
+    favoritesCollapsed.value = localStorage.getItem('dataPlay.scanner.favoritesCollapsed') === '1'
+  } catch {
+    // storage bloqueado (política de privacidade / Safari restrito): default em memória
+  }
   favoritesCollapsedReady = true
 })
 
 function toggleFavoritesCollapsed() {
   favoritesCollapsed.value = !favoritesCollapsed.value
   if (!favoritesCollapsedReady) return // nunca acontece via clique (pós-mount), só guard
-  localStorage.setItem('dataPlay.scanner.favoritesCollapsed', favoritesCollapsed.value ? '1' : '0')
+  try {
+    localStorage.setItem('dataPlay.scanner.favoritesCollapsed', favoritesCollapsed.value ? '1' : '0')
+  } catch {
+    // storage bloqueado: o colapso vale só para a sessão
+  }
 }
 
 // Painel de alertas — estado transitório da sessão, sem persistência.
