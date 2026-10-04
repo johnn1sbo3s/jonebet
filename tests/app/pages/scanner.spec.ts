@@ -185,3 +185,34 @@ describe('scanner: storage indisponível', () => {
     }
   })
 })
+describe('scanner: relatório de amanhã reage ao relógio', () => {
+  it('aba aberta às 22:59 ganha o link ao cruzar 23h, sem reload', async () => {
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-03T22:59:00-03:00'))
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      expect(w.find('a[href*="date=2026-10-04"]').exists()).toBe(false)
+
+      await vi.advanceTimersByTimeAsync(90_000) // 23:00:30
+      const link = w.find('a[href*="date=2026-10-04"]')
+      expect(link.exists()).toBe(true)
+      expect(link.text()).toContain('Relatório de amanhã')
+      w.unmount()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('aba montada depois das 23h já mostra o link (comportamento inalterado)', async () => {
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-03T23:30:00-03:00'))
+      const w = await mountSuspended(ScannerPage, { global: { stubs: STUBS } })
+      const link = w.find('a[href*="date=2026-10-04"]')
+      expect(link.exists()).toBe(true)
+      w.unmount()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})

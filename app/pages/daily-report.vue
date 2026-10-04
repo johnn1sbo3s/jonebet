@@ -180,15 +180,56 @@ const router = useRouter()
 // --- Navegação de data ---
 // Suporta ?date=yyyy-MM-dd na URL. Depois das 23h, se não houver ?date=,
 // defaulta para amanhã (quando o scanner já gerou os dados).
+// O default é derivado do relógio, não fixado no setup: um timer no próximo
+// limite (23h / meia-noite) bumpeia `clockTick` e o default acompanha a virada
+// sem reload. Enquanto o usuário não escolheu uma data, a seleção segue o
+// default; depois que escolheu, a navegação é dele.
+const clockTick = ref(0)
+let clockTimer = null
+
+function nowSP() {
+  clockTick.value
+  return DateTime.now().setZone(SP_TZ)
+}
+
 function defaultDate() {
-  const now = DateTime.now().setZone(SP_TZ)
+  const now = nowSP()
   if (route.query.date) return route.query.date
   // Depois das 23h: amanhã (dados do scanner já disponíveis)
   if (now.hour >= 23) return now.plus({ days: 1 }).toFormat('yyyy-MM-dd')
   return now.toFormat('yyyy-MM-dd')
 }
 
-const selectedDate = ref(defaultDate())
+// Próximo momento em que o default muda: 23h (hoje→amanhã) ou meia-noite.
+function scheduleClock() {
+  const now = nowSP()
+  const limit = (
+    now.hour < 23 ? now.startOf('day').plus({ hours: 23 }) : now.plus({ days: 1 }).startOf('day')
+  ).toMillis()
+  clockTimer = setTimeout(
+    () => {
+      clockTick.value++
+      applyDefaultDate()
+      scheduleClock()
+    },
+    Math.max(1000, limit - now.toMillis()),
+  )
+}
+
+function applyDefaultDate() {
+  const next = defaultDate()
+  if (next !== autoDate) {
+    autoDate = next
+    if (!datePicked) selectedDate.value = next
+  }
+}
+
+let autoDate = defaultDate()
+let datePicked = false
+const selectedDate = ref(autoDate)
+watch(selectedDate, (v) => {
+  if (v !== autoDate) datePicked = true // navegação do usuário: o default para de mandar
+})
 const reportDateLabel = computed(() => formatDate(selectedDate.value, { style: 'long' }))
 
 // Daily-bets para indicador pré-live (refetch automático ao mudar data)
@@ -206,7 +247,7 @@ const preLiveBetsByGame = computed(() => {
 // Max date para o DatePicker: amanhã só depois das 23h (scanner já gerou os
 // dados); antes disso, max = hoje (não adianta navegar para amanhã sem dados).
 const maxDate = computed(() => {
-  const now = DateTime.now().setZone(SP_TZ)
+  const now = nowSP() // mesmo relógio do default: o limite do picker acompanha a virada
   const max = now.hour >= 23 ? now.plus({ days: 1 }) : now
   return max.toFormat('yyyy-MM-dd')
 })
@@ -334,6 +375,10 @@ async function loadReport(date) {
 }
 
 // Carrega ao montar e re-observa mudanças na data.
-onMounted(() => loadReport())
+onMounted(() => {
+  scheduleClock()
+  loadReport()
+})
+onUnmounted(() => clearTimeout(clockTimer))
 watch(selectedDate, (v) => loadReport(v))
 </script>

@@ -3,6 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { ref } from 'vue'
 import DailyReportPage from '~/pages/daily-report.vue'
+import { DateTime } from 'luxon'
+import { formatDate } from '~/utils/formatDate'
+import { SP_TZ } from '~/utils/timezone'
 
 vi.mock('~/composables/useModelApi.js', async () => ({
   useDailyBets: () => ({ data: ref({ bets: [] }) }),
@@ -72,5 +75,44 @@ describe('daily-report: viewMode persistido', () => {
     const byHourActive = w.findAll('button').find((b) => b.text() === 'Por horário')
     expect(byHourActive.classes().join(' ')).toContain('bg-teal-500')
     w.unmount()
+  })
+})
+
+describe('daily-report: data default acompanha o relógio', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('aba aberta às 22:59 passa a exibir a data de amanhã ao cruzar 23h, sem reload', async () => {
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-03T22:59:00-03:00'))
+      const w = await mountSuspended(DailyReportPage)
+      await vi.advanceTimersByTimeAsync(100)
+      expect(w.text()).toContain('03/10/2026')
+
+      await vi.advanceTimersByTimeAsync(90_000) // 23:00:30
+      await vi.advanceTimersByTimeAsync(100)
+      expect(w.text()).toContain('04/10/2026')
+      w.unmount()
+    } finally {
+      vi.clearAllTimers()
+      vi.useRealTimers()
+    }
+  })
+
+  it('aba montada depois das 23h já abre em amanhã (comportamento inalterado)', async () => {
+    // Só interessa o estado inicial: sem avanço de relógio, timers reais bastam.
+    const at = DateTime.now().setZone(SP_TZ).set({ hour: 23, minute: 30, second: 0, millisecond: 0 })
+    const spy = vi.spyOn(Date, 'now').mockReturnValue(at.toMillis())
+    try {
+      const w = await mountSuspended(DailyReportPage)
+      await flushReport()
+      const tomorrow = at.plus({ days: 1 }).toFormat('yyyy-MM-dd')
+      expect(w.text()).toContain(formatDate(tomorrow))
+      w.unmount()
+    } finally {
+      spy.mockRestore()
+    }
   })
 })

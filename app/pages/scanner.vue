@@ -268,9 +268,17 @@ const router = useRouter()
 const { requestRefresh: refreshShotHistory } = useXgHistory()
 
 // Relatório de amanhã: disponível depois das 23h (scanner já gerou os dados).
-const now = DateTime.now().setZone(SP_TZ)
-const hasTomorrowReport = now.hour >= 23
-const tomorrowIso = now.plus({ days: 1 }).toFormat('yyyy-MM-dd')
+// Reativo ao relógio (bump no tick de 1s): uma aba aberta antes das 23h ganha
+// o link sem reload — antes these valores eram congelados no setup.
+const clockTick = ref(0)
+const hasTomorrowReport = computed(() => {
+  clockTick.value
+  return DateTime.now().setZone(SP_TZ).hour >= 23
+})
+const tomorrowIso = computed(() => {
+  clockTick.value
+  return DateTime.now().setZone(SP_TZ).plus({ days: 1 }).toFormat('yyyy-MM-dd')
+})
 
 const snapshot = ref(null)
 const loading = ref(true)
@@ -570,6 +578,7 @@ function maybeHighlight(list) {
 function tick() {
   updatedAgo.value = formatUpdatedAgo(snapshot.value?.generated_at)
   if (!canOpenDrawer.value) canOpenDrawer.value = isAgeGateDismissed()
+  clockTick.value++ // mantém hasTomorrowReport/tomorrowIso em dia com o relógio
 }
 
 // Browser pausa timers em aba em background: ao voltar pro foco, aborta o
