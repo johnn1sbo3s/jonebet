@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install:
+    name: Install (frozen lockfile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # pnpm 9.15.9 is what the Vercel project runs; installing it explicitly keeps
+      # the lockfile readable by the exact same major/minor that builds production.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+          cache: 'pnpm'
+      # Nuxt 4.5.2 requires ^22.19.0 || ^24.11.0 || >=26.0.0, so 24.x alone is too loose.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - run: pnpm install --frozen-lockfile
+
+  quality:
+    name: Lint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+          cache: 'pnpm'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm lint:tailwind
+
+  test:
+    name: Unit tests
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+          cache: 'pnpm'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:unit
+
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+          cache: 'pnpm'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  # Report-only: the audit output is visible in the log but never fails the workflow.
+  audit:
+    name: Dependency audit (report-only)
+    needs: install
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+          cache: 'pnpm'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
+      - run: pnpm install --frozen-lockfile
+      - name: pnpm audit (report-only)
+        continue-on-error: true
+        run: pnpm audit --omit=dev
