@@ -130,7 +130,6 @@ describe('ScannerCard', () => {
     expect(wrapper.text()).toContain('Gol HT')
     expect(wrapper.text()).not.toContain('antes do intervalo')
   })
-
   it('aplica luz viajante (hl-travel) quando highlighted (clique do Telegram)', async () => {
     const wrapper = await mountCard(ScannerCard, {
       props: { game: game([]), highlighted: true },
@@ -507,5 +506,33 @@ describe('ScannerCard análise pré-jogo', () => {
     await retry.trigger('click')
     await new Promise((r) => setTimeout(r, 0))
     expect(w.text()).toContain('Recuperou')
+  })
+})
+
+// Ticket 01: o href do botão Flashscore vem do snapshot do scanner; só
+// http/https podem virar link clicável (javascript: executaria no contexto
+// do app). O botão é suprimido — o resto do card continua igual.
+describe('ScannerCard link externo do Flashscore', () => {
+  it('URL https válida vira âncora com target=_blank', async () => {
+    const w = await mountCard(ScannerCard, { props: { game: game() } })
+    const link = w.findAll('a').find((a) => a.attributes('href') === game().flashscore_url)
+    expect(link).toBeDefined()
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toBe('noopener noreferrer')
+  })
+
+  it.each([
+    ['javascript', 'javascript:alert(1)'],
+    ['data', 'data:text/html,<script>alert(1)</script>'],
+    ['vbscript', 'vbscript:msgbox(1)'],
+    ['sem esquema', 'www.flashscore.com.br/jogo/abc123/'],
+    ['malformada', 'https://'],
+  ])('URL %s do payload não vira link clicável', async (_label, url) => {
+    const w = await mountCard(ScannerCard, { props: { game: { ...game(), flashscore_url: url } } })
+    const hrefs = w.findAll('a').map((a) => a.attributes('href'))
+    expect(hrefs).not.toContain(url)
+    // nenhuma âncora executável sobrou e o card continua renderizado
+    expect(hrefs.filter((h) => h && !h.startsWith('http'))).toEqual([])
+    expect(w.text()).toContain('Palmeiras')
   })
 })

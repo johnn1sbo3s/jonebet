@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { flashscoreUrl } from '~/utils/flashscore.js'
+import { flashscoreUrl, safeExternalUrl } from '~/utils/flashscore.js'
 
 describe('flashscoreUrl', () => {
   it('builds the flashscore game URL for a numeric id', () => {
@@ -34,5 +34,46 @@ describe('flashscoreUrl', () => {
 
   it('rejects ids long enough to be a payload dump', () => {
     expect(flashscoreUrl('a'.repeat(65))).toBeNull()
+  })
+})
+
+// URLs externas vindas de payload (snapshot do scanner): só http/https viram
+// href clicável — javascript:/data:/vbscript: executariam no contexto do app.
+describe('safeExternalUrl', () => {
+  it('aceita https e devolve a URL intacta', () => {
+    expect(safeExternalUrl('https://www.flashscore.com.br/jogo/abc123/')).toBe(
+      'https://www.flashscore.com.br/jogo/abc123/',
+    )
+  })
+
+  it('aceita http', () => {
+    expect(safeExternalUrl('http://www.flashscore.com.br/jogo/abc123/')).toBe(
+      'http://www.flashscore.com.br/jogo/abc123/',
+    )
+  })
+
+  it.each([
+    ['javascript', 'javascript:alert(1)'],
+    ['javascript maiúsculo', 'JaVaScRiPt:alert(1)'],
+    ['javascript com espaço', ' javascript:alert(1)'],
+    ['data html', 'data:text/html,<script>alert(1)</script>'],
+    ['vbscript', 'vbscript:msgbox(1)'],
+    ['file', 'file:///etc/passwd'],
+    ['protocol-relative', '//evil.example/x'],
+    ['relativa', '/jogo/outro'],
+    ['sem esquema', 'www.flashscore.com.br/jogo/abc123/'],
+    ['malformada', 'https://'],
+    ['vazia', '   '],
+  ])('rejeita URL %s', (_label, value) => {
+    expect(safeExternalUrl(value)).toBeNull()
+  })
+
+  it.each([
+    ['null', null],
+    ['undefined', undefined],
+    ['número', 123],
+    ['objeto', {}],
+  ])('rejeita %s', (_label, value) => {
+    expect(safeExternalUrl(value)).toBeNull()
   })
 })

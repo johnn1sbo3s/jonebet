@@ -78,11 +78,11 @@
               <ScannerActionButton icon="i-lucide-camera" square @click.stop="captureCard" />
             </UTooltip>
 
-            <UTooltip text="Abrir no Flashscore">
+            <UTooltip v-if="flashscoreHref" text="Abrir no Flashscore">
               <ScannerActionButton
                 icon="i-lucide-arrow-up-right"
                 square
-                :href="game.flashscore_url"
+                :href="flashscoreHref"
                 target="_blank"
                 @click.stop
               />
@@ -366,6 +366,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { entryTitle, isRecentNotification } from '~/utils/scanner.js'
 import { modelNameToNaturalName } from '~/utils/resolveModelName'
 import { formatNumber, formatPercent } from '~/utils/formatNumber'
+import { safeExternalUrl } from '~/utils/flashscore'
 import { computePressure, computeControl } from '~/utils/scannerPressure'
 import { collectShots, mergeXgSeries, sumTiers } from '~/utils/scannerShots'
 import { toBlob } from 'html-to-image'
@@ -379,6 +380,10 @@ const props = defineProps({
   highlighted: { type: Boolean, default: false },
   preLiveBets: { type: Array, default: () => [] },
 })
+
+// Link externo do snapshot: esquema validado (http/https) — valor recusado
+// não vira âncora clicável (javascript: no href executa no contexto do app).
+const flashscoreHref = computed(() => safeExternalUrl(props.game.flashscore_url))
 
 const { isFavorite, toggleFavorite } = useFavorites()
 

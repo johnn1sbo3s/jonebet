@@ -14,3 +14,23 @@ export function flashscoreUrl(fixtureId) {
 
   return `${FLASHSCORE_MATCH_BASE}${id}/`
 }
+
+// URLs externas vindas de payload (snapshot do scanner, API) só viram href
+// clicável com esquema http/https — javascript:/data:/vbscript: executam no
+// contexto do app no clique. Scheme-relative ("//host"), relativas e strings
+// malformadas caem no mesmo caminho: null (nenhum link).
+export function safeExternalUrl(url) {
+  if (typeof url !== 'string') return null
+
+  const raw = url.trim()
+  if (!raw) return null
+
+  let parsed
+  try {
+    parsed = new URL(raw)
+  } catch {
+    return null
+  }
+
+  return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? raw : null
+}
