@@ -42,7 +42,6 @@
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.41",
     "vue-chart-3": "^3.1.8",
-    "vue-router": "^4.6.4",
     "zod": "^4.4.3"
   },
   "devDependencies": {
