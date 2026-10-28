@@ -4,9 +4,9 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Before exploring, read these
 
-- **`CONTEXT.md`** at this repo root if it exists. If the session opened at the JoneBet parent
-  (`Projetos/jonebet/`), start at the parent's **`CONTEXT-MAP.md`** to confirm this (`frontend`) is the
-  right context, then read this repo's `CONTEXT.md`.
+- **`GLOSSARY.md`** at this repo root if it exists. If the session opened at the JoneBet parent
+  (`Projetos/jonebet/`), start at the parent's **`GLOSSARY-MAP.md`** to confirm this (`frontend`) is the
+  right context, then read this repo's `GLOSSARY.md`.
 - **`docs/adr/`** in this repo: read ADRs that touch the area you're about to work in. For
   system-wide decisions crossing more than one JoneBet repo, also check the parent's `docs/adr/`.
 
@@ -18,7 +18,7 @@ Single-context repo (this repo):
 
 ```
 jonebet-frontend/
-├── CONTEXT.md
+├── GLOSSARY.md
 ├── docs/adr/
 │   ├── 0001-event-sourced-orders.md
 │   └── 0002-postgres-for-write-model.md
@@ -27,11 +27,11 @@ jonebet-frontend/
 
 Cross-context features are spec'd once in the parent's `.scratch/` (see `docs/agents/issue-tracker.md`),
 with each ticket naming its repo in a `Repo:` line. The cross-context map lives at the parent's
-`CONTEXT-MAP.md` (not here).
+`GLOSSARY-MAP.md` (not here).
 
 ## Use the glossary's vocabulary
 
-When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.
+When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `GLOSSARY.md`. Don't drift to synonyms the glossary explicitly avoids.
 
 If the concept you need isn't in the glossary yet, that's a signal: either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `/domain-modeling`).
 

@@ -178,4 +178,4 @@ Default five canonical roles used as-is. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context layout (this repo's `CONTEXT.md` + `docs/adr/`); cross-context map at the parent's `CONTEXT-MAP.md`. See `docs/agents/domain.md`.
+Single-context layout (this repo's `GLOSSARY.md` + `docs/adr/`); cross-context map at the parent's `GLOSSARY-MAP.md`. See `docs/agents/domain.md`.
