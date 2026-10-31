@@ -1,33 +1,22 @@
 # Domain Docs
 
-How the engineering skills should consume this repo's domain documentation when exploring the codebase.
+How the engineering skills consume this repo's domain documentation when exploring the codebase.
+
+## Layout: single context
+
+This repo owns its own vocabulary and decisions:
+
+- **`GLOSSARY.md`** at the repo root
+- **`docs/adr/`** in this repo, for decisions scoped to it
+
+Decisions that span more than one JoneBet repo are recorded in the repo that owns the change for that feature; the other repos point at it from `AGENTS.md`.
 
 ## Before exploring, read these
 
-- **`GLOSSARY.md`** at this repo root if it exists. If the session opened at the JoneBet parent
-  (`Projetos/jonebet/`), start at the parent's **`GLOSSARY-MAP.md`** to confirm this (`frontend`) is the
-  right context, then read this repo's `GLOSSARY.md`.
-- **`docs/adr/`** in this repo: read ADRs that touch the area you're about to work in. For
-  system-wide decisions crossing more than one JoneBet repo, also check the parent's `docs/adr/`.
+- **`GLOSSARY.md`** at this repo root
+- **`docs/adr/`** in this repo: read ADRs that touch the area you are about to work in
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
-
-## File structure
-
-Single-context repo (this repo):
-
-```
-jonebet-frontend/
-├── GLOSSARY.md
-├── docs/adr/
-│   ├── 0001-event-sourced-orders.md
-│   └── 0002-postgres-for-write-model.md
-└── app/
-```
-
-Cross-context features are spec'd once in the parent's `.scratch/` (see `docs/agents/issue-tracker.md`),
-with each ticket naming its repo in a `Repo:` line. The cross-context map lives at the parent's
-`GLOSSARY-MAP.md` (not here).
 
 ## Use the glossary's vocabulary
 

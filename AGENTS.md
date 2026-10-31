@@ -170,7 +170,7 @@ Frozen tables in `app/utils/enums.js`: `SOURCE`, `RESULT`, `GROUP_BY`, `PERIOD`,
 
 ### Issue tracker
 
-Single centralized tracker shared with the other JoneBet repos: issues live as markdown files under `.scratch/<feature>/` at the parent (`Projetos/jonebet/.scratch/`). See `docs/agents/issue-tracker.md`.
+Local tracker: issues live as markdown files under `.scratch/<feature>/` in this repo, tracked in git. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
@@ -178,4 +178,14 @@ Default five canonical roles used as-is. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context layout (this repo's `GLOSSARY.md` + `docs/adr/`); cross-context map at the parent's `GLOSSARY-MAP.md`. See `docs/agents/domain.md`.
+Single context: this repo's `GLOSSARY.md` plus `docs/adr/`. Cross-repo relationships are summarised in the section above. See `docs/agents/domain.md`.
+
+## Project relationships
+
+JoneBet is three repos and one pipeline. This dashboard reads every number it displays from the API (`jonebet-api`) and shows the live snapshot published by the scanner; it computes no picks and no metrics of its own.
+
+<!-- POCOCK-GATES:BEGIN -->
+## Pocock gates
+
+O trabalho segue as skills do Pocock com gates humanos. `/gate` é o único jeito de avançar fase; depois do grill, não ofereça implementação — mostre a fase e o comando. Push só quando o jone pedir no turno. Detalhes na skill `pocock-gates`.
+<!-- POCOCK-GATES:END -->
