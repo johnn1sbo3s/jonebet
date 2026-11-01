@@ -30,6 +30,22 @@ _Avoid_: largura fixa (without saying of what), placeholder
 The state where the screen could not reach the snapshot, signalled by the dot's colour rather than visible text while screen readers still get it in words.
 _Avoid_: erro de rede, desconectado
 
+**Momentum chart**:
+The graph drawn inside each live scanner card, reading the game minute by minute as a dispute of pressure between the two teams, so the user sees which side pushed harder at each minute.
+_Avoid_: gráfico de pressão, gráfico de pressao, pressure graph
+
+**Chart style**:
+The choice of how the momentum chart is drawn, made for the scanner screen as a whole — never for a single game — and remembered between visits; today there are two values: bar style and mirrored area.
+_Avoid_: modo do gráfico, tipo de gráfico, tema
+
+**Bar style**:
+The default chart style: one mark per minute born from the centre line, its height the larger of the two teams' values for that minute, its colour telling whose minute it is — home above the centre line, away below.
+_Avoid_: barras, colunas, histograma
+
+**Mirrored area**:
+The chart style that keeps the same reading as bar style but fills it instead: one band per minute from the centre line out to the value, on the side of the team that won that minute.
+_Avoid_: gráfico de área, área espelhada, área
+
 **Relatório de amanhã**:
 The link to the next day's daily bets, appearing after 23h São Paulo by clock rule alone; it promises that the report will exist, not that it already does.
 _Avoid_: previsão, projeção
