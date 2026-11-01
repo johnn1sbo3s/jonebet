@@ -136,6 +136,36 @@ describe('scanner: estilo do gráfico', () => {
     const after = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
     expect(new Set(after)).toEqual(new Set(['area']))
   })
+
+  it('abre em área quando a preferência já está gravada', async () => {
+    localStorage.setItem('dataPlay.scanner.chartStyle', 'area')
+    const wrapper = await mountTwoGames()
+    const styles = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
+    expect(new Set(styles)).toEqual(new Set(['area']))
+  })
+
+  it('grava a preferência ao trocar o estilo', async () => {
+    const wrapper = await mountTwoGames()
+    const areaButton = wrapper.findAll('button').find((button) => button.text() === 'Área')
+    await areaButton.trigger('click')
+    expect(localStorage.getItem('dataPlay.scanner.chartStyle')).toBe('area')
+    const barsButton = wrapper.findAll('button').find((button) => button.text() === 'Barras')
+    await barsButton.trigger('click')
+    expect(localStorage.getItem('dataPlay.scanner.chartStyle')).toBe('barras')
+  })
+
+  it('com storage bloqueado a tela monta e a troca vale na sessão', async () => {
+    const restore = blockStorage()
+    try {
+      const wrapper = await mountTwoGames()
+      const areaButton = wrapper.findAll('button').find((button) => button.text() === 'Área')
+      await areaButton.trigger('click')
+      const styles = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
+      expect(new Set(styles)).toEqual(new Set(['area']))
+    } finally {
+      restore()
+    }
+  })
 })
 
 describe('scanner: listeners de window', () => {

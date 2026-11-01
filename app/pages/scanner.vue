@@ -495,11 +495,34 @@ const games = computed(() => snapshot.value?.games || [])
 // grid normal até sair do snapshot). O resto segue no grid principal.
 const { isFavorite } = useFavorites()
 
+const CHART_STYLE_KEY = 'dataPlay.scanner.chartStyle'
 const chartStyle = ref('barras')
 const chartStyleOptions = [
   { value: 'barras', label: 'Barras' },
   { value: 'area', label: 'Área' },
 ]
+
+if (import.meta.client) {
+  try {
+    chartStyle.value = localStorage.getItem(CHART_STYLE_KEY) === 'area' ? 'area' : 'barras'
+  } catch {
+    chartStyle.value = 'barras'
+  }
+}
+
+watch(chartStyle, (value) => {
+  if (!import.meta.client) return
+  writeChartStyle(value)
+})
+
+function writeChartStyle(value) {
+  try {
+    localStorage.setItem(CHART_STYLE_KEY, value)
+    return true
+  } catch {
+    return false
+  }
+}
 
 // Daily-bets para indicador pré-live: busca os bets do dia dos jogos ao vivo
 // (não do default "dia seguinte" da API, que quebra o cruzamento após a virada de dia).
