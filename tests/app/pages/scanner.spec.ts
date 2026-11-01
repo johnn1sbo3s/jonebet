@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { ref } from 'vue'
 import ScannerPage from '~/pages/scanner.vue'
+import { useFavorites } from '~/composables/useFavorites'
 
 const unlockSound = vi.fn(async () => true)
 vi.mock('~/utils/alertSound.js', () => ({
@@ -135,6 +136,22 @@ describe('scanner: estilo do gráfico', () => {
     await areaButton.trigger('click')
     const after = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
     expect(new Set(after)).toEqual(new Set(['area']))
+  })
+
+  it('o estilo escolhido alcança favoritos e grade', async () => {
+    const favorites = useFavorites()
+    if (!favorites.isFavorite('g1')) favorites.toggleFavorite('g1', '2999-01-01')
+    try {
+      const wrapper = await mountTwoGames()
+      expect(wrapper.find('section').findAll('.card-stub')).toHaveLength(1)
+      const areaButton = wrapper.findAll('button').find((button) => button.text() === 'Área')
+      await areaButton.trigger('click')
+      const styles = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
+      expect(styles).toHaveLength(2)
+      expect(new Set(styles)).toEqual(new Set(['area']))
+    } finally {
+      if (favorites.isFavorite('g1')) favorites.toggleFavorite('g1')
+    }
   })
 
   it('abre em área quando a preferência já está gravada', async () => {

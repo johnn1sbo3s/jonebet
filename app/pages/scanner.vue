@@ -176,9 +176,16 @@
         </div>
 
         <div class="flex flex-col items-start gap-1.5">
-          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Visualização</span>
+          <span id="chart-style-label" class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase"
+            >Visualização</span
+          >
 
-          <SegmentedControl v-model="chartStyle" :options="chartStyleOptions" />
+          <SegmentedControl
+            v-model="chartStyle"
+            :options="chartStyleOptions"
+            role="group"
+            aria-labelledby="chart-style-label"
+          />
         </div>
 
         <div v-if="otherGames.length" class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -502,6 +509,14 @@ const chartStyleOptions = [
   { value: 'area', label: 'Área' },
 ]
 
+function saveChartStyle(value) {
+  try {
+    localStorage.setItem(CHART_STYLE_KEY, value)
+  } catch {
+    return
+  }
+}
+
 if (import.meta.client) {
   try {
     chartStyle.value = localStorage.getItem(CHART_STYLE_KEY) === 'area' ? 'area' : 'barras'
@@ -512,17 +527,8 @@ if (import.meta.client) {
 
 watch(chartStyle, (value) => {
   if (!import.meta.client) return
-  writeChartStyle(value)
+  saveChartStyle(value)
 })
-
-function writeChartStyle(value) {
-  try {
-    localStorage.setItem(CHART_STYLE_KEY, value)
-    return true
-  } catch {
-    return false
-  }
-}
 
 // Daily-bets para indicador pré-live: busca os bets do dia dos jogos ao vivo
 // (não do default "dia seguinte" da API, que quebra o cruzamento após a virada de dia).

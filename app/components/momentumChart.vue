@@ -251,20 +251,17 @@ function tickX(t) {
   return (t.half === 2 ? P2.value : PAD) + (rel - 1) * STEP.value
 }
 
+const VALUE_SCALE = 55
+
 function barHeight(b) {
-  return Math.max(Number(b.home) || 0, Number(b.away) || 0) * 55
+  return Math.max(Number(b.home) || 0, Number(b.away) || 0) * VALUE_SCALE
 }
 
 function barY(b) {
   return Number(b.home) > 0 ? CENTER - barHeight(b) : CENTER
 }
 
-const BAND_SCALE = 55
 const TEAM_FILL = { home: '#2dd4bf', away: '#3b82f6' }
-
-function bandY(side, value) {
-  return clampBand(side, CENTER - (side === 'home' ? 1 : -1) * value * BAND_SCALE)
-}
 
 function clampBand(side, y) {
   return side === 'home' ? Math.min(CENTER, Math.max(0, y)) : Math.max(CENTER, Math.min(CENTER * 2, y))
@@ -302,11 +299,11 @@ const bands = computed(() => {
       continue
     }
     const half = halfOf(bar)
+    const amplitude = side === 'home' ? home : away
     const point = {
       x: barX(bar),
-      y: bandY(side, side === 'home' ? home : away),
+      y: clampBand(side, CENTER - (side === 'home' ? 1 : -1) * amplitude * VALUE_SCALE),
       minute: panelMinute(bar),
-      value: side === 'home' ? home : away,
     }
     const previous = current?.points[current.points.length - 1]
     if (current && current.side === side && current.half === half && point.minute - previous.minute <= 1) {
@@ -324,13 +321,15 @@ const bands = computed(() => {
     const left = Math.max(start, firstX - STEP.value / 2)
     const right = Math.min(end, lastX + STEP.value / 2)
     const points = run.points
-    let area = `M ${left} ${CENTER} L ${points[0].x} ${CENTER}`
-    area += points.length > 1 ? bandCurve(points, run.side) : ` L ${points[0].x} ${points[0].y}`
-    area += ` L ${right} ${CENTER} Z`
-    let edge = `M ${left} ${CENTER} L ${points[0].x} ${CENTER}`
-    edge += points.length > 1 ? bandCurve(points, run.side) : ` L ${points[0].x} ${points[0].y}`
-    edge += ` L ${right} ${CENTER}`
-    return { key: `${run.side}-${run.half}-${index}`, side: run.side, fill: TEAM_FILL[run.side], d: area, edge }
+    const face =
+      `M ${left} ${CENTER} L ${points[0].x} ${points[0].y}` + (points.length > 1 ? bandCurve(points, run.side) : '')
+    return {
+      key: `${run.side}-${run.half}-${index}`,
+      side: run.side,
+      fill: TEAM_FILL[run.side],
+      d: `${face} L ${right} ${CENTER} Z`,
+      edge: `${face} L ${right} ${CENTER}`,
+    }
   })
 })
 

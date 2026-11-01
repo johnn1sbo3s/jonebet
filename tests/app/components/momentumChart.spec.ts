@@ -309,6 +309,26 @@ describe('MomentumChart: estilo de área', () => {
     expect(bands.map((band) => band.attributes('data-side'))).toEqual(['home', 'away', 'home'])
   })
 
+  it('a banda começa já no valor do primeiro minuto do trecho', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [
+          { minute: 1, half: 1, home: 0.2, away: 0 },
+          { minute: 2, half: 1, home: 0.9, away: 0 },
+        ],
+      },
+    })
+    const numbers = (
+      wrapper
+        .find('path.momentum-area')
+        .attributes('d')
+        .match(/-?\d+(\.\d+)?/g) || []
+    ).map(Number)
+    expect(numbers[1]).toBe(55)
+    expect(numbers[3]).toBeCloseTo(55 - 0.2 * 55, 1)
+  })
+
   it('banda de casa fica acima da central e a de fora abaixo, sem cruzar', async () => {
     const wrapper = await mountSuspended(MomentumChart, {
       props: {
