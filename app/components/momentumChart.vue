@@ -104,20 +104,42 @@
 
         <line class="lane-threshold" x1="0" y1="77" x2="640" y2="77" stroke="#52525b" stroke-width="1" />
 
+        <path
+          v-for="band in bands"
+          :key="`area-${band.key}`"
+          class="momentum-area"
+          :data-side="band.side"
+          :d="band.d"
+          :fill="band.fill"
+          opacity="0.4"
+        />
+
+        <path
+          v-for="band in bands"
+          :key="`edge-${band.key}`"
+          class="momentum-area-edge"
+          :d="band.edge"
+          fill="none"
+          :stroke="band.fill"
+          stroke-width="1.5"
+        />
+
         <line x1="0" y1="55" x2="640" y2="55" stroke="#52525b" stroke-width="1.5" />
 
-        <rect
-          v-for="b in bars"
-          :key="`${halfOf(b)}-${b.minute}`"
-          class="momentum-bar"
-          :x="barX(b)"
-          :y="barY(b)"
-          width="6"
-          :height="barHeight(b)"
-          rx="1.5"
-          :fill="Number(b.home) > 0 ? '#2dd4bf' : '#3b82f6'"
-          opacity="0.85"
-        />
+        <template v-if="chartStyle !== 'area'">
+          <rect
+            v-for="b in bars"
+            :key="`${halfOf(b)}-${b.minute}`"
+            class="momentum-bar"
+            :x="barX(b)"
+            :y="barY(b)"
+            width="6"
+            :height="barHeight(b)"
+            rx="1.5"
+            :fill="Number(b.home) > 0 ? '#2dd4bf' : '#3b82f6'"
+            opacity="0.85"
+          />
+        </template>
 
         <template v-for="t in TICKS" :key="`${t.half}-${t.minute}`">
           <line :x1="tickX(t)" y1="51" :x2="tickX(t)" y2="59" stroke="#3f3f46" />
@@ -162,6 +184,7 @@ const props = defineProps({
   goals: { type: Array, default: () => [] },
   shots: { type: Array, default: () => [] },
   notifications: { type: Array, default: () => [] },
+  chartStyle: { type: String, default: 'barras' },
 })
 
 // Geometria do gráfico do Flashscore (viewBox 640x158, centro em 55):
@@ -235,6 +258,81 @@ function barHeight(b) {
 function barY(b) {
   return Number(b.home) > 0 ? CENTER - barHeight(b) : CENTER
 }
+
+const BAND_SCALE = 55
+const TEAM_FILL = { home: '#2dd4bf', away: '#3b82f6' }
+
+function bandY(side, value) {
+  return clampBand(side, CENTER - (side === 'home' ? 1 : -1) * value * BAND_SCALE)
+}
+
+function clampBand(side, y) {
+  return side === 'home' ? Math.min(CENTER, Math.max(0, y)) : Math.max(CENTER, Math.min(CENTER * 2, y))
+}
+
+function bandCurve(points, side) {
+  let d = ''
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const first = points[i - 1] ?? points[i]
+    const from = points[i]
+    const to = points[i + 1]
+    const last = points[i + 2] ?? to
+    const c1x = from.x + (to.x - first.x) / 6
+    const c1y = clampBand(side, from.y + (to.y - first.y) / 6)
+    const c2x = to.x - (last.x - from.x) / 6
+    const c2y = clampBand(side, to.y - (last.y - from.y) / 6)
+    d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`
+  }
+  return d
+}
+
+const bands = computed(() => {
+  if (props.chartStyle !== 'area') return []
+  const ordered = [...props.bars]
+    .filter((bar) => Number.isFinite(Number(bar?.minute)))
+    .sort((a, b) => halfOf(a) - halfOf(b) || panelMinute(a) - panelMinute(b))
+  const runs = []
+  let current = null
+  for (const bar of ordered) {
+    const home = Number(bar.home) || 0
+    const away = Number(bar.away) || 0
+    const side = home > away ? 'home' : away > home ? 'away' : null
+    if (!side) {
+      current = null
+      continue
+    }
+    const half = halfOf(bar)
+    const point = {
+      x: barX(bar),
+      y: bandY(side, side === 'home' ? home : away),
+      minute: panelMinute(bar),
+      value: side === 'home' ? home : away,
+    }
+    const previous = current?.points[current.points.length - 1]
+    if (current && current.side === side && current.half === half && point.minute - previous.minute <= 1) {
+      current.points.push(point)
+      continue
+    }
+    current = { side, half, points: [point] }
+    runs.push(current)
+  }
+  return runs.map((run, index) => {
+    const firstX = run.points[0].x
+    const lastX = run.points[run.points.length - 1].x
+    const start = run.half === 2 ? P2.value : PAD
+    const end = run.half === 2 ? 640 - PAD : P2.value - GAP
+    const left = Math.max(start, firstX - STEP.value / 2)
+    const right = Math.min(end, lastX + STEP.value / 2)
+    const points = run.points
+    let area = `M ${left} ${CENTER} L ${points[0].x} ${CENTER}`
+    area += points.length > 1 ? bandCurve(points, run.side) : ` L ${points[0].x} ${points[0].y}`
+    area += ` L ${right} ${CENTER} Z`
+    let edge = `M ${left} ${CENTER} L ${points[0].x} ${CENTER}`
+    edge += points.length > 1 ? bandCurve(points, run.side) : ` L ${points[0].x} ${points[0].y}`
+    edge += ` L ${right} ${CENTER}`
+    return { key: `${run.side}-${run.half}-${index}`, side: run.side, fill: TEAM_FILL[run.side], d: area, edge }
+  })
+})
 
 // Quatro trilhas: shots/gol da casa em cima, gol/shots de fora embaixo
 // (gol sempre colado no gráfico). x exato pelo barX; vizinhos da mesma

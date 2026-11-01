@@ -104,6 +104,40 @@ beforeEach(() => {
   localStorage.clear()
 })
 
+describe('scanner: estilo do gráfico', () => {
+  const CHART_STUBS = {
+    ScannerCard: { props: ['chartStyle'], template: '<div class="card-stub" :data-style="chartStyle" />' },
+  }
+
+  async function mountTwoGames() {
+    const original = h.fetchMock.getMockImplementation()
+    h.fetchMock.mockImplementation(() =>
+      h.polls++ === 0
+        ? Promise.resolve({
+            version: 1,
+            generated_at: '2026-10-03T20:00:00-03:00',
+            games: [GAME, { ...GAME, id: 'g2', home: 'Outro' }],
+          })
+        : new Promise(() => {}),
+    )
+    const wrapper = await mountSuspended(ScannerPage, { global: { stubs: CHART_STUBS } })
+    await flushSnapshot()
+    h.fetchMock.mockImplementation(original)
+    return wrapper
+  }
+
+  it('abre em barras e troca todos os cards para área de uma vez', async () => {
+    const wrapper = await mountTwoGames()
+    const before = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
+    expect(before.length).toBeGreaterThan(1)
+    expect(new Set(before)).toEqual(new Set(['barras']))
+    const areaButton = wrapper.findAll('button').find((button) => button.text() === 'Área')
+    await areaButton.trigger('click')
+    const after = wrapper.findAll('.card-stub').map((card) => card.attributes('data-style'))
+    expect(new Set(after)).toEqual(new Set(['area']))
+  })
+})
+
 describe('scanner: listeners de window', () => {
   it('remove pointerdown/keydown no unmount, com a mesma referência', async () => {
     const spy = spyGestureListeners()

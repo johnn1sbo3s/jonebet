@@ -284,3 +284,107 @@ describe('MomentumChart', () => {
     expect(shotCx).toBe(goalCx)
   })
 })
+
+describe('MomentumChart: estilo de área', () => {
+  function yCoords(path) {
+    const numbers = (path.match(/-?\d+(\.\d+)?/g) || []).map(Number)
+    return numbers.filter((_, index) => index % 2 === 1)
+  }
+
+  it('desenha uma banda por trecho de domínio no lugar das barras', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [
+          { minute: 1, half: 1, home: 0.5, away: 0 },
+          { minute: 2, half: 1, home: 0.6, away: 0 },
+          { minute: 3, half: 1, home: 0, away: 0.7 },
+          { minute: 4, half: 1, home: 0.4, away: 0 },
+        ],
+      },
+    })
+    expect(wrapper.findAll('rect.momentum-bar')).toHaveLength(0)
+    const bands = wrapper.findAll('path.momentum-area')
+    expect(bands).toHaveLength(3)
+    expect(bands.map((band) => band.attributes('data-side'))).toEqual(['home', 'away', 'home'])
+  })
+
+  it('banda de casa fica acima da central e a de fora abaixo, sem cruzar', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [
+          { minute: 1, half: 1, home: 0.95, away: 0 },
+          { minute: 2, half: 1, home: 0, away: 0.95 },
+        ],
+      },
+    })
+    const [homeBand, awayBand] = wrapper.findAll('path.momentum-area')
+    expect(Math.max(...yCoords(homeBand.attributes('d')))).toBeLessThanOrEqual(55)
+    expect(Math.min(...yCoords(awayBand.attributes('d')))).toBeGreaterThanOrEqual(55)
+    expect(homeBand.attributes('fill')).toBe('#2dd4bf')
+    expect(awayBand.attributes('fill')).toBe('#3b82f6')
+  })
+
+  it('minuto sem domínio corta a banda em duas', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [
+          { minute: 1, half: 1, home: 0.5, away: 0 },
+          { minute: 2, half: 1, home: 0, away: 0 },
+          { minute: 3, half: 1, home: 0.6, away: 0 },
+        ],
+      },
+    })
+    expect(wrapper.findAll('path.momentum-area')).toHaveLength(2)
+  })
+
+  it('a banda termina no último minuto lido, sem ocupar o painel inteiro', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [
+          { minute: 1, half: 1, home: 0.5, away: 0 },
+          { minute: 2, half: 1, home: 0.6, away: 0 },
+        ],
+      },
+    })
+    const d = wrapper.find('path.momentum-area').attributes('d')
+    const xs = (d.match(/-?\d+(\.\d+)?/g) || []).map(Number).filter((_, index) => index % 2 === 0)
+    expect(Math.max(...xs)).toBeLessThan(60)
+  })
+
+  it('banda do 2º tempo fica no painel direito', async () => {
+    const wrapper = await mountSuspended(MomentumChart, {
+      props: {
+        chartStyle: 'area',
+        bars: [{ minute: 46, half: 2, home: 0, away: 0.8 }],
+      },
+    })
+    const d = wrapper.find('path.momentum-area').attributes('d')
+    const xs = (d.match(/-?\d+(\.\d+)?/g) || []).map(Number).filter((_, index) => index % 2 === 0)
+    expect(Math.min(...xs)).toBeGreaterThanOrEqual(P2_SYMMETRIC)
+  })
+
+  it('marcadores de gol e chute continuam na mesma posição no estilo de área', async () => {
+    const props = {
+      bars: [{ minute: 10, half: 1, home: 0.5, away: 0 }],
+      goals: [{ minute: 10, half: 1, stoppage_time: 0, team: 'home', player: 'x' }],
+      shots: [{ minute: 10, half: 1, team: 'home', tier: 'C2', xg_delta: 0.3, label: 'Boa chance' }],
+    }
+    const bars = await mountSuspended(MomentumChart, { props })
+    const area = await mountSuspended(MomentumChart, { props: { ...props, chartStyle: 'area' } })
+    expect(area.findAll('.lane-goal')).toHaveLength(1)
+    expect(area.findAll('.lane-shot')).toHaveLength(1)
+    expect(area.find('.lane-goal circle[r="10"]').attributes('cx')).toBe(
+      bars.find('.lane-goal circle[r="10"]').attributes('cx'),
+    )
+  })
+
+  it('sem minutos não desenha gráfico', async () => {
+    const wrapper = await mountSuspended(MomentumChart, { props: { chartStyle: 'area', bars: [] } })
+    expect(wrapper.find('svg').exists()).toBe(false)
+    expect(wrapper.text()).toContain('aguardando dados do gráfico')
+  })
+})

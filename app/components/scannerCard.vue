@@ -168,6 +168,7 @@
           :goals="game.goals"
           :shots="chartShots"
           :notifications="game.notifications ?? []"
+          :chart-style="chartStyle"
           class="mb-3"
         />
 
@@ -386,6 +387,7 @@ const props = defineProps({
   // Destaque vindo do Telegram (?game=<id>): luz viajante na borda por ~12s.
   highlighted: { type: Boolean, default: false },
   preLiveBets: { type: Array, default: () => [] },
+  chartStyle: { type: String, default: 'barras' },
 })
 
 // Link externo do snapshot: esquema validado (http/https) — valor recusado

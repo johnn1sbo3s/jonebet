@@ -123,6 +123,7 @@
                     :game="game"
                     :highlighted="game.id === activeHighlight"
                     :pre-live-bets="preLiveBetsByGame[game.id] || []"
+                    :chart-style="chartStyle"
                   />
                 </TransitionGroup>
               </div>
@@ -174,6 +175,12 @@
           </div>
         </div>
 
+        <div class="flex flex-col items-start gap-1.5">
+          <span class="text-2xs font-semibold tracking-wide text-zinc-500 uppercase">Visualização</span>
+
+          <SegmentedControl v-model="chartStyle" :options="chartStyleOptions" />
+        </div>
+
         <div v-if="otherGames.length" class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <ScannerCard
             v-for="game in otherGames"
@@ -182,6 +189,7 @@
             :game="game"
             :highlighted="game.id === activeHighlight"
             :pre-live-bets="preLiveBetsByGame[game.id] || []"
+            :chart-style="chartStyle"
           />
         </div>
 
@@ -486,6 +494,12 @@ const games = computed(() => snapshot.value?.games || [])
 // Favoritos no topo (só ao vivo — jogo finalizado sai da seção e volta pro
 // grid normal até sair do snapshot). O resto segue no grid principal.
 const { isFavorite } = useFavorites()
+
+const chartStyle = ref('barras')
+const chartStyleOptions = [
+  { value: 'barras', label: 'Barras' },
+  { value: 'area', label: 'Área' },
+]
 
 // Daily-bets para indicador pré-live: busca os bets do dia dos jogos ao vivo
 // (não do default "dia seguinte" da API, que quebra o cruzamento após a virada de dia).
