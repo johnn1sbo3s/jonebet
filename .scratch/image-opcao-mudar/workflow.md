@@ -4,6 +4,7 @@
 **Spec:** approved · 2026-10-31
 **Tickets:** approved · 2026-10-31
 **Started:** 2026-10-31 · feat/image-opcao-mudar
+**Reviewed:** 2026-10-31
 
 ## Decisões fechadas (grill, rodada 1)
 
