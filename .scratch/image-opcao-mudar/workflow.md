@@ -1,6 +1,8 @@
 # Workflow — image-opcao-mudar
 
 **Mode:** feature
+**Spec:** approved · 2026-10-31
+**Tickets:** approved · 2026-10-31
 
 ## Decisões fechadas (grill, rodada 1)
 
