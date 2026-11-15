@@ -20,6 +20,17 @@ Create a new file under `.scratch/<feature-slug>/` in this repo (creating the di
 
 Read the file at the referenced path. The user will normally pass the path or the issue number directly.
 
+## Triage intake
+
+Raw issues found outside the flow — a bug, a request, a loose idea — are captured here before triage.
+
+- One file per issue in `.scratch/triage/<slug>.md`, created on first capture.
+- The file starts with `**Status:** needs-triage` and carries the raw report: what happened, steps, expected vs. actual, and where it came from.
+- Capture is cheap: no codebase exploration, no grilling, no format beyond the report.
+- `/triage` reads files with `**Status:** needs-triage` or no `**Status:**`, updates the line (`needs-info`, `ready-for-agent`, `ready-for-human` or `wontfix`) and appends the brief or notes under `## Comments`.
+- Tickets produced by `/to-tickets` are already agent-ready and never enter this queue.
+- Capture does not open a work item; anything that becomes `ready-for-agent` is material for opening one later.
+
 ## Wayfinding operations
 
 Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
